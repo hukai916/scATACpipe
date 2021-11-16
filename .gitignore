@@ -8,4 +8,4 @@ testing*
 test_*/
 *.pyc
 .nextflow.log*
-.github
+.github/
