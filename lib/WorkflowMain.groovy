@@ -78,7 +78,6 @@ class WorkflowMain {
             Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
             log.info "${colors.cyan}${"\nSupplied genome not supported! Try '--support_genome'.\n"}${colors.reset}\n\n"
             System.exit(0)
-
           }
         } else if (params.ref_fasta_ucsc) {
           def res = NfcoreSchema.checkGenome(workflow, params).toBoolean()
@@ -165,39 +164,49 @@ class WorkflowMain {
           // Also check if DOWNSTREAM_ARCHR parameters satisfied
           if (params.preprocess == "default") {
             if (params.ref_bwa_index || params.ref_minimap2_index) {
-              if (!params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {
-                log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]"
+              if !(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name) {
+                log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]\nPls also supply --species_latin_name [Must be quoted]"
                 System.exit(0)
               } else {
                 log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             } else if (params.ref_fasta) {
-              if (!params.archr_gtf) {
-                log.error "Pls supply --archr_gtf [path to gtf file]"
+              if (!params.archr_gtf || !params.species_latin_name) {
+                log.error "Pls supply --archr_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
                 System.exit(0)
               } else {
                 log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             } else if (params.ref_fasta_ensembl || params.ref_fasta_ucsc) {
-              log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
+              if (!params.species_latin_name) {
+                log.error "Pls also supply --species_latin_name [Must be quoted]"
+                System.exit(0)
+              } else {
+                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
+              }
             }
           } else if (params.preprocess == "10xgenomics") {
               if (params.ref_cellranger_index) {
-                if (!params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {
-                  log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]"
+                if !(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name) {
+                  log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]\nPls also supply --species_latin_name [Must be quoted]"
                   System.exit(0)
                 } else {
                   log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
                 }
               } else if (params.ref_fasta) {
-                if (!params.archr_gtf) {
-                  log.error "Pls supply --archr_gtf [path to gtf file]"
+                if (!params.archr_gtf || !params.species_latin_name) {
+                  log.error "Pls supply --archr_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
                   System.exit(0)
                 } else {
                   log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
                 }
               } else if (params.ref_fasta_ensembl || params.ref_fasta_ucsc) {
-                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
+                if (!params.species_latin_name) {
+                  log.error "Pls also supply --species_latin_name [Must be quoted]"
+                  System.exit(0)
+                } else {
+                  log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
+                }
               }
           }
         }
