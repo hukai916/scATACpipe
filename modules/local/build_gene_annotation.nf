@@ -45,11 +45,7 @@ process BUILD_GENE_ANNOTATION {
     txdb <- loadDb("$txdb")
 
     # first, get gene symbol SimpleList
-    if (is.null($species_latin_name)) {
-      id2symbol <- get_geneID_symbol(gtf = "$gtf", species_latin_name = NULL)
-    } else {
-      id2symbol <- get_geneID_symbol(gtf = "$gtf", species_latin_name = "$species_latin_name")
-    }
+    id2symbol <- get_geneID_symbol(gtf = "$gtf", species_latin_name = "$species_latin_name")
 
     create_ArchR_geneannotation_WO_OrgDb(TxDb = txdb,
                                   geneID2Symbol = id2symbol,
