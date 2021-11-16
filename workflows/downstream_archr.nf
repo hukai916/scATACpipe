@@ -328,7 +328,7 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation)
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project)
     } else if (archr_input_type == "genome_gtf") {
-      if (!(params.species_latin_name == 'NULL')) {
+      if (params.species_latin_name) {
         // Build BSgenome:
         if (prep_genome == "run") {
           BUILD_BSGENOME(prep_genome_fasta)

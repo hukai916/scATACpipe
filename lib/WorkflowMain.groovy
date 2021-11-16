@@ -164,7 +164,7 @@ class WorkflowMain {
           // Also check if DOWNSTREAM_ARCHR parameters satisfied
           if (params.preprocess == "default") {
             if (params.ref_bwa_index || params.ref_minimap2_index) {
-              if !(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name) {
+              if (!(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name)) {
                 log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]\nPls also supply --species_latin_name [Must be quoted]"
                 System.exit(0)
               } else {
@@ -187,7 +187,7 @@ class WorkflowMain {
             }
           } else if (params.preprocess == "10xgenomics") {
               if (params.ref_cellranger_index) {
-                if !(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name) {
+                if (!(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name)) {
                   log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]\nPls also supply --species_latin_name [Must be quoted]"
                   System.exit(0)
                 } else {
