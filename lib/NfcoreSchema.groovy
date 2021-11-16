@@ -130,7 +130,7 @@ class NfcoreSchema {
                 }
             }
         }
-
+        
         //=====================================================================//
         // Validate parameters against the schema
         InputStream input_stream = new File(getSchemaPath(workflow, schema_filename=schema_filename)).newInputStream()
@@ -234,6 +234,48 @@ class NfcoreSchema {
         output += NfcoreTemplate.dashedLine(params.monochrome_logs)
         return output
     }
+
+    //
+    // Beautify parameters for --support_genome
+    //
+    public static String paramsGenome(workflow, params, command, json_ucsc='assets/genome_ucsc.json', json_ensembl='assets/genome_ensembl.json') {
+        Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
+        json_ucsc = new File(json_ucsc).text
+        json_ensembl = new File(json_ensembl).text
+
+        def Map genome_ucsc = (Map) new JsonSlurper().parseText(json_ucsc)
+        def Map genome_ensembl = (Map) new JsonSlurper().parseText(json_ensembl)
+
+        String output  = ''
+        output += NfcoreTemplate.dashedLine(params.monochrome_logs)
+        output        += "${colors.cyan}${"\nSupported UCSC genomes:"}${colors.reset}\n\n"
+        output        += genome_ucsc.keySet().join(", ") + "\n"
+        output        += "${colors.cyan}${"\nSupported ENSEMBL genomes:"}${colors.reset}\n\n"
+        output        += genome_ensembl.keySet().join(", ")
+
+        return output
+    }
+
+    //
+    // Check if supplied genome supported, for --ref_fasta_ucsc, --ref_fasta_ensembls
+    //
+    public static String checkGenome(workflow, params, json_ucsc='assets/genome_ucsc.json', json_ensembl='assets/genome_ensembl.json') {
+        Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
+        json_ucsc = new File(json_ucsc).text
+        json_ensembl = new File(json_ensembl).text
+
+        def Map genome_ucsc = (Map) new JsonSlurper().parseText(json_ucsc)
+        def Map genome_ensembl = (Map) new JsonSlurper().parseText(json_ensembl)
+
+        if (params.ref_fasta_ensembl) {
+          return genome_ensembl.containsKey(params.ref_fasta_ensembl)
+        }
+        if (params.ref_fasta_ucsc) {
+          return genome_ucsc.containsKey(params.ref_fasta_ucsc)
+        }
+        return 0
+    }
+
 
     //
     // Groovy Map summarising parameters/workflow options used by the pipeline

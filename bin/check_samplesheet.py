@@ -10,7 +10,7 @@ import argparse
 
 
 def parse_args(args=None):
-    Description = "Reformat nf-core/scatacpipe samplesheet file and check its contents."
+    Description = "Reformat nf-core/scatacseqflow samplesheet file and check its contents."
     Epilog = "Example usage: python check_samplesheet.py <FILE_IN> <FILE_OUT>"
 
     parser = argparse.ArgumentParser(description=Description, epilog=Epilog)
@@ -85,8 +85,10 @@ def check_samplesheet(file_in, file_out):
 
             ## Check sample name entries
             sample, fastq_1, fastq_2 = lspl[: len(HEADER)]
-            sample = sample.replace(" ", "_")
-            if not sample:
+            if sample:
+                if sample.find(" ") != -1:
+                    print_error("Sample entry contains spaces!", "Line", line)
+            else:
                 print_error("Sample entry has not been specified!", "Line", line)
 
             ## Check FastQ file extension

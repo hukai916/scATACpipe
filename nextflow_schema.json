@@ -1,8 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/scatacpipe/master/nextflow_schema.json",
-    "title": "nf-core/scatacpipe pipeline parameters",
-    "description": "An integrative pipeline for single-cell ATAC-seq (scATAC-seq) data analysis: from preprocessing to downstream analysis.",
+    "$id": "https://raw.githubusercontent.com/nf-core/scatacseqflow/master/nextflow_schema.json",
+    "title": "nf-core/scatacseqflow pipeline parameters",
+    "description": "A NF pipeline for scATACseq data analysis.",
     "type": "object",
     "definitions": {
         "input_output_options": {
@@ -10,20 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": [
-                "input"
-            ],
             "properties": {
-                "input": {
-                    "type": "string",
-                    "format": "file-path",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "schema": "assets/schema_input.json",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/scatacpipe/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
-                },
                 "outdir": {
                     "type": "string",
                     "description": "Path to the output directory where the results will be saved.",
@@ -41,44 +28,6 @@
                     "type": "string",
                     "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
-                }
-            }
-        },
-        "reference_genome_options": {
-            "title": "Reference genome options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Reference genome related files and options required for the workflow.",
-            "properties": {
-                "genome": {
-                    "type": "string",
-                    "description": "Name of iGenomes reference.",
-                    "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
-                },
-                "fasta": {
-                    "type": "string",
-                    "format": "file-path",
-                    "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-                    "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
-                },
-                "igenomes_base": {
-                    "type": "string",
-                    "format": "directory-path",
-                    "description": "Directory / URL base for iGenomes references.",
-                    "default": "s3://ngi-igenomes/igenomes",
-                    "fa_icon": "fas fa-cloud-download-alt",
-                    "hidden": true
-                },
-                "igenomes_ignore": {
-                    "type": "boolean",
-                    "description": "Do not load the iGenomes reference config.",
-                    "fa_icon": "fas fa-ban",
-                    "hidden": true,
-                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
                 }
             }
         },
@@ -276,9 +225,6 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
-            "$ref": "#/definitions/reference_genome_options"
-        },
-        {
             "$ref": "#/definitions/institutional_config_options"
         },
         {
@@ -287,5 +233,146 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "input_preprocess": {
+            "type": "string",
+            "fa_icon": "fas fa-arrow-circle-right"
+        },
+        "preprocess": {
+            "type": "string"
+        },
+        "support_genome": {
+            "type": "string",
+            "fa_icon": "fas fa-dna"
+        },
+        "species_latin_name": {
+            "type": "string",
+            "default": "NULL",
+            "fa_icon": "fas fa-paw"
+        },
+        "ref_bwa_index": {
+            "type": "string"
+        },
+        "ref_minimap2_index": {
+            "type": "string"
+        },
+        "ref_fasta": {
+            "type": "string"
+        },
+        "ref_gtf": {
+            "type": "string"
+        },
+        "ref_fasta_ucsc": {
+            "type": "string"
+        },
+        "ref_fasta_ensembl": {
+            "type": "string"
+        },
+        "barcode_whitelist": {
+            "type": "string",
+            "default": "assets/barcode/737K-cratac-v1.txt.gz"
+        },
+        "barcode_correction": {
+            "type": "string",
+            "default": "pheniqs"
+        },
+        "barcode_regex": {
+            "type": "string"
+        },
+        "read1_adapter": {
+            "type": "string",
+            "default": "AGATCGGAAGAGC"
+        },
+        "read2_adapter": {
+            "type": "string",
+            "default": "AGATCGGAAGAGC"
+        },
+        "mapper": {
+            "type": "string",
+            "default": "bwa"
+        },
+        "filter": {
+            "type": "string",
+            "default": "both"
+        },
+        "ref_cellranger_index": {
+            "type": "string"
+        },
+        "ref_cellranger_ucsc": {
+            "type": "string"
+        },
+        "ref_cellranger_ensembl": {
+            "type": "string"
+        },
+        "biorad_genome": {
+            "type": "string"
+        },
+        "input_archr": {
+            "type": "string",
+            "fa_icon": "fas fa-arrow-circle-right"
+        },
+        "archr_thread": {
+            "type": "integer",
+            "default": 4
+        },
+        "archr_genome": {
+            "type": "string"
+        },
+        "archr_genome_fasta": {
+            "type": "string"
+        },
+        "archr_gtf": {
+            "type": "string"
+        },
+        "archr_txdb": {
+            "type": "string"
+        },
+        "archr_org": {
+            "type": "string"
+        },
+        "archr_bsgenome": {
+            "type": "string"
+        },
+        "archr_blacklist_bed": {
+            "type": "string"
+        },
+        "archr_filter_doublets_ratio": {
+            "type": "number",
+            "default": 1.5
+        },
+        "archr_scrnaseq": {
+            "type": "string"
+        },
+        "archr_scrnaseq_grouplist": {
+            "type": "string"
+        },
+        "marker_peak_geneSymbol": {
+            "type": "string"
+        },
+        "marker_peak_clusters": {
+            "type": "string"
+        },
+        "marker_peak_clusters2": {
+            "type": "string"
+        },
+        "pairwise_test_clusters_1": {
+            "type": "string"
+        },
+        "pairwise_test_clusters_2": {
+            "type": "string"
+        },
+        "pairwise_test_clusters2_1": {
+            "type": "string"
+        },
+        "pairwise_test_clusters2_2": {
+            "type": "string"
+        },
+        "custom_peaks": {
+            "type": "string"
+        },
+        "trajectory_groups": {
+            "type": "string"
+        }
+    }
 }

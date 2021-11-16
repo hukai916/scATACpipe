@@ -5,4 +5,6 @@ results/
 .DS_Store
 testing/
 testing*
+test_*/
 *.pyc
+.nextflow.log*
