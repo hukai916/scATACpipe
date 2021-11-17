@@ -278,20 +278,34 @@ workflow DOWNSTREAM_ARCHR {
               log.error "Something must be wrong!"
               exit 1, "EXIT!"
             }
-            DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-            // PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-            PREP_GTF (prep_genome_fasta, prep_genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-            archr_input_type = "genome_gtf"
-            // archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
-            archr_input_list = [prep_genome_name, prep_genome_fasta, PREP_GTF.out.gtf]
+            // Check if natively supported for ucsc genomes:
+            if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
+              log.info "INFO: natively supported ArchR genome supplied."
+              archr_input_type = "naive"
+              archr_input_list = [params.archr_genome, "NA", "NA"]
+            } else {
+              DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
+              // PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+              PREP_GTF (prep_genome_fasta, prep_genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+              archr_input_type = "genome_gtf"
+              // archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
+              archr_input_list = [prep_genome_name, prep_genome_fasta, PREP_GTF.out.gtf]
+            }
           } else if (with_preprocess == "preprocess_10xgenomics") {
             // If PREPPROCESS_10XGENOMICS: both PREP_GENOME and PREP_GTF should been performed
             if (!(prep_genome == "run") || !(prep_gtf == "run")) {
               log.error "Something must be wrong (2)!"
               exit 1, "EXIT!"
             }
-            archr_input_type = "genome_gtf"
-            archr_input_list = [prep_genome_name, prep_genome_fasta, prep_gtf_file]
+            // Check if natively supported for ucsc genomes:
+            if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
+              log.info "INFO: natively supported ArchR genome supplied."
+              archr_input_type = "naive"
+              archr_input_list = [params.archr_genome, "NA", "NA"]
+            } else {
+              archr_input_type = "genome_gtf"
+              archr_input_list = [prep_genome_name, prep_genome_fasta, prep_gtf_file]
+            }
           }
         } else {
           exit 1, exit_msg
