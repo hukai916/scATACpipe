@@ -282,7 +282,7 @@ workflow DOWNSTREAM_ARCHR {
             if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
               log.info "INFO: natively supported ArchR genome supplied."
               archr_input_type = "naive"
-              archr_input_list = [params.archr_genome, "NA", "NA"]
+              archr_input_list = [params.ref_fasta_ucsc, "NA", "NA"]
             } else {
               DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
               // PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
@@ -301,7 +301,7 @@ workflow DOWNSTREAM_ARCHR {
             if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
               log.info "INFO: natively supported ArchR genome supplied."
               archr_input_type = "naive"
-              archr_input_list = [params.archr_genome, "NA", "NA"]
+              archr_input_list = [params.ref_fasta_ucsc, "NA", "NA"]
             } else {
               archr_input_type = "genome_gtf"
               archr_input_list = [prep_genome_name, prep_genome_fasta, prep_gtf_file]
