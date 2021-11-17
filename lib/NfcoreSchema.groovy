@@ -130,7 +130,7 @@ class NfcoreSchema {
                 }
             }
         }
-        
+
         //=====================================================================//
         // Validate parameters against the schema
         InputStream input_stream = new File(getSchemaPath(workflow, schema_filename=schema_filename)).newInputStream()
@@ -181,12 +181,16 @@ class NfcoreSchema {
     //
     // Beautify parameters for --help
     //
-    public static String paramsHelp(workflow, params, command, schema_filename='nextflow_schema.json') {
+    public static String paramsHelp(workflow, params, command1, command2, schema_filename='nextflow_schema.json') {
         Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
         Integer num_hidden = 0
         String output  = ''
-        output        += 'Typical pipeline command:\n\n'
-        output        += "  ${colors.cyan}${command}${colors.reset}\n\n"
+        output        += 'Typical pipeline commands:\n\n'
+        output        += 'If input fragment files:\n'
+        output        += "  ${colors.cyan}${command1}${colors.reset}\n\n"
+        output        += 'If input fastq files:\n'
+        output        += "  ${colors.cyan}${command2}${colors.reset}\n\n"
+        output        += "For detailed usage and examples: https://github.com/hukai916/scATACpipe.\n\n"
         Map params_map = paramsLoad(getSchemaPath(workflow, schema_filename=schema_filename))
         Integer max_chars  = paramsMaxChars(params_map) + 1
         Integer desc_indent = max_chars + 14

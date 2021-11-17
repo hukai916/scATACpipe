@@ -48,7 +48,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
     library(ArchR)
 
     # Include the installed custom BSgenome if supplied:
-    if (!("$user_rlib" == "file_token.txt")) {
+    if (!('$user_rlib' == 'file_token.txt')) {
       .libPaths("user_rlib")
     }
 

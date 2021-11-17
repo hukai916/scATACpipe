@@ -22,10 +22,12 @@ class WorkflowMain {
     // Print help to screen if required
     //
     public static String help(workflow, params, log) {
-        def command = "nextflow run ${workflow.manifest.name} --input samplesheet.csv --genome GRCh37 -profile docker"
+
+        def command1 = "nextflow run main.nf --input_archr samplesheet.csv --archr_genome mm10 -profile [docker|singularity]"
+        def command2 = "nextflow run main.nf --input_preprocess samplesheet.csv --preprocess [default|10xgenomics] --ref_fasta_ucsc hg19 --species_latin_name 'homo sapiens' -profile [docker|singularity]"
         def help_string = ''
         help_string += NfcoreTemplate.logo(workflow, params.monochrome_logs)
-        help_string += NfcoreSchema.paramsHelp(workflow, params, command)
+        help_string += NfcoreSchema.paramsHelp(workflow, params, command1, command2)
         help_string += '\n' + citation(workflow) + '\n'
         help_string += NfcoreTemplate.dashedLine(params.monochrome_logs)
         return help_string

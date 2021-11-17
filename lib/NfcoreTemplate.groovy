@@ -250,18 +250,21 @@ class NfcoreTemplate {
     }
 
     //
-    // nf-core logo
+    // scATACpipe logo
     //
     public static String logo(workflow, monochrome_logs) {
         Map colors = logColours(monochrome_logs)
         String.format(
             """\n
             ${dashedLine(monochrome_logs)}
-                                                    ${colors.green},--.${colors.black}/${colors.green},-.${colors.reset}
-            ${colors.blue}        ___     __   __   __   ___     ${colors.green}/,-._.--~\'${colors.reset}
-            ${colors.blue}  |\\ | |__  __ /  ` /  \\ |__) |__         ${colors.yellow}}  {${colors.reset}
-            ${colors.blue}  | \\| |       \\__, \\__/ |  \\ |___     ${colors.green}\\`-._,-`-,${colors.reset}
-                                                    ${colors.green}`._,._,\'${colors.reset}
+            ${colors.yellow}                 _______       _____       _
+            ${colors.yellow}              /\\|__   __|/\\   / ____|     (_)
+            ${colors.yellow}  ___  ___   /  \\  | |  /  \\ | |     _ __  _ _ __   ___
+            ${colors.yellow} / __|/ __| / /\\ \\ | | / /\\ \\| |    | '_ \\| | '_ \\ / _ \\
+            ${colors.yellow} \\__ \\ (__ / ____ \\| |/ ____ \\ |____| |_) | | |_) |  __/
+            ${colors.yellow} |___/\\___/_/    \\_\\_/_/    \\_\\_____| .__/|_| .__/ \\___|
+            ${colors.yellow}                                    | |     | |
+            ${colors.yellow}                                    |_|     |_|
             ${colors.purple}  ${workflow.manifest.name} v${workflow.manifest.version}${colors.reset}
             ${dashedLine(monochrome_logs)}
             """.stripIndent()
