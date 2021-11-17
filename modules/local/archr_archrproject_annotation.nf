@@ -49,7 +49,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
 
     # Include the installed custom BSgenome if supplied:
     if (!('$user_rlib' == 'file_token.txt')) {
-      .libPaths("user_rlib")
+      .libPaths('user_rlib')
     }
 
     genomeAnnotation <- readRDS(\\"$genome_annotation\\")
