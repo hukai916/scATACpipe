@@ -44,7 +44,6 @@ process ARCHR_CREATE_ARROWFILES {
     """
     echo '
     library(ArchR)
-    .libPaths("user_rlib")
 
     inputFiles <- "$fragment"
     names(inputFiles) <- "$sample_name"

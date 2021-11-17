@@ -29,6 +29,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
     path arrowfiles // this will prepare all required files from the list into the working dir
     path gene_annotation
     path genome_annotation
+    path user_rlib
 
     output:
     // val sample_name, emit: sample_name
@@ -45,6 +46,11 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
 
     echo "
     library(ArchR)
+
+    # Include the installed custom BSgenome if supplied:
+    if (!("$user_rlib" == "file_token.txt")) {
+      .libPaths("user_rlib")
+    }
 
     genomeAnnotation <- readRDS(\\"$genome_annotation\\")
     geneAnnotation <- readRDS(\\"$gene_annotation\\")
