@@ -78,14 +78,14 @@ class WorkflowMain {
           def res = NfcoreSchema.checkGenome(workflow, params).toBoolean()
           if (!res) {
             Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
-            log.info "${colors.cyan}${"\nSupplied genome not supported! Try '--support_genome'.\n"}${colors.reset}\n\n"
+            log.error "Supplied genome not supported! Try '--support_genome'.\n"
             System.exit(0)
           }
         } else if (params.ref_fasta_ucsc) {
           def res = NfcoreSchema.checkGenome(workflow, params).toBoolean()
           if (!res) {
             Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
-            log.info "${colors.cyan}${"\nSupplied genome not supported! Try '--support_genome'.\n"}${colors.reset}\n\n"
+            log.error "Supplied genome not supported! Try '--support_genome'.\n"
             System.exit(0)
           }
         }

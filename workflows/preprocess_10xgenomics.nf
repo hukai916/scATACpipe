@@ -108,49 +108,40 @@ workflow PREPROCESS_10XGENOMICS {
         exit 1, "Pls supply --ref_gtf."
       }
     } else if (params.ref_fasta_ensembl) {
-      if (genome_ensembl_list.contains(params.ref_fasta_ensembl)) {
-        // if ensembl name supplied:
-        // Module: download ensembl genome
-        DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // Module: prep_genome
-        PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-        // Module: download ensembl gtf
-        DOWNLOAD_FROM_ENSEMBL_GTF (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // Module: prep_gtf
-        PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
-        // Module: prepare cellranger index
-        CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
-        // Module: prepare fastq folder
-        GET_10XGENOMICS_FASTQ (ch_samplesheet)
-        // Module: run cellranger-atac count
-        CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder)
-      } else {
-        exit 1, "Pls use --support_genome to show a list of supported genomes!"
-      }
+      // if ensembl name supplied:
+      // Module: download ensembl genome
+      DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
+      // Module: prep_genome
+      PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
+      // Module: download ensembl gtf
+      DOWNLOAD_FROM_ENSEMBL_GTF (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
+      // Module: prep_gtf
+      PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
+      // Module: prepare cellranger index
+      CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
+      // Module: prepare fastq folder
+      GET_10XGENOMICS_FASTQ (ch_samplesheet)
+      // Module: run cellranger-atac count
+      CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder)
     } else if (params.ref_fasta_ucsc) {
-      genome_ucsc_list = get_genome_ucsc()
-      if (genome_ucsc_list.contains(params.ref_fasta_ucsc)) {
-        // Module: download ucsc genome
-        DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-        // Module: prep_genome
-        PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_gtf)
-        // Module: extract primary genome
-        // GET_PRIMARY_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta)
-        // Module: download ucsc gtf
-        DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc)
-        // Module: prep_gtf
-        PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_gtf, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-        // Module: fix gtf
-        // FIX_UCSC_GTF (DOWNLOAD_FROM_UCSC_GTF.out.gtf, GET_PRIMARY_GENOME.out.genome_fasta)
-        // Module: prepare cellranger index
-        CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
-        // Module: prepare fastq folder
-        GET_10XGENOMICS_FASTQ (ch_samplesheet)
-        // Module: run cellranger-atac count
-        CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder)
-      } else {
-        exit 1, "Pls use --support_genome to show a list of supported genomes!"
-      }
+      // Module: download ucsc genome
+      DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
+      // Module: prep_genome
+      PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_gtf)
+      // Module: extract primary genome
+      // GET_PRIMARY_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta)
+      // Module: download ucsc gtf
+      DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc)
+      // Module: prep_gtf
+      PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_gtf, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+      // Module: fix gtf
+      // FIX_UCSC_GTF (DOWNLOAD_FROM_UCSC_GTF.out.gtf, GET_PRIMARY_GENOME.out.genome_fasta)
+      // Module: prepare cellranger index
+      CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
+      // Module: prepare fastq folder
+      GET_10XGENOMICS_FASTQ (ch_samplesheet)
+      // Module: run cellranger-atac count
+      CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder)
     } else {
       exit 1, "PREPROCESS_10XGENOMICS: --ref_fasta_ucsc, or --ref_fasta_ensembl, or --ref_fasta/ref_gtf must be specified!"
     }
