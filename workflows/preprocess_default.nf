@@ -143,7 +143,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
         // module : bwa_map
-        BWA_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, BWA_INDEX.out.bwa_index_folder)
+        BWA_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, BWA_INDEX.out.bwa_index_folder.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ensembl
@@ -163,7 +163,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
         // module : bwa_map
-        BWA_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, BWA_INDEX.out.bwa_index_folder)
+        BWA_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, BWA_INDEX.out.bwa_index_folder.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
       }
@@ -180,7 +180,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index)
+        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ensembl
@@ -190,7 +190,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index)
+        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ucsc) {
         log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ucsc
@@ -202,7 +202,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index)
+        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ucsc/--ref_fasta_ensembl: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
       }
