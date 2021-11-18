@@ -70,7 +70,7 @@ process ARCHR_CLUSTERING {
 
     library(pheatmap)
     cM <- cM / Matrix::rowSums(cM)
-    cM_scran <- cM_scran / Matrix::rowSums(cM)
+    cM_scran <- cM_scran / Matrix::rowSums(cM_scran)
     cellheight <- 18 # 0.25 inch
 
     p1 <- pheatmap::pheatmap(

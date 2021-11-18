@@ -190,7 +190,7 @@ class NfcoreSchema {
         output        += "  ${colors.cyan}${command1}${colors.reset}\n\n"
         output        += 'If input fastq files:\n'
         output        += "  ${colors.cyan}${command2}${colors.reset}\n\n"
-        output        += "For detailed usage and examples: https://github.com/hukai916/scATACpipe.\n\n"
+        output        += "${colors.purple}For detailed usage and examples: https://github.com/hukai916/scATACpipe.${colors.reset}\n\n"
         Map params_map = paramsLoad(getSchemaPath(workflow, schema_filename=schema_filename))
         Integer max_chars  = paramsMaxChars(params_map) + 1
         Integer desc_indent = max_chars + 14
