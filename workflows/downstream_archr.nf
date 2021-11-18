@@ -333,7 +333,7 @@ workflow DOWNSTREAM_ARCHR {
       log.info "INFO: ArchR will build gene/genomeAnnotation files with custom TxDb, Org, and BSgenome files supplied by user."
 
       ARCHR_GET_ANNOTATION_BIOC(params.archr_txdb, params.archr_org, params.archr_bsgenome)
-      ARCHR_CREATE_ARROWFILES_ANNOTATION(ch_samplesheet_archr, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.user_rlib, params.archr_thread)
+      ARCHR_CREATE_ARROWFILES_ANNOTATION(ch_samplesheet_archr, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.user_rlib.collect(), params.archr_thread)
       // Module: add DoubletScores
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
@@ -368,8 +368,7 @@ workflow DOWNSTREAM_ARCHR {
 
         // Match fragment file against gtf file:
         PREP_FRAGMENT(ch_samplesheet_archr, archr_input_list[2])
-        PREP_FRAGMENT.out.fragment.view()
-        ARCHR_CREATE_ARROWFILES_ANNOTATION(PREP_FRAGMENT.out.fragment, BUILD_GENE_ANNOTATION.out.gene_annotation, BUILD_GENOME_ANNOTATION.out.genome_annotation, BUILD_BSGENOME.out.user_rlib, params.archr_thread)
+        ARCHR_CREATE_ARROWFILES_ANNOTATION(PREP_FRAGMENT.out.fragment, BUILD_GENE_ANNOTATION.out.gene_annotation.collect(), BUILD_GENOME_ANNOTATION.out.genome_annotation.collect(), BUILD_BSGENOME.out.user_rlib.collect(), params.archr_thread)
         // Module: add DoubletScores
         ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile)
         // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
