@@ -26,23 +26,23 @@
         },
 
         "input_fragments_option1": {
-            "title": "Input fragments [option 1]",
+            "title": "Input fragments [option 1: using UCSC/ENSEMBL genome]",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
                 "input_archr": {
                     "type": "string",
-                    "description": "Path to input fragment file.",
+                    "description": "Path to input sample sheet for fragment files.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
                 "archr_genome": {
                     "type": "string",
-                    "description": "A genome name, either UCSC style (mm10, etc.) or ENSEMBL style (homo_sapiens, etc.)."
+                    "description": "A genome name, either ENSEMBL style (e.g. homo_sapiens) or UCSC style (e.g. mm10)."
                 },
                 "species_latin_name": {
                     "type": "string",
-                    "description": "Must be quoted. Required if --archr_genome not in (mm9, mm10, hg19, hg38)"
+                    "description": "Must be quoted. Required if '--archr_genome' not in (mm9, mm10, hg19, hg38)"
                 },
                 "archr_blacklist": {
                     "type": "string",
@@ -51,14 +51,14 @@
             }
         },
         "input_fragments_option2": {
-            "title": "Input fragments [option 2]",
+            "title": "Input fragments [option 2: using custom genome]",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
                 "input_archr": {
                     "type": "string",
-                    "description": "Path to input fragment file.",
+                    "description": "Path to input sample sheet for fragment files.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
                 "archr_genome_fasta": {
@@ -80,23 +80,27 @@
             }
         },
         "input_fragments_option3": {
-            "title": "Input fragments [option 3]",
+            "title": "Input fragments [option 3: using Bioconductor objects]",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
                 "input_archr": {
                     "type": "string",
-                    "description": "Path to input fragment file.",
+                    "description": "Path to input sample sheet for fragment files.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
                 "archr_bsgenome": {
                     "type": "string",
-                    "description": "Path to genome fasta."
+                    "description": "A Bioconductor BSgenome package name."
                 },
                 "archr_txdb": {
                     "type": "string",
-                    "description": "Path to gtf file."
+                    "description": "A Bioconductor TxDb package name."
+                },
+                "archr_org": {
+                    "type": "string",
+                    "description": "A Bioconductor OrgDb package name."
                 },
                 "archr_blacklist": {
                     "type": "string",
@@ -105,6 +109,37 @@
             }
         },
 
+        "input_fastq_option1": {
+            "title": "Input FASTQs [option 1: using UCSC/ENSEMBL genome]",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Defines required parameters if input fragment files.",
+            "properties": {
+                "input_preprocess": {
+                    "type": "string",
+                    "description": "Path to input sample sheet for FASTQ files.",
+                    "fa_icon": "fas fa-arrow-circle-right"
+                },
+                "preprocess": {
+                    "type": "string",
+                    "description": "Preprocess method. [default | 10xgenomics]",
+                    "fa_icon": "fas fa-arrow-circle-right"
+                },
+                "ref_fasta_ensembl | --ref_fasta_ucsc": {
+                    "type": "string",
+                    "description": "A genome name, either ENSEMBL style (e.g. homo_sapiens) or UCSC style (e.g. mm10)."
+                },
+                "mapper": {
+                    "type": "string",
+                    "description": "Required if '--preprocess default'. [bwa | bowtie2 (todo) | minimap2].",
+                    "default": "bwa"
+                },
+                "barcode_whitelist": {
+                    "type": "string",
+                    "description": "Optional. For '--preprocess default' only. Path to white barcode file."
+                }
+            }
+        },
 
         "input_fragment_options": {
             "title": "[Mode 1] Input fragments",
