@@ -110,7 +110,7 @@ workflow SCATACPIPE {
         PREPROCESS_DEFAULT (INPUT_CHECK_PREPROCESS.out.reads)
         DOWNSTREAM_ARCHR (PREPROCESS_DEFAULT.out[2], "preprocess_default", prep_genome_run, PREPROCESS_DEFAULT.out[5], PREPROCESS_DEFAULT.out[6], prep_gtf_run, PREPROCESS_DEFAULT.out[7], PREPROCESS_DEFAULT.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1]) // take a tuple (sample_name, fragment_path, tsv_path) as input
-        SPLIT_BAM (PREPROCESS_DEFAULT.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_DEFAULT.out[4].collect(), "[^:]*") // input: sample_name, all_bams, all_fragments, barcode_regex
+        SPLIT_BAM (PREPROCESS_DEFAULT.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_DEFAULT.out[4].collect(), params.barcode_regex) // input: sample_name, all_bams, all_fragments, barcode_regex
         MULTIQC(PREPROCESS_DEFAULT.out[0].mix(DOWNSTREAM_ARCHR.out[0].ifEmpty([])).mix(Channel.from(ch_multiqc_config)).collect())
       } else if (params.preprocess == "10xgenomics") {
         // Determine if PREP_GENOME and PREP_GTF run or not_run:
