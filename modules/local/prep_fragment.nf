@@ -52,7 +52,7 @@ process PREP_FRAGMENT {
     cat fragment.bed | awk 'BEGIN{FS=OFS="\\t"}/^#/{print; next} NF>=3{\$1 = gensub(/(chr)?(.+).*/, "chr\\\\2", "g", \$1); print}' > chrPrefixed.fragment.bed
 
     # make sure bed col1 is a subset of gtf col1:
-    extract_bed.py chrPrefixed.fragment.bed annotation.gtf | bgzip > final.${sample_name}.fragment.bed.gz
+    extract_bed.py chrPrefixed.fragment.bed annotation.gtf | bgzip > final.fragment.bed.gz
 
     """
 }
