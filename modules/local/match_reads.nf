@@ -33,19 +33,25 @@ process MATCH_READS {
 
     output:
     val sample_name, emit: sample_name
-    // path "R2/barcode_corrected*fastq.gz", emit: barcode_fastq
     path corrected_barcode_fastq, emit: barcode_fastq
     path "R1/*.fastq.gz", emit: read1_fastq
     path "R2/*.fastq.gz", emit: read2_fastq
-
+    path "R1_barcode/*.fastq.gz", emit: barcode1_fastq
+    path "R2_barcode/*.fastq.gz", emit: barcode2_fastq
+    
     script:
 
     """
     seqkit pair $options.args -1 $corrected_barcode_fastq -2 $read1_fastq -O R1
-    rm R1/$corrected_barcode_fastq
-    seqkit pair $options.args -1 R1/*.fastq.gz -2 $read2_fastq -O R2
-    mv R2/$read1_fastq R1/
-    # note that though the orders of R1 and R2 matches, the barcode may not.
+    seqkit pair $options.args -1 $corrected_barcode_fastq -2 $read2_fastq -O R2
+
+    mkdir R1_barcode R2_barcode
+    mv R1/$corrected_barcode_fastq R1_barcode/$corrected_barcode_fastq
+    mv R2/$corrected_barcode_fastq R2_barcode/$corrected_barcode_fastq
+
+    # Note, R1 paired up with R1 barcode and R2 paired up with R2 barcode, but R1 may not pair up with R1.
+    # It will not hurt since the match_reads_trimmed.nf pairs up R1 and R2 after trimming.
+
 
     """
 }

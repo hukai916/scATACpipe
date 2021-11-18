@@ -26,7 +26,8 @@ process ADD_BARCODE_TO_READS {
 
     input:
     val sample_name
-    path barcode_fastq
+    path barcode1_fastq
+    path barcode2_fastq
     path read1_fastq
     path read2_fastq
 
@@ -54,19 +55,16 @@ process ADD_BARCODE_TO_READS {
     fi
 
     mkdir R1
-    # ln $barcode_fastq R1/ # must be hard link, note hard link won't be created with docker, so use cp instead
-    # ln $read1_fastq R1/
-    cp $barcode_fastq R1/
+    # ln $barcode1_fastq R1/ # must be hard link, note hard link won't be created with docker, so use cp instead
+    cp $barcode1_fastq R1/
     cp $read1_fastq R1/
-    sinto barcode $options.args --barcode_fastq R1/$barcode_fastq --read1 R1/$read1_fastq -b \$barcode_length
-    rm R1/$barcode_fastq R1/$read1_fastq
+    sinto barcode $options.args --barcode_fastq R1/$barcode1_fastq --read1 R1/$read1_fastq -b \$barcode_length
+    rm R1/$barcode1_fastq R1/$read1_fastq
 
     mkdir R2
-    # ln $barcode_fastq R2/ # must be hard link
-    # ln $read2_fastq R2/
-    cp $barcode_fastq R2/
+    cp $barcode2_fastq R2/
     cp $read2_fastq R2/
-    sinto barcode $options.args --barcode_fastq R2/$barcode_fastq --read1 R2/$read2_fastq -b \$barcode_length
-    rm R2/$read2_fastq R2/$barcode_fastq
+    sinto barcode $options.args --barcode_fastq R2/$barcode2_fastq --read1 R2/$read2_fastq -b \$barcode_length
+    rm R2/$read2_fastq R2/$barcode2_fastq
     """
 }
