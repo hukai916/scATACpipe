@@ -168,7 +168,7 @@ workflow DOWNSTREAM_ARCHR {
       PREP_GENOME(Channel.fromPath(params.test_fasta), "custom_genome")
       PREP_GTF(PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, params.archr_gtf)
       archr_input_type = "genome_gtf"
-      archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
+      archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
     } else {
       if (with_preprocess == "preprocess_null") {
         if (params.archr_genome) {
@@ -185,14 +185,14 @@ workflow DOWNSTREAM_ARCHR {
               PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
               PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
               archr_input_type = "genome_gtf"
-              archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
+              archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
           } else if (genome_ucsc_list.contains(params.archr_genome)) {
               DOWNLOAD_FROM_UCSC (params.archr_genome, Channel.fromPath('assets/genome_ucsc.json'))
               DOWNLOAD_FROM_UCSC_GTF(params.archr_genome, Channel.fromPath('assets/genome_ucsc.json'))
               PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
               PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
               archr_input_type = "genome_gtf"
-              archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
+              archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
           } else {
               exit 1, "Pls use the --support_genome to show a list of supported genomes!"
           }
@@ -209,14 +209,14 @@ workflow DOWNSTREAM_ARCHR {
             PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
             PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
             archr_input_type = "genome_gtf"
-            archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
+            archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
           } else if (params.ref_fasta_ucsc) {
             DOWNLOAD_FROM_UCSC(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
             DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
             PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
             PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
             archr_input_type = "genome_gtf"
-            archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
+            archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
           } else {
             exit 1, exit_msg
           }
@@ -245,7 +245,7 @@ workflow DOWNSTREAM_ARCHR {
             }
 
             archr_input_type = "genome_gtf"
-            archr_input_list = [tem_genome_name, tem_genome_fasta, tem_gtf_file]
+            archr_input_list = [tem_genome_name.collect(), tem_genome_fasta.collect(), tem_gtf_file.collect()]
           } else {
             exit 1, "Pls also supply --archr_gtf."
           }
@@ -259,8 +259,8 @@ workflow DOWNSTREAM_ARCHR {
             DOWNLOAD_FROM_ENSEMBL_GTF(params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
             PREP_GTF (prep_genome_name, prep_genome_fasta, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
             archr_input_type = "genome_gtf"
-            // archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
-            archr_input_list = [prep_genome_name, prep_genome_fasta, PREP_GTF.out.gtf]
+            // archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
+            archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
           } else if (with_preprocess == "preprocess_10xgenomics") {
             // If PREPPROCESS_10XGENOMICS: both PREP_GENOME and PREP_GTF should been performed
             if (!(prep_genome == "run") || !(prep_gtf == "run")) {
@@ -268,8 +268,8 @@ workflow DOWNSTREAM_ARCHR {
               exit 1, "EXIT!"
             }
             archr_input_type = "genome_gtf"
-            // archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
-            archr_input_list = [prep_genome_name, prep_genome_fasta, prep_gtf_file]
+            // archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
+            archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), prep_gtf_file.collect()]
           }
         } else if (params.ref_fasta_ucsc) {
           if (with_preprocess == "preprocess_default") {
@@ -288,8 +288,8 @@ workflow DOWNSTREAM_ARCHR {
               // PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
               PREP_GTF (prep_genome_fasta, prep_genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
               archr_input_type = "genome_gtf"
-              // archr_input_list = [PREP_GENOME.out.genome_name, PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf]
-              archr_input_list = [prep_genome_name, prep_genome_fasta, PREP_GTF.out.gtf]
+              // archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
+              archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
             }
           } else if (with_preprocess == "preprocess_10xgenomics") {
             // If PREPPROCESS_10XGENOMICS: both PREP_GENOME and PREP_GTF should been performed
@@ -304,7 +304,7 @@ workflow DOWNSTREAM_ARCHR {
               archr_input_list = [params.ref_fasta_ucsc, "NA", "NA"]
             } else {
               archr_input_type = "genome_gtf"
-              archr_input_list = [prep_genome_name, prep_genome_fasta, prep_gtf_file]
+              archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), prep_gtf_file.collect()]
             }
           }
         } else {
@@ -319,13 +319,13 @@ workflow DOWNSTREAM_ARCHR {
       // Run ArchR normally:
       log.info "Naively supported ArchR genome: " + archr_input_list[0] + " will be used."
 
-      ARCHR_CREATE_ARROWFILES(ch_samplesheet_archr, archr_input_list[0].collect(), params.archr_thread)
+      ARCHR_CREATE_ARROWFILES(ch_samplesheet_archr, archr_input_list[0], params.archr_thread)
       // Module: add DoubletScores
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES.out.sample_name, ARCHR_CREATE_ARROWFILES.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
 
-      ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0].collect(), params.archr_thread)
+      ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
     } else if (archr_input_type == "bsgenome_txdb_org") {
       // Note that for this option, all supplied package names must be available from Bioconductor per .requirePackage() requirement.
