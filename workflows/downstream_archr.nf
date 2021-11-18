@@ -598,7 +598,7 @@ workflow DOWNSTREAM_ARCHR {
       log.info "test here: "
       ARCHR_CLUSTERING.out.archr_project.collect().view()
       ch_samplesheet_archr.collect().view()
-      ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project, ch_samplesheet_archr, "Clusters")
+      ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), ch_samplesheet_archr, "Clusters")
     } else if (params.groupby_cluster == "Clusters2") {
       ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project, ch_samplesheet_archr, "Clusters2")
     }
