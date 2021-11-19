@@ -607,7 +607,7 @@ workflow DOWNSTREAM_ARCHR {
         log.info "\ntest prep_fragment collect:"
         fragment.collect().view()
         // ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.first(), fragment, "Clusters")
-        ARCHR_GET_CLUSTERING_TSV(Channel.empty(), fragment, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(Channel.fromPath("/home/kh45w/workflow/scATACpipe_test1/work/54/a3b22a9ee2e65963d2f9d706eaa5f0/proj_clustering.rds"), fragment, "Clusters")
 
         // here is a potential NF bug: above should be only one path Channel, and ARCHR_GET_CLSUTERING_TSV should only run for one time, however, when using -resume, both sessions are rescued from caches.
         // ARCHR_GET_CLUSTERING_TSV(Channel.fromPath("/home/kh45w/workflow/scATACpipe_test1/work/71/cb47ad72547d134f493506338fa07f/proj_clustering.rds"), fragment, "Clusters")
