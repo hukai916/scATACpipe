@@ -65,7 +65,7 @@
                     "type": "string",
                     "description": "Path to genome fasta."
                 },
-                "archr_gtf": {
+                "ref_gtf": {
                     "type": "string",
                     "description": "Path to gtf file."
                 },
@@ -494,9 +494,6 @@
             "type": "string"
         },
         "archr_genome_fasta": {
-            "type": "string"
-        },
-        "archr_gtf": {
             "type": "string"
         },
         "archr_txdb": {

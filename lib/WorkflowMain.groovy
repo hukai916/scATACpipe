@@ -117,11 +117,11 @@ class WorkflowMain {
             System.exit(0)
         } else if (params.input_archr) {
           // 3 DOWNSTREAM options
-            if ((!params.archr_genome) && (!params.archr_genome_fasta || !params.archr_gtf || !params.species_latin_name) && (!params.archr_bsgenome || !params.archr_txdb || !params.archr_org)) {
+            if ((!params.archr_genome) && (!params.archr_genome_fasta || !params.ref_gtf || !params.species_latin_name) && (!params.archr_bsgenome || !params.archr_txdb || !params.archr_org)) {
               println ''
               def out_string = "Insufficient parameters supplied for DOWNSTREAM analysis!\nPls choose one:\n\n"
               out_string += "Option1:\n  --archr_genome [a genome name]\n  --archr_blacklist [optional, path to blacklist file]\n"
-              out_string += "Option2:\n  --archr_genome_fasta [path to genome fasta]\n  --archr_gtf [path to gtf file]\n  --species_latin_name [latin name for genome organism, must be quoted]\n  --archr_blacklist [optional, path to blacklist file]\n"
+              out_string += "Option2:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --species_latin_name [latin name for genome organism, must be quoted]\n  --archr_blacklist [optional, path to blacklist file]\n"
               out_string += "Option3:\n  --archr_bsgenome [Bioconductor BSgenome name]\n  --archr_txdb [Bioconductor TxDb name]\n  --archr_org [Bioconductor OrgDb name]\n  --archr_blacklist [optional, path to blacklist file]"
 
               log.error out_string
@@ -173,8 +173,8 @@ class WorkflowMain {
                 log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             } else if (params.ref_fasta) {
-              if (!params.archr_gtf || !params.species_latin_name) {
-                log.error "Pls supply --archr_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
+              if (!params.ref_gtf || !params.species_latin_name) {
+                log.error "Pls supply --ref_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
                 System.exit(0)
               } else {
                 log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
@@ -196,8 +196,8 @@ class WorkflowMain {
                   log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
                 }
               } else if (params.ref_fasta) {
-                if (!params.archr_gtf || !params.species_latin_name) {
-                  log.error "Pls supply --archr_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
+                if (!params.ref_gtf || !params.species_latin_name) {
+                  log.error "Pls supply --ref_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
                   System.exit(0)
                 } else {
                   log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
