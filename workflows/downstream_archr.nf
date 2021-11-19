@@ -599,9 +599,12 @@ workflow DOWNSTREAM_ARCHR {
       if (archr_input_type == "genome_gtf") {
         log.info "run tsv here"
         // ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragment, "Clusters")
-        ARCHR_GET_CLUSTERING_TSV(Channel.empty(), PREP_FRAGMENT.out.fragment, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragment, "Clusters")
       } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project, fragment, "Clusters")
+        log.info "run tsv there"
+        // ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project, fragment, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(Channel.fromPath("/home/kh45w/workflow/scATACpipe_test1/work/71/cb47ad72547d134f493506338fa07f/proj_clustering.rds"), fragment, "Clusters")
+
       }
     } else if (params.groupby_cluster == "Clusters2") {
       if (archr_input_type == "genome_gtf") {
