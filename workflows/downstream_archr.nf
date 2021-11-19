@@ -595,12 +595,11 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: prepare clustering tsv file for spliting using sinto fragment
     if (params.groupby_cluster == "Clusters") {
-      log.info "test get_clustering_default"
-
       // ARCHR_CLUSTERING.out.archr_project.view()
       if (archr_input_type == "genome_gtf") {
         log.info "run tsv here"
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragment, "Clusters")
+        // ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragment, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK.out.archr_project, PREP_FRAGMENT.out.fragment, "Clusters")
       } else {
         ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project, fragment, "Clusters")
       }
