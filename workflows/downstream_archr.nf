@@ -599,6 +599,10 @@ workflow DOWNSTREAM_ARCHR {
       if (archr_input_type == "genome_gtf") {
         log.info "run tsv here"
         // ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragment, "Clusters")
+        log.info "test clustering collect:"
+        ARCHR_CLUSTERING.out.archr_project.collect().view()
+        log.info "\ntest prep_fragment collect:"
+        PREP_FRAGMENT.out.fragment.collect().view()
         ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.first(), PREP_FRAGMENT.out.fragment, "Clusters")
       } else {
         log.info "run tsv there"
