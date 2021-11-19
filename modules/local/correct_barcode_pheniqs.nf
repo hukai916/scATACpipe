@@ -50,7 +50,7 @@ process CORRECT_BARCODE_PHENIQS {
     get_barcode_pool.py $barcode_whitelist $barcode_fastq $options.read_count_cutoff valid_barcode_pool.txt
 
     # step3, make a json config file
-    barcode_length=\$(awk 'FNR==1 {print length(\$(NF-1))}' valid_barcode_pool.txt)
+    barcode_length=\$(awk 'NR==1 {print length(\$(NF-1)); exit}' valid_barcode_pool.txt)
     make_json.py valid_barcode_pool.txt ${sample_name}.cram 3 0::,2:: 1::\$barcode_length ${sample_name}.json
 
     # step4, run pheniqs
@@ -59,13 +59,8 @@ process CORRECT_BARCODE_PHENIQS {
     # step5, extract fastq from pheniqs output bam
     bam2fastq.py ${sample_name}.bam barcode_corrected_${sample_name}
 
-    # step1-1 calculate barcode pool and frequency using our own script.
+    # Note the noise param is determined by sequencer, can't be estimated; confidence: 0.99 (posterior possiblity), one run of pheniqs is okay to estimate the priors (since the invalid barcode are rare, this iteration is not a must.)
 
-    # step2 uses step1-1. noise: 0.01 (determined by sequencer, can't be estimated), confidence: 0.99 (posterior possiblity), one run of pheniqs is okay to estimate the priors (since the invalid barcode are rare, this iteration is not a must.)
-
-    # step2, prepare a json config file for pheniqs
-    # use valid bacode to calculate frequency and pool.
-    # share with Haibo a demo command to run 10xgenomics.
 
     """
 }

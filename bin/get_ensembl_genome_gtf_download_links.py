@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     ## Save genome names to file:
     with open("../modules/local/genome_ensembl.nf", "w") as f:
-        f.write("// Map: ucsc name to links:\n")
+        f.write("// Map: Ensembl name to links:\n")
         f.write("def get_genome_ensembl() {\n")
         f.write("\tdef list_genome_ensembl = [\n")
         for genome in genome_download_links:
