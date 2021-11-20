@@ -23,59 +23,26 @@ ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multi
 
 // Don't overwrite global params.modules, create a copy instead and use that within the main script.
 def modules = params.modules.clone()
-//
-// def multiqc_options   = modules['multiqc']
-// multiqc_options.args += params.multiqc_title ? " --title \"$params.multiqc_title\"" : ''
-//
 
 // Modules: local
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions'   addParams( options: [publish_files : ['csv':'']] )
 include { GET_10XGENOMICS_FASTQ } from '../modules/local/get_10xgenomics_fastq'   addParams( options: modules['get_10xgenomics_fastq'] )
-
 include { CELLRANGER_ATAC_COUNT } from '../modules/local/cellranger_atac_count'   addParams( options: modules['cellranger_atac_count'] )
-include { CORRECT_BARCODE       } from '../modules/local/correct_barcode'         addParams( options: modules['correct_barcode'] )
-include { CORRECT_BARCODE_PHENIQS } from '../modules/local/correct_barcode_pheniqs' addParams( options: modules['correct_barcode_pheniqs'] )
-include { MATCH_READS           } from '../modules/local/match_reads'             addParams( options: modules['match_reads'] )
-include { MATCH_READS_TRIMMED   } from '../modules/local/match_reads_trimmed'     addParams( options: modules['match_reads_trimmed'] )
-include { FASTQC                } from '../modules/local/fastqc'                  addParams( options: modules['fastqc'] )
-
-include { ADD_BARCODE_TO_READS       } from '../modules/local/add_barcode_to_reads'    addParams( options: modules['add_barcode_to_reads'] )
-include { CUTADAPT         } from '../modules/local/cutadapt'    addParams( options: modules['cutadapt'] )
-
-include { DOWNLOAD_FROM_UCSC; DOWNLOAD_FROM_UCSC as DOWNLOAD_FROM_UCSC2 } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
+include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
 include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
-// can be removed
-include { GET_PRIMARY_GENOME        } from '../modules/local/get_primary_genome'    addParams( options: modules['get_primary_genome'] )
-include { BWA_INDEX        } from '../modules/local/bwa_index'    addParams( options: modules['bwa_index'] )
-include { BWA_MAP          } from '../modules/local/bwa_map'    addParams( options: modules['bwa_map'] )
-
-include { BUILD_BSGENOME } from '../modules/local/build_bsgenome'
-include { BUILD_TXDB } from '../modules/local/build_txdb'
 include { PREP_GENOME } from '../modules/local/prep_genome'
-include { PREP_GTF; PREP_GTF as PREP_GTF_ARCHR } from '../modules/local/prep_gtf'
-include { BUILD_GENE_ANNOTATION } from '../modules/local/build_gene_annotation' addParams( options: modules['build_gene_annotation'] )
-include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotation' addParams( options: modules['build_genome_annotation'] )
-include { PREP_FRAGMENT } from '../modules/local/prep_fragment'
-
-include { MINIMAP2_INDEX   } from '../modules/local/minimap2_index'    addParams( options: modules['minimap2_index'] )
-include { MINIMAP2_MAP     } from '../modules/local/minimap2_map'    addParams( options: modules['minimap2_map'] )
-
-include { BAM_FILTER       } from '../modules/local/bam_filter'    addParams( options: modules['bam_filter'] )
-include { REMOVE_DUPLICATE } from '../modules/local/remove_duplicate'    addParams( options: modules['remove_duplicate'] )
-include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
-include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
-
-include { DOWNLOAD_FROM_UCSC_GTF; DOWNLOAD_FROM_UCSC_GTF as DOWNLOAD_FROM_UCSC_GTF2 } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
-include { FIX_UCSC_GTF } from '../modules/local/fix_ucsc_gtf'    addParams( options: modules['fix_ucsc_gtf'] )
-include { DOWNLOAD_FROM_ENSEMBL_GTF; DOWNLOAD_FROM_ENSEMBL_GTF as DOWNLOAD_FROM_ENSEMBL_GTF2 } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
+include { PREP_GTF } from '../modules/local/prep_gtf'
+include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
+include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
 include { CELLRANGER_INDEX } from '../modules/local/cellranger_index'             addParams( options: modules['cellranger_index'] )
+
 
 ////////////////////////////////////////////////////
 /* --           RUN MAIN WORKFLOW              -- */
 ////////////////////////////////////////////////////
 workflow PREPROCESS_10XGENOMICS {
   take:
-    ch_samplesheet
+    reads
 
   main:
     // Examine if all required parameters supplied:
@@ -89,7 +56,7 @@ workflow PREPROCESS_10XGENOMICS {
     if (params.ref_cellranger_index) {
       // if cellranger index folder provided:
       log.info "Parameter --ref_cellranger_index supplied, will use it as index folder."
-      GET_10XGENOMICS_FASTQ (ch_samplesheet)
+      GET_10XGENOMICS_FASTQ (reads)
       CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, params.ref_cellranger_index)
     } else if (params.ref_fasta) {
       if (params.ref_gtf) {
@@ -101,7 +68,7 @@ workflow PREPROCESS_10XGENOMICS {
         // Module: prepare cellranger index
         CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
         // Module: prepare fastq folder
-        GET_10XGENOMICS_FASTQ (ch_samplesheet)
+        GET_10XGENOMICS_FASTQ (reads)
         // Module: run cellranger-atac count
         CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
       } else {
@@ -120,7 +87,7 @@ workflow PREPROCESS_10XGENOMICS {
       // Module: prepare cellranger index
       CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
       // Module: prepare fastq folder
-      GET_10XGENOMICS_FASTQ (ch_samplesheet)
+      GET_10XGENOMICS_FASTQ (reads)
       // Module: run cellranger-atac count
       CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
     } else if (params.ref_fasta_ucsc) {
@@ -128,18 +95,14 @@ workflow PREPROCESS_10XGENOMICS {
       DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
       // Module: prep_genome
       PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_gtf)
-      // Module: extract primary genome
-      // GET_PRIMARY_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta)
       // Module: download ucsc gtf
       DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc)
       // Module: prep_gtf
       PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_gtf, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-      // Module: fix gtf
-      // FIX_UCSC_GTF (DOWNLOAD_FROM_UCSC_GTF.out.gtf, GET_PRIMARY_GENOME.out.genome_fasta)
       // Module: prepare cellranger index
       CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
       // Module: prepare fastq folder
-      GET_10XGENOMICS_FASTQ (ch_samplesheet)
+      GET_10XGENOMICS_FASTQ (reads)
       // Module: run cellranger-atac count
       CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
     } else {
@@ -163,7 +126,6 @@ workflow PREPROCESS_10XGENOMICS {
     } catch (Exception ex) { }
     try {
       prep_gtf_genome   = PREP_GTF.out.genome_name
-      // prep_gtf          = Channel.value("run")
     } catch (Exception ex) {}
     try {
       prep_gtf_file = PREP_GTF.out.gtf

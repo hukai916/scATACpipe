@@ -11,7 +11,6 @@ read_count_cutoff is an integer indicating the minimum number of reads to includ
 
 import sys
 import gzip
-import pysam
 
 whitelist_file = sys.argv[1]
 index_fastq    = sys.argv[2]
@@ -33,12 +32,34 @@ else:
 
 # count barcode from index fastq file:
 not_in_whitelist = 0 # count how many barcodes are not in whitelist
-with pysam.FastxFile(index_fastq) as f:
-    for read in f:
-        if read.sequence in whitelist_dict:
-            whitelist_dict[read.sequence] += 1
-        else:
-            not_in_whitelist += 1
+
+## pysam can't seem to handle big fastq files: EOF error
+# with pysam.FastxFile(index_fastq) as f:
+#     for read in f:
+#         if read.sequence in whitelist_dict:
+#             whitelist_dict[read.sequence] += 1
+#         else:
+#             not_in_whitelist += 1
+## below uses
+
+if index_fastq.endswith(".gz"):
+    with gzip.open(index_fastq, "rt") as f:
+        for i, line in enumerate(f):
+            if i%4 == 1:
+                seq = line.strip()
+                if seq in whitelist_dict:
+                    whitelist_dict[seq] += 1
+                else:
+                    not_in_whitelist += 1
+else:
+    with open(index_fastq) as f:
+        for i, line in enumerate(f):
+            if i%4 == 1:
+                seq = line.strip()
+                if seq in whitelist_dict:
+                    whitelist_dict[seq] += 1
+                else:
+                    not_in_whitelist += 1
 
 total_valid_barcode = sum([x for x in list(whitelist_dict.values()) if x > read_count_cutoff])
 total_unique_valid_barcode = sum([1 for x in list(whitelist_dict.values()) if x > read_count_cutoff])

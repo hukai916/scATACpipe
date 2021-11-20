@@ -20,55 +20,21 @@ ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multi
 
 // Don't overwrite global params.modules, create a copy instead and use that within the main script.
 def modules = params.modules.clone()
-//
-// def multiqc_options   = modules['multiqc']
-// multiqc_options.args += params.multiqc_title ? " --title \"$params.multiqc_title\"" : ''
-//
 
 // Modules: local
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions'   addParams( options: [publish_files : ['csv':'']] )
-include { GET_10XGENOMICS_FASTQ } from '../modules/local/get_10xgenomics_fastq'   addParams( options: modules['get_10xgenomics_fastq'] )
-
-include { CELLRANGER_ATAC_COUNT } from '../modules/local/cellranger_atac_count'   addParams( options: modules['cellranger_atac_count'] )
-include { CORRECT_BARCODE       } from '../modules/local/correct_barcode'         addParams( options: modules['correct_barcode'] )
-include { CORRECT_BARCODE_PHENIQS } from '../modules/local/correct_barcode_pheniqs' addParams( options: modules['correct_barcode_pheniqs'] )
-include { MATCH_READS           } from '../modules/local/match_reads'             addParams( options: modules['match_reads'] )
-include { MATCH_READS_TRIMMED   } from '../modules/local/match_reads_trimmed'     addParams( options: modules['match_reads_trimmed'] )
-include { FASTQC                } from '../modules/local/fastqc'                  addParams( options: modules['fastqc'] )
-
-include { ADD_BARCODE_TO_READS       } from '../modules/local/add_barcode_to_reads'    addParams( options: modules['add_barcode_to_reads'] )
-include { CUTADAPT         } from '../modules/local/cutadapt'    addParams( options: modules['cutadapt'] )
-
-include { DOWNLOAD_FROM_UCSC; DOWNLOAD_FROM_UCSC as DOWNLOAD_FROM_UCSC2 } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
+include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
 include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
-// can be removed
-include { GET_PRIMARY_GENOME        } from '../modules/local/get_primary_genome'    addParams( options: modules['get_primary_genome'] )
-include { BWA_INDEX        } from '../modules/local/bwa_index'    addParams( options: modules['bwa_index'] )
-include { BWA_MAP          } from '../modules/local/bwa_map'    addParams( options: modules['bwa_map'] )
-
 include { BUILD_BSGENOME } from '../modules/local/build_bsgenome'
 include { BUILD_TXDB } from '../modules/local/build_txdb'
 include { PREP_GENOME } from '../modules/local/prep_genome'
-include { PREP_GTF; PREP_GTF as PREP_GTF_ARCHR } from '../modules/local/prep_gtf'
+include { PREP_GTF } from '../modules/local/prep_gtf'
 include { BUILD_GENE_ANNOTATION } from '../modules/local/build_gene_annotation' addParams( options: modules['build_gene_annotation'] )
 include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotation' addParams( options: modules['build_genome_annotation'] )
 include { PREP_FRAGMENT } from '../modules/local/prep_fragment'
-
-include { MINIMAP2_INDEX   } from '../modules/local/minimap2_index'    addParams( options: modules['minimap2_index'] )
-include { MINIMAP2_MAP     } from '../modules/local/minimap2_map'    addParams( options: modules['minimap2_map'] )
-
-include { BAM_FILTER       } from '../modules/local/bam_filter'    addParams( options: modules['bam_filter'] )
-include { REMOVE_DUPLICATE } from '../modules/local/remove_duplicate'    addParams( options: modules['remove_duplicate'] )
-include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
-include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
-
-include { DOWNLOAD_FROM_UCSC_GTF; DOWNLOAD_FROM_UCSC_GTF as DOWNLOAD_FROM_UCSC_GTF2 } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
-include { FIX_UCSC_GTF } from '../modules/local/fix_ucsc_gtf'    addParams( options: modules['fix_ucsc_gtf'] )
-include { DOWNLOAD_FROM_ENSEMBL_GTF; DOWNLOAD_FROM_ENSEMBL_GTF as DOWNLOAD_FROM_ENSEMBL_GTF2 } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
-include { CELLRANGER_INDEX } from '../modules/local/cellranger_index'             addParams( options: modules['cellranger_index'] )
-
+include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
+include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
 // For ArchR functions:
-// include { ARCHR_GET_ANNOTATION } from '../modules/local/archr_get_annotation' addParams( options: modules['archr_get_annotation'] )
 include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
 include { ARCHR_CREATE_ARROWFILES } from '../modules/local/archr_create_arrowfiles' addParams( options: modules['archr_create_arrowfiles'] )
 include { ARCHR_CREATE_ARROWFILES_ANNOTATION } from '../modules/local/archr_create_arrowfiles_annotation' addParams( options: modules['archr_create_arrowfiles_annotation'] )
@@ -108,13 +74,14 @@ include { ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2 } from '../modules/local/arc
 include { ARCHR_TRAJECTORY_CLUSTERS2 } from '../modules/local/archr_trajectory_clusters2' addParams( options: modules['archr_trajectory_clusters2'] )
 include { ARCHR_GET_CLUSTERING_TSV } from '../modules/local/archr_get_clustering_tsv' addParams( options: modules['archr_get_clustering_tsv'] )
 
+
 ////////////////////////////////////////////////////
 /* --           RUN MAIN WORKFLOW              -- */
 ////////////////////////////////////////////////////
 
 workflow DOWNSTREAM_ARCHR {
   take:
-    fragment
+    fragments
     with_preprocess // string value: "preprocess_null", "preprocess_default", or "preprocess_10xgenomics"
     prep_genome // string value: "run" or "not_run"
     prep_genome_name // PREP_GENOME.out.genome_name if prep_genome == 'run' else Channel.empty()
@@ -319,7 +286,7 @@ workflow DOWNSTREAM_ARCHR {
       // Run ArchR normally:
       log.info "Naively supported ArchR genome: " + archr_input_list[0] + " will be used."
 
-      ARCHR_CREATE_ARROWFILES(fragment, archr_input_list[0], params.archr_thread)
+      ARCHR_CREATE_ARROWFILES(fragments, archr_input_list[0], params.archr_thread)
       // Module: add DoubletScores
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES.out.sample_name, ARCHR_CREATE_ARROWFILES.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
@@ -336,7 +303,7 @@ workflow DOWNSTREAM_ARCHR {
       log.info "INFO: ArchR will build gene/genomeAnnotation files with custom TxDb, Org, and BSgenome files supplied by user."
 
       ARCHR_GET_ANNOTATION_BIOC(params.archr_txdb, params.archr_org, params.archr_bsgenome)
-      ARCHR_CREATE_ARROWFILES_ANNOTATION(fragment, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.user_rlib.collect(), params.archr_thread)
+      ARCHR_CREATE_ARROWFILES_ANNOTATION(fragments, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.user_rlib.collect(), params.archr_thread)
       // Module: add DoubletScores
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
@@ -370,8 +337,8 @@ workflow DOWNSTREAM_ARCHR {
         }
 
         // Match fragment file against gtf file:
-        PREP_FRAGMENT(fragment, archr_input_list[2])
-        ARCHR_CREATE_ARROWFILES_ANNOTATION(PREP_FRAGMENT.out.fragment, BUILD_GENE_ANNOTATION.out.gene_annotation.collect(), BUILD_GENOME_ANNOTATION.out.genome_annotation.collect(), BUILD_BSGENOME.out.user_rlib.collect(), params.archr_thread)
+        PREP_FRAGMENT(fragments, archr_input_list[2])
+        ARCHR_CREATE_ARROWFILES_ANNOTATION(PREP_FRAGMENT.out.fragments, BUILD_GENE_ANNOTATION.out.gene_annotation.collect(), BUILD_GENOME_ANNOTATION.out.genome_annotation.collect(), BUILD_BSGENOME.out.user_rlib.collect(), params.archr_thread)
         // Module: add DoubletScores
         ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile)
         // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
@@ -600,15 +567,15 @@ workflow DOWNSTREAM_ARCHR {
     if (params.groupby_cluster == "Clusters") {
       // ARCHR_CLUSTERING.out.archr_project.view()
       if (archr_input_type == "genome_gtf") {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragment, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters")
       } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragment, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, "Clusters")
       }
     } else if (params.groupby_cluster == "Clusters2") {
       if (archr_input_type == "genome_gtf") {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), PREP_FRAGMENT.out.fragment, "Clusters2")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters2")
       } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragment, "Clusters2")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragments, "Clusters2")
       }
 
     }

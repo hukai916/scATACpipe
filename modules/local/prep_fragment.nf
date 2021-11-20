@@ -29,7 +29,7 @@ process PREP_FRAGMENT {
     path gtf
 
     output:
-    tuple val(sample_name), path("final.*.fragment.bed.gz"), emit: fragment
+    tuple val(sample_name), path("final.*.fragment.bed.gz"), emit: fragments
 
     """
     if [[ $fragment == *.gz ]]; then
