@@ -79,6 +79,9 @@ out_file.close()
 # output some statistics:
 print("total valid bacodes: ", total_valid_barcode)
 print("total unique valid barcodes: ", total_unique_valid_barcode)
-print("not_in_whitelist / total valid barcodes: ", not_in_whitelist/total_valid_barcode)
-print("If above value > 0.25, you may have used the wrong whitelist.")
-print("Done!")
+if (total_valid_barcode == 0):
+    sys.exit("No valid barcodes detected in index fastq!")
+if (not_in_whitelist/total_valid_barcode > 0.5):
+    sys.exit("warning: not_in_whitelist / total valid barcodes: " + str(not_in_whitelist/total_valid_barcode, ", wrong whitelist used!"))
+else:
+    print("not_in_whitelist / total valid barcodes: ", not_in_whitelist/total_valid_barcode)
