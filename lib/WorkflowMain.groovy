@@ -23,8 +23,8 @@ class WorkflowMain {
     //
     public static String help(workflow, params, log) {
 
-        def command1 = "nextflow run main.nf --input_archr samplesheet.csv --archr_genome mm10 -profile [docker|singularity]"
-        def command2 = "nextflow run main.nf --input_preprocess samplesheet.csv --preprocess [default|10xgenomics] --ref_fasta_ucsc hg19 --species_latin_name 'homo sapiens' -profile [docker|singularity]"
+        def command1 = "nextflow run main.nf --input_fragment samplesheet.csv --archr_genome mm10 -profile [docker|singularity]"
+        def command2 = "nextflow run main.nf --input_fastq samplesheet.csv --preprocess [default|10xgenomics] --ref_fasta_ucsc hg19 --species_latin_name 'homo sapiens' -profile [docker|singularity]"
         def help_string = ''
         help_string += NfcoreTemplate.logo(workflow, params.monochrome_logs)
         help_string += NfcoreSchema.paramsHelp(workflow, params, command1, command2)
@@ -109,13 +109,13 @@ class WorkflowMain {
         // Check the hostnames against configured profiles
         NfcoreTemplate.hostName(workflow, params, log)
 
-        // Check --input_archr/--input_preprocess has been provided
-        if ((!params.input_preprocess) && (!params.input_archr)) {
+        // Check --input_fragment/--input_fastq has been provided
+        if ((!params.input_fastq) && (!params.input_fragment)) {
             println ''
-            log.error "Pls supply either fragment file (--input_archr) or samplesheet tsv file (--input_preprocess)!"
+            log.error "Pls supply either fragment (--input_fragment) or fastq samplesheet file (--input_fastq)!"
             println ''
             System.exit(0)
-        } else if (params.input_archr) {
+        } else if (params.input_fragment) {
           // 3 DOWNSTREAM options
             if ((!params.archr_genome) && (!params.archr_genome_fasta || !params.ref_gtf || !params.species_latin_name) && (!params.archr_bsgenome || !params.archr_txdb || !params.archr_org)) {
               println ''
@@ -130,7 +130,7 @@ class WorkflowMain {
             } else {
             log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
             }
-        } else if (params.input_preprocess) {
+        } else if (params.input_fastq) {
           // First check if PREPROCESS parameters satisfied
           if (params.preprocess == "default") {
             if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf) && (!params.ref_bwa_index || !params.ref_minimap2_index)) {

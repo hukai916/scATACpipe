@@ -21,7 +21,7 @@ def modules = params.modules.clone()
 WorkflowMain.initialise(workflow, params, log)
 
 // Check input path parameters to see if they exist:
-def checkPathParamList = [ params.input_archr, params.input_preprocess, params.ref_bwa_index, params.ref_minimap2_index, params.ref_cellranger_index, params.ref_gtf, params.ref_fasta, params.barcode_whitelist, params.archr_genome_fasta, params.archr_blacklist_bed, params.archr_scrnaseq ]
+def checkPathParamList = [ params.input_fragment, params.input_fastq, params.ref_bwa_index, params.ref_minimap2_index, params.ref_cellranger_index, params.ref_gtf, params.ref_fasta, params.barcode_whitelist, params.archr_genome_fasta, params.archr_blacklist_bed, params.archr_scrnaseq ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 // Check mandatory parameters: already in initialise
@@ -33,9 +33,9 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 ////////////////////////////////////////////////////
 
 // Parse samplesheet:
-if (params.input_preprocess) {
+if (params.input_fastq) {
   Channel
-  .from(file(params.input_preprocess, checkIfExists: true))
+  .from(file(params.input_fastq, checkIfExists: true))
   .splitCsv(header: true, sep: ",", strip: true)
   .map {
     row ->
@@ -43,9 +43,9 @@ if (params.input_preprocess) {
   }
   .unique()
   .set { ch_samplesheet_preprocess }
-} else if (params.input_archr) { // Parse ArchR samplesheet:
+} else if (params.input_fragment) { // Parse ArchR samplesheet:
   Channel
-  .from(file(params.input_archr, checkIfExists: true))
+  .from(file(params.input_fragment, checkIfExists: true))
   .splitCsv(header: true, sep: ",", strip: true)
   .map {
     row ->
@@ -54,7 +54,7 @@ if (params.input_preprocess) {
   .unique()
   .set { ch_samplesheet_archr }
 } else {
-  exit 1, "Must specify eitehr --input_archr or --input_preprocess!"
+  exit 1, "Must specify eitehr --input_fragment or --input_fastq!"
 }
 
 // Workflow.validateMainParams(workflow, params, json_schema, log)
@@ -76,23 +76,23 @@ ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yaml", checkI
 
 workflow SCATACPIPE {
   take:
-    input_archr
-    input_preprocess
+    input_fragment
+    input_fastq
     // ch_samplesheet
 
   main:
-    if (input_archr) {
+    if (input_fragment) {
       log.info "Running DOWNSTREAM ..."
       log.info "Validating sample sheet ... If pipeline exits, check .nextflow.log file."
-      INPUT_CHECK_ARCHR (Channel.fromPath(input_archr))
+      INPUT_CHECK_ARCHR (Channel.fromPath(input_fragment))
 
       DOWNSTREAM_ARCHR (INPUT_CHECK_ARCHR.out.fragment, "preprocess_null", "token1", "token2", "token3", "token4", "token5", "token6")
       SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
       MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
-    } else if (input_preprocess) {
+    } else if (input_fastq) {
       log.info "Running PREPROCESS + DOWNSTREAM ..."
       log.info "Validating sample sheet ... If pipeline exits, check .nextflow.log file."
-      INPUT_CHECK_PREPROCESS (Channel.fromPath(input_preprocess))
+      INPUT_CHECK_PREPROCESS (Channel.fromPath(input_fastq))
 
       if (params.preprocess == "default") {
         // Determine if PREP_GENOME and PREP_GTF run or not_run:
@@ -135,20 +135,20 @@ workflow SCATACPIPE {
         exit 1, "must supply valid --preprocess option"
       }
     } else {
-      exit 1, "Pls supply either --input_archr or --input_preprocess"
+      exit 1, "Pls supply either --input_fragment or --input_fastq"
     }
 }
 
 workflow {
-  // SCATACPIPE (params.input_archr, params.input_preprocess, ch_samplesheet_preprocess)
-  SCATACPIPE (params.input_archr, params.input_preprocess)
+  // SCATACPIPE (params.input_fragment, params.input_fastq, ch_samplesheet_preprocess)
+  SCATACPIPE (params.input_fragment, params.input_fastq)
 
 
-  // if (params.input_archr) {
-  //   // SCATACPIPE (params.input_archr, params.input_preprocess, ch_samplesheet_archr)
-  //   SCATACPIPE (params.input_archr, params.input_preprocess, params.input_archr)
-  // } else if (params.input_preprocess) {
-  //   SCATACPIPE (params.input_archr, params.input_preprocess, ch_samplesheet_preprocess)
+  // if (params.input_fragment) {
+  //   // SCATACPIPE (params.input_fragment, params.input_fastq, ch_samplesheet_archr)
+  //   SCATACPIPE (params.input_fragment, params.input_fastq, params.input_fragment)
+  // } else if (params.input_fastq) {
+  //   SCATACPIPE (params.input_fragment, params.input_fastq, ch_samplesheet_preprocess)
   // }
 }
 

@@ -31,7 +31,7 @@
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
-                "input_archr": {
+                "input_fragment": {
                     "type": "string",
                     "description": "Path to input sample sheet for fragment files.",
                     "fa_icon": "fas fa-arrow-circle-right"
@@ -56,7 +56,7 @@
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
-                "input_archr": {
+                "input_fragment": {
                     "type": "string",
                     "description": "Path to input sample sheet for fragment files.",
                     "fa_icon": "fas fa-arrow-circle-right"
@@ -85,7 +85,7 @@
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
-                "input_archr": {
+                "input_fragment": {
                     "type": "string",
                     "description": "Path to input sample sheet for fragment files.",
                     "fa_icon": "fas fa-arrow-circle-right"
@@ -115,7 +115,7 @@
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
-                "input_preprocess": {
+                "input_fastq": {
                     "type": "string",
                     "description": "Path to input sample sheet for FASTQ files.",
                     "fa_icon": "fas fa-arrow-circle-right"
@@ -409,7 +409,7 @@
         }
     ],
     "properties": {
-        "input_preprocess": {
+        "input_fastq": {
             "type": "string",
             "fa_icon": "fas fa-arrow-circle-right"
         },
@@ -482,7 +482,7 @@
         "biorad_genome": {
             "type": "string"
         },
-        "input_archr": {
+        "input_fragment": {
             "type": "string",
             "fa_icon": "fas fa-arrow-circle-right"
         },
