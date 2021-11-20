@@ -4,30 +4,14 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-/*
- * Parse software version numbers
- */
 process ARCHR_CREATE_ARROWFILES {
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_create_arrowfiles', publish_id:'') }
-
-    // conda (params.enable_conda ? "conda-forge::python=3.8.3" : null)
-    // if (workflow.containerEngine == 'singularity' && !params.singularity_pull_docker_container) {
-    //     container "https://depot.galaxyproject.org/singularity/python:3.8.3"
-    // } else {
-    //     container "quay.io/biocontainers/python:3.8.3"
-    // }
-
-    // container "hukai916/bcl2fastq:2.20.0-centos7"
     container "hukai916/r_sc:0.5"
 
-    // cache false
-
     input:
-    // if get_annotation == "yes", then use gene_annotation and genome_annotation to build ArchR genome.
-    // if get_annotation == "no", then, use archr_genome directly.
     tuple val(sample_name), path(fragment)
     val archr_genome
     val archr_thread
@@ -39,7 +23,6 @@ process ARCHR_CREATE_ARROWFILES {
     path "report_*", emit: report
 
     script:
-    // for unknown reason, #!/usr/bin/R + direct R codes won't work
 
     """
     echo '

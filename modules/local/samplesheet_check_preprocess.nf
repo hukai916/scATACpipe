@@ -4,9 +4,6 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-/*
- * Reformat design file and check validity
- */
 process SAMPLESHEET_CHECK_PREPROCESS {
     tag "$samplesheet"
     publishDir "${params.outdir}",
@@ -21,7 +18,8 @@ process SAMPLESHEET_CHECK_PREPROCESS {
     output:
     path '*.csv'
 
-    script:  // This script is bundled with the pipeline, in nf-core/scatacseqflow/bin/
+    script:
+
     """
     check_samplesheet_preprocess.py $samplesheet samplesheet.valid.csv
     """

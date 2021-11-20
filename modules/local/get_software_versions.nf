@@ -4,9 +4,6 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-/*
- * Parse software version numbers
- */
 process GET_SOFTWARE_VERSIONS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -29,6 +26,7 @@ process GET_SOFTWARE_VERSIONS {
     path 'software_versions_mqc.yaml', emit: yaml
 
     script:
+    
     """
     echo $workflow.manifest.version > pipeline.version.txt
     echo $workflow.nextflow.version > nextflow.version.txt
