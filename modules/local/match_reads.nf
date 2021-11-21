@@ -5,11 +5,11 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process MATCH_READS {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'match_reads', publish_id:'') }
-    container "hukai916/seqkit_0.16.1:0.1"
+    container "hukai916/fastq-pair:0.1"
 
     input:
     val sample_name
@@ -19,28 +19,45 @@ process MATCH_READS {
 
     output:
     val sample_name, emit: sample_name
-    path corrected_barcode_fastq, emit: barcode_fastq
-    path "R1/*.fastq.gz", emit: read1_fastq
-    path "R2/*.fastq.gz", emit: read2_fastq
-    // Note, below creates duplicate staged file name error
-    // path "R1_barcode/*.fastq.gz", emit: barcode1_fastq
-    // path "R2_barcode/*.fastq.gz", emit: barcode2_fastq
-    path "read1_matching_corrected_barcode.fastq.gz", emit: barcode1_fastq
-    path "read2_matching_corrected_barcode.fastq.gz", emit: barcode2_fastq
+
+    path "match_pair_first_read/first_read_in_pair.fq.paired.fq", emiat: read1_fastq
+    path "match_pair_second_read/second_read_in_pair.fq.paired.fq", emiat: read2_fastq
+    path "match_pair_first_read/first_read_matched_corrected_barcode.fq.gz", emiat: barcode1_fastq
+    path "match_pair_second_read/second_read_matched_corrected_barcode.fq.gz", emiat: barcode2_fastq
+    // Be carefule of the duplicated staged file name error
 
     script:
 
     """
-    seqkit pair $options.args -1 $corrected_barcode_fastq -2 $read1_fastq -O R1
-    seqkit pair $options.args -1 $corrected_barcode_fastq -2 $read2_fastq -O R2
+    mkdir match_pair_first_read
+    cd match_pair_first_read
+    ln -s $corrected_barcode_fastq match_pair_first_read/
+    ln -s $read1_fastq match_pair_first_read/
+    mv $corrected_barcode_fastq corrected_barcode.fq.gz
+    mv $read1_fastq first_read_in_pair.fq.gz
+    gzip -d corrected_barcode.fq.gz
+    gzip -d first_read_in_pair.fq.gz
+    fastq_pair $options.args corrected_barcode.fq first_read_in_pair.fq
+    rm corrected_barcode.fq first_read_in_pair.fq
+    gzip corrected_barcode.fq.paired.fq
+    gzip first_read_in_pair.fq.paired.fq
+    mv corrected_barcode.fq.paired.fq first_read_matched_corrected_barcode.fq.gz
 
-    mkdir R1_barcode R2_barcode
-    mv R1/$corrected_barcode_fastq read1_matching_corrected_barcode.fastq.gz
-    mv R2/$corrected_barcode_fastq read2_matching_corrected_barcode.fastq.gz
+    cd ../
 
-    # Note, by using this method here, R1 paired up with R1 barcode and R2 paired up with R2 barcode, but R1 may not pair up with R1.
-    # It will not hurt since the match_reads_trimmed.nf pairs up R1 and R2 after trimming.
-
+    mkdir match_pair_second_read
+    cd match_pair_second_read
+    ln -s $corrected_barcode_fastq match_pair_second_read/
+    ln -s $read1_fastq match_pair_second_read/
+    mv $corrected_barcode_fastq corrected_barcode.fq.gz
+    mv $read1_fastq second_read_in_pair.fq.gz
+    gzip -d corrected_barcode.fq.gz
+    gzip -d second_read_in_pair.fq.gz
+    fastq_pair $options.args corrected_barcode.fq second_read_in_pair.fq
+    rm corrected_barcode.fq second_read_in_pair.fq
+    gzip corrected_barcode.fq.paired.fq
+    gzip second_read_in_pair.fq.paired.fq
+    mv corrected_barcode.fq.paired.fq second_read_matched_corrected_barcode.fq.gz
 
     """
 }

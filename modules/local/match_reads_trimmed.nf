@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process MATCH_READS_TRIMMED {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'match_reads_trimmed', publish_id:'') }
