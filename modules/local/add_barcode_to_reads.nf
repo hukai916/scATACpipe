@@ -27,18 +27,18 @@ process ADD_BARCODE_TO_READS {
 
     """
     # use the first read length from fastq file to determine the length since -b is required by sinto.
-    filename=\$(basename -- "$barcode_fastq")
+    filename=\$(basename -- "$barcode1_fastq")
     extension="\${filename##*.}"
 
     if [[ "\$extension" == "gz" ]]
     then
-      # barcode_length=\$(zcat $barcode_fastq | awk '{if(NR==2) print length(\$1)}')
+      # barcode_length=\$(zcat $barcode1_fastq | awk '{if(NR==2) print length(\$1)}')
       # Below is more efficient: but also exit 141 when running on NF.
-      # barcode_length=\$(zcat $barcode_fastq | awk 'NR==2 { print length(\$1); exit }')
+      # barcode_length=\$(zcat $barcode1_fastq | awk 'NR==2 { print length(\$1); exit }')
       # Below works too, but not with head -n 1, since head breaks the pipe and exit with 141.
-      barcode_length=\$(zcat $barcode_fastq | awk '{if(NR%4==2) print length(\$1)}' | tail -n 1)
+      barcode_length=\$(zcat $barcode1_fastq | awk '{if(NR%4==2) print length(\$1)}' | tail -n 1)
     else
-      barcode_length=\$(cat $barcode_fastq | awk 'NR==2 { print length(\$1); exit }')
+      barcode_length=\$(cat $barcode1_fastq | awk 'NR==2 { print length(\$1); exit }')
     fi
 
     mkdir R1
