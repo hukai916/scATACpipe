@@ -21,8 +21,8 @@ process CORRECT_BARCODE_PHENIQS {
     output:
     val sample_name, emit: sample_name
     path "summary_*.txt", emit: corrected_barcode_summary
-    path "barcode_corrected*.R1.fastq.gz", emit: read1_fastq
-    path "barcode_corrected*.R2.fastq.gz", emit: read2_fastq
+    path "barcode_corrected*.first_read_in_pair.fastq.gz", emit: read1_fastq
+    path "barcode_corrected*.second_read_in_pair.fastq.gz", emit: read2_fastq
     // path "barcode_corrected*.R3.fastq.gz", emit: corrected_barcode
     // barcode is not needed for pheniqs since corrected barcodes are added by default.
 

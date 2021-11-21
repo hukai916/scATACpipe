@@ -23,8 +23,8 @@ discard_read_num = 0
 count            = 0
 
 # output R1 and R2 fastq:
-r1 = gzip.open(outname + ".R1.fastq.gz", "wt")
-r2 = gzip.open(outname + ".R2.fastq.gz", "wt")
+r1 = gzip.open(outname + ".first_read_in_pair.fastq.gz", "wt")
+r2 = gzip.open(outname + ".second_read_in_pair.fastq.gz", "wt")
 #r3 = gzip.open(outname + ".R3.fastq.gz", "wt") # stores corrected index
 
 for read in inbam:
