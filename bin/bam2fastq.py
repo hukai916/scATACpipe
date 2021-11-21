@@ -25,7 +25,7 @@ count            = 0
 # output R1 and R2 fastq:
 r1 = gzip.open(outname + ".R1.fastq.gz", "wt")
 r2 = gzip.open(outname + ".R2.fastq.gz", "wt")
-r3 = gzip.open(outname + ".R3.fastq.gz", "wt") # stores corrected index
+#r3 = gzip.open(outname + ".R3.fastq.gz", "wt") # stores corrected index
 
 for read in inbam:
     count += 1
@@ -49,11 +49,11 @@ for read in inbam:
             r1.write("\n".join([line1, line2, line3, line4]) + "\n")
         elif (read.flag & 128):
             r2.write("\n".join([line1, line2, line3, line4]) + "\n")
-        r3.write("\n".join([line1, tag_rg, "+", tag_qt]) + "\n")
+        #r3.write("\n".join([line1, tag_rg, "+", tag_qt]) + "\n")  # this file is not necessary anymore
 inbam.close()
 r1.close()
 r2.close()
-r3.close()
+#r3.close()
 
 # store a summary file:
 print("Done!\n")
@@ -61,6 +61,6 @@ print("Total valid reads: ", valid_read_num)
 print("Total rescued reads: ", rescued_read_num)
 print("Total discarded reads: ", discard_read_num)
 
-summary = "Summary (R_correct_barcode): " + "total valid: " + str(valid_read_num) + "; total corrected: " + str(rescued_read_num) + "; total discarded: " + str(discard_read_num) + "."
+summary = "Summary (Pheniqs_correct_barcode): " + "total valid: " + str(valid_read_num) + "; total corrected: " + str(rescued_read_num) + "; total discarded: " + str(discard_read_num) + "."
 with open("summary_" + outname + ".txt", "w") as f:
     f.write(summary)
