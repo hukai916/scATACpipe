@@ -122,7 +122,7 @@ workflow SCATACPIPE {
         }
 
         // PREPROCESS_10XGENOMICS (ch_samplesheet)
-        PREPROCESS_10XGENOMICS (INPUT_CHECK_FASTQ.out.reads)
+        PREPROCESS_10XGENOMICS (INPUT_CHECK_FASTQ.out.reads, INPUT_CHECK_FASTQ.out.sample_count)
         // DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics")
         DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_10XGENOMICS.out[5], PREPROCESS_10XGENOMICS.out[6], prep_gtf_run, PREPROCESS_10XGENOMICS.out[7], PREPROCESS_10XGENOMICS.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
