@@ -23,7 +23,7 @@ process COMBINE_BAM {
 
     """
     # first combine all bam files that belong to the same library (sample_name):
-    samtools merge -o ${sample_name}.combined.bam rm_dup_${sample_name}.*.sorted.bam
+    samtools merge ${sample_name}.combined.bam rm_dup_${sample_name}.*.sorted.bam
 
     # then, sort output bam:
     samtools sort ${sample_name}.combined.bam -o ${sample_name}.combined.sorted.bam
