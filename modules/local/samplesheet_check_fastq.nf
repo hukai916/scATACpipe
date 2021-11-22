@@ -20,7 +20,6 @@ process SAMPLESHEET_CHECK_FASTQ {
     path '*.csv', emit: csv
     path '*.txt', emit: count
 
-
     script:
 
     """
