@@ -6,6 +6,7 @@ options        = initOptions(params.options)
 
 process SAMPLESHEET_CHECK_PREPROCESS {
     tag "$samplesheet"
+    label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir:'pipeline_info', publish_id:'') }
