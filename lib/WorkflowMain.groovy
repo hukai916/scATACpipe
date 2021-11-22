@@ -143,7 +143,7 @@ class WorkflowMain {
               log.error out_string
               System.exit(0)
             } else {
-              log.info "Validating input params for DOWNSTREAM_DEFAULT, passed."
+              log.info "Validating input params for PREPROCESS_DEFAULT, passed."
             }
           } else if (params.preprocess == "10xgenomics") {
             if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf) && (!params.ref_cellranger_index)) {
@@ -156,7 +156,7 @@ class WorkflowMain {
               log.error out_string
               System.exit(0)
             } else {
-              log.info "Validating input params for DOWNSTREAM_10XGENOMICS, passed."
+              log.info "Validating input params for PREPROCESS_10XGENOMICS, passed."
             }
           } else {
             log.error "Pls supply --preprocess [default | 10xgenomics]"
