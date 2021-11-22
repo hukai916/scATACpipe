@@ -27,7 +27,7 @@ process COMBINE_FRAGMENTS {
     cat ${sample_name}* > ${sample_name}.combined.fragments.tsv
 
     # then sort and bgzip:
-    sort -k 1,1 -k2,2n ${sample_name}.combined.fragments.sort.tsv
+    sort -k 1,1 -k2,2n ${sample_name}.combined.fragments.tsv > ${sample_name}.combined.fragments.sort.tsv
     bgzip ${sample_name}.combined.fragments.sort.tsv
 
     """
