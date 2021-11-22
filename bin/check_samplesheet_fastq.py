@@ -109,7 +109,7 @@ def check_samplesheet(file_in, file_out):
 
             ## Create sample mapping dictionary = { sample: [ single_end, fastq_1, fastq_2 ] }
             if sample not in sample_mapping_dict:
-                sample_mapping_dict[sample] = sample_info
+                sample_mapping_dict[sample] = [sample_info]
             else:
                 if sample_info in sample_mapping_dict[sample]:
                     print_error("Samplesheet contains duplicate rows!", "Line", line)
@@ -122,8 +122,9 @@ def check_samplesheet(file_in, file_out):
         make_dir(out_dir)
         with open(file_out, "w") as fout:
             fout.write(",".join(["sample_name", "path_fastq_1", "path_fastq_2", "path_barcode"]) + "\n")
-            for sample in sorted(sample_mapping_dict.keys()):
-                fout.write(",".join(sample_mapping_dict[sample]) + "\n")
+            for library in sorted(sample_mapping_dict.keys()):
+                for sample in library:
+                    fout.write(",".join(sample_mapping_dict[sample]) + "\n")
     else:
         print_error("No entries to process!", "Samplesheet: {}".format(file_in))
 
