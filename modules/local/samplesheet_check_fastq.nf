@@ -25,7 +25,7 @@ process SAMPLESHEET_CHECK_FASTQ {
 
     """
     check_samplesheet_fastq.py $samplesheet samplesheet.valid.csv
-    awk 'NR > 1 { print NR-1 }' samplesheet.valid.csv > sample_count.txt
+    awk '{ if (NR == 1) print "sample_count"; else print NR-1 }' samplesheet.valid.csv > sample_count.txt
 
     """
 }

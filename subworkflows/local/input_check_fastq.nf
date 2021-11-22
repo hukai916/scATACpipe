@@ -26,12 +26,15 @@ workflow INPUT_CHECK_FASTQ {
     sample_count = SAMPLESHEET_CHECK_FASTQ
                     .out
                     .count
-                    .splitCsv(header: false, sep: ",", strip: true)
+                    .splitCsv(header: true, sep: ",", strip: true)
+                    .map {
+                      row -> row.sample_count
+                    }
 
     emit:
     reads // channel: [ val(meta), [ reads ] ]
     sample_count // total number of samples
-    
+
 }
 
 // Function to get list of [ meta, [ fastq_1, fastq_2 ] ]
