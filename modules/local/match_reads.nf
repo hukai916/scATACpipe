@@ -49,10 +49,10 @@ process MATCH_READS {
 
     mkdir match_pair_second_read
     cp $corrected_barcode_fastq match_pair_second_read/
-    cp $read1_fastq match_pair_second_read/
+    cp $read2_fastq match_pair_second_read/
     cd match_pair_second_read
     mv $corrected_barcode_fastq corrected_barcode.fq.gz
-    mv $read1_fastq second_read_in_pair.fq.gz
+    mv $read2_fastq second_read_in_pair.fq.gz
     gzip -d corrected_barcode.fq.gz
     gzip -d second_read_in_pair.fq.gz
     fastq_pair $options.args corrected_barcode.fq second_read_in_pair.fq

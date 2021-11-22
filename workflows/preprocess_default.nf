@@ -215,6 +215,9 @@ workflow PREPROCESS_DEFAULT {
     // use raw bam file since ArchR may take advantage of the duplication info.
     GET_FRAGMENTS (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam)
 
+    // module: combine fragments with are from the same library (with same sample name)
+    COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name, GET_FRAGMENTS.out.fragments.collect())
+
     // Collect all output results for MultiQC report:
     res_files = Channel.empty()
     // res_files = res_files.mix(Channel.from(ch_multiqc_config))
