@@ -123,7 +123,7 @@ def check_samplesheet(file_in, file_out):
         with open(file_out, "w") as fout:
             fout.write(",".join(["sample_name", "path_fastq_1", "path_fastq_2", "path_barcode"]) + "\n")
             for library in sorted(sample_mapping_dict.keys()):
-                for sample in library:
+                for sample in sample_mapping_dict[library]:
                     fout.write(",".join(sample) + "\n")
     else:
         print_error("No entries to process!", "Samplesheet: {}".format(file_in))
