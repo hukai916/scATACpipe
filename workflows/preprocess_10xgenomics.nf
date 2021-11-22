@@ -43,6 +43,7 @@ include { CELLRANGER_INDEX } from '../modules/local/cellranger_index'           
 workflow PREPROCESS_10XGENOMICS {
   take:
     reads
+    sample_count
 
   main:
     // Examine if all required parameters supplied:
@@ -52,12 +53,15 @@ workflow PREPROCESS_10XGENOMICS {
       exit 1, "EXIT!"
     }
     // Above is redundant to WorkflowMain::initialise()
+    // module: staging sample_name in case of inconsistency in sample names
+    MATCH_SAMPLE_NAME (reads, sample_count)
 
     if (params.ref_cellranger_index) {
       // if cellranger index folder provided:
       log.info "Parameter --ref_cellranger_index supplied, will use it as index folder."
-      GET_10XGENOMICS_FASTQ (reads)
-      CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, params.ref_cellranger_index)
+      // GET_10XGENOMICS_FASTQ (reads)
+      // CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, params.ref_cellranger_index)
+      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), params.ref_cellranger_index)
     } else if (params.ref_fasta) {
       if (params.ref_gtf) {
         log.info "Parameter --ref_fasta/ref_gtf supplied, will build index."
@@ -67,10 +71,12 @@ workflow PREPROCESS_10XGENOMICS {
         PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, params.ref_gtf)
         // Module: prepare cellranger index
         CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
-        // Module: prepare fastq folder
-        GET_10XGENOMICS_FASTQ (reads)
         // Module: run cellranger-atac count
-        CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
+        CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.collect())
+        // Module: prepare fastq folder
+        // GET_10XGENOMICS_FASTQ (reads)
+        // Module: run cellranger-atac count
+        // CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
       } else {
         exit 1, "Pls supply --ref_gtf."
       }
@@ -86,10 +92,12 @@ workflow PREPROCESS_10XGENOMICS {
       PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
       // Module: prepare cellranger index
       CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
-      // Module: prepare fastq folder
-      GET_10XGENOMICS_FASTQ (reads)
       // Module: run cellranger-atac count
-      CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
+      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.collect())
+      // Module: prepare fastq folder
+      // GET_10XGENOMICS_FASTQ (reads)
+      // Module: run cellranger-atac count
+      // CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
     } else if (params.ref_fasta_ucsc) {
       // Module: download ucsc genome
       DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
@@ -101,10 +109,12 @@ workflow PREPROCESS_10XGENOMICS {
       PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
       // Module: prepare cellranger index
       CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
-      // Module: prepare fastq folder
-      GET_10XGENOMICS_FASTQ (reads)
       // Module: run cellranger-atac count
-      CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
+      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.collect())
+      // Module: prepare fastq folder
+      // GET_10XGENOMICS_FASTQ (reads)
+      // Module: run cellranger-atac count
+      // CELLRANGER_ATAC_COUNT (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.fastq_folder, CELLRANGER_INDEX.out.index_folder.collect())
     } else {
       exit 1, "PREPROCESS_10XGENOMICS: --ref_fasta_ucsc, or --ref_fasta_ensembl, or --ref_fasta/ref_gtf must be specified!"
     }

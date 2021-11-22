@@ -13,7 +13,7 @@ process CELLRANGER_ATAC_COUNT {
 
     input:
     val sample_name
-    path sample_files
+    path fastq_folder
     path reference
 
     output:
@@ -30,24 +30,18 @@ process CELLRANGER_ATAC_COUNT {
     # the fastq file name must not contain special characters other than dash, underscore, digit; dot is not allowed
     # the --id must not contain dot either:
 
-    # prepare for output folder:
-    outfolder=cellranger_atac_count_\$( echo $sample_name | tr '.' '_' ) # just in case
-
-    # prepare for input fastq folder:
-    infastq=input_fastq_\$outfolder
-    mkdir \$infastq
-    cp ${sample_name}_S1_L*_*_001.fastq.gz \$infastq/
+    fastq_folder=\$( echo $fastq_folder | tr '.' '_' ) # just in case
 
     cellranger-atac count $options.args \
-    --id \$outfolder \
-    --fastqs \$infastq \
+    --id cellranger_atac_count_\$fastq_folder \
+    --fastqs $fastq_folder \
     --reference $reference \
     --localcores $task.cpus \
     --localmem $avail_mem
 
     # rename the output bam file for split_bam module:
-    mv \${outfolder}/outs/possorted_bam.bam \${outfolder}/outs/outs/${sample_name}_possorted_bam.bam
-    mv \${outfolder}/outs/possorted_bam.bam.bai \${outfolder}/outs/outs/${sample_name}_possorted_bam.bam.bai
+    mv cellranger_atac_count_\${fastq_folder}/outs/possorted_bam.bam cellranger_atac_count_\${fastq_folder}/outs/${sample_name}_possorted_bam.bam
+    mv cellranger_atac_count_\${fastq_folder}/outs/possorted_bam.bam.bai cellranger_atac_count_\${fastq_folder}/outs/${sample_name}_possorted_bam.bam.bai
 
     """
 }
