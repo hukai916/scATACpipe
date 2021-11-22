@@ -31,8 +31,8 @@ process MATCH_READS {
     """
     mkdir match_pair_first_read
     cd match_pair_first_read
-    ln -s $corrected_barcode_fastq match_pair_first_read/
-    ln -s $read1_fastq match_pair_first_read/
+    cp $corrected_barcode_fastq match_pair_first_read/
+    cp $read1_fastq match_pair_first_read/
     mv $corrected_barcode_fastq corrected_barcode.fq.gz
     mv $read1_fastq first_read_in_pair.fq.gz
     gzip -d corrected_barcode.fq.gz
@@ -47,8 +47,8 @@ process MATCH_READS {
 
     mkdir match_pair_second_read
     cd match_pair_second_read
-    ln -s $corrected_barcode_fastq match_pair_second_read/
-    ln -s $read1_fastq match_pair_second_read/
+    cp $corrected_barcode_fastq match_pair_second_read/
+    cp $read1_fastq match_pair_second_read/
     mv $corrected_barcode_fastq corrected_barcode.fq.gz
     mv $read1_fastq second_read_in_pair.fq.gz
     gzip -d corrected_barcode.fq.gz
