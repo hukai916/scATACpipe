@@ -61,6 +61,6 @@ print("Total valid reads: ", valid_read_num)
 print("Total rescued reads: ", rescued_read_num)
 print("Total discarded reads: ", discard_read_num)
 
-summary = "Summary (Pheniqs_correct_barcode): " + "total valid: " + str(valid_read_num) + "; total corrected: " + str(rescued_read_num) + "; total discarded: " + str(discard_read_num) + "."
+summary = "Summary (correct_barcode): " + "total valid: " + str(valid_read_num) + "; total corrected: " + str(rescued_read_num) + "; total discarded: " + str(discard_read_num) + "."
 with open("summary_" + outname + ".txt", "w") as f:
     f.write(summary)
