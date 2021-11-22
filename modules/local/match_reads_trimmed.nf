@@ -9,7 +9,7 @@ process MATCH_READS_TRIMMED {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'match_reads_trimmed', publish_id:'') }
-    container "hukai916/seqkit_0.16.1:0.1"
+    container "hukai916/fastq-pair:0.1"
 
     input:
     val sample_name
@@ -18,15 +18,25 @@ process MATCH_READS_TRIMMED {
 
     output:
     val sample_name, emit: sample_name
-    path "R1/*.fastq.gz", emit: read1_fastq
-    path "R2/*.fastq.gz", emit: read2_fastq
+    path "first_read_in_pair.fq.paired.fq.gz", emit: read1_fastq
+    path "second_read_in_pair.fq.paired.fq.gz", emit: read2_fastq
 
     script:
 
     """
-    seqkit pair $options.args -1 $read1_fastq -2 $read2_fastq -O R1
-    mkdir R2
-    mv R1/$read2_fastq R2/
+    mkdir match_trim
+    cp $read1_fastq match_trim/
+    cp $read2_fastq match_trim/
+    cd match_trim
+    mv $read1_fastq first_read_in_pair.fq.gz
+    mv $read2_fastq second_read_in_pair.fq.gz
+    gzip -d first_read_in_pair.fq.gz
+    gzip -d second_read_in_pair.fq.gz
+
+    fastq_pair $options.args first_read_in_pair.fq second_read_in_pair.fq
+    rm first_read_in_pair.fq second_read_in_pair.fq
+    gzip first_read_in_pair.fq.paired.fq
+    gzip second_read_in_pair.fq.paired.fq
 
     """
 }
