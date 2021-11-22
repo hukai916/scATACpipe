@@ -20,10 +20,10 @@ process MATCH_READS {
     output:
     val sample_name, emit: sample_name
 
-    path "match_pair_first_read/first_read_in_pair.fq.paired.fq", emiat: read1_fastq
-    path "match_pair_second_read/second_read_in_pair.fq.paired.fq", emiat: read2_fastq
-    path "match_pair_first_read/first_read_matched_corrected_barcode.fq.gz", emiat: barcode1_fastq
-    path "match_pair_second_read/second_read_matched_corrected_barcode.fq.gz", emiat: barcode2_fastq
+    path "match_pair_first_read/first_read_in_pair.fq.paired.fq", emit: read1_fastq
+    path "match_pair_second_read/second_read_in_pair.fq.paired.fq", emit: read2_fastq
+    path "match_pair_first_read/first_read_matched_corrected_barcode.fq.gz", emit: barcode1_fastq
+    path "match_pair_second_read/second_read_matched_corrected_barcode.fq.gz", emit: barcode2_fastq
     // Be carefule of the duplicated staged file name error
 
     script:
