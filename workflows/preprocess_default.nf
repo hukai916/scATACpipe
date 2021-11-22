@@ -284,8 +284,8 @@ workflow PREPROCESS_DEFAULT {
     res_files // out[0]: res folders for MultiQC report
     COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
     COMBINE_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
-    REMOVE_DUPLICATE.out.sample_name // out[3]: for split bam
-    REMOVE_DUPLICATE.out.bam // out[4]: for split bam
+    COMBINE_BAM.out.sample_name // out[3]: for split bam
+    COMBINE_BAM.out.bam // out[4]: for split bam
     prep_genome_name         // out[5]: for DOWNSTREAM_ARCHR
     prep_genome_fasta        // out[6]: for DOWNSTREAM_ARCHR
     prep_gtf_genome          // out[7]: for DOWNSTREAM_ARCHR
