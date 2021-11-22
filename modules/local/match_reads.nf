@@ -29,6 +29,8 @@ process MATCH_READS {
     script:
 
     """
+    # Need to decompress .gz file since fastq-pair doesn't support .gz files.
+
     mkdir match_pair_first_read
     cp $corrected_barcode_fastq match_pair_first_read/
     cp $read1_fastq match_pair_first_read/
@@ -41,7 +43,7 @@ process MATCH_READS {
     rm corrected_barcode.fq first_read_in_pair.fq
     gzip corrected_barcode.fq.paired.fq
     gzip first_read_in_pair.fq.paired.fq
-    mv corrected_barcode.fq.paired.fq first_read_matched_corrected_barcode.fq.gz
+    mv corrected_barcode.fq.paired.fq.gz first_read_matched_corrected_barcode.fq.gz
 
     cd ../
 
@@ -57,7 +59,7 @@ process MATCH_READS {
     rm corrected_barcode.fq second_read_in_pair.fq
     gzip corrected_barcode.fq.paired.fq
     gzip second_read_in_pair.fq.paired.fq
-    mv corrected_barcode.fq.paired.fq second_read_matched_corrected_barcode.fq.gz
+    mv corrected_barcode.fq.paired.fq.gz second_read_matched_corrected_barcode.fq.gz
 
     """
 }
