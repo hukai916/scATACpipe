@@ -94,7 +94,7 @@ workflow PREPROCESS_10XGENOMICS {
       // Module: download ucsc genome
       DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
       // Module: download ucsc gtf
-      DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc)
+      DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
       // Module: prep_genome
       PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
       // Module: prep_gtf
