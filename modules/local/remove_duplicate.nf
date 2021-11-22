@@ -14,6 +14,7 @@ process REMOVE_DUPLICATE {
     input:
     val sample_name
     path bam
+    val sample_count
 
     output:
     val sample_name, emit: sample_name
@@ -27,7 +28,7 @@ process REMOVE_DUPLICATE {
     remove_duplicate.py --inbam $bam --outbam rm_dup_${sample_name}.bam $options.args
 
     # sort output bam:
-    samtools sort rm_dup_${sample_name}.bam -o rm_dup_${sample_name}.sorted.bam
+    samtools sort rm_dup_${sample_name}.bam -o rm_dup_${sample_name}.${sample_count}.sorted.bam
 
     """
 

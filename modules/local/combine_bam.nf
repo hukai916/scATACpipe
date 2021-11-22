@@ -17,25 +17,16 @@ process COMBINE_BAM {
 
     output:
     val sample_name, emit: sample_name
-    path "combined*.sorted.bam", emit: bam
-    // path "summary_rm_dup_*.txt", emit: remove_duplicate_summary
+    path "*.combined.sorted.bam", emit: bam
 
     script:
 
     """
     # first combine all bam files that belong to the same library (sample_name):
-    cat ${sample_name}* > ${sample_name}.combined.fragments.tsv
+    samtools merge -o ${sample_name}.combined.bam rm_dup_${sample_name}.*.sorted.bam
 
-    # then sort and bgzip:
-    sort -k 1,1 -k2,2n ${sample_name}.combined.fragments.sort.tsv
-    bgzip ${sample_name}.combined.fragments.sort.tsv
-
-
-    # remove PCR duplicates based on cell barcode, start, end:
-    remove_duplicate.py --inbam $bam --outbam rm_dup_${sample_name}.bam $options.args
-
-    # sort output bam:
-    samtools sort rm_dup_${sample_name}.bam -o rm_dup_${sample_name}.sorted.bam
+    # then, sort output bam:
+    samtools sort ${sample_name}.combined.bam -o ${sample_name}.combined.sorted.bam
 
     """
 
