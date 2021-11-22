@@ -291,10 +291,6 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES.out.sample_name, ARCHR_CREATE_ARROWFILES.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
-      log.info "test ch_arrowfile_list"
-      println ch_arrowfile_list
-      ch_arrowfile_list.view()
-      log.info "done test here"
       ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
     } else if (archr_input_type == "bsgenome_txdb_org") {
