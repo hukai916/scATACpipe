@@ -4,7 +4,7 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-process SAMPLESHEET_CHECK_ARCHR {
+process SAMPLESHEET_CHECK_FASTQ {
     tag "$samplesheet"
     label 'process_low'
     publishDir "${params.outdir}",
@@ -22,7 +22,6 @@ process SAMPLESHEET_CHECK_ARCHR {
     script:
 
     """
-    check_samplesheet_archr.py $samplesheet samplesheet.valid.csv
-
+    check_samplesheet_fastq.py $samplesheet samplesheet.valid.csv
     """
 }

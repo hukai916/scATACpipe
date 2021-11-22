@@ -18,8 +18,8 @@ process MATCH_READS_TRIMMED {
 
     output:
     val sample_name, emit: sample_name
-    path "first_read_in_pair.fq.paired.fq.gz", emit: read1_fastq
-    path "second_read_in_pair.fq.paired.fq.gz", emit: read2_fastq
+    path "match_trim/first_read_in_pair.fq.paired.fq.gz", emit: read1_fastq
+    path "match_trim/second_read_in_pair.fq.paired.fq.gz", emit: read2_fastq
 
     script:
 

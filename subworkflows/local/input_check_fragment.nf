@@ -4,14 +4,14 @@
 
 params.options = [:]
 
-include { SAMPLESHEET_CHECK_ARCHR } from '../../modules/local/samplesheet_check_archr' addParams( options: params.options )
+include { SAMPLESHEET_CHECK_FRAGMENT } from '../../modules/local/samplesheet_check_fragment' addParams( options: params.options )
 
-workflow INPUT_CHECK_ARCHR {
+workflow INPUT_CHECK_FRAGMENT {
     take:
     samplesheet // file: /path/to/samplesheet.csv
 
     main:
-    SAMPLESHEET_CHECK_ARCHR ( samplesheet )
+    SAMPLESHEET_CHECK_FRAGMENT ( samplesheet )
         .splitCsv(header: true, sep: ",", strip: true)
         .map { create_fragment_channels(it) }
         .unique()

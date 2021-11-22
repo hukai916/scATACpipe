@@ -69,8 +69,8 @@ include { SPLIT_BED  } from './modules/local/split_bed' addParams( options: modu
 include { SPLIT_BAM  } from './modules/local/split_bam' addParams( options: modules['split_bam'] )
 include { MULTIQC    } from './modules/local/multiqc' addParams( options: modules['multiqc'] )
 
-include { INPUT_CHECK_ARCHR } from './subworkflows/local/input_check_archr'
-include { INPUT_CHECK_PREPROCESS } from './subworkflows/local/input_check_preprocess'
+include { INPUT_CHECK_FRAGMENT } from './subworkflows/local/input_check_fragment'
+include { INPUT_CHECK_FASTQ } from './subworkflows/local/input_check_fastq'
 
 ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
 
@@ -78,21 +78,20 @@ workflow SCATACPIPE {
   take:
     input_fragment
     input_fastq
-    // ch_samplesheet
 
   main:
     if (input_fragment) {
       log.info "Running DOWNSTREAM ..."
       log.info "Validating sample sheet ... If pipeline exits, check .nextflow.log file."
-      INPUT_CHECK_ARCHR (Channel.fromPath(input_fragment))
+      INPUT_CHECK_FRAGMENT (Channel.fromPath(input_fragment))
 
-      DOWNSTREAM_ARCHR (INPUT_CHECK_ARCHR.out.fragment, "preprocess_null", "token1", "token2", "token3", "token4", "token5", "token6")
+      DOWNSTREAM_ARCHR (INPUT_CHECK_FRAGMENT.out.fragment, "preprocess_null", "token1", "token2", "token3", "token4", "token5", "token6")
       SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
       MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
     } else if (input_fastq) {
       log.info "Running PREPROCESS + DOWNSTREAM ..."
       log.info "Validating sample sheet ... If pipeline exits, check .nextflow.log file."
-      INPUT_CHECK_PREPROCESS (Channel.fromPath(input_fastq))
+      INPUT_CHECK_FASTQ (Channel.fromPath(input_fastq))
 
       if (params.preprocess == "default") {
         // Determine if PREP_GENOME and PREP_GTF run or not_run:
@@ -107,7 +106,7 @@ workflow SCATACPIPE {
         }
 
         // PREPROCESS_DEFAULT (ch_samplesheet)
-        PREPROCESS_DEFAULT (INPUT_CHECK_PREPROCESS.out.reads)
+        PREPROCESS_DEFAULT (INPUT_CHECK_FASTQ.out.reads)
         DOWNSTREAM_ARCHR (PREPROCESS_DEFAULT.out[2], "preprocess_default", prep_genome_run, PREPROCESS_DEFAULT.out[5], PREPROCESS_DEFAULT.out[6], prep_gtf_run, PREPROCESS_DEFAULT.out[7], PREPROCESS_DEFAULT.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1]) // take a tuple (sample_name, fragment_path, tsv_path) as input
         SPLIT_BAM (PREPROCESS_DEFAULT.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_DEFAULT.out[4].collect(), params.barcode_regex) // input: sample_name, all_bams, all_fragments, barcode_regex
@@ -123,7 +122,7 @@ workflow SCATACPIPE {
         }
 
         // PREPROCESS_10XGENOMICS (ch_samplesheet)
-        PREPROCESS_10XGENOMICS (INPUT_CHECK_PREPROCESS.out.reads)
+        PREPROCESS_10XGENOMICS (INPUT_CHECK_FASTQ.out.reads)
         // DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics")
         DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_10XGENOMICS.out[5], PREPROCESS_10XGENOMICS.out[6], prep_gtf_run, PREPROCESS_10XGENOMICS.out[7], PREPROCESS_10XGENOMICS.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1])

@@ -4,7 +4,7 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-process SAMPLESHEET_CHECK_PREPROCESS {
+process SAMPLESHEET_CHECK_FRAGMENT {
     tag "$samplesheet"
     label 'process_low'
     publishDir "${params.outdir}",
@@ -22,6 +22,7 @@ process SAMPLESHEET_CHECK_PREPROCESS {
     script:
 
     """
-    check_samplesheet_preprocess.py $samplesheet samplesheet.valid.csv
+    check_samplesheet_fragment.py $samplesheet samplesheet.valid.csv
+
     """
 }

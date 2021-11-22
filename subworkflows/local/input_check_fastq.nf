@@ -4,14 +4,14 @@
 
 params.options = [:]
 
-include { SAMPLESHEET_CHECK_PREPROCESS } from '../../modules/local/samplesheet_check_preprocess' addParams( options: params.options )
+include { SAMPLESHEET_CHECK_FASTQ } from '../../modules/local/samplesheet_check_fastq' addParams( options: params.options )
 
-workflow INPUT_CHECK_PREPROCESS {
+workflow INPUT_CHECK_FASTQ {
     take:
     samplesheet // file: /path/to/samplesheet.csv
 
     main:
-    SAMPLESHEET_CHECK_PREPROCESS ( samplesheet )
+    SAMPLESHEET_CHECK_FASTQ ( samplesheet )
         .splitCsv(header: true, sep: ",", strip: true)
         .map {
           row ->
