@@ -17,12 +17,15 @@ process COMBINE_FRAGMENTS {
 
     output:
     val sample_name, emit: sample_name
-    path "fragments.sort.bed.gz", emit: fragments
-    tuple val(sample_name), path("fragments.sort.bed.gz"), emit: ch_fragment
+    path "combined.fragments.sort.bed.gz", emit: fragments
+    tuple val(sample_name), path("combined.fragments.sort.bed.gz"), emit: ch_fragment
 
     script:
 
     """
+    # first combine all fragments that belong to the same library (sample_name)
+
+
     # first index the bam file
     samtools index $options.args $bam
 

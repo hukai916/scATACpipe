@@ -216,7 +216,7 @@ workflow PREPROCESS_DEFAULT {
     GET_FRAGMENTS (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam)
 
     // module: combine fragments with are from the same library (with same sample name)
-    COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name, GET_FRAGMENTS.out.fragments.collect())
+    // COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name, GET_FRAGMENTS.out.fragments.collect())
 
     // Collect all output results for MultiQC report:
     res_files = Channel.empty()
