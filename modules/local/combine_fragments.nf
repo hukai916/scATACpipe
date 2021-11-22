@@ -18,7 +18,7 @@ process COMBINE_FRAGMENTS {
     output:
     val sample_name, emit: sample_name
     path "*.combined.fragments.sort.tsv.gz", emit: fragments
-    tuple val(sample_name), path(".combined.fragments.sort.tsv.gz"), emit: ch_fragment
+    tuple val(sample_name), path("*.combined.fragments.sort.tsv.gz"), emit: ch_fragment
 
     script:
 
