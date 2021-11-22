@@ -106,7 +106,10 @@ workflow SCATACPIPE {
         }
 
         // PREPROCESS_DEFAULT (ch_samplesheet)
-        PREPROCESS_DEFAULT (INPUT_CHECK_FASTQ.out.reads)
+        PREPROCESS_DEFAULT (INPUT_CHECK_FASTQ.out.reads, INPUT_CHECK_FASTQ.out.sample_count)
+        log.info "test here "
+        INPUT_CHECK_FASTQ.out.sample_count.view()
+        INPUT_CHECK_FASTQ.out.sample_count.collect().view()
         DOWNSTREAM_ARCHR (PREPROCESS_DEFAULT.out[2], "preprocess_default", prep_genome_run, PREPROCESS_DEFAULT.out[5], PREPROCESS_DEFAULT.out[6], prep_gtf_run, PREPROCESS_DEFAULT.out[7], PREPROCESS_DEFAULT.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1]) // take a tuple (sample_name, fragment_path, tsv_path) as input
         SPLIT_BAM (PREPROCESS_DEFAULT.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_DEFAULT.out[4].collect(), params.barcode_regex) // input: sample_name, all_bams, all_fragments, barcode_regex

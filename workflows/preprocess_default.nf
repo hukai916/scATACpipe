@@ -56,6 +56,8 @@ include { QUALIMAP         } from '../modules/local/qualimap'    addParams( opti
 include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
+include { COMBINE_FRAGMENTS } from '../modules/local/combine_fragments'
+
 
 
 ////////////////////////////////////////////////////
@@ -64,6 +66,7 @@ include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensem
 workflow PREPROCESS_DEFAULT {
   take:
     reads
+    sample_count
 
   main:
     // Examine if all required parameters supplied:
@@ -213,10 +216,10 @@ workflow PREPROCESS_DEFAULT {
 
     // module: generate fragment file with sinto
     // use raw bam file since ArchR may take advantage of the duplication info.
-    GET_FRAGMENTS (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam)
+    GET_FRAGMENTS (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam, sample_count)
 
     // module: combine fragments with are from the same library (with same sample name)
-    // COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name, GET_FRAGMENTS.out.fragments.collect())
+    COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name, GET_FRAGMENTS.out.fragments.collect())
 
     // Collect all output results for MultiQC report:
     res_files = Channel.empty()
@@ -274,8 +277,8 @@ workflow PREPROCESS_DEFAULT {
 
   emit:
     res_files // out[0]: res folders for MultiQC report
-    GET_FRAGMENTS.out.fragments // out[1]: for split bed
-    GET_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
+    COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
+    COMBINE_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
     REMOVE_DUPLICATE.out.sample_name // out[3]: for split bam
     REMOVE_DUPLICATE.out.bam // out[4]: for split bam
     prep_genome_name         // out[5]: for DOWNSTREAM_ARCHR

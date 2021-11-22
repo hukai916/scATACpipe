@@ -12,16 +12,26 @@ workflow INPUT_CHECK_FASTQ {
 
     main:
     SAMPLESHEET_CHECK_FASTQ ( samplesheet )
-        .splitCsv(header: true, sep: ",", strip: true)
-        .map {
-          row ->
-            [ row.sample_name, row.path_fastq_1, row.path_fastq_2, row.path_barcode ]
-        }
-        .unique()
-        .set { reads }
+
+    reads = SAMPLESHEET_CHECK_FASTQ
+              .out
+              .csv
+              .splitCsv(header: true, sep: ",", strip: true)
+              .map {
+                row ->
+                  [ row.sample_name, row.path_fastq_1, row.path_fastq_2, row.path_barcode ]
+              }
+              .unique()
+
+    sample_count = SAMPLESHEET_CHECK_FASTQ
+                    .out
+                    .count
+                    .splitCsv(header: false, sep: ",", strip: true)
 
     emit:
     reads // channel: [ val(meta), [ reads ] ]
+    sample_count // total number of samples
+    
 }
 
 // Function to get list of [ meta, [ fastq_1, fastq_2 ] ]

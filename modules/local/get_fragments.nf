@@ -14,11 +14,12 @@ process GET_FRAGMENTS {
     input:
     val sample_name
     path bam
+    val sample_count
 
     output:
     val sample_name, emit: sample_name
-    path "fragments.sort.bed.gz", emit: fragments
-    tuple val(sample_name), path("fragments.sort.bed.gz"), emit: ch_fragment
+    path "*.sort.tsv", emit: fragments
+    tuple val(sample_name), path("*.sort.tsv"), emit: ch_fragment
 
     script:
 
@@ -30,9 +31,7 @@ process GET_FRAGMENTS {
     sinto fragments $options.args --nproc $task.cpus --bam $bam -f fragments.tsv --barcode_regex "[^:]*"
     # sort and bzip the fragment file
     sort -k 1,1 -k2,2n fragments.tsv > fragments.sort.tsv
-    bgzip fragments.sort.tsv
-    mv fragments.sort.tsv.gz ${sample_name}.
-
+    mv fragments.sort.tsv ${sample_name}.${sample_count}.sort.tsv
 
     """
 }

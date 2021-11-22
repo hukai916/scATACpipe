@@ -17,11 +17,15 @@ process SAMPLESHEET_CHECK_FASTQ {
     path samplesheet
 
     output:
-    path '*.csv'
+    path '*.csv', emit: csv
+    path '*.txt', emit: count
+
 
     script:
 
     """
     check_samplesheet_fastq.py $samplesheet samplesheet.valid.csv
+    awk 'NR > 1 { print NR-1 }' samplesheet.valid.csv > sample_count.txt
+
     """
 }
