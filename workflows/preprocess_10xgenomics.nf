@@ -93,10 +93,10 @@ workflow PREPROCESS_10XGENOMICS {
     } else if (params.ref_fasta_ucsc) {
       // Module: download ucsc genome
       DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-      // Module: prep_genome
-      PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
       // Module: download ucsc gtf
       DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc)
+      // Module: prep_genome
+      PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
       // Module: prep_gtf
       PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
       // Module: prepare cellranger index
