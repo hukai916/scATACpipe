@@ -38,6 +38,32 @@ process CELLRANGER_ATAC_COUNT {
     mkdir \$infastq
     cp ${sample_name}_S1_L*_*_001.fastq.gz \$infastq/
 
+    # cellranger_atac is very strict regarding fastq nomenclature, need to match it
+    # note that the Lane number may not match with the original, but it should not matter
+    cd \$infastq/
+    # get number of lanes
+    lanes=(\$(ls -d *_R1_001.fastq.gz))
+    lanes=\${#lanes[@]}
+
+    # get unique sample_count
+    sample_count=array()
+    sample_fastq=(\$(ls -d *.fastq.gz))
+    for fastq in "\${sample_fastq[@]}"
+    do
+      [[ \$fastq =~ _L([0-9]+)_R[0-9]_(001.fastq.gz) ]]
+      sample_count+=(\${BASH_REMATCH[1]})
+    done
+    uniq_sample_count=(\$(echo "\${sample_count[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+
+    # rename sample_count to use formatted lane number
+    for sample_count in "\${sample_count[@]}"
+    do
+      printf -v lane "%03d" \$sample_count
+      mv ${sample_name}_S1_L\${sample_count}_R1_001.fastq.gz ${sample_name}_S1_L\${lane}_R1_001.fastq.gz
+      mv ${sample_name}_S1_L\${sample_count}_R2_001.fastq.gz ${sample_name}_S1_L\${lane}_R2_001.fastq.gz
+      mv ${sample_name}_S1_L\${sample_count}_R3_001.fastq.gz ${sample_name}_S1_L\${lane}_R3_001.fastq.gz
+    done
+
     cellranger-atac count $options.args \
     --id \$outfolder \
     --fastqs \$infastq \
