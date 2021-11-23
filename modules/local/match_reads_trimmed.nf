@@ -25,7 +25,7 @@ process MATCH_READS_TRIMMED {
 
     """
     mkdir match_trim
-    cp $read1_fastq match_trim/
+    cp $read1_fastq match_trim/ # if using cp -P, gzip is problematic then.
     cp $read2_fastq match_trim/
     cd match_trim
     mv $read1_fastq first_read_in_pair.fq.gz
