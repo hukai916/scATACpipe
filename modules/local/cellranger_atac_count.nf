@@ -64,6 +64,8 @@ process CELLRANGER_ATAC_COUNT {
       mv ${sample_name}_S1_L\${sample_count}_R3_001.fastq.gz ${sample_name}_S1_L\${lane}_R3_001.fastq.gz
     done
 
+    cd ../
+
     cellranger-atac count $options.args \
     --id \$outfolder \
     --fastqs \$infastq \
