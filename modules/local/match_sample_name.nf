@@ -17,7 +17,7 @@ process MATCH_SAMPLE_NAME {
 
     output:
     val sample_name, emit: sample_name
-    path "*.fastq.gz", emit: sample_files
+    path "name_matched_fastq/*.fastq.gz", emit: sample_files
 
     // path "*_R1_001.fastq.gz", emit: read1_fastq
     // path "*_R2_001.fastq.gz", emit: barcode_fastq
@@ -29,9 +29,10 @@ process MATCH_SAMPLE_NAME {
     # rename sample names in case of unexpected inconsistency:
     # note that the lane number may not match with original, but it will not hurt anything.
 
-    cp -P $path_fastq_1 ${sample_name}_S1_L${sample_count}_R1_001.fastq.gz
-    cp -P $path_fastq_2 ${sample_name}_S1_L${sample_count}_R3_001.fastq.gz
-    cp -P $path_barcode ${sample_name}_S1_L${sample_count}_R2_001.fastq.gz
+    mkdir name_matched_fastq
+    cp -P $path_fastq_1 name_matched_fastq/${sample_name}_S1_L${sample_count}_R1_001.fastq.gz
+    cp -P $path_fastq_2 name_matched_fastq/${sample_name}_S1_L${sample_count}_R3_001.fastq.gz
+    cp -P $path_barcode name_matched_fastq/${sample_name}_S1_L${sample_count}_R2_001.fastq.gz
 
     """
 }
