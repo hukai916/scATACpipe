@@ -30,9 +30,9 @@ process MATCH_SAMPLE_NAME {
     # note that the lane number may not match with original, but it will not hurt anything.
     # dev note: if you cp softlink to a different filename, the actual file will be copied
 
-    mv $path_fastq_1 ${sample_name}_S1_L${sample_count}_R1_001.fastq.gz
-    mv $path_fastq_2 ${sample_name}_S1_L${sample_count}_R3_001.fastq.gz
-    mv $path_barcode ${sample_name}_S1_L${sample_count}_R2_001.fastq.gz
+    cp $path_fastq_1 ${sample_name}_S1_L${sample_count}_R1_001.fastq.gz
+    cp $path_fastq_2 ${sample_name}_S1_L${sample_count}_R3_001.fastq.gz
+    cp $path_barcode ${sample_name}_S1_L${sample_count}_R2_001.fastq.gz
 
     """
 }
