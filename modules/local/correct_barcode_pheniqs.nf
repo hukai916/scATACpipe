@@ -14,7 +14,6 @@ process CORRECT_BARCODE_PHENIQS {
     input:
     val sample_name
     path barcode_fastq
-    path barcode_whitelist
     path read1_fastq
     path read2_fastq
 

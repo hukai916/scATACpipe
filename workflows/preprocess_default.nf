@@ -87,28 +87,24 @@ workflow PREPROCESS_DEFAULT {
     GET_10XGENOMICS_FASTQ.out.barcode_fastq)
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
-    if (!(params.barcode_whitelist)) {
-      log.info "NOTICE: --barcode_whitelist: not supplied, skip barcode correction!"
+    if (!(params.barcode_correction)) {
       ADD_BARCODE_TO_READS (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.barcode_fastq, Channel.fromPath("$projectDir/assets/file_token.txt").first(), GET_10XGENOMICS_FASTQ.out.read1_fastq, GET_10XGENOMICS_FASTQ.out.read2_fastq)
-    } else {
-      // Module: determine the right whitelist barcode
-      GET_WHITELIST_BARCODE (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.barcode_fastq, Channel.fromPath(params.barcode_whitelist).collect(), GET_10XGENOMICS_FASTQ.out.read1_fastq, GET_10XGENOMICS_FASTQ.out.read2_fastq)
-
-      // Allow users to choose from barcode_correction.R or Pheniqs:
-      if (params.barcode_correction == "naive") {
+    } else if (params.barcode_correction == "pheniqs") {
+      CORRECT_BARCODE_PHENIQS (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.barcode_fastq, GET_10XGENOMICS_FASTQ.out.read1_fastq, GET_10XGENOMICS_FASTQ.out.read2_fastq)
+    } else if (params.barcode_correction == "naive") {
+      if (params.barcode_whitelist) {
+        // Module: determine the right whitelist barcode
+        GET_WHITELIST_BARCODE (GET_10XGENOMICS_FASTQ.out.sample_name, GET_10XGENOMICS_FASTQ.out.barcode_fastq, Channel.fromPath(params.barcode_whitelist).collect(), GET_10XGENOMICS_FASTQ.out.read1_fastq, GET_10XGENOMICS_FASTQ.out.read2_fastq)
         CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode, GET_WHITELIST_BARCODE.out.read1_fastq, GET_WHITELIST_BARCODE.out.read2_fastq)
-      // MATCH_READS (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.corrected_barcode, GET_10XGENOMICS_FASTQ.out.read1_fastq, GET_10XGENOMICS_FASTQ.out.read2_fastq)
-      // Note that the above might be problematic, since MATCH_READS would take inputs from two channels, the instance of samples may not match.
         MATCH_READS (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.corrected_barcode, CORRECT_BARCODE.out.read1_fastq, CORRECT_BARCODE.out.read2_fastq)
-
         ADD_BARCODE_TO_READS (MATCH_READS.out.sample_name, MATCH_READS.out.barcode1_fastq, MATCH_READS.out.barcode2_fastq, MATCH_READS.out.read1_fastq, MATCH_READS.out.read2_fastq)
       } else {
-        // use pheniqs:
-        CORRECT_BARCODE_PHENIQS (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode, GET_WHITELIST_BARCODE.out.read1_fastq, GET_WHITELIST_BARCODE.out.read2_fastq)
-        // will not need a separate match_reads step since barodes are added and r1 and r2 must be matched already.
-
-        // MATCH_READS (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.corrected_barcode, CORRECT_BARCODE_PHENIQS.out.read1_fastq, CORRECT_BARCODE_PHENIQS.out.read2_fastq)
+        log.error "Pls also supply --barcode_whitelist!"
+        exit 1, "EXIT!"
       }
+    } else {
+      log.error "Invalid --barcode_correction value supplied!"
+      exit 1, "EXIT!"
     }
 
     // module: trimming off adapter
