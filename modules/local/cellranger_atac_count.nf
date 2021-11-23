@@ -58,7 +58,7 @@ process CELLRANGER_ATAC_COUNT {
     # rename sample_count to use formatted lane number
     for i in "\${!uniq_sample_count[@]}"
     do
-      shift_one=$(expr \$i + 1) # should not matter though
+      shift_one=\$(expr \$i + 1) # should not matter though
       printf -v lane "%03d" \$shift_one
       mv ${sample_name}_S1_L\${uniq_sample_count[\$i]}_R1_001.fastq.gz ${sample_name}_S1_L\${lane}_R1_001.fastq.gz
       mv ${sample_name}_S1_L\${uniq_sample_count[\$i]}_R2_001.fastq.gz ${sample_name}_S1_L\${lane}_R2_001.fastq.gz
