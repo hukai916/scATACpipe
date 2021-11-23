@@ -35,7 +35,7 @@ process CORRECT_BARCODE_PHENIQS {
 
     # step2, retrieve valid barcode pool and concentration in raw counts
     barcode_length=\$((zcat $barcode_fastq || true) | awk 'NR==2 {print length(\$0); exit}')
-    printf -v bc_pattern '%0.s-' \$(seq 1 \$barcode_length)
+    printf -v bc_pattern '%0.sC' \$(seq 1 \$barcode_length)
     umi_tools whitelist $options.args -I $barcode_fastq --bc-pattern \$bc_pattern | grep -v "#" > valid_barcode_pool.txt
 
     # step3, make a json config file
