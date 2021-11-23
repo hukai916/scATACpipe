@@ -108,9 +108,8 @@ workflow PREPROCESS_DEFAULT {
     }
 
     // module: trimming off adapter
-    if ((params.barcode_whitelist) && (params.barcode_correction == "pheniqs")) {
+    if (params.barcode_correction == "pheniqs") {
       // CUTADAPT (MATCH_READS.out.sample_name, MATCH_READS.out.read1_fastq, MATCH_READS.out.read2_fastq, params.read1_adapter, params.read2_adapter)
-
       CUTADAPT (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.read1_fastq, CORRECT_BARCODE_PHENIQS.out.read2_fastq, params.read1_adapter, params.read2_adapter)
     } else {
       CUTADAPT (ADD_BARCODE_TO_READS.out.sample_name, ADD_BARCODE_TO_READS.out.read1_fastq, ADD_BARCODE_TO_READS.out.read2_fastq, params.read1_adapter, params.read2_adapter)
