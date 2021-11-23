@@ -29,12 +29,12 @@ process CORRECT_BARCODE_PHENIQS {
     script:
 
     """
-
     # step1, interleave read and index files
     pheniqs mux -R log_interleave.txt -i $read1_fastq -i $barcode_fastq -i $read2_fastq --output ${sample_name}.cram
 
     # step2, retrieve valid barcode pool and concentration in raw counts
     get_barcode_pool.py $barcode_whitelist $barcode_fastq $options.read_count_cutoff valid_barcode_pool.txt
+    # Here need to modify the umi-tools: by adding some arbitory N to fastq file.
 
     # step3, make a json config file
     barcode_length=\$(awk 'NR==1 {print length(\$(NF-1)); exit}' valid_barcode_pool.txt)
