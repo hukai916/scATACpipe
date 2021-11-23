@@ -43,14 +43,15 @@ process ADD_BARCODE_TO_READS {
 
     mkdir R1
     # ln $barcode1_fastq R1/ # must be hard link, note hard link won't be created with docker, so use cp instead
-    cp $barcode1_fastq R1/
-    cp $read1_fastq R1/
+    # better to use cp -P to copy soft links
+    cp -P $barcode1_fastq R1/
+    cp -P $read1_fastq R1/
     sinto barcode $options.args --barcode_fastq R1/$barcode1_fastq --read1 R1/$read1_fastq -b \$barcode_length
     rm R1/$barcode1_fastq R1/$read1_fastq
 
     mkdir R2
-    cp $barcode2_fastq R2/
-    cp $read2_fastq R2/
+    cp -P $barcode2_fastq R2/
+    cp -P $read2_fastq R2/
     sinto barcode $options.args --barcode_fastq R2/$barcode2_fastq --read1 R2/$read2_fastq -b \$barcode_length
     rm R2/$read2_fastq R2/$barcode2_fastq
     """
