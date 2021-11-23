@@ -23,7 +23,7 @@ process BAM_FILTER {
     script:
 
     // Some codes adapted from Haibo Liu, kudos to him!
-    if (filter == 'both') // filter out both mitochondiral and "unproper reads"
+    if (filter == 'both') // filter out both mitochondiral and "improper reads"
     """
     # Keep only the following reads:
     # 1. Paried reads mapped in the correct orientation.
@@ -49,7 +49,7 @@ process BAM_FILTER {
 
     """
 
-    else if (filter == 'unproper') // filter out only "unproper reads"
+    else if (filter == 'improper') // filter out only "improper reads"
     """
     # Keep only the following reads:
     # 1. Paried reads mapped in the correct orientation.

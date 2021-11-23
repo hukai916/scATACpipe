@@ -212,6 +212,27 @@ class WorkflowMain {
               }
           }
         }
+
+        // Check if other parameters are acceptable
+        if (params.mapper) {
+          if (!(params.mapper == "bwa") && !(params.mapper == "minimap2") && !(params.mapper == "bowtie2")) {
+            log.error "--mapper must be from 'bwa', 'minimap2', 'bowtie2(todo)'."
+            System.exit(0)
+          }
+        }
+        if (params.barcode_correction) {
+          if (!(params.barcode_correction == "naive") && !(params.barcode_correction == "pheniqs")) {
+            log.error "--barcode_correction must be from 'naive', 'pheniqs'."
+            System.exit(0)
+          }
+        }
+        if (params.filter) {
+          if (!(params.filter == "both") && !(params.filter == "improper")) {
+            log.error "--filter must be from 'both', 'improper'."
+            System.exit(0)
+          }
+        }
+
     }
 
     //

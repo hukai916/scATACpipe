@@ -5,17 +5,25 @@
     "description": "A NF pipeline for scATACseq data analysis.",
     "type": "object",
     "definitions": {
-        "output_options": {
-            "title": "Output options",
+        "basic_options": {
+            "title": "Basic options",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define output related options",
             "properties": {
+                "help": {
+                    "type": "string",
+                    "description": "Print help info."
+                },
                 "outdir": {
                     "type": "string",
                     "description": "Path to the output directory where the results will be saved.",
                     "default": "./results",
                     "fa_icon": "fas fa-folder-open"
+                },
+                "support_genome": {
+                    "type": "string",
+                    "description": "Use this flag to view currently supported genomes."
                 },
                 "multiqc_title [todo]": {
                     "type": "string",
@@ -25,7 +33,7 @@
             }
         },
 
-        "input_fragments_option1": {
+        "input_fragment_option1": {
             "title": "Input fragments [option 1: using UCSC/ENSEMBL genome]",
             "type": "object",
             "fa_icon": "fas fa-terminal",
@@ -50,7 +58,7 @@
                 }
             }
         },
-        "input_fragments_option2": {
+        "input_fragment_option2": {
             "title": "Input fragments [option 2: using custom genome]",
             "type": "object",
             "fa_icon": "fas fa-terminal",
@@ -79,7 +87,7 @@
                 }
             }
         },
-        "input_fragments_option3": {
+        "input_fragment_option3": {
             "title": "Input fragments [option 3: using Bioconductor objects]",
             "type": "object",
             "fa_icon": "fas fa-terminal",
@@ -122,89 +130,137 @@
                 },
                 "preprocess": {
                     "type": "string",
-                    "description": "Preprocess method. [default | 10xgenomics]",
+                    "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
-                "ref_fasta_ensembl | --ref_fasta_ucsc": {
+                "ref_fasta_ensembl|--ref_fasta_ucsc": {
                     "type": "string",
-                    "description": "A genome name, either ENSEMBL style (e.g. homo_sapiens) or UCSC style (e.g. mm10)."
+                    "description": "A genome name, either from ENSEMBL (e.g. homo_sapiens) or UCSC (e.g. mm10)."
                 },
                 "mapper": {
                     "type": "string",
-                    "description": "Required if '--preprocess default'. [bwa | bowtie2 (todo) | minimap2].",
+                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)', 'minimap2'.",
                     "default": "bwa"
                 },
                 "barcode_whitelist": {
                     "type": "string",
-                    "description": "Optional. For '--preprocess default' only. Path to white barcode file."
+                    "description": "For '--preprocess default' only. Path to whitelist folder.",
+                    "default": "./assets/whitelist_barcodes"
+                },
+                "barcode_correction": {
+                    "type": "string",
+                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs'.",
+                    "default": "pheniqs"
+                },
+                "species_latin_name": {
+                    "type": "string",
+                    "description": "Must be quoted."
+                },
+                "archr_blacklist": {
+                    "type": "string",
+                    "description": "Optional. Path to blacklist file."
                 }
             }
         },
-
-        "input_fragment_options": {
-            "title": "[Mode 1] Input fragments",
+        "input_fastq_option2": {
+            "title": "Input FASTQs [option 2: using custom genome]",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
             "properties": {
-                "test": {
-                    "title": "[Mode 1] Input fragments",
-                    "type": "object",
-                    "fa_icon": "fas fa-terminal",
-                    "description": "Defines required parameters if input fragment files.",
-                    "properties": {
-                      "outdir": {
-                          "type": "string",
-                          "description": "Path to the output directory where the results will be saved.",
-                          "default": "./results",
-                          "fa_icon": "fas fa-folder-open"
-                      }
-                    }
-                },
-
-                "outdir": {
+                "input_fastq": {
                     "type": "string",
-                    "description": "Path to the output directory where the results will be saved.",
-                    "default": "./results",
-                    "fa_icon": "fas fa-folder-open"
+                    "description": "Path to input sample sheet for FASTQ files.",
+                    "fa_icon": "fas fa-arrow-circle-right"
                 },
-                "email": {
+                "preprocess": {
                     "type": "string",
-                    "description": "Email address for completion summary.",
-                    "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                    "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
+                    "fa_icon": "fas fa-arrow-circle-right"
                 },
-
-            }
-        },
-
-        "input_output_options2": {
-            "title": "Input/output options2",
-            "type": "object",
-            "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data and save output data.",
-            "properties": {
-                "outdir": {
+                "ref_fasta": {
                     "type": "string",
-                    "description": "Path to the output directory where the results will be saved.",
-                    "default": "./results",
-                    "fa_icon": "fas fa-folder-open"
+                    "description": "Path to refernce genome file."
                 },
-                "email": {
+                "ref_gtf": {
                     "type": "string",
-                    "description": "Email address for completion summary.",
-                    "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+                    "description": "Path to refernce gtf file."
                 },
-                "multiqc_title": {
+                "mapper": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
+                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)', 'minimap2'.",
+                    "default": "bwa"
+                },
+                "barcode_whitelist": {
+                    "type": "string",
+                    "description": "For '--preprocess default' only. Path to whitelist folder.",
+                    "default": "./assets/whitelist_barcodes"
+                },
+                "barcode_correction": {
+                    "type": "string",
+                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs'.",
+                    "default": "pheniqs"
+                },
+                "species_latin_name": {
+                    "type": "string",
+                    "description": "Must be quoted."
+                },
+                "archr_blacklist": {
+                    "type": "string",
+                    "description": "Optional. Path to blacklist file."
                 }
             }
         },
+        "input_fastq_option3": {
+            "title": "Input FASTQs [option 3: using existing genome index]",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Defines required parameters if input fragment files.",
+            "properties": {
+                "input_fastq": {
+                    "type": "string",
+                    "description": "Path to input sample sheet for FASTQ files.",
+                    "fa_icon": "fas fa-arrow-circle-right"
+                },
+                "preprocess": {
+                    "type": "string",
+                    "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
+                    "fa_icon": "fas fa-arrow-circle-right"
+                },
+                "--ref_bwa_index|--ref_minimap2_index": {
+                    "type": "string",
+                    "description": "Path to refernce index folder."
+                },
+                "ref_gtf": {
+                    "type": "string",
+                    "description": "Path to refernce gtf file."
+                },
+                "mapper": {
+                    "type": "string",
+                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)', 'minimap2'.",
+                    "default": "bwa"
+                },
+                "barcode_whitelist": {
+                    "type": "string",
+                    "description": "For '--preprocess default' only. Path to whitelist folder.",
+                    "default": "./assets/whitelist_barcodes"
+                },
+                "barcode_correction": {
+                    "type": "string",
+                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs'.",
+                    "default": "pheniqs"
+                },
+                "species_latin_name": {
+                    "type": "string",
+                    "description": "Must be quoted."
+                },
+                "archr_blacklist": {
+                    "type": "string",
+                    "description": "Optional. Path to blacklist file."
+                }
+            }
+        },
+
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -393,10 +449,29 @@
                 }
             }
         }
+
     },
     "allOf": [
         {
-            "$ref": "#/definitions/input_output_options2"
+            "$ref": "#/definitions/basic_options"
+        },
+        {
+            "$ref": "#/definitions/input_fragment_option1"
+        },
+        {
+            "$ref": "#/definitions/input_fragment_option2"
+        },
+        {
+            "$ref": "#/definitions/input_fragment_option3"
+        },
+        {
+            "$ref": "#/definitions/input_fastq_option1"
+        },
+        {
+            "$ref": "#/definitions/input_fastq_option2"
+        },
+        {
+            "$ref": "#/definitions/input_fastq_option3"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
@@ -409,141 +484,80 @@
         }
     ],
     "properties": {
-        "input_fastq": {
-            "type": "string",
-            "fa_icon": "fas fa-arrow-circle-right"
-        },
-        "preprocess": {
-            "type": "string"
-        },
-        "support_genome": {
-            "type": "string",
-            "fa_icon": "fas fa-dna"
-        },
-        "species_latin_name": {
-            "type": "string",
-            "default": "NULL",
-            "fa_icon": "fas fa-paw"
-        },
-        "ref_bwa_index": {
-            "type": "string"
-        },
-        "ref_minimap2_index": {
-            "type": "string"
-        },
-        "ref_fasta": {
-            "type": "string"
-        },
-        "ref_gtf": {
-            "type": "string"
-        },
-        "ref_fasta_ucsc": {
-            "type": "string"
-        },
-        "ref_fasta_ensembl": {
-            "type": "string"
-        },
-        "barcode_whitelist": {
-            "type": "string",
-            "default": "assets/barcode/737K-cratac-v1.txt.gz"
-        },
-        "barcode_correction": {
-            "type": "string",
-            "default": "pheniqs"
-        },
-        "barcode_regex": {
-            "type": "string"
-        },
         "read1_adapter": {
             "type": "string",
+            "description": "For trimming read1.",
             "default": "AGATCGGAAGAGC"
         },
         "read2_adapter": {
             "type": "string",
+            "description": "For trimming read2.",
             "default": "AGATCGGAAGAGC"
-        },
-        "mapper": {
-            "type": "string",
-            "default": "bwa"
         },
         "filter": {
             "type": "string",
+            "description": "Algorithm for filtering bam file. Choose from 'false', 'both', 'improper'",
             "default": "both"
         },
-        "ref_cellranger_index": {
-            "type": "string"
-        },
-        "ref_cellranger_ucsc": {
-            "type": "string"
-        },
-        "ref_cellranger_ensembl": {
-            "type": "string"
-        },
-        "biorad_genome": {
-            "type": "string"
-        },
-        "input_fragment": {
+        "barcode_regex": {
             "type": "string",
-            "fa_icon": "fas fa-arrow-circle-right"
+            "description": "Regular expression used to detect barcodes, used for SPLIT_BAM.",
+            "default": "[^:]*",
+            "hidden": true
         },
         "archr_thread": {
             "type": "integer",
+            "description": "Number of threads used for ArchR.",
             "default": 4
-        },
-        "archr_genome": {
-            "type": "string"
-        },
-        "archr_genome_fasta": {
-            "type": "string"
-        },
-        "archr_txdb": {
-            "type": "string"
-        },
-        "archr_org": {
-            "type": "string"
-        },
-        "archr_bsgenome": {
-            "type": "string"
-        },
-        "archr_blacklist_bed": {
-            "type": "string"
         },
         "archr_filter_doublets_ratio": {
             "type": "number",
-            "default": 1.5
+            "default": 1.5,
+            "hidden": true
         },
         "archr_scrnaseq": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "archr_scrnaseq_grouplist": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "marker_peak_geneSymbol": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "marker_peak_clusters": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "marker_peak_clusters2": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "pairwise_test_clusters_1": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "pairwise_test_clusters_2": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "pairwise_test_clusters2_1": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "pairwise_test_clusters2_2": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "custom_peaks": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         },
         "trajectory_groups": {
-            "type": "string"
+            "type": "string",
+            "hidden": true
         }
     }
 }

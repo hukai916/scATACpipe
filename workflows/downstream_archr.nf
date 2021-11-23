@@ -326,8 +326,8 @@ workflow DOWNSTREAM_ARCHR {
         }
 
         // Build ArchR genome annotation file:
-        if (params.archr_blacklist_bed) {
-          BUILD_GENOME_ANNOTATION(BUILD_BSGENOME.out.bsgenome, BUILD_GENE_ANNOTATION.out.gene_annotation, Channel.fromPath(params.archr_blacklist_bed))
+        if (params.archr_blacklist) {
+          BUILD_GENOME_ANNOTATION(BUILD_BSGENOME.out.bsgenome, BUILD_GENE_ANNOTATION.out.gene_annotation, Channel.fromPath(params.archr_blacklist))
         } else {
           BUILD_GENOME_ANNOTATION(BUILD_BSGENOME.out.bsgenome, BUILD_GENE_ANNOTATION.out.gene_annotation, "$projectDir/assets/file_token.txt")
         }
