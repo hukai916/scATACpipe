@@ -31,7 +31,7 @@ process MATCH_SAMPLE_NAME {
 
     cp $path_fastq_1 ${sample_name}_S1_L${sample_count}_R1_001.fastq.gz
     cp $path_fastq_2 ${sample_name}_S1_L${sample_count}_R3_001.fastq.gz
-    cp $barcode_fastq ${sample_name}_S1_L${sample_count}_R2_001.fastq.gz
+    cp $path_barcode ${sample_name}_S1_L${sample_count}_R2_001.fastq.gz
 
     """
 }
