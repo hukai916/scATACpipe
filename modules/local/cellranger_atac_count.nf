@@ -37,7 +37,7 @@ process CELLRANGER_ATAC_COUNT {
     # prepare for input fastq folder:
     infastq=input_fastq_\$outfolder
     mkdir \$infastq
-    cp ${sample_name}_S1_L*_*_001.fastq.gz \$infastq/
+    cp -P ${sample_name}_S1_L*_*_001.fastq.gz \$infastq/
 
     # cellranger_atac is very strict regarding fastq nomenclature, need to match it
     # note that the Lane number may not match with the original, but it should not matter
@@ -47,7 +47,6 @@ process CELLRANGER_ATAC_COUNT {
     lanes=\${#lanes[@]}
 
     # get unique sample_count
-    sample_count=array()
     sample_fastq=(\$(ls -d *.fastq.gz))
     for fastq in "\${sample_fastq[@]}"
     do
