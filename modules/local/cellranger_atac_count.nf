@@ -56,7 +56,7 @@ process CELLRANGER_ATAC_COUNT {
     uniq_sample_count=(\$(echo "\${sample_count[@]}" | tr ' ' '\\n' | sort -u | tr '\\n' ' '))
 
     # rename sample_count to use formatted lane number
-    for sample_count in "\${sample_count[@]}"
+    for sample_count in "\${uniq_sample_count[@]}"
     do
       printf -v lane "%03d" \$sample_count
       mv ${sample_name}_S1_L\${sample_count}_R1_001.fastq.gz ${sample_name}_S1_L\${lane}_R1_001.fastq.gz
