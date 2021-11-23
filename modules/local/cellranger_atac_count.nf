@@ -27,6 +27,7 @@ process CELLRANGER_ATAC_COUNT {
     def avail_mem = task.memory ? "${ (task.memory.toBytes().intdiv(1073741824) * 0.9).toInteger() }" : ''
 
     """
+
     # the fastq file name must not contain special characters other than dash, underscore, digit; dot is not allowed
     # the --id must not contain dot either:
 
@@ -53,7 +54,7 @@ process CELLRANGER_ATAC_COUNT {
       [[ \$fastq =~ _L([0-9]+)_R[0-9]_(001.fastq.gz) ]]
       sample_count+=(\${BASH_REMATCH[1]})
     done
-    uniq_sample_count=(\$(echo "\${sample_count[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+    uniq_sample_count=(\$(echo "\${sample_count[@]}" | tr ' ' '\\n' | sort -u | tr '\\n' ' '))
 
     # rename sample_count to use formatted lane number
     for sample_count in "\${sample_count[@]}"
