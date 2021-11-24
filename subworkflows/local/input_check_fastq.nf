@@ -19,7 +19,7 @@ workflow INPUT_CHECK_FASTQ {
               .splitCsv(header: true, sep: ",", strip: true)
               .map {
                 row ->
-                  [ row.sample_name, path(row.path_fastq_1), path(row.path_fastq_2), path(row.path_barcode) ]
+                  [ row.sample_name, row.path_fastq_1, row.path_fastq_2, row.path_barcode ]
               }
               .unique()
 
