@@ -24,5 +24,7 @@ process STAGE_SAMPLE {
 
     """
     touch test.txt
+    cp $path_barcode test.file
+    
     """
 }

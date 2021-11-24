@@ -19,7 +19,6 @@ process GET_WHITELIST_BARCODE {
     tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq), emit: reads
     path "selected_*", emit: whitelist_barcode
 
-
     script:
 
     """
