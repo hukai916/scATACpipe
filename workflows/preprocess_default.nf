@@ -99,7 +99,8 @@ workflow PREPROCESS_DEFAULT {
         // Module: determine the right whitelist barcode
         // GET_WHITELIST_BARCODE (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.barcode_fastq, Channel.fromPath(params.barcode_whitelist).collect(), STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq)
         // GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.barcode_whitelist).first())
-        GET_WHITELIST_BARCODE (reads, 'assets/whitelist_barcodes')
+        GET_WHITELIST_BARCODE (reads, "$projectDir/assets/whitelist_barcodes")
+
 
 
         // Here must use Channel.fromPath() to convert params into path object. If it is
