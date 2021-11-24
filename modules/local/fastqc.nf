@@ -12,10 +12,7 @@ process FASTQC {
     container "hukai916/fastqc_0.11.9:0.1"
 
     input:
-    val sample_name
-    path read1_fastq
-    path read2_fastq
-    path barcode_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
 
     output:
     path "*.html", emit: html

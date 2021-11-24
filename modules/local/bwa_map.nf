@@ -12,9 +12,7 @@ process BWA_MAP {
     container "hukai916/bwa_xenial:0.1"
 
     input:
-    val sample_name
-    path read1_fastq
-    path read2_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq)
     path bwa_index_folder
 
     output:

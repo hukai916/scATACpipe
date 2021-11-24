@@ -12,17 +12,12 @@ process CORRECT_BARCODE_PHENIQS {
     container "hukai916/pheniqs_xenial:0.2"
 
     input:
-    val sample_name
-    path barcode_fastq
-    path read1_fastq
-    path read2_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
 
     output:
+    tuple val(sample_name), path("barcode_corrected*.first_read_in_pair.fastq.gz"), path("barcode_corrected*.second_read_in_pair.fastq.gz"), emit: reads_0
     val sample_name, emit: sample_name
     path "summary_*.txt", emit: corrected_barcode_summary
-    path "barcode_corrected*.first_read_in_pair.fastq.gz", emit: read1_fastq
-    path "barcode_corrected*.second_read_in_pair.fastq.gz", emit: read2_fastq
-    // path "barcode_corrected*.R3.fastq.gz", emit: corrected_barcode
     // barcode is not needed for pheniqs since corrected barcodes are added by default.
 
     script:

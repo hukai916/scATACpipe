@@ -31,7 +31,6 @@ def modules = params.modules.clone()
 
 // Modules: local
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions'   addParams( options: [publish_files : ['csv':'']] )
-include { STAGE_SAMPLE } from '../modules/local/stage_sample'
 include { CELLRANGER_ATAC_COUNT } from '../modules/local/cellranger_atac_count'   addParams( options: modules['cellranger_atac_count'] )
 include { GET_WHITELIST_BARCODE } from '../modules/local/get_whitelist_barcode'
 include { CORRECT_BARCODE       } from '../modules/local/correct_barcode'         addParams( options: modules['correct_barcode'] )
@@ -39,7 +38,8 @@ include { CORRECT_BARCODE_PHENIQS } from '../modules/local/correct_barcode_pheni
 include { MATCH_READS           } from '../modules/local/match_reads'             addParams( options: modules['match_reads'] )
 include { MATCH_READS_TRIMMED   } from '../modules/local/match_reads_trimmed'     addParams( options: modules['match_reads_trimmed'] )
 include { FASTQC                } from '../modules/local/fastqc'                  addParams( options: modules['fastqc'] )
-include { ADD_BARCODE_TO_READS       } from '../modules/local/add_barcode_to_reads'    addParams( options: modules['add_barcode_to_reads'] )
+include { ADD_BARCODE_TO_READS       } from '../modules/local/add_barcode_to_reads'
+include { ADD_BARCODE_TO_READS_2       } from '../modules/local/add_barcode_to_reads'
 include { CUTADAPT         } from '../modules/local/cutadapt'    addParams( options: modules['cutadapt'] )
 include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
 include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
@@ -80,29 +80,30 @@ workflow PREPROCESS_DEFAULT {
     }
     // Above is redundant to WorkflowMain::initialise()
 
+    // .out.reads: tuple val(sample_name), path(read1), path(read2), path(barcode)
+    // .out.reads_0: tuple val(sample_name), path(read1), path(read2)
+    // .out.reads_2: tuple val(sample_name), path(read1), path(read2), path(barcode1), path(barcode2)
+
     // log.info "INFO(2): --preprocess: default"
 
-    // module: stage sample by emitting individual element in tuple
-    STAGE_SAMPLE (reads)
-
     // module: fastQC
-    FASTQC (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq,
-    STAGE_SAMPLE.out.barcode_fastq)
+    FASTQC (reads)
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
-      ADD_BARCODE_TO_READS (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.barcode_fastq, Channel.fromPath("$projectDir/assets/file_token.txt").first(), STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq)
+      ADD_BARCODE_TO_READS (reads)
     } else if (params.barcode_correction == "pheniqs") {
-      CORRECT_BARCODE_PHENIQS (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.barcode_fastq, STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq)
+      CORRECT_BARCODE_PHENIQS (reads)
     } else if (params.barcode_correction == "naive") {
       if (params.barcode_whitelist) {
         // Module: determine the right whitelist barcode
         // GET_WHITELIST_BARCODE (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.barcode_fastq, Channel.fromPath(params.barcode_whitelist).collect(), STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq)
-        GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.barcode_whitelist).first())
+        GET_WHITELIST_BARCODE (reads, params.barcode_whitelist)
         // CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode, GET_WHITELIST_BARCODE.out.read1_fastq, GET_WHITELIST_BARCODE.out.read2_fastq)
         CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.reads, GET_WHITELIST_BARCODE.out.whitelist_barcode)
-        MATCH_READS (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.corrected_barcode, CORRECT_BARCODE.out.read1_fastq, CORRECT_BARCODE.out.read2_fastq)
-        ADD_BARCODE_TO_READS (MATCH_READS.out.sample_name, MATCH_READS.out.barcode1_fastq, MATCH_READS.out.barcode2_fastq, MATCH_READS.out.read1_fastq, MATCH_READS.out.read2_fastq)
+        // MATCH_READS (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.corrected_barcode, CORRECT_BARCODE.out.read1_fastq, CORRECT_BARCODE.out.read2_fastq)
+        MATCH_READS (CORRECT_BARCODE.out.reads)
+        ADD_BARCODE_TO_READS_2 (MATCH_READS.out.reads_2)
       } else {
         log.error "Pls also supply --barcode_whitelist!"
         exit 1, "EXIT!"
@@ -113,22 +114,24 @@ workflow PREPROCESS_DEFAULT {
     }
 
     // module: trimming off adapter
-    if (params.barcode_correction == "pheniqs") {
+    if (!(params.barcode_correction)) {
+      CUTADAPT (ADD_BARCODE_TO_READS.out.reads_0, params.read1_adapter, params.read2_adapter)
+    } else if (params.barcode_correction == "pheniqs") {
       // CUTADAPT (MATCH_READS.out.sample_name, MATCH_READS.out.read1_fastq, MATCH_READS.out.read2_fastq, params.read1_adapter, params.read2_adapter)
-      CUTADAPT (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.read1_fastq, CORRECT_BARCODE_PHENIQS.out.read2_fastq, params.read1_adapter, params.read2_adapter)
-    } else {
-      CUTADAPT (ADD_BARCODE_TO_READS.out.sample_name, ADD_BARCODE_TO_READS.out.read1_fastq, ADD_BARCODE_TO_READS.out.read2_fastq, params.read1_adapter, params.read2_adapter)
+      CUTADAPT (CORRECT_BARCODE_PHENIQS.out.reads_0, params.read1_adapter, params.read2_adapter)
+    } else if (params.barcode_correction == "naive") {
+      CUTADAPT (ADD_BARCODE_TO_READS_2.out.reads_0, params.read1_adapter, params.read2_adapter)
     }
 
     // module: MATCH_READS_TRIMMED: in case user choose to trim based on quality and read pair gets unbalanced.
-    MATCH_READS_TRIMMED (CUTADAPT.out.sample_name, CUTADAPT.out.trimed_read1_fastq, CUTADAPT.out.trimed_read2_fastq)
+    MATCH_READS_TRIMMED (CUTADAPT.out.reads_0)
 
     // module: mapping with bwa or minimap2: mark duplicate
     // bwa or minimap2
     if (params.mapper == 'bwa') {
       log.info "INFO: --mapper: bwa"
       if (params.ref_bwa_index) {
-        BWA_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, params.ref_bwa_index)
+        BWA_MAP (MATCH_READS_TRIMMED.out.reads_0, params.ref_bwa_index)
       } else if (params.ref_fasta) {
         log.info "INFO: --ref_fasta provided, use it for building bwa index."
         // module : prep_genome
@@ -136,7 +139,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
         // module : bwa_map
-        BWA_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, BWA_INDEX.out.bwa_index_folder.collect())
+        BWA_MAP (MATCH_READS_TRIMMED.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ensembl
@@ -154,7 +157,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
         // module : bwa_map
-        BWA_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, BWA_INDEX.out.bwa_index_folder.collect())
+        BWA_MAP (MATCH_READS_TRIMMED.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
       }
@@ -163,7 +166,7 @@ workflow PREPROCESS_DEFAULT {
       if (params.ref_minimap2_index) {
         // use user provided bwa index for mapping
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, params.ref_minimap2_index)
+        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, params.ref_minimap2_index)
       } else if (params.ref_fasta) {
         log.info "INFO: --ref_fasta provided, use it to build minimap2 index."
         // module : prep_genome
@@ -171,7 +174,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index.collect())
+        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ensembl
@@ -181,7 +184,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index.collect())
+        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ucsc) {
         log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ucsc
@@ -191,7 +194,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.sample_name, MATCH_READS_TRIMMED.out.read1_fastq, MATCH_READS_TRIMMED.out.read2_fastq, MINIMAP2_INDEX.out.minimap2_index.collect())
+        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ucsc/--ref_fasta_ensembl: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
       }

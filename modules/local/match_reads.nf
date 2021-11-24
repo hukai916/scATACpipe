@@ -12,18 +12,11 @@ process MATCH_READS {
     container "hukai916/fastq-pair:0.1"
 
     input:
-    val sample_name
-    path corrected_barcode_fastq
-    path read1_fastq
-    path read2_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(corrected_barcode_fastq)
 
     output:
+    tuple val(sample_name), path("match_pair_first_read/first_read_in_pair.fq.paired.fq.gz"), path("match_pair_second_read/second_read_in_pair.fq.paired.fq.gz"), path("match_pair_first_read/first_read_matched_corrected_barcode.fq.gz"), path("match_pair_second_read/second_read_matched_corrected_barcode.fq.gz"), emit: reads_2
     val sample_name, emit: sample_name
-
-    path "match_pair_first_read/first_read_in_pair.fq.paired.fq.gz", emit: read1_fastq
-    path "match_pair_second_read/second_read_in_pair.fq.paired.fq.gz", emit: read2_fastq
-    path "match_pair_first_read/first_read_matched_corrected_barcode.fq.gz", emit: barcode1_fastq
-    path "match_pair_second_read/second_read_matched_corrected_barcode.fq.gz", emit: barcode2_fastq
     // Be carefule of the duplicated staged file name error
 
     script:

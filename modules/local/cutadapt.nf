@@ -12,16 +12,12 @@ process CUTADAPT {
     container "hukai916/cutadapt_xenial:0.1"
 
     input:
-    val sample_name
-    path read1_fastq
-    path read2_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq)
     val read1_adapter
     val read2_adapter
 
     output:
-    val sample_name, emit: sample_name
-    path "R1/trimmed*", emit: trimed_read1_fastq
-    path "R2/trimmed*", emit: trimed_read2_fastq
+    tuple val(sample_name), path("R1/trimmed*"), path("R2/trimmed*"), emit: reads_0
     path "log_cutadapt_*.txt", emit: log
 
     script:

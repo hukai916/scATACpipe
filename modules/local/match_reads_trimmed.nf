@@ -12,9 +12,7 @@ process MATCH_READS_TRIMMED {
     container "hukai916/fastq-pair:0.1"
 
     input:
-    val sample_name
-    path read1_fastq
-    path read2_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq)
 
     output:
     val sample_name, emit: sample_name
