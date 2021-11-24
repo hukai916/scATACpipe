@@ -39,7 +39,7 @@ include { MATCH_READS           } from '../modules/local/match_reads'           
 include { MATCH_READS_TRIMMED   } from '../modules/local/match_reads_trimmed'     addParams( options: modules['match_reads_trimmed'] )
 include { FASTQC                } from '../modules/local/fastqc'                  addParams( options: modules['fastqc'] )
 include { ADD_BARCODE_TO_READS       } from '../modules/local/add_barcode_to_reads'
-include { ADD_BARCODE_TO_READS_2       } from '../modules/local/add_barcode_to_reads2'
+include { ADD_BARCODE_TO_READS_2       } from '../modules/local/add_barcode_to_reads_2'
 include { CUTADAPT         } from '../modules/local/cutadapt'    addParams( options: modules['cutadapt'] )
 include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
 include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
