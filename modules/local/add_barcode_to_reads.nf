@@ -53,7 +53,7 @@ process ADD_BARCODE_TO_READS {
 
     mkdir R2
     cp -P \$barcode2_fastq R2/
-    cp -P \$read2_fastq R2/
+    cp -P $read2_fastq R2/
     sinto barcode $options.args --barcode_fastq R2/\$barcode2_fastq --read1 R2/$read2_fastq -b \$barcode_length
     rm R2/$read2_fastq R2/\$barcode2_fastq
     """
