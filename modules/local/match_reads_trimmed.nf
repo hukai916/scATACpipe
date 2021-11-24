@@ -15,9 +15,7 @@ process MATCH_READS_TRIMMED {
     tuple val(sample_name), path(read1_fastq), path(read2_fastq)
 
     output:
-    val sample_name, emit: sample_name
-    path "match_trim/first_read_in_pair.fq.paired.fq.gz", emit: read1_fastq
-    path "match_trim/second_read_in_pair.fq.paired.fq.gz", emit: read2_fastq
+    tuple val(sample_name), path("match_trim/first_read_in_pair.fq.paired.fq.gz"), path("match_trim/second_read_in_pair.fq.paired.fq.gz"), emit: reads_0
 
     script:
 
