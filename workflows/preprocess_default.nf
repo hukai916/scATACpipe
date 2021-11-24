@@ -89,7 +89,7 @@ workflow PREPROCESS_DEFAULT {
     // module: fastQC
     FASTQC (reads)
 
-    // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
+    // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
       ADD_BARCODE_TO_READS (reads)
     } else if (params.barcode_correction == "pheniqs") {
@@ -97,18 +97,8 @@ workflow PREPROCESS_DEFAULT {
     } else if (params.barcode_correction == "naive") {
       if (params.barcode_whitelist) {
         // Module: determine the right whitelist barcode
-        // GET_WHITELIST_BARCODE (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.barcode_fastq, Channel.fromPath(params.barcode_whitelist).collect(), STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq)
-        // GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.barcode_whitelist).first())
-        // GET_WHITELIST_BARCODE (reads, "$projectDir/assets/whitelist_barcodes")
         GET_WHITELIST_BARCODE (reads, Channel.fromPath("assets/whitelist_barcodes"))
-
-
-
-
-        // Here must use Channel.fromPath() to convert params into path object. If it is
-        // CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode, GET_WHITELIST_BARCODE.out.read1_fastq, GET_WHITELIST_BARCODE.out.read2_fastq)
         CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.reads, GET_WHITELIST_BARCODE.out.whitelist_barcode)
-        // MATCH_READS (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.corrected_barcode, CORRECT_BARCODE.out.read1_fastq, CORRECT_BARCODE.out.read2_fastq)
         MATCH_READS (CORRECT_BARCODE.out.reads)
         ADD_BARCODE_TO_READS_2 (MATCH_READS.out.reads_2)
       } else {
