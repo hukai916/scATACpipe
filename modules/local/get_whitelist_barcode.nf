@@ -12,18 +12,13 @@ process GET_WHITELIST_BARCODE {
     container "hukai916/seqkit_0.16.1:0.1"
 
     input:
-    val sample_name
-    path barcode_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
     path barcode_whitelist_folder
-    path read1_fastq
-    path read2_fastq
 
     output:
-    val sample_name, emit: sample_name
-    path barcode_fastq, emit: barcode_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq), emit: reads
     path "selected_*", emit: whitelist_barcode
-    path read1_fastq, emit: read1_fastq
-    path read2_fastq, emit: read2_fastq
+
 
     script:
 

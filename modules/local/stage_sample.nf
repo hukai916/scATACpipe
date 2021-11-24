@@ -23,5 +23,6 @@ process STAGE_SAMPLE {
     script:
 
     """
+    touch test.txt
     """
 }

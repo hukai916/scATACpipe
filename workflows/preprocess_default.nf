@@ -83,9 +83,6 @@ workflow PREPROCESS_DEFAULT {
     // log.info "INFO(2): --preprocess: default"
 
     // module: stage sample by emitting individual element in tuple
-    println reads.out.sample_name
-    reads.view()
-
     STAGE_SAMPLE (reads)
 
     // module: fastQC
@@ -100,8 +97,10 @@ workflow PREPROCESS_DEFAULT {
     } else if (params.barcode_correction == "naive") {
       if (params.barcode_whitelist) {
         // Module: determine the right whitelist barcode
-        GET_WHITELIST_BARCODE (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.barcode_fastq, Channel.fromPath(params.barcode_whitelist).collect(), STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq)
-        CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode, GET_WHITELIST_BARCODE.out.read1_fastq, GET_WHITELIST_BARCODE.out.read2_fastq)
+        // GET_WHITELIST_BARCODE (STAGE_SAMPLE.out.sample_name, STAGE_SAMPLE.out.barcode_fastq, Channel.fromPath(params.barcode_whitelist).collect(), STAGE_SAMPLE.out.read1_fastq, STAGE_SAMPLE.out.read2_fastq)
+        GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.barcode_whitelist).first())
+        // CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode, GET_WHITELIST_BARCODE.out.read1_fastq, GET_WHITELIST_BARCODE.out.read2_fastq)
+        CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.reads, GET_WHITELIST_BARCODE.out.whitelist_barcode)
         MATCH_READS (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.corrected_barcode, CORRECT_BARCODE.out.read1_fastq, CORRECT_BARCODE.out.read2_fastq)
         ADD_BARCODE_TO_READS (MATCH_READS.out.sample_name, MATCH_READS.out.barcode1_fastq, MATCH_READS.out.barcode2_fastq, MATCH_READS.out.read1_fastq, MATCH_READS.out.read2_fastq)
       } else {
