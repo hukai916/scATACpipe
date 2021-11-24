@@ -15,16 +15,19 @@ process STAGE_SAMPLE {
     tuple val(sample_name), val(path_fastq_1), val(path_fastq_2), val(path_barcode)
 
     output:
-    path path_fastq_1, emit: read1_fastq
-    path path_barcode, emit: barcode_fastq
-    path path_fastq_2, emit: read2_fastq
+    path "path_fastq_1", emit: read1_fastq
+    path "path_barcode", emit: barcode_fastq
+    path "path_fastq_2", emit: read2_fastq
     val sample_name, emit: sample_name
 
     script:
 
     """
     touch test.txt
-    cp $path_barcode test.file
-    
+    cp $path_barcode path_fastq_q
+    cp $path_fastq_1 path_fastq_1
+    cp $path_fastq_1 path_fastq_1
+    cp $path_barcode path_barcode
+
     """
 }
