@@ -83,6 +83,9 @@ workflow PREPROCESS_DEFAULT {
     // log.info "INFO(2): --preprocess: default"
 
     // module: stage sample by emitting individual element in tuple
+    println reads.out.sample_name
+    reads.view()
+
     STAGE_SAMPLE (reads)
 
     // module: fastQC
