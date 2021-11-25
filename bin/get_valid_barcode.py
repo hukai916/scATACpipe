@@ -18,14 +18,14 @@ if valid_barcode_frequency.endswith(".gz"):
     with gzip.open(valid_barcode_frequency, "rt") as f:
         for line in f:
             tem = line.split()
-        if not tem[0] in dict_valid_barcode:
-            dict_valid_barcode[tem[0]] = tem[1]
+            if not tem[0] in dict_valid_barcode:
+                dict_valid_barcode[tem[0]] = tem[1]
 else:
     with open(valid_barcode_frequency) as f:
         for line in f:
             tem = line.split()
-        if not tem[0] in dict_valid_barcode:
-            dict_valid_barcode[tem[0]] = tem[1]
+            if not tem[0] in dict_valid_barcode:
+                dict_valid_barcode[tem[0]] = tem[1]
 
 with open(outfile_name, "w") as fout:
     if whitelist_barcode.endswith(".gz"):
