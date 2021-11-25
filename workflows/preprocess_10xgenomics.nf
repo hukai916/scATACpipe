@@ -32,6 +32,8 @@ include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    add
 include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
 include { PREP_GENOME } from '../modules/local/prep_genome'
 include { PREP_GTF } from '../modules/local/prep_gtf'
+include { GET_VALID_BARCODE_CELLRANGER } from '../modules/local/get_valid_barcode_cellranger'
+include { FILTER_CELL } from '../modules/local/filter_cell'
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
 include { CELLRANGER_INDEX } from '../modules/local/cellranger_index'             addParams( options: modules['cellranger_index'] )
@@ -70,7 +72,7 @@ workflow PREPROCESS_10XGENOMICS {
         // Module: prepare cellranger index
         CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
         // Module: run cellranger-atac count
-        CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.collect())
+        CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.first())
       } else {
         exit 1, "Pls supply --ref_gtf."
       }
@@ -87,7 +89,7 @@ workflow PREPROCESS_10XGENOMICS {
       // Module: prepare cellranger index
       CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
       // Module: run cellranger-atac count
-      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.collect())
+      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.first())
     } else if (params.ref_fasta_ucsc) {
       // Module: download ucsc genome
       DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
@@ -100,7 +102,17 @@ workflow PREPROCESS_10XGENOMICS {
       // Module: prepare cellranger index
       CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
       // Module: run cellranger-atac count
-      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.collect())
+      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.first())
+
+      // Below are for filtering cells based on "valid barcode" inferred from the "knee" method
+      if (params.barcode_whitelist) {
+        GET_VALID_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath(params.barcode_whitelist).first())
+        FILTER_CELL (GET_VALID_BARCODE_CELLRANGER.out.sample, GET_VALID_BARCODE_CELLRANGER.out.valid_barcode) // filter both fragment and bam file.
+      } else {
+        GET_VALID_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath("assets/file_token.txt").first())
+        FILTER_CELL (GET_VALID_BARCODE_CELLRANGER.out.sample, GET_VALID_BARCODE_CELLRANGER.out.valid_barcode) // filter both fragment and bam file.
+      }
+
     } else {
       exit 1, "PREPROCESS_10XGENOMICS: --ref_fasta_ucsc, or --ref_fasta_ensembl, or --ref_fasta/ref_gtf must be specified!"
     }
