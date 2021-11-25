@@ -17,8 +17,8 @@ from statistics import mean
 parser = argparse.ArgumentParser(description='Remove PCR duplicates with mapping coordinates and cell barcode.')
 parser.add_argument('--inbam', type = argparse.FileType('r'), default = sys.stdin, help = 'Path to paired bam file. (default: stdin)')
 parser.add_argument('--outbam', type = argparse.FileType('w'), default = sys.stdout, help = 'Filename for output bam file. (default: stdout)')
-parser.add_argument('--shift_forward', type = int, default = 0, help = "Number of bases to shift for the reads mapped to forward strand (+4 for Tn5). (default: %(default)i)")
-parser.add_argument('--shift_reverse', type = int, default = 0, help = "Number of bases to shift for the reads mapped to reverse strand (-5 for Tn5). (default: %(default)i)")
+parser.add_argument('--shift_forward', type = int, default = 4, help = "Number of bases to shift for the reads mapped to forward strand (+4 for Tn5). (default: %(default)i)")
+parser.add_argument('--shift_reverse', type = int, default = -5, help = "Number of bases to shift for the reads mapped to reverse strand (-5 for Tn5). (default: %(default)i)")
 parser.add_argument('--barcode_regex', type = str, default = '[^:]*', help = 'Regular expression (must be double quoted) that matches the barcode in name. (default: "%(default)s")')
 parser.add_argument('--barcode_tag', type = str, default = 'N/A', help = "Bam tag that stores the cell barcode if available (default: %(default)s)")
 
