@@ -33,6 +33,7 @@ def modules = params.modules.clone()
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions'   addParams( options: [publish_files : ['csv':'']] )
 include { CELLRANGER_ATAC_COUNT } from '../modules/local/cellranger_atac_count'   addParams( options: modules['cellranger_atac_count'] )
 include { GET_WHITELIST_BARCODE } from '../modules/local/get_whitelist_barcode'
+include { GET_VALID_BARCODE } from '../modules/local/get_valid_barcode'
 include { CORRECT_BARCODE       } from '../modules/local/correct_barcode'         addParams( options: modules['correct_barcode'] )
 include { CORRECT_BARCODE_PHENIQS } from '../modules/local/correct_barcode_pheniqs' addParams( options: modules['correct_barcode_pheniqs'] )
 include { MATCH_READS           } from '../modules/local/match_reads'             addParams( options: modules['match_reads'] )
