@@ -19,7 +19,7 @@ process CELLRANGER_ATAC_COUNT {
     output:
     tuple val(sample_name), path(sample_files), path("cellranger_atac_count_*/outs/*_possorted_bam.bam"), path("cellranger_atac_count_*/outs/fragments.tsv.gz"), emit: sample
 
-    // val sample_name, emit: sample_name
+    val sample_name, emit: sample_name
     path "cellranger_atac_count_*/outs/fragments.tsv.gz", emit: fragments
     tuple val(sample_name), path("cellranger_atac_count_*/outs/fragments.tsv.gz"), emit: ch_fragment
     path "cellranger_atac_count_*", emit: cellranger_atac_count
