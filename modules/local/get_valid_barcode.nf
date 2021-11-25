@@ -30,7 +30,7 @@ process GET_VALID_BARCODE {
     if [[ $whitelist_barcode == file_token.txt ]]; then
       cat valid_barcode_frequency.txt | cut -f 1 > valid_barcode.txt
     else
-      get_valid_barcode.py valid_barcode_frequency.txt $whitelsit_barcode valid_barcode.txt
+      get_valid_barcode.py valid_barcode_frequency.txt $whitelist_barcode valid_barcode.txt
     fi
 
     """
