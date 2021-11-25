@@ -25,10 +25,8 @@ process CUTADAPT {
     read2_name = read2_fastq.getName()
 
     """
-    mkdir R1
-    cutadapt $options.args -a $read1_adapter -o R1/trimmed_$read1_name $read1_fastq
-    mkdir R2
-    cutadapt $options.args -a $read2_adapter -o R2/trimmed_$read2_name $read2_fastq
+    mkdir R1 R2
+    cutadapt $options.args -a $read1_adapter -A $read2_adapter -o R1/trimmed_$read1_name -p R2/trimmed_$read2_name $read1_fastq $read2_fastq
     cp .command.log log_cutadapt_${sample_name}.txt
 
     """
