@@ -92,22 +92,24 @@ workflow PREPROCESS_DEFAULT {
     // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
       ADD_BARCODE_TO_READS (reads)
-    } else if (params.barcode_correction == "pheniqs") {
-      CORRECT_BARCODE_PHENIQS (reads)
-    } else if (params.barcode_correction == "naive") {
+    } else {
       if (params.barcode_whitelist) {
-        // Module: determine the right whitelist barcode
-        GET_WHITELIST_BARCODE (reads, Channel.fromPath("assets/whitelist_barcodes"))
-        CORRECT_BARCODE (GET_WHITELIST_BARCODE.out.reads, GET_WHITELIST_BARCODE.out.whitelist_barcode)
+        GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.barcode_whitelist).first())
+        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.reads, GET_WHITELIST_BARCODE.out.whitelist_barcode)
+      } else {
+        GET_VALID_BARCODE (reads, Channel.fromPath("assets/file_token.txt").first())
+      }
+
+      if (params.barcode_correction == "pheniqs") {
+        CORRECT_BARCODE_PHENIQS (GET_VALID_BARCODE.out.reads, GET_VALID_BARCODE.out.valid_barcode_frequency)
+      } else if (params.barcode_correction == "naive") {
+        CORRECT_BARCODE (GET_VALID_BARCODE.out.reads, GET_VALID_BARCODE.out.valid_barcode)
         MATCH_READS (CORRECT_BARCODE.out.reads)
         ADD_BARCODE_TO_READS_2 (MATCH_READS.out.reads_2)
       } else {
-        log.error "Pls also supply --barcode_whitelist!"
+        log.error "Invalid --barcode_correction value supplied!"
         exit 1, "EXIT!"
       }
-    } else {
-      log.error "Invalid --barcode_correction value supplied!"
-      exit 1, "EXIT!"
     }
 
     // module: trimming off adapter

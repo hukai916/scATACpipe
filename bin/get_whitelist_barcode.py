@@ -9,10 +9,6 @@ import gzip
 import os
 from shutil import copy2
 
-test = "test"
-test2 = "1"
-os.path.join("test", "test2")
-
 whitelist_barcode_folder = sys.argv[1]
 index_fastq    = sys.argv[2]
 outfile_prefix = sys.argv[3]
