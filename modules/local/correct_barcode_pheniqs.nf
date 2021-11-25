@@ -29,6 +29,7 @@ process CORRECT_BARCODE_PHENIQS {
     pheniqs mux -R log_interleave.txt -i $read1_fastq -i $barcode_fastq -i $read2_fastq --output ${sample_name}.cram
 
     # step2, make a json config file
+    barcode_length=\$((zcat $barcode_fastq || true) | awk 'NR==2 {print length(\$0); exit}')
     make_json.py $valid_barcode_frequency ${sample_name}.cram 3 0::,2:: 1::\$barcode_length ${sample_name}.json
 
     # step3, run pheniqs
