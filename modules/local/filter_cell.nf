@@ -23,7 +23,7 @@ process FILTER_CELL {
 
     """
     # filter fragment file
-    filter_fragment.py $fragment $valid_barcode | gzip > valid_barcode_filtered_fragment.gz
+    # filter_fragment.py $fragment $valid_barcode | gzip > valid_barcode_filtered_fragment.gz
 
     # filter bam file
 
