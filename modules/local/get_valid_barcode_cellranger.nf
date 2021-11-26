@@ -22,7 +22,7 @@ process GET_VALID_BARCODE_CELLRANGER {
     script:
 
     """
-    zcat *_R2_001.fastq.gz > barcode.fastq.gz
+    cat *_R2_001.fastq.gz > barcode.fastq.gz
 
     barcode_length=\$((zcat barcode.fastq.gz || true) | awk 'NR==2 {print length(\$0); exit}')
     printf -v bc_pattern '%0.sC' \$(seq 1 \$barcode_length)
