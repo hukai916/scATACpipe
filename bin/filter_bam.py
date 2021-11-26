@@ -7,13 +7,9 @@ Filter bam file based on valid barcode list.
 import sys
 import gzip
 import os
-from shutil import copy2
+import pysam
 
-valid_barcode_frequency = sys.argv[1]
-whitelist_barcode       = sys.argv[2]
-outfile_name            = sys.argv[3]
-
-fragment        = sys.argv[1]
+bam             = sys.argv[1]
 valid_barcode   = sys.argv[2]
 
 dict_valid_barcode = {}
@@ -29,6 +25,11 @@ else:
             tem = line.split()
             if not tem[0] in dict_valid_barcode:
                 dict_valid_barcode[tem[0]] = tem[1]
+
+samfile = pysam.AlignmentFile(bam, "rb")
+for read in samfile.fetch():
+    
+samfile.close()
 
 if fragment.endswith(".gz"):
     with gzip.open(fragment, "rt") as fin:

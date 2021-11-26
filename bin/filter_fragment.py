@@ -7,7 +7,6 @@ Filter fragment file based on valid barcode list.
 import sys
 import gzip
 import os
-from shutil import copy2
 
 fragment        = sys.argv[1]
 valid_barcode   = sys.argv[2]
@@ -18,13 +17,13 @@ if valid_barcode.endswith(".gz"):
         for line in f:
             tem = line.split()
             if not tem[0] in dict_valid_barcode:
-                dict_valid_barcode[tem[0]] = tem[1]
+                dict_valid_barcode[tem[0]] = 1
 else:
     with open(valid_barcode) as f:
         for line in f:
             tem = line.split()
             if not tem[0] in dict_valid_barcode:
-                dict_valid_barcode[tem[0]] = tem[1]
+                dict_valid_barcode[tem[0]] = 1
 
 if fragment.endswith(".gz"):
     with gzip.open(fragment, "rt") as fin:
