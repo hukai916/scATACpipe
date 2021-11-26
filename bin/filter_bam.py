@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
 """
-Filter fragment file based on valid barcode list.
+Filter bam file based on valid barcode list.
 """
 
 import sys
 import gzip
 import os
 from shutil import copy2
+
+valid_barcode_frequency = sys.argv[1]
+whitelist_barcode       = sys.argv[2]
+outfile_name            = sys.argv[3]
 
 fragment        = sys.argv[1]
 valid_barcode   = sys.argv[2]
