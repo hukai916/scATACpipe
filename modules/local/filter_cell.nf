@@ -17,13 +17,13 @@ process FILTER_CELL {
     path valid_barcode
 
     output:
-
+    path "valid_barcode_filtered_fragment.tsv.gz", emit: filtered_fragment
 
     script:
 
     """
     # filter fragment file
-    # filter_fragment.py $fragment $valid_barcode | gzip > valid_barcode_filtered_fragment.gz
+    filter_fragment.py $fragment $valid_barcode | gzip > valid_barcode_filtered_fragment.tsv.gz
 
     # filter bam file
 
