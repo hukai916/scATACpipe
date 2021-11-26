@@ -31,7 +31,7 @@ if fragment.endswith(".gz"):
             if not line.startswith("#"):
                 tem = line.split()[3].split("-")[0]
                 if tem in dict_valid_barcode:
-                    print(tem)
+                    print(line, end = "")
             else:
                 print(line, end = "")
 else:
@@ -40,6 +40,6 @@ else:
             if not line.startswith("#"):
                 tem = line.split()[3].split("-")[0]
                 if tem in dict_valid_barcode:
-                    print(tem)
+                    print(line, end = "")
             else:
                 print(line, end = "")
