@@ -112,11 +112,10 @@ workflow PREPROCESS_10XGENOMICS {
     if (params.barcode_whitelist) {
       GET_WHITELIST_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample,, Channel.fromPath(params.barcode_whitelist).first())
       GET_VALID_BARCODE_CELLRANGER (GET_WHITELIST_BARCODE_CELLRANGER.out.sample, GET_WHITELIST_BARCODE_CELLRANGER.out.whitelist_barcode)
-      FILTER_CELL (GET_VALID_BARCODE_CELLRANGER.out.sample, GET_VALID_BARCODE_CELLRANGER.out.valid_barcode) // filter both fragment and bam file.
     } else {
       GET_VALID_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath("assets/file_token.txt").first())
-      FILTER_CELL (GET_VALID_BARCODE_CELLRANGER.out.sample, GET_VALID_BARCODE_CELLRANGER.out.valid_barcode) // filter both fragment and bam file.
     }
+    FILTER_CELL (GET_VALID_BARCODE_CELLRANGER.out.sample, GET_VALID_BARCODE_CELLRANGER.out.valid_barcode) // filter both fragment and bam file.
 
     // Emit PREP_GENOME output if PREP_GENOME is invoked.
     // prep_genome         = Channel.value("not_run")
