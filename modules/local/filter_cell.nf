@@ -26,6 +26,12 @@ process FILTER_CELL {
     filter_fragment.py $fragment $valid_barcode | gzip > valid_barcode_filtered_fragment.tsv.gz
 
     # filter bam file
+    # filter_bam.py $bam $valid_barcode 
+
+    #samtools index $bam
+    #samtools view -h -@ $task.cpus $options.args $bam | awk 'BEGIN{FS=OFS="\\t"} \
+    #/^@/ || (\$7 == "=" && abs(\$9) <= 2000 && abs(\$9) >= 38) {print}'| \
+    #samtools view -h -b -o ${bam.baseName}.filtered.bam
 
     """
 }
