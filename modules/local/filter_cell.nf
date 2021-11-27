@@ -26,7 +26,7 @@ process FILTER_CELL {
 
     """
     # filter fragment file
-    filter_fragment.py $fragment $valid_barcode | gzip > ${sample_name}_valid_barcode_filtered_fragment.tsv.gz
+    filter_fragment.py $fragment $valid_barcode | bgzip > ${sample_name}_valid_barcode_filtered_fragment.tsv.gz
 
     # filter bam file
     samtools index $bam
