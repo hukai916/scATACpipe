@@ -9,7 +9,7 @@ process CORRECT_BARCODE_PHENIQS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'correct_barcode_pheniqs', publish_id:'') }
-    container "hukai916/pheniqs_xenial:0.1"
+    container "hukai916/pheniqs_xenial:0.2"
 
     input:
     tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
@@ -36,6 +36,7 @@ process CORRECT_BARCODE_PHENIQS {
     pheniqs mux -R log_decode.txt --threads $task.cpus --decoding-threads $task.cpus --htslib-threads $task.cpus --config ${sample_name}.json --output ${sample_name}.bam
 
     # step4, extract fastq from pheniqs output bam
+    samtools index ${sample_name}.bam
     bam2fastq.py ${sample_name}.bam barcode_corrected_${sample_name}
 
     # Note the noise param is determined by sequencer, can't be estimated; confidence: 0.99 (posterior possiblity), one run of pheniqs is okay to estimate the priors (since the invalid barcode are rare, this iteration is not a must.)
