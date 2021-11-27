@@ -17,21 +17,20 @@ process FILTER_CELL {
     path valid_barcode
 
     output:
-    path "valid_barcode_filtered_fragment.tsv.gz", emit: filtered_fragment
+    val sample_name, emit: sample_name
+    path "*_valid_barcode_filtered_fragment.tsv.gz", emit: filtered_fragment
+    tuple val(sample_name), path("*_valid_barcode_filtered_fragment.tsv.gz"), emit: ch_filtered_fragment
+    path "*_valid_barcode_filtered_fragment.bam", emit: filtered_bam
 
     script:
 
     """
     # filter fragment file
-    filter_fragment.py $fragment $valid_barcode | gzip > valid_barcode_filtered_fragment.tsv.gz
+    filter_fragment.py $fragment $valid_barcode | gzip > ${sample_name}_valid_barcode_filtered_fragment.tsv.gz
 
     # filter bam file
-    # filter_bam.py $bam $valid_barcode 
-
-    #samtools index $bam
-    #samtools view -h -@ $task.cpus $options.args $bam | awk 'BEGIN{FS=OFS="\\t"} \
-    #/^@/ || (\$7 == "=" && abs(\$9) <= 2000 && abs(\$9) >= 38) {print}'| \
-    #samtools view -h -b -o ${bam.baseName}.filtered.bam
+    samtools index $bam
+    filter_bam.py $bam $valid_barcode ${sample_name}_valid_barcode_filtered_fragment.bam
 
     """
 }

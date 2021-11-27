@@ -11,6 +11,7 @@ import pysam
 
 bam             = sys.argv[1]
 valid_barcode   = sys.argv[2]
+outbam          = sys.argv[3]
 
 dict_valid_barcode = {}
 if valid_barcode.endswith(".gz"):
@@ -18,28 +19,20 @@ if valid_barcode.endswith(".gz"):
         for line in f:
             tem = line.split()
             if not tem[0] in dict_valid_barcode:
-                dict_valid_barcode[tem[0]] = tem[1]
+                dict_valid_barcode[tem[0]] = 1
 else:
     with open(valid_barcode) as f:
         for line in f:
             tem = line.split()
             if not tem[0] in dict_valid_barcode:
-                dict_valid_barcode[tem[0]] = tem[1]
+                dict_valid_barcode[tem[0]] = 1
 
 samfile = pysam.AlignmentFile(bam, "rb")
-for read in samfile.fetch():
-    
-samfile.close()
+outbam  = pysam.AlignmentFile(outbam, "wb", template=samfile)
 
-if fragment.endswith(".gz"):
-    with gzip.open(fragment, "rt") as fin:
-        for line in fin:
-            tem = line.split()[0]
-            if tem in dict_valid_barcode:
-                print(tem + "\n")
-else:
-    with open(fragment) as fin:
-        for line in fin:
-            tem = line.split()[0]
-            if tem in dict_valid_barcode:
-                print(tem + "\n")
+for read in samfile.fetch():
+    cr = read.get_tag("CR")
+    if cr in dict_valid_barcode:
+        outbam.write(read)
+outbam.close()
+samfile.close()
