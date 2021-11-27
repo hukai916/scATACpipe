@@ -146,8 +146,7 @@ workflow PREPROCESS_10XGENOMICS {
     FILTER_CELL.out.filtered_fragment
     FILTER_CELL.out.ch_filtered_fragment
     FILTER_CELL.out.sample_name
-    FILTER_CELL.out.bam
-
+    FILTER_CELL.out.filtered_bam
 
     // CELLRANGER_ATAC_COUNT.out.fragments // out[1]: for split bed
     // CELLRANGER_ATAC_COUNT.out.ch_fragment // out[2]: fragment ch for ArchR
