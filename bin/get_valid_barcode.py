@@ -50,10 +50,10 @@ with open(outfile_frequency, "w") as fout:
             for line in fin:
                 tem = line.split()[0]
                 if tem in dict_valid_barcode:
-                    fout.write(line, end = "")
+                    fout.write(line)
     else:
         with open(valid_barcode_frequency) as fin:
             for line in fin:
                 tem = line.split()[0]
                 if tem in dict_valid_barcode:
-                    fout.write(line, end = "")
+                    fout.write(line)
