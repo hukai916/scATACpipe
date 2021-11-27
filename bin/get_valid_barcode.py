@@ -45,7 +45,7 @@ with open(outfile_name, "w") as fout:
 
 # output valid_barcode_frequency:
 with open(outfile_frequency, "w") as fout:
-    if whitelist_barcode.endswith(".gz"):
+    if valid_barcode_frequency.endswith(".gz"):
         with gzip.open(valid_barcode_frequency, "rt") as fin:
             for line in fin:
                 tem = line.split()[0]
