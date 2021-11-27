@@ -25,12 +25,12 @@ process GET_VALID_BARCODE {
     """
     barcode_length=\$((zcat $barcode_fastq || true) | awk 'NR==2 {print length(\$0); exit}')
     printf -v bc_pattern '%0.sC' \$(seq 1 \$barcode_length)
-    umi_tools whitelist $options.args -I $barcode_fastq --bc-pattern \$bc_pattern --error-correct-threshold 0 | grep -v "#" > valid_barcode_frequency.txt
+    umi_tools whitelist $options.args -I $barcode_fastq --bc-pattern \$bc_pattern --error-correct-threshold 0 | grep -v "#" > valid_barcode_frequency_raw.txt
 
     if [[ $whitelist_barcode == file_token.txt ]]; then
-      cat valid_barcode_frequency.txt | cut -f 1 > valid_barcode.txt
+      cat valid_barcode_frequency_raw.txt | cut -f 1 > valid_barcode.txt
     else
-      get_valid_barcode.py valid_barcode_frequency.txt $whitelist_barcode valid_barcode.txt
+      get_valid_barcode.py valid_barcode_frequency_raw.txt $whitelist_barcode valid_barcode.txt valid_barcode_frequency.txt
     fi
 
     """

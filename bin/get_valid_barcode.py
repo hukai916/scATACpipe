@@ -12,6 +12,7 @@ from shutil import copy2
 valid_barcode_frequency = sys.argv[1]
 whitelist_barcode       = sys.argv[2]
 outfile_name            = sys.argv[3]
+outfile_frequency       = sys.argv[4]
 
 dict_valid_barcode = {}
 if valid_barcode_frequency.endswith(".gz"):
@@ -27,6 +28,7 @@ else:
             if not tem[0] in dict_valid_barcode:
                 dict_valid_barcode[tem[0]] = tem[1]
 
+# output valid_barcode:
 with open(outfile_name, "w") as fout:
     if whitelist_barcode.endswith(".gz"):
         with gzip.open(whitelist_barcode, "rt") as fin:
@@ -40,3 +42,18 @@ with open(outfile_name, "w") as fout:
                 tem = line.split()[0]
                 if tem in dict_valid_barcode:
                     fout.write(tem + "\n")
+
+# output valid_barcode_frequency:
+with open(outfile_frequency, "w") as fout:
+    if whitelist_barcode.endswith(".gz"):
+        with gzip.open(valid_barcode_frequency, "rt") as fin:
+            for line in fin:
+                tem = line.split()[0]
+                if tem in dict_valid_barcode:
+                    fout.write(line, end = "")
+    else:
+        with open(valid_barcode_frequency) as fin:
+            for line in fin:
+                tem = line.split()[0]
+                if tem in dict_valid_barcode:
+                    fout.write(line, end = "")
