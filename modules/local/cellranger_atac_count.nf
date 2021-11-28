@@ -17,7 +17,7 @@ process CELLRANGER_ATAC_COUNT {
     path reference
 
     output:
-    tuple val(sample_name), path(sample_files), path("cellranger_atac_count_*/outs/*_possorted_bam.bam"), path("cellranger_atac_count_*/outs/fragments.tsv.gz"), emit: sample
+    tuple val(sample_name), path(sample_files), path("cellranger_atac_count_*/outs/*_possorted_bam.bam"), path("cellranger_atac_count_*/outs/fragments.tsv.gz"), path("cellranger_atac_count_*/outs/filtered_peak_bc_matrix/barcodes.tsv"), emit: sample
 
     script:
     def avail_mem = task.memory ? "${ (task.memory.toBytes().intdiv(1073741824) * 0.9).toInteger() }" : ''

@@ -13,8 +13,7 @@ process FILTER_CELL {
     container "hukai916/sinto_xenial:0.1"
 
     input:
-    tuple val(sample_name), path(sample_files), path(bam), path(fragment)
-    path valid_barcode
+    tuple val(sample_name), path(sample_files), path(bam), path(fragment), path(filtered_barcode)
 
     output:
     val sample_name, emit: sample_name
@@ -26,11 +25,11 @@ process FILTER_CELL {
 
     """
     # filter fragment file
-    filter_fragment.py $fragment $valid_barcode | bgzip > ${sample_name}_valid_barcode_filtered_fragment.tsv.gz
+    filter_fragment.py $fragment $filtered_barcode | bgzip > ${sample_name}_valid_barcode_filtered_fragment.tsv.gz
 
     # filter bam file
     samtools index $bam
-    filter_bam.py $bam $valid_barcode ${sample_name}_valid_barcode_filtered_fragment.bam
+    filter_bam.py $bam $filtered_barcode ${sample_name}_valid_barcode_filtered_fragment.bam
 
     """
 }

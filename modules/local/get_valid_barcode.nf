@@ -17,8 +17,8 @@ process GET_VALID_BARCODE {
 
     output:
     tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq), emit: reads
-    path "valid_barcode_frequency.txt", emit: valid_barcode_frequency
-    path "valid_barcode.txt", emit: valid_barcode
+    path "*valid_barcode_frequency.txt", emit: valid_barcode_frequency
+    path "*valid_barcode.txt", emit: valid_barcode
 
     script:
 
@@ -28,9 +28,9 @@ process GET_VALID_BARCODE {
     umi_tools whitelist $options.args -I $barcode_fastq --bc-pattern \$bc_pattern --error-correct-threshold 0 | grep -v "#" > valid_barcode_frequency_raw.txt
 
     if [[ $whitelist_barcode == file_token.txt ]]; then
-      cat valid_barcode_frequency_raw.txt | cut -f 1 > valid_barcode.txt
+      cat valid_barcode_frequency_raw.txt | cut -f 1 > ${sample_name}_valid_barcode.txt
     else
-      get_valid_barcode.py valid_barcode_frequency_raw.txt $whitelist_barcode valid_barcode.txt valid_barcode_frequency.txt
+      get_valid_barcode.py valid_barcode_frequency_raw.txt $whitelist_barcode ${sample_name}_valid_barcode.txt ${sample_name}_valid_barcode_frequency.txt
     fi
 
     """

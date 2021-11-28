@@ -108,14 +108,18 @@ workflow PREPROCESS_10XGENOMICS {
       exit 1, "PREPROCESS_10XGENOMICS: --ref_fasta_ucsc, or --ref_fasta_ensembl, or --ref_fasta/ref_gtf must be specified!"
     }
 
+    // Filter raw fragment and bam file based on filtered_peak_bc_matrix/barcodes.tsv
+    FILTER_CELL (CELLRANGER_ATAC_COUNT.out.sample)
+
+    // Old version:
     // Below are for filtering cells based on "valid barcode" inferred from the "knee" method
-    if (params.barcode_whitelist) {
-      GET_WHITELIST_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath(params.barcode_whitelist).first())
-      GET_VALID_BARCODE_CELLRANGER (GET_WHITELIST_BARCODE_CELLRANGER.out.sample, GET_WHITELIST_BARCODE_CELLRANGER.out.whitelist_barcode)
-    } else {
-      GET_VALID_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath("assets/file_token.txt").first())
-    }
-    FILTER_CELL (GET_VALID_BARCODE_CELLRANGER.out.sample, GET_VALID_BARCODE_CELLRANGER.out.valid_barcode) // filter both fragment and bam file.
+    // if (params.barcode_whitelist) {
+    //   GET_WHITELIST_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath(params.barcode_whitelist).first())
+    //   GET_VALID_BARCODE_CELLRANGER (GET_WHITELIST_BARCODE_CELLRANGER.out.sample, GET_WHITELIST_BARCODE_CELLRANGER.out.whitelist_barcode)
+    // } else {
+    //   GET_VALID_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath("assets/file_token.txt").first())
+    // }
+    // FILTER_CELL (GET_VALID_BARCODE_CELLRANGER.out.sample, GET_VALID_BARCODE_CELLRANGER.out.valid_barcode) // filter both fragment and bam file.
 
     // Emit PREP_GENOME output if PREP_GENOME is invoked.
     // prep_genome         = Channel.value("not_run")

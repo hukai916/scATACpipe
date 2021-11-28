@@ -29,7 +29,7 @@ if fragment.endswith(".gz"):
     with gzip.open(fragment, "rt") as fin:
         for line in fin:
             if not line.startswith("#"):
-                tem = line.split()[3].split("-")[0]
+                tem = line.split()[3]
                 if tem in dict_valid_barcode:
                     print(line, end = "")
             else:
@@ -38,7 +38,7 @@ else:
     with open(fragment) as fin:
         for line in fin:
             if not line.startswith("#"):
-                tem = line.split()[3].split("-")[0]
+                tem = line.split()[3]
                 if tem in dict_valid_barcode:
                     print(line, end = "")
             else:

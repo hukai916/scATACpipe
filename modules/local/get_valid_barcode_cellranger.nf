@@ -12,12 +12,12 @@ process GET_VALID_BARCODE_CELLRANGER {
     container "hukai916/umitools_xenial:0.1"
 
     input:
-    tuple val(sample_name), path(sample_files), path(bam), path(fragment)
+    tuple val(sample_name), path(sample_files), path(bam), path(fragment), path(filtered_barcode)
     path whitelist_barcode
 
     output:
-    tuple val(sample_name), path(sample_files), path(bam), path(fragment), emit: sample
-    path "valid_barcode.txt", emit: valid_barcode
+    tuple val(sample_name), path(sample_files), path(bam), path(fragment), path(filtered_barcode), emit: sample
+    path "*valid_barcode.txt", emit: valid_barcode
 
     script:
 
@@ -29,9 +29,9 @@ process GET_VALID_BARCODE_CELLRANGER {
     umi_tools whitelist $options.args -I barcode.fastq.gz --bc-pattern \$bc_pattern --error-correct-threshold 0 | grep -v "#" > valid_barcode_frequency_raw.txt
 
     if [[ $whitelist_barcode == file_token.txt ]]; then
-      cat valid_barcode_frequency_raw.txt | cut -f 1 > valid_barcode.txt
+      cat valid_barcode_frequency_raw.txt | cut -f 1 > ${sample_name}_valid_barcode.txt
     else
-      get_valid_barcode.py valid_barcode_frequency_raw.txt $whitelist_barcode valid_barcode.txt valid_barcode_frequency.txt
+      get_valid_barcode.py valid_barcode_frequency_raw.txt $whitelist_barcode ${sample_name}_valid_barcode.txt ${sample_name}_valid_barcode_frequency.txt
     fi
 
     """

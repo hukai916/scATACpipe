@@ -12,11 +12,11 @@ process GET_WHITELIST_BARCODE_CELLRANGER {
     container "hukai916/seqkit_0.16.1:0.1"
 
     input:
-    tuple val(sample_name), path(sample_files), path(bam), path(fragment)
+    tuple val(sample_name), path(sample_files), path(bam), path(fragment), path(filtered_barcode)
     path barcode_whitelist_folder
 
     output:
-    tuple val(sample_name), path(sample_files), path(bam), path(fragment), emit: sample
+    tuple val(sample_name), path(sample_files), path(bam), path(fragment), path(filtered_barcode), emit: sample
     path "selected_*", emit: whitelist_barcode
 
     script:
