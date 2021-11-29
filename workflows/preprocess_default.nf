@@ -98,8 +98,8 @@ workflow PREPROCESS_DEFAULT {
     read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
     read2_chunk   = SPLIT_FASTQ.out.read2_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
     barcode_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    // Here. collect() is a must, otherwise, read1 will be empty when passed to GET_SAMPLE_NAME_PATH: need read more
-    GET_SAMPLE_NAME_PATH (read1)
+    // Here. collect() is a must, otherwise, read1 will be empty when passed to GET_SAMPLE_NAME_PATH: need more reading
+    GET_SAMPLE_NAME_PATH (read1_chunk)
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
