@@ -23,7 +23,7 @@ process GET_SAMPLE_NAME_PATH {
     """
     #!/usr/bin/env python
     import os
-    print(os.path.basename($sample))
+    print(os.path.basename("$sample"))
 
     """
 }
