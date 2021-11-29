@@ -22,11 +22,11 @@ process GET_SAMPLE_NAME_PATH {
 
     """
     #!/usr/bin/env python
-    import os
-    basename = os.path.basename("$sample")
-    sample_name = "_".join(basename.split("_")[1:-2])
-    f = open(sample_name + ".token")
-    f.close()
+
+    sample_name = "_".join("$sample".split("_")[1:-2])
+
+    with open(sample_name + ".token", "w") as f:
+      pass
 
     """
 }
