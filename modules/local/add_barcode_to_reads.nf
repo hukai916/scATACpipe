@@ -12,7 +12,11 @@ process ADD_BARCODE_TO_READS {
     container "hukai916/sinto_xenial:0.1"
 
     input:
-    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
+    // tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
+    val sample_name
+    path read1_fastq
+    path read2_fastq
+    path barcode_fastq
 
     output:
     tuple val(sample_name), path("R1/*barcoded*"), path("R2/*barcoded*"), emit: reads_0
