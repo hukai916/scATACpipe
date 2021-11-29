@@ -102,9 +102,13 @@ workflow PREPROCESS_DEFAULT {
 
     GET_SAMPLE_NAME_PATH (read1)
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
+    sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
-    sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.toSortedList()
-    sample_name.view()
+    println "View: "
+    SPLIT_FASTQ.out.read1_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
+    SPLIT_FASTQ.out.read2_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
+    GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().view()
+    println "Done!"
 
     // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
