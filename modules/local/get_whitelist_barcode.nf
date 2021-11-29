@@ -12,25 +12,33 @@ process GET_WHITELIST_BARCODE {
     container "hukai916/seqkit_0.16.1:0.1"
 
     input:
-    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
+    val sample_name
+    path barcode_chunk
     path barcode_whitelist_folder
 
     output:
-    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq), emit: reads
-    path "selected_*", emit: whitelist_barcode
+    val sample_name, emit: sample_name
+    path "barcode_*.fastq.gz", emit: barcode_fastq
+    path "whitelist_*", emit: whitelist_barcode
 
     script:
 
     """
-    # Use the first 10,000 reads for quick tests:
-    if [[ $barcode_fastq == *.gz ]]
+    # Use the first 10,000 reads from one chunk for quick tests:
+    barcode_files=(\$(ls -d barcode_${sample_name}_*.fastq.gz))
+
+    if [[ \${barcode_files[0]} == *.gz ]]
     then # note "|| true" is to capture and skip the SIGPIPE error
-      (zcat $barcode_fastq || true) | awk '{ print \$0 } NR==40000 {exit}' | gzip > subset.fastq.gz
+      (zcat \${barcode_files[0]} || true) | awk '{ print \$0 } NR==40000 {exit}' | gzip > subset.fastq.gz
+      cat barcode_${sample_name}_*.fastq.gz > barcode_${sample_name}.fastq.gz
     else
-      (cat $barcode_fastq || true) | awk '{ print \$0 } NR==40000 {exit}' | gzip > subset.fastq.gz
+      (cat \${barcode_files[0]} || true) | awk '{ print \$0 } NR==40000 {exit}' | gzip > subset.fastq.gz
+      cat barcode_${sample_name}_*.fastq.gz | gzip > barcode_${sample_name}.fastq.gz
     fi
 
-    get_whitelist_barcode.py $barcode_whitelist_folder subset.fastq.gz selected_
+    get_whitelist_barcode.py $barcode_whitelist_folder subset.fastq.gz whitelist_${sample_name}_
+
+
 
     """
 }

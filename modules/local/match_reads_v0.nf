@@ -15,7 +15,7 @@ process MATCH_READS {
     tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(corrected_barcode_fastq)
 
     output:
-    tuple val(sample_name), path("match_pair_first_read/paired_R1_*.fastq.gz"), path("match_pair_second_read/paired_R2_*.fastq.gz"), path("match_pair_first_read/paired_barcode_*.fastq.gz"), path("match_pair_second_read/paired_barcode_*.fastq.gz"), emit: reads_2
+    tuple val(sample_name), path("match_pair_first_read/*first_read_in_pair.fq.paired.fq.gz"), path("match_pair_second_read/*second_read_in_pair.fq.paired.fq.gz"), path("match_pair_first_read/*first_read_matched_corrected_barcode.fq.gz"), path("match_pair_second_read/*second_read_matched_corrected_barcode.fq.gz"), emit: reads_2
     val sample_name, emit: sample_name
     // Be carefule of the duplicated staged file name error
 
@@ -36,10 +36,7 @@ process MATCH_READS {
     rm ${sample_name}_corrected_barcode.fq ${sample_name}_first_read_in_pair.fq
     gzip ${sample_name}_corrected_barcode.fq.paired.fq
     gzip ${sample_name}_first_read_in_pair.fq.paired.fq
-    # mv ${sample_name}_corrected_barcode.fq.paired.fq.gz ${sample_name}_first_read_matched_corrected_barcode.fq.gz
-    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz paired_${barcode_fastq}
-    mv ${sample_name}_first_read_in_pair.fq.paired.fq.gz paired_${read1_fastq}
-
+    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz ${sample_name}_first_read_matched_corrected_barcode.fq.gz
 
     cd ../
 
@@ -55,9 +52,7 @@ process MATCH_READS {
     rm ${sample_name}_corrected_barcode.fq ${sample_name}_second_read_in_pair.fq
     gzip ${sample_name}_corrected_barcode.fq.paired.fq
     gzip ${sample_name}_second_read_in_pair.fq.paired.fq
-    # mv ${sample_name}_corrected_barcode.fq.paired.fq.gz ${sample_name}_second_read_matched_corrected_barcode.fq.gz
-    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz paired_${barcode_fastq}
-    mv ${sample_name}_second_read_in_pair.fq.paired.fq.gz paired_${read2_fastq}
+    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz ${sample_name}_second_read_matched_corrected_barcode.fq.gz
 
     """
 }

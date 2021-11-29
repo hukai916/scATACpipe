@@ -12,10 +12,7 @@ process CORRECT_BARCODE {
     container "hukai916/r_sc_atac:0.1"
 
     input:
-    val sample_name
-    path read1_fastq
-    path read2_fastq
-    path barcode_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
     path barcode_whitelist
 
     output:
@@ -27,7 +24,7 @@ process CORRECT_BARCODE {
     """
     correct_barcode.R $options.args \
     --barcode_file=$barcode_fastq \
-    --whitelist_file=${sample_name}_valid_barcode.txt \
+    --whitelist_file=$barcode_whitelist \
     --path_output_fq=./
 
     """

@@ -12,12 +12,11 @@ process GET_VALID_BARCODE {
     container "hukai916/umitools_xenial:0.2"
 
     input:
-    val sample_name
-    path barcode_fastq
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
     path whitelist_barcode
 
     output:
-    val sample_name
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq), emit: reads
     path "*valid_barcode_frequency.txt", emit: valid_barcode_frequency
     path "*valid_barcode.txt", emit: valid_barcode
 
