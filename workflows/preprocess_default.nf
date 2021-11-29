@@ -111,7 +111,7 @@ workflow PREPROCESS_DEFAULT {
     // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
       // ADD_BARCODE_TO_READS (reads)
-      ADD_BARCODE_TO_READS (sample_name, read1, read2, barcode)
+      ADD_BARCODE_TO_READS ((sample_name, read1, read2, barcode))
     } else {
       if (params.barcode_whitelist) {
         GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.barcode_whitelist).first())
