@@ -32,8 +32,6 @@ include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    add
 include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
 include { PREP_GENOME } from '../modules/local/prep_genome'
 include { PREP_GTF } from '../modules/local/prep_gtf'
-include { GET_WHITELIST_BARCODE_CELLRANGER } from '../modules/local/get_whitelist_barcode_cellranger'
-include { GET_VALID_BARCODE_CELLRANGER } from '../modules/local/get_valid_barcode_cellranger'
 include { FILTER_CELL } from '../modules/local/filter_cell'
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )

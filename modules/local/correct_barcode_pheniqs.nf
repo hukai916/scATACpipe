@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process CORRECT_BARCODE_PHENIQS {
-    label 'process_medium'
+    label 'process_high'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'correct_barcode_pheniqs', publish_id:'') }
@@ -33,11 +33,11 @@ process CORRECT_BARCODE_PHENIQS {
     make_json.py $valid_barcode_frequency ${sample_name}.cram 3 0::,2:: 1::\$barcode_length ${sample_name}.json
 
     # step3, run pheniqs
-    pheniqs mux -R log_decode.txt --threads $task.cpus --decoding-threads $task.cpus --htslib-threads $task.cpus --config ${sample_name}.json --output ${sample_name}.bam
+    pheniqs mux -R log_decode.txt --threads $task.cpus --decoding-threads $task.cpus --htslib-threads $task.cpus --config ${sample_name}.json --output ${sample_name}.corrected.cram
 
-    # step4, extract fastq from pheniqs output bam
-    samtools index ${sample_name}.bam
-    bam2fastq.py ${sample_name}.bam barcode_corrected_${sample_name}
+    # step4, extract fastq from pheniqs output cram
+    samtools index ${sample_name}.corrected.cram
+    bam2fastq.py ${sample_name}.corrected.cram barcode_corrected_${sample_name}
 
     # Note the noise param is determined by sequencer, can't be estimated; confidence: 0.99 (posterior possiblity), one run of pheniqs is okay to estimate the priors (since the invalid barcode are rare, this iteration is not a must.)
 

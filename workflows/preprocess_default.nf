@@ -31,7 +31,9 @@ def modules = params.modules.clone()
 
 // Modules: local
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions'   addParams( options: [publish_files : ['csv':'']] )
-include { CELLRANGER_ATAC_COUNT } from '../modules/local/cellranger_atac_count'   addParams( options: modules['cellranger_atac_count'] )
+include { SPLIT_FASTQ           } from '../modules/local/split_fastq'
+include { GET_SAMPLE_NAME_PATH  } from '../modules/local/get_sample_name_path'
+include { GET_SAMPLE_NAME_VAL   } from '../modules/local/get_sample_name_val'
 include { GET_WHITELIST_BARCODE } from '../modules/local/get_whitelist_barcode'
 include { GET_VALID_BARCODE } from '../modules/local/get_valid_barcode'
 include { CORRECT_BARCODE       } from '../modules/local/correct_barcode'         addParams( options: modules['correct_barcode'] )
@@ -89,6 +91,17 @@ workflow PREPROCESS_DEFAULT {
 
     // module: fastQC
     FASTQC (reads)
+
+    // module: split read into 20M chunks
+    SPLIT_FASTQ (reads, sample_count)
+    read1 = SPLIT_FASTQ.out.read1_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    read2 = SPLIT_FASTQ.out.read2_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    barcode = SPLIT_FASTQ.out.barcode_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    GET_SAMPLE_NAME_PATH (read1)
+    GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
+
+    sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.toSortedList()
+    sample_name.view()
 
     // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {

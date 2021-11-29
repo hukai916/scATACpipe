@@ -12,9 +12,9 @@ import pysam
 import sys
 import gzip
 
-bamfile = sys.argv[1]
+cramfile = sys.argv[1]
 outname = sys.argv[2]
-inbam = pysam.AlignmentFile(bamfile, check_sq = False)
+inbam = pysam.AlignmentFile(cramfile, "rc", check_sq = False)
 
 # some statistics
 valid_read_num   = 0

@@ -15,7 +15,7 @@ process MATCH_READS_TRIMMED {
     tuple val(sample_name), path(read1_fastq), path(read2_fastq)
 
     output:
-    tuple val(sample_name), path("match_trim/first_read_in_pair.fq.paired.fq.gz"), path("match_trim/second_read_in_pair.fq.paired.fq.gz"), emit: reads_0
+    tuple val(sample_name), path("match_trim/*first_read_in_pair.fq.paired.fq.gz"), path("match_trim/*second_read_in_pair.fq.paired.fq.gz"), emit: reads_0
 
     script:
 
@@ -24,15 +24,15 @@ process MATCH_READS_TRIMMED {
     cp $read1_fastq match_trim/ # if using cp -P, gzip is problematic then.
     cp $read2_fastq match_trim/
     cd match_trim
-    mv $read1_fastq first_read_in_pair.fq.gz
-    mv $read2_fastq second_read_in_pair.fq.gz
-    gzip -d first_read_in_pair.fq.gz
-    gzip -d second_read_in_pair.fq.gz
+    mv $read1_fastq ${sample_name}_first_read_in_pair.fq.gz
+    mv $read2_fastq ${sample_name}_second_read_in_pair.fq.gz
+    gzip -d ${sample_name}_first_read_in_pair.fq.gz
+    gzip -d ${sample_name}_second_read_in_pair.fq.gz
 
-    fastq_pair $options.args first_read_in_pair.fq second_read_in_pair.fq
-    rm first_read_in_pair.fq second_read_in_pair.fq
-    gzip first_read_in_pair.fq.paired.fq
-    gzip second_read_in_pair.fq.paired.fq
+    fastq_pair $options.args ${sample_name}_first_read_in_pair.fq ${sample_name}_second_read_in_pair.fq
+    rm ${sample_name}_first_read_in_pair.fq ${sample_name}_second_read_in_pair.fq
+    gzip ${sample_name}_first_read_in_pair.fq.paired.fq
+    gzip ${sample_name}_second_read_in_pair.fq.paired.fq
 
     """
 }
