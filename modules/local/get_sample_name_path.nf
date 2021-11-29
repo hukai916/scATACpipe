@@ -15,7 +15,7 @@ process GET_SAMPLE_NAME_PATH {
     path sample
 
     output:
-    path ".token", emit: sample_name_path
+    path "*.token", emit: sample_name_path
 
 
     script:
