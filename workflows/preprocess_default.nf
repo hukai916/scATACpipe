@@ -94,15 +94,17 @@ workflow PREPROCESS_DEFAULT {
 
     // module: split read into 20M chunks
     SPLIT_FASTQ (reads, sample_count)
-    read1 = SPLIT_FASTQ.out.read1_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    read2 = SPLIT_FASTQ.out.read2_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    barcode = SPLIT_FASTQ.out.barcode_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    read1.view()
-    GET_SAMPLE_NAME_PATH (read1)
-    GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
+    // read1 = SPLIT_FASTQ.out.read1_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    // read2 = SPLIT_FASTQ.out.read2_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    // barcode = SPLIT_FASTQ.out.barcode_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    // read1.view()
+    SPLIT_FASTQ.out.read1_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
 
-    sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.toSortedList()
-    sample_name.view()
+    // GET_SAMPLE_NAME_PATH (read1)
+    // GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
+    //
+    // sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.toSortedList()
+    // sample_name.view()
 
     // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
