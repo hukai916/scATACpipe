@@ -98,8 +98,9 @@ workflow PREPROCESS_DEFAULT {
     // read2 = SPLIT_FASTQ.out.read2_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
     // barcode = SPLIT_FASTQ.out.barcode_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
     // read1.view()
+    println "TEST HERE"
     SPLIT_FASTQ.out.read1_fastq.toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
-
+    println "TEST THERE"
     // GET_SAMPLE_NAME_PATH (read1)
     // GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     //
