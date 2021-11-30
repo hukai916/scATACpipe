@@ -29,10 +29,11 @@ process CUTADAPT {
     outname1="\${sample_name%%.*}"
     sample_name=$read2_fastq
     outname2="\${sample_name%%.*}"
+    outname="\${outname1#R1_}"
 
     mkdir R1 R2
     cutadapt $options.args -a $read1_adapter -A $read2_adapter -o R1/\${outname1}.trimmed.fastq.gz -p R2/\${outname2}.trimmed.fastq.gz $read1_fastq $read2_fastq
-    cp .command.log log_cutadapt_${sample_name}.txt
+    cp .command.log log_cutadapt_\${outname}.txt
 
     """
 }

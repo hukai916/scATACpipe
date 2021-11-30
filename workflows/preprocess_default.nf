@@ -89,10 +89,10 @@ workflow PREPROCESS_DEFAULT {
 
     // log.info "INFO(2): --preprocess: default"
 
-    // module: fastQC
+    // Module: fastQC
     FASTQC (reads)
 
-    // module: split read into 20M chunks
+    // Module: split read into 20M chunks
     // Below is to ensure that sample_name, R1, R2, and barcode matches
     SPLIT_FASTQ (reads, sample_count)
     read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
@@ -103,7 +103,7 @@ workflow PREPROCESS_DEFAULT {
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
-    // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
+    // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
       ADD_BARCODE_TO_READS (sample_name, read1_chunk, read2_chunk, barcode_chunk)
     } else {
@@ -127,7 +127,7 @@ workflow PREPROCESS_DEFAULT {
       }
     }
 
-    // module: trimming off adapter
+    // Module: trimming off adapter
     if (!(params.barcode_correction)) {
       CUTADAPT (ADD_BARCODE_TO_READS.out.reads_0, params.read1_adapter, params.read2_adapter)
     } else if (params.barcode_correction == "pheniqs") {
@@ -137,7 +137,7 @@ workflow PREPROCESS_DEFAULT {
       CUTADAPT (ADD_BARCODE_TO_READS_2.out.reads_0, params.read1_adapter, params.read2_adapter)
     }
 
-    // module: mapping with bwa or minimap2: mark duplicate
+    // Module: mapping with bwa or minimap2: mark duplicate
     // bwa or minimap2
     if (params.mapper == 'bwa') {
       log.info "INFO: --mapper: bwa"
@@ -145,29 +145,29 @@ workflow PREPROCESS_DEFAULT {
         BWA_MAP (CUTADAPT.out.reads_0, params.ref_bwa_index)
       } else if (params.ref_fasta) {
         log.info "INFO: --ref_fasta provided, use it for building bwa index."
-        // module : prep_genome
+        // Module : prep_genome
         PREP_GENOME (params.ref_fasta, "custom_genome")
-        // module : bwa_index
+        // Module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
-        // module : bwa_map
+        // Module : bwa_map
         BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
-        // module : download_from_ensembl
+        // Module : download_from_ensembl
         DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // module: prep_genome
+        // Module: prep_genome
         PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-        // module : bwa_index
+        // Module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
       } else if (params.ref_fasta_ucsc) {
         log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build bwa index, and map with bwa ..."
-        // module : download_from_ucsc
+        // Module : download_from_ucsc
         DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-        // module : prep_genome
+        // Module : prep_genome
         PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
-        // module : bwa_index
+        // Module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
-        // module : bwa_map
+        // Module : bwa_map
         BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
@@ -176,35 +176,35 @@ workflow PREPROCESS_DEFAULT {
       log.info "INFO: --mapper: minimap2"
       if (params.ref_minimap2_index) {
         // use user provided bwa index for mapping
-        // module : minimap2_map
+        // Module : minimap2_map
         MINIMAP2_MAP (CUTADAPT.out.reads_0, params.ref_minimap2_index)
       } else if (params.ref_fasta) {
         log.info "INFO: --ref_fasta provided, use it to build minimap2 index."
-        // module : prep_genome
+        // Module : prep_genome
         PREP_GENOME (params.ref_fasta, "custom_genome")
-        // module : bwa_index
+        // Module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
-        // module : minimap2_map
+        // Module : minimap2_map
         MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
-        // module : download_from_ensembl
+        // Module : download_from_ensembl
         DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // module: PREP_GENOME
+        // Module: PREP_GENOME
         PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-        // module : bwa_index
+        // Module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
-        // module : minimap2_map
+        // Module : minimap2_map
         MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ucsc) {
         log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
-        // module : download_from_ucsc
+        // Module : download_from_ucsc
         DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-        // module : prep_genome
+        // Module : prep_genome
         PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_gtf)
-        // module : bwa_index
+        // Module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
-        // module : minimap2_map
+        // Module : minimap2_map
         MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ucsc/--ref_fasta_ensembl: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
@@ -214,26 +214,26 @@ workflow PREPROCESS_DEFAULT {
       exit 1, "EXIT!"
     }
 
-    // module: filter out poorly mapped reads
+    // Module: filter out poorly mapped reads
     if (params.mapper == 'bwa') {
       BAM_FILTER (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
     } else if (params.mapper == "minimap2") {
         BAM_FILTER (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
     }
 
-    // module: combine bam:
+    // Module: combine bam:
     COMBINE_BAM (BAM_FILTER.out.sample_name.unique(), BAM_FILTER.out.bam.collect())
 
-    // module: remove duplicates based on cell barcode, start, end
+    // Module: remove duplicates based on cell barcode, start, end
     REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
     // DISCUSS: bamqc with qualimap for raw bam files
     // QUALIMAP (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
 
-    // module: generate fragment file with sinto
+    // Module: generate fragment file with sinto
     // use raw bam file since ArchR may take advantage of the duplication info.
     GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
 
-    // module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
+    // Module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
     QUALIMAP (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
 
     // Collect all output results for MultiQC report:
