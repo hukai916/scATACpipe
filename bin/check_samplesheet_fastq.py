@@ -7,6 +7,7 @@ import os
 import sys
 import errno
 import argparse
+from itertools import combinations
 
 
 def parse_args(args=None):
@@ -107,7 +108,7 @@ def check_samplesheet(file_in, file_out):
             sample_info = []  ## [single_end, fastq_1, fastq_2]
             sample_info = [sample, fastq_1, fastq_2, barcode]
 
-            ## Create sample mapping dictionary = { sample: [ single_end, fastq_1, fastq_2 ] }
+            ## Create sample mapping dictionary = { sample: [ single_end, fastq_1, fastq_2, barcode ] }
             if sample not in sample_mapping_dict:
                 sample_mapping_dict[sample] = [sample_info]
             else:
@@ -118,6 +119,12 @@ def check_samplesheet(file_in, file_out):
 
     ## Write validated samplesheet with appropriate columns
     if len(sample_mapping_dict) > 0:
+        ## Check if sample_name "contained" in another sample_name:
+        sample_names = set(sample_mapping_dict.keys())
+        for pair in combinations(sample_names, 2):
+            if pair[0] in pair[1] or pair[1] in pair[0]:
+                print_error("certain sample name 'contained' in another sample name!\nSupplied sample names: " + ", ".join(sample_names))
+
         out_dir = os.path.dirname(file_out)
         make_dir(out_dir)
         with open(file_out, "w") as fout:
