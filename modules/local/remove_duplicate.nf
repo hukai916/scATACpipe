@@ -29,6 +29,9 @@ process REMOVE_DUPLICATE {
     # sort output bam:
     samtools sort ${sample_name}.rmdup.bam -o ${sample_name}.rmdup.sorted.bam
 
+    # clean temp file:
+    rm ${sample_name}.rmdup.bam
+    
     """
 
 }

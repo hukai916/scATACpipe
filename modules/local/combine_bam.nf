@@ -28,6 +28,9 @@ process COMBINE_BAM {
     # then, sort output bam:
     samtools sort ${sample_name}.combined.bam -o ${sample_name}.combined.sorted.bam
 
+    # clean the temp file:
+    rm ${sample_name}.combined.bam
+
     """
 
 }
