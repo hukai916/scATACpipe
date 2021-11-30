@@ -21,10 +21,6 @@ process SPLIT_FASTQ {
     path "R2_*.fastq.gz", emit: read2_fastq
     path "barcode_*.fastq.gz", emit: barcode_fastq
 
-    // tuple val(sample_name), path("R1/*barcoded*"), path("R2/*barcoded*"), emit: reads_0
-    // val sample_count
-    // val chunk_count
-
     script:
 
     """

@@ -223,25 +223,15 @@ workflow PREPROCESS_DEFAULT {
 
     // module: combine bam:
     COMBINE_BAM (BAM_FILTER.out.sample_name.unique(), BAM_FILTER.out.bam.collect())
-    // COMBINE_BAM (REMOVE_DUPLICATE.out.sample_name.unique(), REMOVE_DUPLICATE.out.bam.collect())
 
     // module: remove duplicates based on cell barcode, start, end
-    // REMOVE_DUPLICATE(BAM_FILTER.out.sample_name, BAM_FILTER.out.bam, sample_count)
-
     REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
     // DISCUSS: bamqc with qualimap for raw bam files
     // QUALIMAP (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
 
     // module: generate fragment file with sinto
     // use raw bam file since ArchR may take advantage of the duplication info.
-    // GET_FRAGMENTS (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam, sample_count)
     GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
-
-    // module: combine fragments that are from the same library (with same sample name)
-    // COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name.unique(), GET_FRAGMENTS.out.fragments.collect())
-
-    // module: combine processed bam files that are from teh same library (with same sample name)
-    // COMBINE_BAM (REMOVE_DUPLICATE.out.sample_name.unique(), REMOVE_DUPLICATE.out.bam.collect())
 
     // module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
     QUALIMAP (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
