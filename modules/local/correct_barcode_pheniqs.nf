@@ -43,10 +43,10 @@ process CORRECT_BARCODE_PHENIQS {
     # rename output:
     sample_name=$read1_fastq
     outname="\${sample_name%%.*}"
-    mv corrected_${barcode_fastq}*first_read_in_pair.fastq.gz ${outname}.pheniqs.fastq.gz
+    mv corrected_${barcode_fastq}*first_read_in_pair.fastq.gz \${outname}.pheniqs.fastq.gz
     sample_name=$read2_fastq
     outname="\${sample_name%%.*}"
-    mv corrected_${barcode_fastq}*second_read_in_pair.fastq.gz ${outname}.pheniqs.fastq.gz
+    mv corrected_${barcode_fastq}*second_read_in_pair.fastq.gz \${outname}.pheniqs.fastq.gz
 
     # Note the noise param is determined by sequencer, can't be estimated; confidence: 0.99 (posterior possiblity), one run of pheniqs is okay to estimate the priors (since the invalid barcode are rare, this iteration is not a must.)
 
