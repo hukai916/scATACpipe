@@ -40,7 +40,7 @@ process MATCH_READS {
     sample_name=$read1_fastq
     outname="\${sample_name%%.*}"
     outname="\${outname#R1_}"
-    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz barcode_\${outname}.matched.fastq.gz
+    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz barcode_R1_\${outname}.matched.fastq.gz
     mv ${sample_name}_first_read_in_pair.fq.paired.fq.gz R1_\${outname}.matched.fastq.gz
 
 
@@ -62,7 +62,7 @@ process MATCH_READS {
     sample_name=$read2_fastq
     outname="\${sample_name%%.*}"
     outname="\${outname#R2_}"
-    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz barcode_\${outname}.matched.fastq.gz
+    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz barcode_R2_\${outname}.matched.fastq.gz
     mv ${sample_name}_second_read_in_pair.fq.paired.fq.gz R2_\${outname}.matched.fastq.gz
 
     """
