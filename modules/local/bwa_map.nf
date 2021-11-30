@@ -27,7 +27,11 @@ process BWA_MAP {
     filename=\$(basename $bwa_index_folder/*.bwt)
     index_name="\${filename%.*}"
 
-    bwa mem $options.args -t $task.cpus $bwa_index_folder/\$index_name $read1_fastq $read2_fastq | samtools sort -@ $task.cpus $avail_mem -O bam -o ${sample_name}.sorted.bam
+    sample_name=$read1_fastq
+    outname="\${sample_name%%.*}"
+    outname="\${outname#R1_}"
+
+    bwa mem $options.args -t $task.cpus $bwa_index_folder/\$index_name $read1_fastq $read2_fastq | samtools sort -@ $task.cpus $avail_mem -O bam -o ${outname}.sorted.bam
 
     """
 }

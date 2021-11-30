@@ -151,14 +151,14 @@ workflow PREPROCESS_DEFAULT {
     }
 
     // module: MATCH_READS_TRIMMED: in case user choose to trim based on quality and read pair gets unbalanced.
-    MATCH_READS_TRIMMED (CUTADAPT.out.reads_0)
+    // MATCH_READS_TRIMMED (CUTADAPT.out.reads_0)
 
     // module: mapping with bwa or minimap2: mark duplicate
     // bwa or minimap2
     if (params.mapper == 'bwa') {
       log.info "INFO: --mapper: bwa"
       if (params.ref_bwa_index) {
-        BWA_MAP (MATCH_READS_TRIMMED.out.reads_0, params.ref_bwa_index)
+        BWA_MAP (CUTADAPT.out.reads_0, params.ref_bwa_index)
       } else if (params.ref_fasta) {
         log.info "INFO: --ref_fasta provided, use it for building bwa index."
         // module : prep_genome
@@ -166,7 +166,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
         // module : bwa_map
-        BWA_MAP (MATCH_READS_TRIMMED.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
+        BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ensembl
@@ -184,7 +184,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         BWA_INDEX (PREP_GENOME.out.genome_fasta)
         // module : bwa_map
-        BWA_MAP (MATCH_READS_TRIMMED.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
+        BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
       }
@@ -193,7 +193,7 @@ workflow PREPROCESS_DEFAULT {
       if (params.ref_minimap2_index) {
         // use user provided bwa index for mapping
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, params.ref_minimap2_index)
+        MINIMAP2_MAP (CUTADAPT.out.reads_0, params.ref_minimap2_index)
       } else if (params.ref_fasta) {
         log.info "INFO: --ref_fasta provided, use it to build minimap2 index."
         // module : prep_genome
@@ -201,7 +201,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
+        MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ensembl) {
         log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ensembl
@@ -211,7 +211,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
+        MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else if (params.ref_fasta_ucsc) {
         log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
         // module : download_from_ucsc
@@ -221,7 +221,7 @@ workflow PREPROCESS_DEFAULT {
         // module : bwa_index
         MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
         // module : minimap2_map
-        MINIMAP2_MAP (MATCH_READS_TRIMMED.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
+        MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
       } else {
         exit 1, 'Parameter --ref_fasta_ucsc/--ref_fasta_ensembl: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
       }
@@ -237,21 +237,27 @@ workflow PREPROCESS_DEFAULT {
         BAM_FILTER (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
     }
 
-    // module: remove duplicates based on cell barcode, start, end
-    REMOVE_DUPLICATE(BAM_FILTER.out.sample_name, BAM_FILTER.out.bam, sample_count)
+    // module: combine bam:
+    COMBINE_BAM (BAM_FILTER.out.sample_name.unique(), BAM_FILTER.out.bam.collect())
+    // COMBINE_BAM (REMOVE_DUPLICATE.out.sample_name.unique(), REMOVE_DUPLICATE.out.bam.collect())
 
+    // module: remove duplicates based on cell barcode, start, end
+    // REMOVE_DUPLICATE(BAM_FILTER.out.sample_name, BAM_FILTER.out.bam, sample_count)
+
+    REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
     // DISCUSS: bamqc with qualimap for raw bam files
     // QUALIMAP (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
 
     // module: generate fragment file with sinto
     // use raw bam file since ArchR may take advantage of the duplication info.
-    GET_FRAGMENTS (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam, sample_count)
+    // GET_FRAGMENTS (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam, sample_count)
+    GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
 
     // module: combine fragments that are from the same library (with same sample name)
-    COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name.unique(), GET_FRAGMENTS.out.fragments.collect())
+    // COMBINE_FRAGMENTS (GET_FRAGMENTS.out.sample_name.unique(), GET_FRAGMENTS.out.fragments.collect())
 
     // module: combine processed bam files that are from teh same library (with same sample name)
-    COMBINE_BAM (REMOVE_DUPLICATE.out.sample_name.unique(), REMOVE_DUPLICATE.out.bam.collect())
+    // COMBINE_BAM (REMOVE_DUPLICATE.out.sample_name.unique(), REMOVE_DUPLICATE.out.bam.collect())
 
     // module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
     QUALIMAP (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
@@ -314,6 +320,8 @@ workflow PREPROCESS_DEFAULT {
     res_files // out[0]: res folders for MultiQC report
     COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
     COMBINE_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
+    GET_FRAGMENTS.out.fragments // out[1]: for split bed
+    GET_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
     COMBINE_BAM.out.sample_name // out[3]: for split bam
     COMBINE_BAM.out.bam // out[4]: for split bam
     prep_genome_name         // out[5]: for DOWNSTREAM_ARCHR

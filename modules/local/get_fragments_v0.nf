@@ -14,6 +14,7 @@ process GET_FRAGMENTS {
     input:
     val sample_name
     path bam
+    val sample_count
 
     output:
     val sample_name, emit: sample_name
@@ -29,7 +30,8 @@ process GET_FRAGMENTS {
     # then, generate the fragments file
     sinto fragments $options.args --nproc $task.cpus --bam $bam -f fragments.tsv --barcode_regex "[^:]*"
     # sort the fragment (not a must)
-    sort -k 1,1 -k2,2n fragments.tsv > ${sample_name}.sort.tsv
+    sort -k 1,1 -k2,2n fragments.tsv > fragments.sort.tsv
+    mv fragments.sort.tsv ${sample_name}.${sample_count}.sort.tsv
 
     """
 }

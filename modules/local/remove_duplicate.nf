@@ -14,21 +14,20 @@ process REMOVE_DUPLICATE {
     input:
     val sample_name
     path bam
-    val sample_count
 
     output:
     val sample_name, emit: sample_name
-    path "rm_dup_*.sorted.bam", emit: bam
+    path "*.rmdup.sorted.bam", emit: bam
     path "summary_rm_dup_*.txt", emit: remove_duplicate_summary
 
     script:
 
     """
     # remove PCR duplicates based on cell barcode, start, end:
-    remove_duplicate.py --inbam $bam --outbam rm_dup_${sample_name}.bam $options.args
+    remove_duplicate.py --inbam $bam --outbam ${sample_name}.rmdup.bam $options.args
 
     # sort output bam:
-    samtools sort rm_dup_${sample_name}.bam -o rm_dup_${sample_name}.${sample_count}.sorted.bam
+    samtools sort ${sample_name}.rmdup.bam -o ${sample_name}.rmdup.sorted.bam
 
     """
 
