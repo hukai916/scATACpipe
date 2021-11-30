@@ -31,8 +31,6 @@ process COMBINE_BAM {
     # clean the temp file:
     rm ${sample_name}.combined.bam
 
-    # test code
-
     """
 
 }
