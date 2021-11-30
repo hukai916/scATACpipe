@@ -15,7 +15,7 @@ process MATCH_READS {
     tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(corrected_barcode_fastq)
 
     output:
-    tuple val(sample_name), path("match_pair_first_read/paired_R1_*.fastq.gz"), path("match_pair_second_read/paired_R2_*.fastq.gz"), path("match_pair_first_read/paired_barcode_*.fastq.gz"), path("match_pair_second_read/paired_barcode_*.fastq.gz"), emit: reads_2
+    tuple val(sample_name), path("match_pair_first_read/R1_*.fastq.gz"), path("match_pair_second_read/R2_*.fastq.gz"), path("match_pair_first_read/barcode_*.fastq.gz"), path("match_pair_second_read/barcode_*.fastq.gz"), emit: reads_2
     val sample_name, emit: sample_name
     // Be carefule of the duplicated staged file name error
 
