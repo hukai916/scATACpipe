@@ -103,34 +103,21 @@ workflow PREPROCESS_DEFAULT {
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
-    // println "View: "
-    // SPLIT_FASTQ.out.read1_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
-    // SPLIT_FASTQ.out.read2_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
-    // GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().view()
-
     // module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     if (!(params.barcode_correction)) {
-      // ADD_BARCODE_TO_READS (reads)
       ADD_BARCODE_TO_READS (sample_name, read1_chunk, read2_chunk, barcode_chunk)
     } else {
       if (params.barcode_whitelist) {
         // use whole library to determine a single whitelist barcode for each chunk.
-        // GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.barcode_whitelist).first())
         GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.barcode_whitelist).first())
-
-        // GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.reads, GET_WHITELIST_BARCODE.out.whitelist_barcode)
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode)
-
       } else {
-        // GET_VALID_BARCODE (reads, Channel.fromPath("assets/file_token.txt").first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, Channel.fromPath("assets/file_token.txt"))
       }
 
       if (params.barcode_correction == "pheniqs") {
-        // CORRECT_BARCODE_PHENIQS (GET_VALID_BARCODE.out.reads, GET_VALID_BARCODE.out.valid_barcode_frequency)
         CORRECT_BARCODE_PHENIQS (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode_frequency.collect())
       } else if (params.barcode_correction == "naive") {
-        // CORRECT_BARCODE (GET_VALID_BARCODE.out.reads, GET_VALID_BARCODE.out.valid_barcode)
         CORRECT_BARCODE (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode.collect())
         MATCH_READS (CORRECT_BARCODE.out.reads)
         ADD_BARCODE_TO_READS_2 (MATCH_READS.out.reads_2)
@@ -149,9 +136,6 @@ workflow PREPROCESS_DEFAULT {
     } else if (params.barcode_correction == "naive") {
       CUTADAPT (ADD_BARCODE_TO_READS_2.out.reads_0, params.read1_adapter, params.read2_adapter)
     }
-
-    // module: MATCH_READS_TRIMMED: in case user choose to trim based on quality and read pair gets unbalanced.
-    // MATCH_READS_TRIMMED (CUTADAPT.out.reads_0)
 
     // module: mapping with bwa or minimap2: mark duplicate
     // bwa or minimap2

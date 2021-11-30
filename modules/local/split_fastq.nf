@@ -28,9 +28,9 @@ process SPLIT_FASTQ {
     script:
 
     """
-    zcat $read1_fastq | split --lines=2000000 --filter='gzip > \${FILE}.fastq.gz' - R1_${sample_name}_${sample_count}_
-    zcat $read2_fastq | split --lines=2000000 --filter='gzip > \${FILE}.fastq.gz' - R2_${sample_name}_${sample_count}_
-    zcat $barcode_fastq | split --lines=2000000 --filter='gzip > \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_
+    zcat $read1_fastq | split --lines=80000000 --filter='gzip > \${FILE}.fastq.gz' - R1_${sample_name}_${sample_count}_
+    zcat $read2_fastq | split --lines=80000000 --filter='gzip > \${FILE}.fastq.gz' - R2_${sample_name}_${sample_count}_
+    zcat $barcode_fastq | split --lines=80000000 --filter='gzip > \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_
 
     """
 }
