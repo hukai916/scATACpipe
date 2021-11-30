@@ -19,7 +19,7 @@ process CORRECT_BARCODE_PHENIQS {
     path valid_barcode_frequency
 
     output:
-    tuple val(sample_name), path("corrected_*.first_read_in_pair.fastq.gz"), path("corrected_*.second_read_in_pair.fastq.gz"), emit: reads_0
+    tuple val(sample_name), path("R1_*pheniqs*.fastq.gz"), path("R2_*pheniqs*.fastq.gz"), emit: reads_0
     path "summary_*.txt", emit: corrected_barcode_summary
     // barcode is not needed for pheniqs since corrected barcodes are added by default.
 
@@ -39,6 +39,14 @@ process CORRECT_BARCODE_PHENIQS {
     # step4, extract fastq from pheniqs output bam
     samtools index ${sample_name}.corrected.bam
     bam2fastq.py ${sample_name}.corrected.bam corrected_${barcode_fastq}
+
+    # rename output:
+    sample_name=$read1_fastq
+    outname="\${sample_name%%.*}"
+    mv corrected_${barcode_fastq}*first_read_in_pair.fastq.gz ${outname}.pheniqs.fastq.gz
+    sample_name=$read2_fastq
+    outname="\${sample_name%%.*}"
+    mv corrected_${barcode_fastq}*second_read_in_pair.fastq.gz ${outname}.pheniqs.fastq.gz
 
     # Note the noise param is determined by sequencer, can't be estimated; confidence: 0.99 (posterior possiblity), one run of pheniqs is okay to estimate the priors (since the invalid barcode are rare, this iteration is not a must.)
 

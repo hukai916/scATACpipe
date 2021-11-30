@@ -17,7 +17,7 @@ process CUTADAPT {
     val read2_adapter
 
     output:
-    tuple val(sample_name), path("R1/trimmed*"), path("R2/trimmed*"), emit: reads_0
+    tuple val(sample_name), path("R1/*trimmed.fastq.gz"), path("R2/*trimmed.fastq.gz"), emit: reads_0
     path "log_cutadapt_*.txt", emit: log
 
     script:
@@ -25,8 +25,13 @@ process CUTADAPT {
     read2_name = read2_fastq.getName()
 
     """
+    sample_name=$read1_fastq
+    outname1="\${sample_name%%.*}"
+    sample_name=$read2_fastq
+    outname2="\${sample_name%%.*}"
+
     mkdir R1 R2
-    cutadapt $options.args -a $read1_adapter -A $read2_adapter -o R1/trimmed_$read1_name -p R2/trimmed_$read2_name $read1_fastq $read2_fastq
+    cutadapt $options.args -a $read1_adapter -A $read2_adapter -o R1/\${outname1}.trimmed.fastq.gz -p R2/\${outname2}.trimmed.fastq.gz $read1_fastq $read2_fastq
     cp .command.log log_cutadapt_${sample_name}.txt
 
     """
