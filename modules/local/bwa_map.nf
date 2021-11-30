@@ -31,7 +31,7 @@ process BWA_MAP {
     outname="\${sample_name%%.*}"
     outname="\${outname#R1_}"
 
-    bwa mem $options.args -t $task.cpus $bwa_index_folder/\$index_name $read1_fastq $read2_fastq | samtools sort -@ $task.cpus $avail_mem -O bam -o ${outname}.sorted.bam
+    bwa mem $options.args -t $task.cpus $bwa_index_folder/\$index_name $read1_fastq $read2_fastq | samtools sort -@ $task.cpus $avail_mem -O bam -o \${outname}.sorted.bam
 
     """
 }
