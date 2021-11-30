@@ -318,8 +318,8 @@ workflow PREPROCESS_DEFAULT {
 
   emit:
     res_files // out[0]: res folders for MultiQC report
-    COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
-    COMBINE_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
+    // COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
+    // COMBINE_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
     GET_FRAGMENTS.out.fragments // out[1]: for split bed
     GET_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
     COMBINE_BAM.out.sample_name // out[3]: for split bam
