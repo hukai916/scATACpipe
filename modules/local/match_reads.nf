@@ -36,9 +36,12 @@ process MATCH_READS {
     rm ${sample_name}_corrected_barcode.fq ${sample_name}_first_read_in_pair.fq
     gzip ${sample_name}_corrected_barcode.fq.paired.fq
     gzip ${sample_name}_first_read_in_pair.fq.paired.fq
-    # mv ${sample_name}_corrected_barcode.fq.paired.fq.gz ${sample_name}_first_read_matched_corrected_barcode.fq.gz
-    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz paired_${barcode_fastq}
-    mv ${sample_name}_first_read_in_pair.fq.paired.fq.gz paired_${read1_fastq}
+    # rename output:
+    sample_name=$read1_fastq
+    outname="\${sample_name%%.*}"
+    outname="\${outname#R1_}"
+    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz barcode_\${outname}.matched.fastq.gz
+    mv ${sample_name}_first_read_in_pair.fq.paired.fq.gz R1_\${outname}.matched.fastq.gz
 
 
     cd ../
@@ -55,9 +58,12 @@ process MATCH_READS {
     rm ${sample_name}_corrected_barcode.fq ${sample_name}_second_read_in_pair.fq
     gzip ${sample_name}_corrected_barcode.fq.paired.fq
     gzip ${sample_name}_second_read_in_pair.fq.paired.fq
-    # mv ${sample_name}_corrected_barcode.fq.paired.fq.gz ${sample_name}_second_read_matched_corrected_barcode.fq.gz
-    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz paired_${barcode_fastq}
-    mv ${sample_name}_second_read_in_pair.fq.paired.fq.gz paired_${read2_fastq}
+    # rename output:
+    sample_name=$read2_fastq
+    outname="\${sample_name%%.*}"
+    outname="\${outname#R2_}"
+    mv ${sample_name}_corrected_barcode.fq.paired.fq.gz barcode_\${outname}.matched.fastq.gz
+    mv ${sample_name}_second_read_in_pair.fq.paired.fq.gz R2_\${outname}.matched.fastq.gz
 
     """
 }
