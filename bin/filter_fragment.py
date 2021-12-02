@@ -16,13 +16,13 @@ if valid_barcode.endswith(".gz"):
     with gzip.open(valid_barcode, "rt") as f:
         for line in f:
             tem = line.split()
-            if not tem[0] in dict_valid_barcode: # this in not necessary
+            if not tem[0] in dict_valid_barcode: # this is not necessary
                 dict_valid_barcode[tem[0]] = 1
 else:
     with open(valid_barcode) as f:
         for line in f:
             tem = line.split()
-            if not tem[0] in dict_valid_barcode: # this in not necessary
+            if not tem[0] in dict_valid_barcode: # this is not necessary
                 dict_valid_barcode[tem[0]] = 1
 
 if fragment.endswith(".gz"):
