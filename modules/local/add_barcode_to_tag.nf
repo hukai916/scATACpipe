@@ -23,7 +23,7 @@ process ADD_BARCODE_TO_TAG {
 
     """
     # Copy cell barcode from readname to tag CB (assuming barcode matches /[^:]*/):
-    samtools view -h $bam | awk 'BEGIN { OFS = "\t"} match(\$1, /[^:]*/) { print \$0, "CB:Z:"substr(\$1, RSTART, RLENGTH) }' | samtools view -o ${bam.baseName}.barcode_tagged.bam
+    samtools view -h $bam | awk 'BEGIN { OFS = "\t"} match(\$1, /[^:]*/) { print \$0, "CR:Z:"substr(\$1, RSTART, RLENGTH) }' | samtools view -o ${bam.baseName}.barcode_tagged.bam
 
     """
 
