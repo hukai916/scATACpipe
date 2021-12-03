@@ -22,8 +22,13 @@ process ADD_BARCODE_TO_TAG {
     script:
 
     """
-    # Copy cell barcode from readname to tag CB (assuming barcode matches /[^:]*/):
-    samtools view -h $bam | awk 'BEGIN { OFS = "\t"} match(\$1, /[^:]*/) { print \$0, "CB:Z:"substr(\$1, RSTART, RLENGTH) }' | samtools view -o ${bam.baseName}.barcode_tagged.bam
+    # Copy cell barcode from readname to tag CB:
+    # Prepare tag file:
+    samtools view $bam | awk 'BEGIN { OFS = "\t"} match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH), "CB", substr(\$1, RSTART, RLENGTH)}' > ${bam.baseName}_tag.tsv
+
+    # Add barcode to CB tag:
+    samtools index $bam
+    sinto addtags -p $task.cpus -m tag -b $bam -f ${bam.baseName}_tag.tsv -o ${bam.baseName}.barcode_tagged.bam
 
     """
 
