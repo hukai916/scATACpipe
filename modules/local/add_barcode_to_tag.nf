@@ -27,7 +27,7 @@ process ADD_BARCODE_TO_TAG {
     samtools view $bam | awk 'BEGIN { OFS = "\t"} match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH), "CB", substr(\$1, RSTART, RLENGTH)}' > ${bam.baseName}_tag.tsv
 
     # Add barcode to CB tag:
-    sinto addtags -p $task.cpus -m tag -f ${bam.baseName}_tag.tsv -o ${bam.baseName}.barcode_tagged.bam
+    sinto addtags -p $task.cpus -m tag -b $bam -f ${bam.baseName}_tag.tsv -o ${bam.baseName}.barcode_tagged.bam
 
     """
 
