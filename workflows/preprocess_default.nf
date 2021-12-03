@@ -54,6 +54,7 @@ include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotati
 include { MINIMAP2_INDEX   } from '../modules/local/minimap2_index'    addParams( options: modules['minimap2_index'] )
 include { MINIMAP2_MAP     } from '../modules/local/minimap2_map'    addParams( options: modules['minimap2_map'] )
 include { BAM_FILTER       } from '../modules/local/bam_filter'    addParams( options: modules['bam_filter'] )
+include { ADD_BARCODE_TO_TAG } from '../modules/local/add_barcode_to_tag'
 include { REMOVE_DUPLICATE } from '../modules/local/remove_duplicate'    addParams( options: modules['remove_duplicate'] )
 include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
 include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
@@ -112,6 +113,7 @@ workflow PREPROCESS_DEFAULT {
         GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.barcode_whitelist).first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode)
       } else {
+        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, Channel.fromPath("assets/file_token.txt"))
       }
 
@@ -218,11 +220,14 @@ workflow PREPROCESS_DEFAULT {
     if (params.mapper == 'bwa') {
       BAM_FILTER (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
     } else if (params.mapper == "minimap2") {
-        BAM_FILTER (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
+      BAM_FILTER (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
     }
 
+    // Module: add cell barcode to tag
+    ADD_BARCODE_TO_TAG (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam)
+
     // Module: combine bam:
-    COMBINE_BAM (BAM_FILTER.out.sample_name.unique(), BAM_FILTER.out.bam.collect())
+    COMBINE_BAM (ADD_BARCODE_TO_TAG.out.sample_name.unique(), ADD_BARCODE_TO_TAG.out.bam.collect())
 
     // Module: remove duplicates based on cell barcode, start, end
     REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
