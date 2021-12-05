@@ -24,7 +24,8 @@ process ADD_BARCODE_TO_TAG {
     """
     # Copy cell barcode from readname to tag CB:
     # Prepare tag file:
-    samtools view $bam | awk 'BEGIN { OFS = "\t"} match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH), "CB", substr(\$1, RSTART, RLENGTH)}' > ${bam.baseName}_tag.tsv
+    samtools view $bam | awk 'BEGIN { OFS = "\t"} match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH), "CB", substr(\$1, RSTART, RLENGTH)}' | sort | uniq > ${bam.baseName}_temp.tag.tsv
+    # Note that each row must be unique, otherwise sinto problem.
 
     # Add barcode to CB tag:
     samtools index $bam

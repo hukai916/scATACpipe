@@ -53,9 +53,11 @@ include { BUILD_GENE_ANNOTATION } from '../modules/local/build_gene_annotation' 
 include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotation' addParams( options: modules['build_genome_annotation'] )
 include { MINIMAP2_INDEX   } from '../modules/local/minimap2_index'    addParams( options: modules['minimap2_index'] )
 include { MINIMAP2_MAP     } from '../modules/local/minimap2_map'    addParams( options: modules['minimap2_map'] )
-include { BAM_FILTER       } from '../modules/local/bam_filter'    addParams( options: modules['bam_filter'] )
-include { ADD_BARCODE_TO_TAG } from '../modules/local/add_barcode_to_tag'
-include { REMOVE_DUPLICATE } from '../modules/local/remove_duplicate'    addParams( options: modules['remove_duplicate'] )
+include { FILTER_BAM       } from '../modules/local/FILTER_BAM'    addParams( options: modules['filter_bam'] )
+include { PREP_BAM         } from '../modules/local/PREP_BAM'    addParams( options: modules['prep_bam'] )
+include { DEDUP_BAM        } from '../modules/local/DEDUP_BAM'
+// include { ADD_BARCODE_TO_TAG } from '../modules/local/add_barcode_to_tag'
+// include { REMOVE_DUPLICATE } from '../modules/local/remove_duplicate'    addParams( options: modules['remove_duplicate'] )
 include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
 include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
@@ -218,25 +220,33 @@ workflow PREPROCESS_DEFAULT {
 
     // Module: filter out poorly mapped reads
     if (params.mapper == 'bwa') {
-      BAM_FILTER (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
+      FILTER_BAM (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
     } else if (params.mapper == "minimap2") {
-      BAM_FILTER (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
+      FILTER_BAM (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
     }
 
+    // Module: prepare bam: copy barcode from name to CB tag, shift Tn5, extend soft clips
+    PREP_BAM (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
+
     // Module: add cell barcode to tag
-    ADD_BARCODE_TO_TAG (BAM_FILTER.out.sample_name, BAM_FILTER.out.bam)
+    // ADD_BARCODE_TO_TAG (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
 
     // Module: combine bam:
-    COMBINE_BAM (ADD_BARCODE_TO_TAG.out.sample_name.unique(), ADD_BARCODE_TO_TAG.out.bam.collect())
+    // COMBINE_BAM (ADD_BARCODE_TO_TAG.out.sample_name.unique(), ADD_BARCODE_TO_TAG.out.bam.collect())
+    COMBINE_BAM (PREP_BAM.out.sample_name.unique(), PREP_BAM.out.bam.collect())
+
+    // Module: dedup bam by barcode tag:
+    DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
 
     // Module: remove duplicates based on cell barcode, start, end
-    REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
+    // REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
     // DISCUSS: bamqc with qualimap for raw bam files
     // QUALIMAP (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
 
     // Module: generate fragment file with sinto
     // use raw bam file since ArchR may take advantage of the duplication info.
-    GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
+    // GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
+    GET_FRAGMENTS (DEDUP_BAM.out.sample_name, DEDUP_BAM.out.bam)
 
     // Module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
     QUALIMAP (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)

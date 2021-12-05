@@ -4,11 +4,11 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-process BAM_FILTER {
+process FILTER_BAM {
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'bam_filter', publish_id:'') }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'filter_bam', publish_id:'') }
     container "hukai916/bwa_xenial:0.1"
 
     input:
@@ -52,7 +52,7 @@ process BAM_FILTER {
     else if (filter == 'improper') // filter out only "improper reads"
     """
     # Keep only the following reads:
-    # 1. Paried reads mapped in the correct orientation.
+    # 1. Paired reads mapped in the correct orientation.
     # 2. Fragment size ranges from 38 to 2000 bp.
     # 3. The mapq of both reads > 20.
 
