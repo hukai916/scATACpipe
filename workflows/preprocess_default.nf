@@ -226,14 +226,15 @@ workflow PREPROCESS_DEFAULT {
     }
 
     // Module: prepare bam: copy barcode from name to CB tag, shift Tn5, extend soft clips
-    PREP_BAM (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
+    // PREP_BAM (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
 
     // Module: add cell barcode to tag
     // ADD_BARCODE_TO_TAG (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
 
     // Module: combine bam:
     // COMBINE_BAM (ADD_BARCODE_TO_TAG.out.sample_name.unique(), ADD_BARCODE_TO_TAG.out.bam.collect())
-    COMBINE_BAM (PREP_BAM.out.sample_name.unique(), PREP_BAM.out.bam.collect())
+    // COMBINE_BAM (PREP_BAM.out.sample_name.unique(), PREP_BAM.out.bam.collect())
+    COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
 
     // Module: dedup bam by barcode tag:
     DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)

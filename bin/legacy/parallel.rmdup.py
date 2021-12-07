@@ -5,6 +5,14 @@ Created on Fri Sep 28 12:08:23 2021
 @authors: liuh, huk
 Usage:
 python remove_duplicate.py -h
+
+Known issues/bugs: remove_duplicate.py has fixed them.
+1. Out-of-boundary issue still exist;
+2. outbam better has a default;
+3. If contig contains no reads, the pysam.sort() can be issue: remove_duplicate.py doesn't have such problem;
+4. @ nprocs are hard-coded.
+5. Need to get rid of intermediate files.
+
 """
 
 import pysam
@@ -24,27 +32,27 @@ def rm_dup(contig, inbam, header_len_dict,
     print("Processing ", contig, " ...")
     prefix = re.sub(".bam", "", os.path.basename(inbam))
     outname = os.path.join(outdir, prefix + "_" + contig + ".bam")
-    
+
     read_dict = {} # dict to store reads by name
     unique_fragments_dict = {} # dict to store unique fragments
-    
+
     ## summary statistics
     soft_clip_num = 0
     no_corrected_barcode_num     = 0
     not_properly_mapped_num      = 0
     total_unique_fragment_num    = 0
     total_duplicate_fragment_num = 0
-    
+
     inbam   = pysam.AlignmentFile(inbam, "rb")
     outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
-    
+
     # fill in the read_dict dictionary:
     for read in inbam.fetch(contig = contig):
         if not read.query_name in read_dict:
             read_dict[read.query_name] = [read]
         else:
             read_dict[read.query_name].append(read)
-    
+
     # accounting for soft-clipping and Tn5 shifts:
     for query_name in read_dict.keys():
         if len(read_dict[query_name]) == 2:
@@ -153,25 +161,25 @@ def rm_dup(contig, inbam, header_len_dict,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Remove PCR duplicates with mapping coordinates and cell barcode.')
-    parser.add_argument('--inbam', type = str, 
+    parser.add_argument('--inbam', type = str,
                         help = 'Path to paired bam file.')
-    parser.add_argument('--outbam', type = str, 
+    parser.add_argument('--outbam', type = str,
                         help = 'Filename for output bam file.')
-    parser.add_argument('--outdir', type = str, 
+    parser.add_argument('--outdir', type = str,
                         help = 'directory for output intermediate bam file.')
     parser.add_argument('--nproc', type = int, default = 1,
                         help = "Number of cores for parallel computing. (default: %(default)i)")
     parser.add_argument('--shift_forward', type = int, default = 4,
                         help = "Number of bases to shift for the reads mapped to forward strand (+4 for Tn5). (default: %(default)i)")
-    parser.add_argument('--shift_reverse', type = int, default = -5, 
+    parser.add_argument('--shift_reverse', type = int, default = -5,
                         help = "Number of bases to shift for the reads mapped to reverse strand (-5 for Tn5). (default: %(default)i)")
     parser.add_argument('--barcode_regex', type = str, default = '[^:]*',
                         help = 'Regular expression (must be double quoted) that matches the barcode in name. (default: "%(default)s")')
-    parser.add_argument('--barcode_tag', type = str, default = 'N/A', 
+    parser.add_argument('--barcode_tag', type = str, default = 'N/A',
                         help = "Bam tag that stores the cell barcode if available (default: %(default)s)")
-    
+
     args = parser.parse_args()
-    
+
     # read in bam file, close them when done:
     if (os.path.exists(args.inbam)):
         # for inbam.fetch() to work, must be put before reading in bam.
@@ -182,19 +190,19 @@ if __name__ == "__main__":
             inbam   = pysam.AlignmentFile(args.inbam, "rb")
     else:
         raise ValueError(args.inbam + " doesn't exist!")
-    
+
     # process on a per chromosome basis:
     header_chr = list(inbam.references)
     header_length =  list(inbam.lengths)
     header_len_dict = dict(zip(header_chr , header_length))
-    
+
     soft_clip_5 = re.compile(r'^(\d+)S')
     soft_clip_3 = re.compile(r'(\d+)S$')
     inbam.close()
-    
+
     if (not os.path.exists(args.outdir)):
         os.makedirs(args.outdir)
-            
+
     nproc = args.nproc
     with Pool(nproc) as p:
         contig_bam_lists = p.map_async(functools.partial(rm_dup, inbam = args.inbam,
@@ -208,17 +216,17 @@ if __name__ == "__main__":
                                                     barcode_tag = args.barcode_tag),
                                     header_chr,
                                     chunksize = len(header_chr) // nproc).get()
-    
+
     soft_clip_num = 0
     no_corrected_barcode_num     = 0
     not_properly_mapped_num      = 0
     total_unique_fragment_num    = 0
     total_duplicate_fragment_num = 0
-    
+
     contig_bam_files = [res[0] for res in contig_bam_lists] # list of BAM filenames
     contig_bam_stats = [res[1] for res in contig_bam_lists] # list of dict
     # cat files and write to output
-    
+
     out_bams = []
     for bam in contig_bam_files:
         prefix = os.path.basename(bam)
@@ -228,18 +236,18 @@ if __name__ == "__main__":
         pysam.index(outname)
         out_bams.append(outname)
         #os.remove(i)
-        
+
     merge_param = ["-f", "-@", "8", args.outbam] +  out_bams
     pysam.merge(*merge_param)
     pysam.index(args.outbam)
-        
+
     for stat in contig_bam_stats:
         soft_clip_num += stat[soft_clip_num]
-        no_corrected_barcode_num += stat[no_corrected_barcode_num]
-        not_properly_mapped_num += stat[not_properly_mapped_num]
-        total_unique_fragment_num += stat[total_unique_fragment_num]
-        total_duplicate_fragment_num += stat[total_duplicate_fragment_num]
-        
+        no_corrected_barcode_num += stat["no_corrected_barcode_num"]
+        not_properly_mapped_num += stat["not_properly_mapped_num"]
+        total_unique_fragment_num += stat["total_unique_fragment_num"]
+        total_duplicate_fragment_num += stat["total_duplicate_fragment_num"]
+
     # print out summary statistics:
     print("Soft_clipped (reads): ", soft_clip_num)
     print("No corrected barcode (of all paired fragments): ", no_corrected_barcode_num)
