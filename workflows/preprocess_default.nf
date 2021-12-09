@@ -55,9 +55,9 @@ include { MINIMAP2_INDEX   } from '../modules/local/minimap2_index'    addParams
 include { MINIMAP2_MAP     } from '../modules/local/minimap2_map'    addParams( options: modules['minimap2_map'] )
 include { FILTER_BAM       } from '../modules/local/filter_bam'    addParams( options: modules['filter_bam'] )
 // include { PREP_BAM         } from '../modules/local/prep_bam'    addParams( options: modules['prep_bam'] )
+include { TAG_BAM          } from '../modules/local/tag_bam'
 include { DEDUP_BAM; DEDUP_BAM as DEDUP_BAM2 } from '../modules/local/dedup_bam'
 // include { ADD_BARCODE_TO_TAG } from '../modules/local/add_barcode_to_tag'
-// include { REMOVE_DUPLICATE } from '../modules/local/remove_duplicate'    addParams( options: modules['remove_duplicate'] )
 include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
 include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
