@@ -55,7 +55,7 @@ include { MINIMAP2_INDEX   } from '../modules/local/minimap2_index'    addParams
 include { MINIMAP2_MAP     } from '../modules/local/minimap2_map'    addParams( options: modules['minimap2_map'] )
 include { FILTER_BAM       } from '../modules/local/FILTER_BAM'    addParams( options: modules['filter_bam'] )
 include { PREP_BAM         } from '../modules/local/PREP_BAM'    addParams( options: modules['prep_bam'] )
-include { DEDUP_BAM        } from '../modules/local/DEDUP_BAM'
+include { DEDUP_BAM; DEDUP_BAM as DEDUP_BAM2 } from '../modules/local/DEDUP_BAM'
 // include { ADD_BARCODE_TO_TAG } from '../modules/local/add_barcode_to_tag'
 // include { REMOVE_DUPLICATE } from '../modules/local/remove_duplicate'    addParams( options: modules['remove_duplicate'] )
 include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
@@ -106,40 +106,11 @@ workflow PREPROCESS_DEFAULT {
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
-    // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
-    if (!(params.barcode_correction)) {
-      ADD_BARCODE_TO_READS (sample_name, read1_chunk, read2_chunk, barcode_chunk)
-    } else {
-      if (params.barcode_whitelist) {
-        // use whole library to determine a single whitelist barcode for each chunk.
-        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.barcode_whitelist).first())
-        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode)
-      } else {
-        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
-        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, Channel.fromPath("assets/file_token.txt"))
-      }
+    // Module: add barcode to reads
+    ADD_BARCODE_TO_READS (sample_name, read1_chunk, read2_chunk, barcode_chunk)
 
-      if (params.barcode_correction == "pheniqs") {
-        CORRECT_BARCODE_PHENIQS (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode_frequency.collect())
-      } else if (params.barcode_correction == "naive") {
-        CORRECT_BARCODE (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode.collect())
-        MATCH_READS (CORRECT_BARCODE.out.reads)
-        ADD_BARCODE_TO_READS_2 (MATCH_READS.out.reads_2)
-      } else {
-        log.error "Invalid --barcode_correction value supplied!"
-        exit 1, "EXIT!"
-      }
-    }
-
-    // Module: trimming off adapter
-    if (!(params.barcode_correction)) {
-      CUTADAPT (ADD_BARCODE_TO_READS.out.reads_0, params.read1_adapter, params.read2_adapter)
-    } else if (params.barcode_correction == "pheniqs") {
-      // CUTADAPT (MATCH_READS.out.sample_name, MATCH_READS.out.read1_fastq, MATCH_READS.out.read2_fastq, params.read1_adapter, params.read2_adapter)
-      CUTADAPT (CORRECT_BARCODE_PHENIQS.out.reads_0, params.read1_adapter, params.read2_adapter)
-    } else if (params.barcode_correction == "naive") {
-      CUTADAPT (ADD_BARCODE_TO_READS_2.out.reads_0, params.read1_adapter, params.read2_adapter)
-    }
+    // Module: trim off adapter
+    CUTADAPT (ADD_BARCODE_TO_READS.out.reads_0, params.read1_adapter, params.read2_adapter)
 
     // Module: mapping with bwa or minimap2: mark duplicate
     // bwa or minimap2
@@ -231,14 +202,48 @@ workflow PREPROCESS_DEFAULT {
     // Module: add cell barcode to tag
     // ADD_BARCODE_TO_TAG (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
 
-    // Module: combine bam:
+    // Module: combine bam
     // COMBINE_BAM (ADD_BARCODE_TO_TAG.out.sample_name.unique(), ADD_BARCODE_TO_TAG.out.bam.collect())
     // COMBINE_BAM (PREP_BAM.out.sample_name.unique(), PREP_BAM.out.bam.collect())
     COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
 
-    // Module: dedup bam by barcode tag:
-    DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
+    // Module: dedup bam by barcode tag
+    DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam, "N/A")
 
+    if (!params.barcode_correction) {
+      // Module: get fragment file
+      GET_FRAGMENTS (DEDUP_BAM.out.sample_name, DEDUP_BAM.out.bam)
+    } else {
+      // Module: get valid barcode
+      if (!params.whitelist_barcode) {
+        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
+        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, Channel.fromPath("assets/file_token.txt").first())
+      } else {
+        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.barcode_whitelist).first())
+        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode)
+      }
+      // Modules: correct barcode
+      if (params.barcode_correction == "pheniqs") {
+        // Module: pheniqs
+        CORRECT_BARCODE_PHENIQS (GET_VALID_BARCODE.out.sample_name, GET_VALID_BARCODE.out.barcode_fastq, GET_VALID_BARCODE.out.valid_barcode_counts_fastq)
+
+        // Module: add CB tag to BAM containg corrected barcodes
+        TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile_sinto, DEDUP_BAM.out.bam.collect())
+
+        // Module: dedup bam again using "CB" tag
+        DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
+
+      } else if (params.barcode_correction == "naive") {
+        CORRECT_BARCODE (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode.collect())
+        MATCH_READS (CORRECT_BARCODE.out.reads)
+        ADD_BARCODE_TO_READS_2 (MATCH_READS.out.reads_2)
+      } else {
+        log.error "Invalid --barcode_correction value supplied!"
+        exit 1, "EXIT!"
+      }
+    }
+
+    // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     // Module: remove duplicates based on cell barcode, start, end
     // REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
     // DISCUSS: bamqc with qualimap for raw bam files
@@ -247,10 +252,10 @@ workflow PREPROCESS_DEFAULT {
     // Module: generate fragment file with sinto
     // use raw bam file since ArchR may take advantage of the duplication info.
     // GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
-    GET_FRAGMENTS (DEDUP_BAM.out.sample_name, DEDUP_BAM.out.bam)
+    GET_FRAGMENTS (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
 
     // Module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
-    QUALIMAP (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
+    QUALIMAP (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
 
     // Collect all output results for MultiQC report:
     res_files = Channel.empty()

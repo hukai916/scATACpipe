@@ -9,7 +9,7 @@ process GET_VALID_BARCODE {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'get_valid_barcode', publish_id:'') }
-    container "hukai916/umitools_xenial:0.2"
+    container "hukai916/r_util:0.2"
 
     input:
     val sample_name
@@ -18,21 +18,35 @@ process GET_VALID_BARCODE {
 
     output:
     val sample_name
-    path "*valid_barcode_frequency.txt", emit: valid_barcode_frequency
-    path "*valid_barcode.txt", emit: valid_barcode
+    path barcode_fastq, emit: barcode_fastq
+    path "*_valid_barcode_counts_fastq.txt", emit: valid_barcode_counts_fastq
+    path "*_valid_barcodes_dedup_bam.txt", emit: valid_barcodes
 
     script:
 
     """
-    barcode_length=\$((zcat $barcode_fastq || true) | awk 'NR==2 {print length(\$0); exit}')
-    printf -v bc_pattern '%0.sC' \$(seq 1 \$barcode_length)
-    umi_tools whitelist $options.args -I $barcode_fastq --bc-pattern \$bc_pattern --error-correct-threshold 0 | grep -v "#" > valid_barcode_frequency_raw.txt
+    # Generate three outfiles:
+    #  Outfile1: Barcode read counts from dedup bam: -> inflection point -> valid barcode counts (outfile2).
+    #  Outfile3: Barcode counts from raw barcode fastq: -> raw barcode counts -> pheniqs barcode correction.
+
+    # For outfile1:
+    samtools view ${sample_name}.dedup.bam | awk 'BEGIN { OFS = "\t" } match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH) }' | sort | uniq -c | awk '{print \$2, \$1}' > ${sample_name}_barcode_counts_dedup_bam.txt
+
+    # For outfile2:
+    get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
 
     if [[ $whitelist_barcode == file_token.txt ]]; then
-      cat valid_barcode_frequency_raw.txt | cut -f 1 > ${sample_name}_valid_barcode.txt
+      cat ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt
+      mv ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt ${sample_name}_valid_barcode_counts_dedup_bam.txt
     else
-      get_valid_barcode.py valid_barcode_frequency_raw.txt $whitelist_barcode ${sample_name}_valid_barcode.txt ${sample_name}_valid_barcode_frequency.txt
+      join -1 1 -2 1 <(sort $whitelist_barcode) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
+      rm ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
+      cat ${sample_name}_valid_barcode_counts_dedup_bam.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt
     fi
+
+    # For outfile3:
+    zcat $barcode_fastq | awk 'NR%4==2 {print}' | sort | uniq -c | awk '{print \$2, \$1}' > ${sample_name}_barcode_counts_fastq.txt
+    join -1 1 -2 1 <(sort ${sample_name}_valid_barcodes_dedup_bam.txt) <(sort ${sample_name}_barcode_counts_fastq.txt) > ${sample_name}_valid_barcode_counts_fastq.txt
 
     """
 }

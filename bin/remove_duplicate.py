@@ -14,7 +14,7 @@ Dev notes:
 2. When shifting for Tn5, must shift positive value for forward reads and negative for reverse reads: to comply with boudary check.
   2.1 When shifting, for forward reads: start - shift_forward
   2.2 When shifting, for reverse reads: end + shift_reverse (shift_reverse is negative)
-3. 
+3.
 
 
 """
@@ -31,7 +31,7 @@ from sinto import utils
 def rm_dup(intervals, inbam, header_len_dict,
            soft_clip_5, soft_clip_3,
            shift_forward = 4, shift_reverse = -5,
-           barcode_regex = "[^:]+",
+           barcode_regex = "[^:]*",
            outdir = ".",
            barcode_tag = "N/A"):
 
@@ -235,7 +235,7 @@ if __name__ == "__main__":
     intervals = utils.chunk_bam(bam_temp, nproc)
 
     with Pool(nproc) as p:
-        contig_bam_lists = p.map_async(
+        chunk_bam_lists = p.map_async(
             functools.partial(rm_dup, inbam = args.inbam,
                             header_len_dict = header_len_dict,
                             soft_clip_5 = soft_clip_5,
@@ -253,12 +253,12 @@ if __name__ == "__main__":
     total_unique_fragment_num    = 0
     total_duplicate_fragment_num = 0
 
-    contig_bam_files = [res[0] for res in contig_bam_lists] # list of BAM filenames
-    contig_bam_stats = [res[1] for res in contig_bam_lists] # list of dict
+    chunk_bam_files = [res[0] for res in chunk_bam_lists] # list of BAM filenames
+    contig_bam_stats = [res[1] for res in chunk_bam_lists] # list of dict
     # cat files and write to output
 
     out_bams = []
-    for bam in contig_bam_files:
+    for bam in chunk_bam_files:
         prefix = os.path.basename(bam)
         prefix = re.sub(".bam$", "", prefix)
         outname =  os.path.join(args.outdir, prefix + ".srt.bam")
@@ -271,7 +271,7 @@ if __name__ == "__main__":
     pysam.index(args.outbam)
 
     # clean intermediate files:
-    for bam in contig_bam_files:
+    for bam in chunk_bam_files:
         try:
             os.remove(bam)
         except:

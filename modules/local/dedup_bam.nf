@@ -14,6 +14,7 @@ process DEDUP_BAM {
     input:
     val sample_name
     path bam
+    val barcode_tag
 
     output:
     val sample_name, emit: sample_name
@@ -23,7 +24,7 @@ process DEDUP_BAM {
 
     """
     # Deduplicate bam file with remove_duplicate.py:
-    remove_duplicate.py --inbam $bam --outdir ./ --outbam ${sample_name}.dedup.bam --nproc $task.cpus
+    remove_duplicate.py --inbam $bam --barcode_tag $barcode_tag --outdir ./ --outbam ${sample_name}.dedup.bam --nproc $task.cpus
 
     """
 

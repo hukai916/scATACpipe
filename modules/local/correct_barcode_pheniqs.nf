@@ -13,43 +13,41 @@ process CORRECT_BARCODE_PHENIQS {
 
     input:
     val sample_name
-    path read1_fastq
-    path read2_fastq
+    // path read1_fastq
+    // path read2_fastq
     path barcode_fastq
-    path valid_barcode_frequency
+    path valid_barcode_counts
 
     output:
-    tuple val(sample_name), path("R1_*pheniqs*.fastq.gz"), path("R2_*pheniqs*.fastq.gz"), emit: reads_0
+    // tuple val(sample_name), path("R1_*pheniqs*.fastq.gz"), path("R2_*pheniqs*.fastq.gz"), emit: reads_0
+    val sample_name
+    path "*.tagfile_sinto.tsv", emit: tagfile_sinto
     path "summary_*.txt", emit: corrected_barcode_summary
-    // barcode is not needed for pheniqs since corrected barcodes are added by default.
 
     script:
 
     """
-    # step1, interleave read and index files
-    pheniqs mux -R log_interleave.txt -i $read1_fastq -i $barcode_fastq -i $read2_fastq --output ${sample_name}.cram
+    # Step1, interleave read and index files:
+    pheniqs mux -R log_interleave.txt -i $barcode_fastq -i $barcode_fastq --output ${sample_name}.cram
 
-    # step2, make a json config file
+    # Step2, make a json config file (use a minial 0:0:1 as output R1 to save I/O):
     barcode_length=\$((zcat $barcode_fastq || true) | awk 'NR==2 {print length(\$0); exit}')
-    make_json.py ${sample_name}_valid_barcode_frequency.txt ${sample_name}.cram 3 0::,2:: 1::\$barcode_length ${sample_name}.json
+    make_json.py $valid_barcode_counts ${sample_name}.cram 2 0:0:1 1::\$barcode_length ${sample_name}.json
 
-    # step3, run pheniqs
+    # Step3, run pheniqs:
     pheniqs mux -R log_decode.txt --threads $task.cpus --decoding-threads $task.cpus --htslib-threads $task.cpus --config ${sample_name}.json --output ${sample_name}.corrected.bam
 
-    # step4, extract fastq from pheniqs output bam
+    # Step4, extract a tag file:
     samtools index ${sample_name}.corrected.bam
-    bam2fastq.py ${sample_name}.corrected.bam corrected_${barcode_fastq}
+    extrac_tag.py ${sample_name}.corrected.bam BC,RG ${sample_name}.tag.txt
+    cat ${sample_name}.tag.txt | awk 'BEGIN { OFS = "\t"} { print \$1,"CB",\$2 }' > ${sample_name}.tagfile_sinto.tsv
 
-    # rename output:
-    sample_name=$read1_fastq
-    outname="\${sample_name%%.*}"
-    mv corrected_${barcode_fastq}*first_read_in_pair.fastq.gz \${outname}.pheniqs.fastq.gz
-    sample_name=$read2_fastq
-    outname="\${sample_name%%.*}"
-    mv corrected_${barcode_fastq}*second_read_in_pair.fastq.gz \${outname}.pheniqs.fastq.gz
+    # Step5, print stats:
+    valid_read_num=\$(cat ${sample_name}.tag.txt | awk '{ if (\$1 == \$2) print \$0 }' | wc -l)
+    discard_read_num=\$(cat ${sample_name}.tag.txt | awk '{ if (\$2 == "undetermined") print \$0 }' | wc -l)
+    rescued_read_num=\$(cat ${sample_name}.tag.txt | grep -v "undetermined" | awk '{ if (\$1 != \$2) print \$0 }' | wc -l)
 
-    # Note the noise param is determined by sequencer, can't be estimated; confidence: 0.99 (posterior possiblity), one run of pheniqs is okay to estimate the priors (since the invalid barcode are rare, this iteration is not a must.)
-
+    echo "Summary (correct_barcode): total valid: "\${valid_read_num}"; total corrected: "\${rescued_read_num}"; total discarded: "\${discard_read_num}"." > summary_${sample_name}.txt
 
     """
 }

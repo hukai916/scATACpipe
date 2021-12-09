@@ -7,9 +7,9 @@ Usage:
 python remove_duplicate.py -h
 
 Known issues/bugs: remove_duplicate.py has fixed them.
-1. Out-of-boundary issue still exist;
+1. Out-of-boundary issue still exist: start can't be 0;
 2. outbam better has a default;
-3. If contig contains no reads, the pysam.sort() can be issue: remove_duplicate.py doesn't have such problem;
+3. If contig contains no reads, the pysam.merge() can be issue: remove_duplicate.py doesn't have such problem;
 4. @ nprocs are hard-coded.
 5. Need to get rid of intermediate files.
 
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Remove PCR duplicates with mapping coordinates and cell barcode.')
     parser.add_argument('--inbam', type = str,
                         help = 'Path to paired bam file.')
-    parser.add_argument('--outbam', type = str,
+    parser.add_argument('--outbam', type = str, default = "out.bam",
                         help = 'Filename for output bam file.')
     parser.add_argument('--outdir', type = str,
                         help = 'directory for output intermediate bam file.')
