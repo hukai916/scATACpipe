@@ -217,10 +217,10 @@ workflow PREPROCESS_DEFAULT {
       // Module: get valid barcode
       if (!params.whitelist_barcode) {
         GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
-        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, Channel.fromPath("assets/file_token.txt").first())
+        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
       } else {
         GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.barcode_whitelist).first())
-        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, GET_WHITELIST_BARCODE.out.whitelist_barcode)
+        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
       }
       // Modules: correct barcode
       if (params.barcode_correction == "pheniqs") {

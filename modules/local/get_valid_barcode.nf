@@ -14,6 +14,7 @@ process GET_VALID_BARCODE {
     input:
     val sample_name
     path barcode_fastq
+    path dedup_bam
     path whitelist_barcode
 
     output:
