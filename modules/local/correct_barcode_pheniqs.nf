@@ -20,7 +20,7 @@ process CORRECT_BARCODE_PHENIQS {
 
     output:
     // tuple val(sample_name), path("R1_*pheniqs*.fastq.gz"), path("R2_*pheniqs*.fastq.gz"), emit: reads_0
-    val sample_name
+    val sample_name, emit: sample_name
     path "*.tagfile_sinto.tsv", emit: tagfile_sinto
     path "summary_*.txt", emit: corrected_barcode_summary
 
