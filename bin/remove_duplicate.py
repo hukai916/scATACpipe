@@ -53,13 +53,12 @@ def rm_dup(intervals, inbam, header_len_dict,
     total_unique_fragment_num    = 0
     total_duplicate_fragment_num = 0
 
-    pysam.index(inbam)
-    inbam_file   = pysam.AlignmentFile(inbam, "rb")
-    outbam  = pysam.AlignmentFile(outname, "wb", template = inbam_file)
+    inbam   = pysam.AlignmentFile(inbam, "rb")
+    outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
     # fill in the read_dict dictionary:
     for i in intervals:
-        for read in inbam_file.fetch(i[0], i[1], i[2]):
+        for read in inbam.fetch(i[0], i[1], i[2]):
             if not read.query_name in read_dict:
                 read_dict[read.query_name] = [read]
             else:
@@ -173,7 +172,7 @@ def rm_dup(intervals, inbam, header_len_dict,
         outbam.write(left_read)
         outbam.write(right_read)
 
-    inbam_file.close()
+    inbam.close()
     outbam.close()
     return  [outname, dict(soft_clip_num = soft_clip_num,
                           no_corrected_barcode_num = no_corrected_barcode_num,
@@ -253,7 +252,7 @@ if __name__ == "__main__":
     total_unique_fragment_num    = 0
     total_duplicate_fragment_num = 0
 
-    chunk_bam_files = [res[0] for res in chunk_bam_lists] # list of BAM filenames
+    chunk_bam_files  = [res[0] for res in chunk_bam_lists] # list of BAM filenames
     contig_bam_stats = [res[1] for res in chunk_bam_lists] # list of dict
     # cat files and write to output
 
@@ -262,6 +261,7 @@ if __name__ == "__main__":
         prefix = os.path.basename(bam)
         prefix = re.sub(".bam$", "", prefix)
         outname =  os.path.join(args.outdir, prefix + ".srt.bam")
+        print(bam, " test ", outname)
         pysam.sort("-o", outname, "-m", "4G", "-@", str(nproc), bam)
         pysam.index(outname)
         out_bams.append(outname)
