@@ -53,11 +53,8 @@ def rm_dup(intervals, inbam, header_len_dict,
     total_unique_fragment_num    = 0
     total_duplicate_fragment_num = 0
 
-    try:
-        inbam   = pysam.AlignmentFile(inbam, "rb")
-    except:
-        pysam.index(inbam)
-        inbam   = pysam.AlignmentFile(inbam, "rb")
+    pysam.index(inbam)
+    inbam   = pysam.AlignmentFile(inbam, "rb")
     outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
     # fill in the read_dict dictionary:
