@@ -54,12 +54,12 @@ def rm_dup(intervals, inbam, header_len_dict,
     total_duplicate_fragment_num = 0
 
     pysam.index(inbam)
-    inbam   = pysam.AlignmentFile(inbam, "rb")
-    outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
+    inbam_file   = pysam.AlignmentFile(inbam, "rb")
+    outbam  = pysam.AlignmentFile(outname, "wb", template = inbam_file)
 
     # fill in the read_dict dictionary:
     for i in intervals:
-        for read in inbam.fetch(i[0], i[1], i[2]):
+        for read in inbam_file.fetch(i[0], i[1], i[2]):
             if not read.query_name in read_dict:
                 read_dict[read.query_name] = [read]
             else:
@@ -173,7 +173,7 @@ def rm_dup(intervals, inbam, header_len_dict,
         outbam.write(left_read)
         outbam.write(right_read)
 
-    inbam.close()
+    inbam_file.close()
     outbam.close()
     return  [outname, dict(soft_clip_num = soft_clip_num,
                           no_corrected_barcode_num = no_corrected_barcode_num,
@@ -206,7 +206,6 @@ if __name__ == "__main__":
     assert args.shift_forward >= 0, "Can not shift negative value for forward reads!"
     assert args.shift_reverse <= 0, "Can not shift positive value for reverse reads!"
     # Above is to ensure the out-of-boundary issue doesn't exist, otherwise samtools sort/index might be problematic.
-
 
     # read in bam file, close them when done:
     if (os.path.exists(args.inbam)):
