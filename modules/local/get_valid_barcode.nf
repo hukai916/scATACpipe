@@ -17,7 +17,7 @@ process GET_VALID_BARCODE {
     path whitelist_barcode
 
     output:
-    val sample_name
+    val sample_name, emit: sample_name
     path barcode_fastq, emit: barcode_fastq
     path "*_valid_barcode_counts_fastq.txt", emit: valid_barcode_counts_fastq
     path "*_valid_barcodes_dedup_bam.txt", emit: valid_barcodes
