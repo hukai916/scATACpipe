@@ -40,7 +40,12 @@ process GET_VALID_BARCODE {
       cat ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt
       mv ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt ${sample_name}_valid_barcode_counts_dedup_bam.txt
     else
-      join -1 1 -2 1 <(sort $whitelist_barcode) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
+      if [[ $whitelist_barcode == *.gz ]]; then
+        join -1 1 -2 1 <(zcat $whitelist_barcode | sort) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
+      else
+        join -1 1 -2 1 <(sort $whitelist_barcode) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
+      fi
+
       rm ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
       cat ${sample_name}_valid_barcode_counts_dedup_bam.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt
     fi
