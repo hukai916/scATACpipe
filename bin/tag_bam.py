@@ -18,7 +18,7 @@ outname         = sys.argv[3]
 
 dict_tag = {}
 with open(tagfile, "r") as f:
-    for line in open(f):
+    for line in f:
         tem = line.split()
         raw_barcode = tem[0]
         corrected_barcode = tem[1]
