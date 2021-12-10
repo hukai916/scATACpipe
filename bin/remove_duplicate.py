@@ -210,6 +210,7 @@ if __name__ == "__main__":
     if (os.path.exists(args.inbam)):
         # for inbam.fetch() to work, must be put before reading in bam.
         try:
+            print("test here")
             inbam   = pysam.AlignmentFile(args.inbam, "rb")
         except:
             pysam.index(args.inbam)
