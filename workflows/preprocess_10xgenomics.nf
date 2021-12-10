@@ -111,8 +111,8 @@ workflow PREPROCESS_10XGENOMICS {
 
     // Old version:
     // Below are for filtering cells based on "valid barcode" inferred from the "knee" method
-    // if (params.barcode_whitelist) {
-    //   GET_WHITELIST_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath(params.barcode_whitelist).first())
+    // if (params.whitelist_barcode) {
+    //   GET_WHITELIST_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath(params.whitelist_barcode).first())
     //   GET_VALID_BARCODE_CELLRANGER (GET_WHITELIST_BARCODE_CELLRANGER.out.sample, GET_WHITELIST_BARCODE_CELLRANGER.out.whitelist_barcode)
     // } else {
     //   GET_VALID_BARCODE_CELLRANGER (CELLRANGER_ATAC_COUNT.out.sample, Channel.fromPath("assets/file_token.txt").first())

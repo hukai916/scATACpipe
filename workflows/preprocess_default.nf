@@ -219,7 +219,7 @@ workflow PREPROCESS_DEFAULT {
         GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
       } else {
-        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.barcode_whitelist).first())
+        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.whitelist_barcode).first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
       }
       // Modules: correct barcode
