@@ -44,8 +44,6 @@ def chunk_bam(bam, nproc):
 
 def set_tag(intervals, inbam, dict_tag, tag):
     inbam   = pysam.AlignmentFile(inbam, "rb")
-    print(intervals)
-
     prefix  = re.sub(".bam$", "", os.path.basename(bam))
     outname = os.path.join("tagged_" + prefix + ".bam")
     outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
@@ -96,6 +94,7 @@ with Pool(nproc) as p:
 
 merge_param = ["-f", "-@", str(nproc), outname] +  out_bams
 pysam.merge(*merge_param)
+print(os.listdir())
 
 # clean intermediate files:
 for bam in chunk_bam_lists:
