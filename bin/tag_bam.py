@@ -15,12 +15,13 @@ import subprocess
 import math
 import os
 from multiprocessing import Pool
+import functools
 from sinto import utils
 
 bam             = sys.argv[1]
 tagfile         = sys.argv[2]
 outname         = sys.argv[3]
-nproc           = sys.argv[4]
+nproc           = int(sys.argv[4])
 
 dict_tag = {}
 with open(tagfile, "r") as f:
@@ -74,9 +75,9 @@ inbam   = pysam.AlignmentFile(bam, "rb")
 outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
 # chunk_bams = chunk_bam(inbam, nproc)
-intervals = utils.chunk_bam(inbam, int(nproc))
+intervals = utils.chunk_bam(inbam, nproc)
 
-with Pool(int(nproc)) as p:
+with Pool(nproc) as p:
     chunk_bam_lists = p.map_async(
         functools.partial(set_tag,
                           dict_tag = dict_tag,
