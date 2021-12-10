@@ -92,7 +92,7 @@ with Pool(nproc) as p:
                           ).get()
 
 
-merge_param = ["-f", "-@", str(nproc), outname] +  out_bams
+merge_param = ["-f", "-@", str(nproc), outname] +  chunk_bam_lists
 pysam.merge(*merge_param)
 print(os.listdir())
 
