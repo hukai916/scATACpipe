@@ -174,7 +174,11 @@ def rm_dup(intervals, inbam, header_len_dict,
 
     inbam.close()
     outbam.close()
-    return  [outname, dict(soft_clip_num = soft_clip_num,
+
+    pysam.sort("-o", outname + ".srt.bam", "-m", "4G", "-@", str(nproc), outbam)
+    pysam.index(outname + ".srt.bam")
+
+    return  [outname + ".srt.bam", dict(soft_clip_num = soft_clip_num,
                           no_corrected_barcode_num = no_corrected_barcode_num,
                           not_properly_mapped_num = not_properly_mapped_num,
                           total_unique_fragment_num = total_unique_fragment_num,
@@ -257,7 +261,6 @@ if __name__ == "__main__":
         prefix = os.path.basename(bam)
         prefix = re.sub(".bam$", "", prefix)
         outname =  os.path.join(args.outdir, prefix + ".srt.bam")
-        print(bam, " test ", outname)
         pysam.sort("-o", outname, "-m", "4G", "-@", str(nproc), bam)
         pysam.index(outname)
         out_bams.append(outname)
