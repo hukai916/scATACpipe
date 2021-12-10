@@ -176,7 +176,7 @@ def rm_dup(intervals, inbam, header_len_dict,
     outbam.close()
 
     outname_sorted = os.path.join(outdir, "tmp_" + prefix + "_chunk_" + temp_name + ".srt.bam")
-    pysam.sort("-o", outname_sorted, "-m", "4G", "-@", str(nproc), outbam)
+    pysam.sort("-o", outname_sorted, "-m", "4G", "-@", str(nproc), outname)
     pysam.index(outname_sorted)
 
     return  [outname_sorted, dict(soft_clip_num = soft_clip_num,
