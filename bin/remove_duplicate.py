@@ -238,6 +238,7 @@ if __name__ == "__main__":
     nproc = args.nproc
     bam_temp = pysam.AlignmentFile(args.inbam, "rb")
     intervals = utils.chunk_bam(bam_temp, nproc)
+    bam_temp.close()
 
     with Pool(nproc) as p:
         chunk_bam_lists = p.map_async(

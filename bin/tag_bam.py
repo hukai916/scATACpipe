@@ -80,18 +80,19 @@ outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
 # chunk_bams = chunk_bam(inbam, nproc)
 intervals = utils.chunk_bam(inbam, nproc)
+inbam.close()
+outbam.close()
 
 with Pool(nproc) as p:
     chunk_bam_lists = p.map_async(
         functools.partial(set_tag,
-                          inbam    = inbam,
+                          inbam    = bam,
                           dict_tag = dict_tag,
                           tag      = "CB"
                           ),
                           intervals.values()
                           ).get()
-inbam.close()
-outbam.close()
+
 
 merge_param = ["-f", "-@", str(nproc), outname] +  out_bams
 pysam.merge(*merge_param)
