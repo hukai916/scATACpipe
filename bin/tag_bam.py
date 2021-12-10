@@ -50,7 +50,7 @@ def set_tag(intervals, inbam, dict_tag, tag):
 
     print("Processing ", "chunk_" + temp_name, " ...")
     prefix  = re.sub(".bam$", "", os.path.basename(bam))
-    outname = os.path.join(outdir, "tmp_" + prefix + "_chunk_" + temp_name + ".bam")
+    outname = os.path.join("tmp_" + prefix + "_chunk_" + temp_name + ".bam")
     outname = os.path.join("tagged_" + prefix + ".bam")
     outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
