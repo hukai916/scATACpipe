@@ -30,7 +30,7 @@ y <- log10(freq[, 2])
 subset0 <- which(diff(y) < 0)
 
 # Visualize the count density to see if there is any pattern that can be leveraged to to remove boundary noises:
-plot(density(x[subset0]))
+# plot(density(x[subset0]))
 d <- density(x[subset0])
 
 # Get the truncated range:
