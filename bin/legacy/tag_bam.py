@@ -6,6 +6,8 @@ Add tag CB to bam file via a tagfile: for tag pair (raw-corrected) in the tag fi
 Usage:
 python tag_bam.py in.bam tag.txt outname.bam
 
+Legacy version: split bam by read chunk
+
 """
 
 import sys
@@ -15,7 +17,6 @@ import subprocess
 import math
 import os
 from multiprocessing import Pool
-from sinto import utils
 
 bam             = sys.argv[1]
 tagfile         = sys.argv[2]
@@ -73,16 +74,14 @@ def set_tag(bam, dict_tag, tag):
 inbam   = pysam.AlignmentFile(bam, "rb")
 outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
-# chunk_bams = chunk_bam(inbam, nproc)
-intervals = utils.chunk_bam(inbam, nproc)
-
+chunk_bams = chunk_bam(inbam, nproc)
 with Pool(nproc) as p:
     chunk_bam_lists = p.map_async(
         functools.partial(set_tag,
                           dict_tag = dict_tag,
                           tag      = "CB"
                           ),
-                          intervals.values()
+                          chunk_bams
                           ).get()
 inbam.close()
 outbam.close()
