@@ -256,14 +256,14 @@ if __name__ == "__main__":
     contig_bam_stats = [res[1] for res in chunk_bam_lists] # list of dict
     # cat files and write to output
 
-    out_bams = []
-    for bam in chunk_bam_files:
-        prefix = os.path.basename(bam)
-        prefix = re.sub(".bam$", "", prefix)
-        outname =  os.path.join(args.outdir, prefix + ".srt.bam")
-        pysam.sort("-o", outname, "-m", "4G", "-@", str(nproc), bam)
-        pysam.index(outname)
-        out_bams.append(outname)
+    out_bams = [bam for bam in chunk_bam_files]
+    # for bam in chunk_bam_files:
+    #     prefix = os.path.basename(bam)
+    #     prefix = re.sub(".bam$", "", prefix)
+    #     outname =  os.path.join(args.outdir, prefix + ".srt.bam")
+    #     pysam.sort("-o", outname, "-m", "4G", "-@", str(nproc), bam)
+    #     pysam.index(outname)
+    #     out_bams.append(outname)
 
     merge_param = ["-f", "-@", str(nproc), args.outbam] +  out_bams
     pysam.merge(*merge_param)
