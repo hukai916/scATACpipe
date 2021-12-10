@@ -42,17 +42,20 @@ def chunk_bam(bam, nproc):
     bam_chunks = [f for f in os.listdir('.') if re.match(r'tmp_*\.bam', f)]
     return(bam_chunks)
 
-def set_tag(bam, dict_tag, tag):
-    inbam   = pysam.AlignmentFile(bam, "rb")
+def set_tag(intervals, inbam, dict_tag, tag):
+    inbam   = pysam.AlignmentFile(inbam, "rb")
+
     prefix  = re.sub(".bam$", "", os.path.basename(bam))
     outname = os.path.join("tagged_" + prefix + ".bam")
     outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
-    for read in bam.fetch():
-        raw_barcode = re.search('[^:]*', read.query_name).group()
-        if raw_barcode in dict_tag:
-            read.set_tag(tag, dict_tag[raw_barcode])
-            outbam.write(read)
+    for i in intervals:
+        for read in inbam.fetch(i[0], i[1], i[2]):
+            raw_barcode = re.search('[^:]*', read.query_name).group()
+            if raw_barcode in dict_tag:
+                read.set_tag(tag, dict_tag[raw_barcode])
+                outbam.write(read)
+
     inbam.close()
     outbam.close()
     # Index for later merging:
@@ -80,6 +83,7 @@ intervals = utils.chunk_bam(inbam, nproc)
 with Pool(nproc) as p:
     chunk_bam_lists = p.map_async(
         functools.partial(set_tag,
+                          inbam    = inbam,
                           dict_tag = dict_tag,
                           tag      = "CB"
                           ),
