@@ -76,7 +76,7 @@ outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 # chunk_bams = chunk_bam(inbam, nproc)
 intervals = utils.chunk_bam(inbam, int(nproc))
 
-with Pool(nproc) as p:
+with Pool(int(nproc)) as p:
     chunk_bam_lists = p.map_async(
         functools.partial(set_tag,
                           dict_tag = dict_tag,
