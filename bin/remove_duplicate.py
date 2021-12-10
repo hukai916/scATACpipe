@@ -178,6 +178,11 @@ def rm_dup(intervals, inbam, header_len_dict,
     outname_sorted = os.path.join(outdir, "tmp_" + prefix + "_chunk_" + temp_name + ".srt.bam")
     pysam.sort("-o", outname_sorted, "-m", "4G", "-@", str(nproc), outname)
     pysam.index(outname_sorted)
+    try:
+        os.remove(outname)
+        os.remove(outname + ".bai")
+    except:
+        pass
 
     return  [outname_sorted, dict(soft_clip_num = soft_clip_num,
                           no_corrected_barcode_num = no_corrected_barcode_num,
@@ -254,7 +259,7 @@ if __name__ == "__main__":
     total_duplicate_fragment_num = 0
 
     chunk_bam_files  = [res[0] for res in chunk_bam_lists] # list of BAM filenames
-    contig_bam_stats = [res[1] for res in chunk_bam_lists] # list of dict
+    chunk_bam_stats = [res[1] for res in chunk_bam_lists] # list of dict
     # cat files and write to output
 
     out_bams = [bam for bam in chunk_bam_files]
@@ -273,16 +278,11 @@ if __name__ == "__main__":
     for bam in chunk_bam_files:
         try:
             os.remove(bam)
-        except:
-            pass
-    for bam in out_bams:
-        try:
-            os.remove(bam)
             os.remove(bam + ".bai")
         except:
             pass
 
-    for stat in contig_bam_stats:
+    for stat in chunk_bam_stats:
         soft_clip_num += stat["soft_clip_num"]
         no_corrected_barcode_num += stat["no_corrected_barcode_num"]
         not_properly_mapped_num += stat["not_properly_mapped_num"]
