@@ -44,6 +44,7 @@ def chunk_bam(bam, nproc):
 
 def set_tag(intervals, inbam, dict_tag, tag):
     inbam   = pysam.AlignmentFile(inbam, "rb")
+    print(intervals)
 
     prefix  = re.sub(".bam$", "", os.path.basename(bam))
     outname = os.path.join("tagged_" + prefix + ".bam")
