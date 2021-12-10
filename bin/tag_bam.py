@@ -44,7 +44,13 @@ def chunk_bam(bam, nproc):
 
 def set_tag(intervals, inbam, dict_tag, tag):
     inbam   = pysam.AlignmentFile(inbam, "rb")
+    temp_name_start = "_".join([str(intervals[0][i]) for i in [0, 1]])
+    temp_name_end   = "_".join([str(intervals[-1][i]) for i in [0, 2]])
+    temp_name       = temp_name_start + "_to_" + temp_name_end
+
+    print("Processing ", "chunk_" + temp_name, " ...")
     prefix  = re.sub(".bam$", "", os.path.basename(bam))
+    outname = os.path.join(outdir, "tmp_" + prefix + "_chunk_" + temp_name + ".bam")
     outname = os.path.join("tagged_" + prefix + ".bam")
     outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
