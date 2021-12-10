@@ -28,7 +28,7 @@ process CORRECT_BARCODE_PHENIQS {
 
     """
     # Step1, interleave read and index files:
-    cp $barcode_fastq temp.fastq.gz
+    cp $barcode_fastq temp.fastq.gz # pheniqs do not accept duplicate filenames
     pheniqs mux -R log_interleave.txt -i temp.fastq.gz -i $barcode_fastq --output ${sample_name}.cram
 
     # Step2, make a json config file (use a minial 0:0:1 as output R1 to save I/O):
@@ -40,7 +40,7 @@ process CORRECT_BARCODE_PHENIQS {
 
     # Step4, extract a tag file:
     samtools index ${sample_name}.corrected.bam
-    extrac_tag.py ${sample_name}.corrected.bam BC,RG ${sample_name}.tag.txt
+    extract_tag.py ${sample_name}.corrected.bam BC,RG ${sample_name}.tag.txt
     cat ${sample_name}.tag.txt | awk 'BEGIN { OFS = "\t"} { print \$1,"CB",\$2 }' > ${sample_name}.tagfile_sinto.tsv
 
     # Step5, print stats:
