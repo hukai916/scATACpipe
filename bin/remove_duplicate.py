@@ -176,7 +176,7 @@ def rm_dup(intervals, inbam, header_len_dict,
     outbam.close()
 
     outname_sorted = os.path.join(outdir, "tmp_" + prefix + "_chunk_" + temp_name + ".srt.bam")
-    pysam.sort("-o", outname_sorted, "-m", "4G", "-@", str(nproc), outname)
+    pysam.sort("-o", outname_sorted, "-m", "4G", "-@", "1", outname)
     pysam.index(outname_sorted)
     try:
         os.remove(outname)

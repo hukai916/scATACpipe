@@ -25,7 +25,7 @@ process TAG_BAM {
 
     """
     samtools index ${sample_name}.dedup.bam
-    tag_bam.py ${sample_name}.dedup.bam $tagfile ${sample_name}.tag.bam
+    tag_bam.py ${sample_name}.dedup.bam $tagfile ${sample_name}.tag.bam $task.cpus
 
     """
 }
