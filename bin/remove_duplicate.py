@@ -213,6 +213,7 @@ if __name__ == "__main__":
             inbam   = pysam.AlignmentFile(args.inbam, "rb")
         except:
             pysam.index(args.inbam)
+            print("create index")
             inbam   = pysam.AlignmentFile(args.inbam, "rb")
     else:
         raise ValueError(args.inbam + " doesn't exist!")
@@ -268,7 +269,6 @@ if __name__ == "__main__":
 
     merge_param = ["-f", "-@", str(nproc), args.outbam] +  out_bams
     pysam.merge(*merge_param)
-    pysam.index(args.outbam)
 
     # clean intermediate files:
     for bam in chunk_bam_files:
