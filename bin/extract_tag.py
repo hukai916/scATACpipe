@@ -20,6 +20,7 @@ tag_list = tags.split(",")
 inbam = pysam.AlignmentFile(bam, "rb", check_sq = False)
 with open(outfile, "w") as f:
     for read in inbam.fetch():
+        print(read)
         line = "\t".join([read.get_tag(tag) for tag in tag_list])
         f.write(line + "\n")
 inbam.close()
