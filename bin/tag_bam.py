@@ -64,7 +64,7 @@ def set_tag(intervals, inbam, dict_tag, tag):
     inbam.close()
     outbam.close()
     # Index for later merging:
-    outname_sorted = os.path.join("tagged_" + prefix + ".srt.bam")
+    outname_sorted = os.path.join("tagged_" + prefix + "_chunk_" + temp_name + ".srt.bam")
     print("test here")
     print(outname_sorted)
     pysam.sort("-o", outname_sorted, "-m", "4G", "-@", "1", outname)
@@ -76,11 +76,6 @@ def set_tag(intervals, inbam, dict_tag, tag):
 
     return(outname_sorted)
 
-# for read in inbam.fetch():
-#     raw_barcode = re.search('[^:]*', read.query_name).group()
-#     if raw_barcode in dict_tag:
-#         read.set_tag("CB", dict_tag[raw_barcode])
-#         outbam.write(read)
 inbam   = pysam.AlignmentFile(bam, "rb")
 outbam  = pysam.AlignmentFile(outname, "wb", template = inbam)
 
