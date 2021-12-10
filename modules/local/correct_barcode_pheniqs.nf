@@ -40,7 +40,7 @@ process CORRECT_BARCODE_PHENIQS {
 
     # Step4, extract a tag file:
     samtools index ${sample_name}.corrected.bam
-    extract_tag.py ${sample_name}.corrected.bam BC,RG ${sample_name}.tag.txt
+    extract_tag.py ${sample_name}.corrected.bam BC,RG ${sample_name}.tag.tsv
     # cat ${sample_name}.tag.txt | awk 'BEGIN { OFS = "\\t"} { print \$1,"CB",\$2 }' > ${sample_name}.tagfile_sinto.tsv
 
     # Step5, print stats:
