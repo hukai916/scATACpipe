@@ -213,6 +213,7 @@ if __name__ == "__main__":
             print("test here")
             inbam   = pysam.AlignmentFile(args.inbam, "rb")
         except:
+            print("test htere")
             pysam.index(args.inbam)
             print("create index")
             inbam   = pysam.AlignmentFile(args.inbam, "rb")
