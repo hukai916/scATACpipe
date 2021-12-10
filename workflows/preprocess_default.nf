@@ -228,7 +228,7 @@ workflow PREPROCESS_DEFAULT {
         CORRECT_BARCODE_PHENIQS (GET_VALID_BARCODE.out.sample_name, GET_VALID_BARCODE.out.barcode_fastq, GET_VALID_BARCODE.out.valid_barcode_counts_fastq)
 
         // Module: add CB tag to BAM containg corrected barcodes
-        TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile_sinto, DEDUP_BAM.out.bam.collect())
+        TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile, DEDUP_BAM.out.bam.collect())
 
         // Module: dedup bam again using "CB" tag
         DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
