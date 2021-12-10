@@ -28,7 +28,8 @@ process CORRECT_BARCODE_PHENIQS {
 
     """
     # Step1, interleave read and index files:
-    pheniqs mux -R log_interleave.txt -i $barcode_fastq -i $barcode_fastq --output ${sample_name}.cram
+    cp $barcode_fastq temp.fastq.gz
+    pheniqs mux -R log_interleave.txt -i temp.fastq.gz -i $barcode_fastq --output ${sample_name}.cram
 
     # Step2, make a json config file (use a minial 0:0:1 as output R1 to save I/O):
     barcode_length=\$((zcat $barcode_fastq || true) | awk 'NR==2 {print length(\$0); exit}')
