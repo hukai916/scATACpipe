@@ -182,6 +182,7 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 
 		message(paste0("Valid: ", valid_count, "; 1 mismatched: ", mismatch1_count, "; others(discarded): ", others_count))
 		for (line in taglines) {
+			print(paste0("tagline: ", line))
 			writeLines(line, paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)))
 		}
 
