@@ -169,7 +169,7 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 
 		fq@quality <- fq@quality[which(keep > 0)]
 		fq@sread   <- reads[which(keep > 0)] %>% DNAStringSet()
-		fq@id      <- fq@ide[which(keep > 0)]
+		fq@id      <- fq@id[which(keep > 0)]
 
 		read_chunk <- read_chunk + 1
 		valid_count <- sum(keep == 1)
