@@ -157,11 +157,11 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 		for (i in seq(reads)) {
 			if (dict_whitelist$has(reads[i])) {
 				keep[i] <- 1 # indicate barcode perfectly matching whitelist barcode.
-				taglines[i] <- paste0(reads[i], "\t",  dict_whitelist$get(reads[i]))
+				taglines[i] <- paste0(reads[i], "\t",  reads[i])
 			} else if (dict_invalid_1mismatch$has(reads[i])) {
 				keep[i]  <- 2 # indicate barcode 1 mismatch away from whitelist barcode.
 				reads[i] <- dict_invalid_1mismatch$get(reads[i])
-				taglines[i] <- paste0(reads[i], "\t", reads[i])
+				taglines[i] <- paste0(reads[i], "\t", reads[i], " 1mismtach")
 			} else {
 				keep[i] <- -1 # indicate barcode more than 2 mismatches from whitelist, should be discarded.
 			}
@@ -183,7 +183,8 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 		message(paste0("Valid: ", valid_count, "; 1 mismatched: ", mismatch1_count, "; others(discarded): ", others_count))
 		for (line in taglines) {
 			print(paste0("tagline: ", line))
-			writeLines(line, paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)))
+			# writeLines(line, paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)))
+			write(line, paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)), append = TRUE)
 		}
 
 		# In need of corrected barcode fastq, uncomment below line and file.rename line.
