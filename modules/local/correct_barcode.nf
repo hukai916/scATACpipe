@@ -35,7 +35,7 @@ process CORRECT_BARCODE {
     """
     correct_barcode.R $options.args \
     --barcode_file=$barcode_fastq \
-    --whitelist_file=${sample_name}_valid_barcode.txt \
+    --whitelist_file=$valid_barcodes \
     --path_output_fq=./
 
     """
