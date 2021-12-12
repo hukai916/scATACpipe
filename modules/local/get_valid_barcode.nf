@@ -46,7 +46,7 @@ process GET_VALID_BARCODE {
         join -1 1 -2 1 <(sort $whitelist_barcode) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
       fi
 
-      rm ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
+      # rm ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
       cat ${sample_name}_valid_barcode_counts_dedup_bam.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt
     fi
 
