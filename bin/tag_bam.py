@@ -65,8 +65,6 @@ def set_tag(intervals, inbam, dict_tag, tag):
     outbam.close()
     # Index for later merging:
     outname_sorted = os.path.join("tagged_" + prefix + "_chunk_" + temp_name + ".srt.bam")
-    print("test here")
-    print(outname_sorted)
     pysam.sort("-o", outname_sorted, "-m", "4G", "-@", "1", outname)
     pysam.index(outname_sorted)
     try:

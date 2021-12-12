@@ -12,23 +12,15 @@ process CORRECT_BARCODE {
     container "hukai916/r_sc_atac:0.1"
 
     input:
-    // val sample_name
-    // path read1_fastq
-    // path read2_fastq
-    // path barcode_fastq
-    // path barcode_whitelist
     val sample_name
+    path read1_fastq
+    path read2_fastq
     path barcode_fastq
-    path valid_barcodes
-
+    path barcode_whitelist
 
     output:
-    val sample_name, emit: sample_name
-    path "*.tag.tsv", emit: tagfile
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path("barcode_*"), emit: reads
     path "summary_*.txt", emit: corrected_barcode_summary
-
-    // tuple val(sample_name), path(read1_fastq), path(read2_fastq), path("barcode_*"), emit: reads
-    // path "summary_*.txt", emit: corrected_barcode_summary
 
     script:
 

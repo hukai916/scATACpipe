@@ -196,18 +196,10 @@ workflow PREPROCESS_DEFAULT {
       FILTER_BAM (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
     }
 
-    // Module: prepare bam: copy barcode from name to CB tag, shift Tn5, extend soft clips
-    // PREP_BAM (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
-
-    // Module: add cell barcode to tag
-    // ADD_BARCODE_TO_TAG (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam)
-
     // Module: combine bam
-    // COMBINE_BAM (ADD_BARCODE_TO_TAG.out.sample_name.unique(), ADD_BARCODE_TO_TAG.out.bam.collect())
-    // COMBINE_BAM (PREP_BAM.out.sample_name.unique(), PREP_BAM.out.bam.collect())
     COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
 
-    // Module: dedup bam by barcode tag
+    // Module: dedup bam by barcode seq added in the front
     DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam, "N/A")
 
     if (!params.barcode_correction) {
@@ -232,11 +224,16 @@ workflow PREPROCESS_DEFAULT {
 
         // Module: dedup bam again using "CB" tag
         DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
-
       } else if (params.barcode_correction == "naive") {
-        CORRECT_BARCODE (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode.collect())
-        MATCH_READS (CORRECT_BARCODE.out.reads)
-        ADD_BARCODE_TO_READS_2 (MATCH_READS.out.reads_2)
+        // Module: naive barcode correction
+        // CORRECT_BARCODE (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode.collect())
+        CORRECT_BARCODE (GET_VALID_BARCODE.out.sample_name, GET_VALID_BARCODE.out.barcode_fastq, GET_VALID_BARCODE.out.valid_barcodes)
+
+        // Module: add CB tag to BAM containing corrected barcodes
+        TAG_BAM (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.tagfile, DEDUP_BAM.out.bam.collect())
+
+        // Module: dedup bam again using "CB" tag
+        DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
       } else {
         log.error "Invalid --barcode_correction value supplied!"
         exit 1, "EXIT!"

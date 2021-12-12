@@ -9,7 +9,7 @@ option_list = list(
 	make_option(c("--reads_per_chunk"), type="integer", default=1000000,
 							help="the number of reads to process in one chunk [default=%default]", metavar="character"),
 	make_option(c("--path_output_fq"), type="character", default="./",
-							help="Output dir to corrected barcode fasetq/tagfile [default=%default]", metavar="character"))
+							help="Output directory [default=%default]", metavar="character"));
 
 opt_parser = OptionParser(option_list = option_list);
 opt = parse_args(opt_parser);
@@ -152,16 +152,12 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 		message(paste0("Processing chunk ", read_chunk, "/", chunk_number, " ..."))
 		keep <- vector(mode = "integer", length = reads_per_chunk)
 
-		taglines <- vector(mode="character", length=length(reads))
-
 		for (i in seq(reads)) {
 			if (dict_whitelist$has(reads[i])) {
 				keep[i] <- 1 # indicate barcode perfectly matching whitelist barcode.
-				taglines[i] <- paste0(reads[i], "\t",  dict_whitelist$get(reads[i]))
 			} else if (dict_invalid_1mismatch$has(reads[i])) {
 				keep[i]  <- 2 # indicate barcode 1 mismatch away from whitelist barcode.
 				reads[i] <- dict_invalid_1mismatch$get(reads[i])
-				taglines[i] <- paste0(reads[i], "\t", reads[i])
 			} else {
 				keep[i] <- -1 # indicate barcode more than 2 mismatches from whitelist, should be discarded.
 			}
@@ -169,7 +165,7 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 
 		fq@quality <- fq@quality[which(keep > 0)]
 		fq@sread   <- reads[which(keep > 0)] %>% DNAStringSet()
-		fq@id      <- fq@ide[which(keep > 0)]
+		fq@id      <- fq@id[which(keep > 0)]
 
 		read_chunk <- read_chunk + 1
 		valid_count <- sum(keep == 1)
@@ -181,16 +177,10 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 		total_discard <- total_discard + others_count
 
 		message(paste0("Valid: ", valid_count, "; 1 mismatched: ", mismatch1_count, "; others(discarded): ", others_count))
-		for (line in taglines) {
-			writeLines(line, paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)))
-		}
-
-		# In need of corrected barcode fastq, uncomment below line and file.rename line.
-		#writeFastq(fq, paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), mode = "a")
+		writeFastq(fq, paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), mode = "a")
 	}
 	close(f)
-	#file.rename(paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), paste0(path_output_fq, "/barcode_corrected_", basename(barcode_file)))
-	file.rename(paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)), paste0(path_output_fq, "/tagfile_", basename(barcode_file)))
+	file.rename(paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), paste0(path_output_fq, "/barcode_corrected_", basename(barcode_file)))
 
 	message("Barcode correction finished!")
 	summary_info <- paste0("Summary (correct_barcode): total valid: ", total_valid, "; total corrected: ", total_1mismatch, "; total discarded: ", total_discard, ".")
