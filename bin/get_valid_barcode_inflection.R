@@ -17,7 +17,7 @@ if (is.null(opt$freq)) {
 	stop("The --freq must be provided!")
 }
 if (file.exists(opt$outfile)) {
-  stop("Output file already existS!")
+  stop("Output file already exists!")
 }
 
 # Read in read counts per barcode data and sort by descending order:
