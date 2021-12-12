@@ -41,9 +41,9 @@ process GET_VALID_BARCODE {
       mv ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt ${sample_name}_valid_barcode_counts_dedup_bam.txt
     else
       if [[ $whitelist_barcode == *.gz ]]; then
-        join -t $'\t' -1 1 -2 1 <(zcat $whitelist_barcode | sort) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
+        join -t $'\\t' -1 1 -2 1 <(zcat $whitelist_barcode | sort) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
       else
-        join -t $'\t' -1 1 -2 1 <(sort $whitelist_barcode) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
+        join -t $'\\t' -1 1 -2 1 <(sort $whitelist_barcode) <(sort ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt) > ${sample_name}_valid_barcode_counts_dedup_bam.txt
       fi
 
       # rm ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
@@ -52,7 +52,7 @@ process GET_VALID_BARCODE {
 
     # For outfile3:
     zcat $barcode_fastq | awk 'NR%4==2 {print}' | sort | uniq -c | awk '{print \$2, \$1}' > ${sample_name}_barcode_counts_fastq.txt
-    join -t $'\t' -1 1 -2 1 <(sort ${sample_name}_valid_barcodes_dedup_bam.txt) <(sort ${sample_name}_barcode_counts_fastq.txt) > ${sample_name}_valid_barcode_counts_fastq.txt
+    join -t $'\\t' -1 1 -2 1 <(sort ${sample_name}_valid_barcodes_dedup_bam.txt) <(sort ${sample_name}_barcode_counts_fastq.txt) > ${sample_name}_valid_barcode_counts_fastq.txt
 
     """
 }
