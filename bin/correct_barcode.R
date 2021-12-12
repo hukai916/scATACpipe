@@ -186,7 +186,7 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 		}
 
 		# In need of corrected barcode fastq, uncomment below line and file.rename line.
-		#writeFastq(fq, paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), mode = "a")
+		writeFastq(fq, paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), mode = "a")
 	}
 	close(f)
 	#file.rename(paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), paste0(path_output_fq, "/barcode_corrected_", basename(barcode_file)))
