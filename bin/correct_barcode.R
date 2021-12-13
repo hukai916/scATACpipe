@@ -182,11 +182,7 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 		total_discard <- total_discard + others_count
 
 		message(paste0("Valid: ", valid_count, "; 1 mismatched: ", mismatch1_count, "; others(discarded): ", others_count))
-		for (line in taglines) {
-			if (line != "") {
-				write(line, paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)), append = TRUE)
-			}
-		}
+		write(taglines, paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file), ".txt"), append = TRUE)
 
 		# In need of corrected barcode fastq, uncomment below line and file.rename line.
 		# writeFastq(fq, paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), mode = "a")
