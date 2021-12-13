@@ -24,7 +24,7 @@ process CORRECT_BARCODE {
 
     output:
     val sample_name, emit: sample_name
-    path "*.tag.tsv", emit: tagfile
+    path "tagfile_*.txt", emit: tagfile
     path "summary_*.txt", emit: corrected_barcode_summary
 
     // tuple val(sample_name), path(read1_fastq), path(read2_fastq), path("barcode_*"), emit: reads
