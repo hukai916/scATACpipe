@@ -189,7 +189,7 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 	}
 	close(f)
 	#file.rename(paste0(path_output_fq, "/tem_barcode_corrected_", basename(barcode_file)), paste0(path_output_fq, "/barcode_corrected_", basename(barcode_file)))
-	file.rename(paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file)), paste0(path_output_fq, "/tagfile_", basename(barcode_file)))
+	file.rename(paste0(path_output_fq, "/tem_tagfile_", basename(barcode_file), ".txt"), paste0(path_output_fq, "/tagfile_", basename(barcode_file), ".txt"))
 
 	message("Barcode correction finished!")
 	summary_info <- paste0("Summary (correct_barcode): total valid: ", total_valid, "; total corrected: ", total_1mismatch, "; total discarded: ", total_discard, ".")
