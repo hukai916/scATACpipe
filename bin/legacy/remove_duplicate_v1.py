@@ -16,6 +16,7 @@ Dev notes:
   2.2 When shifting, for reverse reads: end + shift_reverse (shift_reverse is negative)
 3. For paired-read check, since we split BAM into smaller chunks, "len(read_dict[query_name]) == 2" criteria is no longer valid (R1/R2 may end up to different chunks).
 
+v1: without compensating for uncaptured paired reads.
 """
 
 import pysam
@@ -26,15 +27,13 @@ import functools
 import os.path
 import tempfile
 from sinto import utils
-import math
 
 def rm_dup(intervals, inbam, header_len_dict,
            soft_clip_5, soft_clip_3,
            shift_forward = 4, shift_reverse = -5,
            barcode_regex = "[^:]*",
            outdir = ".",
-           barcode_tag = "N/A",
-           max_frag_len = 5000):
+           barcode_tag = "N/A"):
 
     temp_name_start = "_".join([str(intervals[0][i]) for i in [0, 1]])
     temp_name_end   = "_".join([str(intervals[-1][i]) for i in [0, 2]])
@@ -43,6 +42,9 @@ def rm_dup(intervals, inbam, header_len_dict,
     print("Processing ", "chunk_" + temp_name, " ...")
     prefix = re.sub(".bam$", "", os.path.basename(inbam))
     outname = os.path.join(outdir, "tmp_" + prefix + "_chunk_" + temp_name + ".bam")
+
+    read_dict = {} # dict to store reads by name
+    unique_fragments_dict = {} # dict to store unique fragments
 
     ## summary statistics:
     soft_clip_num = 0
@@ -56,131 +58,111 @@ def rm_dup(intervals, inbam, header_len_dict,
 
     # fill in the read_dict dictionary:
     for i in intervals:
-        read_dict = {} # dict to store reads by name
-        unique_fragments_dict = {} # dict to store unique fragments
-
-        s_extend = max(0, i[1] - max_frag_len) # pysam regin is 0-based.
-        e_extend = min(header_len_dict[i[0]], i[2] + max_frag_len)
-
-        for read in inbam.fetch(i[0], s_extend, e_extend):
+        for read in inbam.fetch(i[0], i[1], i[2]):
             if not read.query_name in read_dict:
                 read_dict[read.query_name] = [read]
             else:
                 read_dict[read.query_name].append(read)
 
-        # keep only those reads that the left_read_start is within chunk range:
-        tokeep = []
-        for query_name in read_dict.keys():
-            for read in read_dict[query_name]:
-                if read.flag in [99, 163]: # reads mapped to forward strand
-                    if read.reference_start in range(math.floor(i[1]), math.ceil(i[2])):
-                        tokeep.append(query_name)
-                        break
+    # accounting for soft-clipping and Tn5 shifts:
+    for query_name in read_dict.keys():
+        # if len(read_dict[query_name]) == 2: since we count reads by bam chunks, this criteria is no longer valid for determining paired reads.
+        right_read_check, left_read_check = 0, 0
+        not_properly_mapped_check = 0
+        for read in read_dict[query_name]:
+            cigar = read.cigarstring
+            if read.flag in [99, 163]: # reads mapped to forward strand
+                left_read = copy.deepcopy(read) # copy the AlignmentSegment object
+                left_read_reference_end  = left_read.reference_end # reference_end is not writable, changes automatically when reference_start changes
+                left_read_check = 1
+                match_5   = re.search(soft_clip_5, cigar)
+                match_3   = re.search(soft_clip_3, cigar)
+                if match_5:
+                    left_read.reference_start = left_read.reference_start - int(match_5.group(1)) + shift_forward
+                else:
+                    left_read.reference_start = left_read.reference_start + shift_forward
+                if match_3:
+                    left_read_reference_end = left_read.reference_end + int(match_3.group(1))
+                if match_3 or match_5:
+                    soft_clip_num += 1
 
-        read_dict = { query_name: read_dict[query_name] for query_name in tokeep }
+                # ensure reads are within boundaries:
+                left_read.reference_start = max(1, left_read.reference_start) # reference start must not be 0.
+                left_read_reference_end   = min(header_len_dict[left_read.reference_name], left_read_reference_end) # reference end must not greater than chr end.
 
-        # accounting for soft-clipping and Tn5 shifts:
-        for query_name in read_dict.keys():
-            #if len(read_dict[query_name]) == 2: since we count reads by bam chunks, this criteria is no longer valid for determining paired reads.
-            if len(read_dict[query_name]) == 2:
-                right_read_check, left_read_check = 0, 0
-                not_properly_mapped_check = 0
-                for read in read_dict[query_name]:
-                    cigar = read.cigarstring
-                    if read.flag in [99, 163]: # reads mapped to forward strand
-                        left_read = copy.deepcopy(read) # copy the AlignmentSegment object
-                        left_read_reference_end  = left_read.reference_end # reference_end is not writable, changes automatically when reference_start changes
-                        left_read_check = 1
-                        match_5   = re.search(soft_clip_5, cigar)
-                        match_3   = re.search(soft_clip_3, cigar)
-                        if match_5:
-                            left_read.reference_start = left_read.reference_start - int(match_5.group(1)) + shift_forward
-                        else:
-                            left_read.reference_start = left_read.reference_start + shift_forward
-                        if match_3:
-                            left_read_reference_end = left_read.reference_end + int(match_3.group(1))
-                        if match_3 or match_5:
-                            soft_clip_num += 1
+                left_read.query_sequence = left_read.query_sequence[shift_forward:]
+                left_read.query_qualities = read.query_qualities[shift_forward:] # use read since left_read.query_qualities will be None as long as query_sequence is modified.
+                left_read.cigar =((0, left_read.infer_query_length() - shift_forward),)  # return cigar contains only 'M'.
+            elif read.flag in [147, 83]: # reads mapped to reverse strand
+                right_read = copy.deepcopy(read)
+                right_read_reference_end = right_read.reference_end
+                right_read_check = 1
+                match_3    = re.search(soft_clip_3, cigar)
+                match_5    = re.search(soft_clip_5, cigar)
+                if match_3:
+                    # frag_end_pos = right_read.reference_end + int(match_3.group(1)) + shift_reverse
+                    right_read_reference_end = right_read.reference_end + int(match_3.group(1)) + shift_reverse
+                else:
+                    # frag_end_pos = right_read.reference_end + shift_reverse
+                    right_read_reference_end = right_read.reference_end + shift_reverse
+                if match_5:
+                    right_read.reference_start = right_read.reference_start - int(match_5.group(1))
+                if match_3 or match_5:
+                    soft_clip_num += 1
 
-                        # ensure reads are within boundaries:
-                        left_read.reference_start = max(1, left_read.reference_start) # reference start must not be 0.
-                        left_read_reference_end   = min(header_len_dict[left_read.reference_name], left_read_reference_end) # reference end must not greater than chr end.
+                # ensure reads are within boundaries:
+                right_read.reference_start = max(1, right_read.reference_start) # reference start must not be 0.
+                right_read_reference_end   = min(header_len_dict[right_read.reference_name], right_read_reference_end) # reference
 
-                        left_read.query_sequence = left_read.query_sequence[shift_forward:]
-                        left_read.query_qualities = read.query_qualities[shift_forward:] # use read since left_read.query_qualities will be None as long as query_sequence is modified.
-                        left_read.cigar =((0, left_read.infer_query_length() - shift_forward),)  # return cigar contains only 'M'.
-                    elif read.flag in [147, 83]: # reads mapped to reverse strand
-                        right_read = copy.deepcopy(read)
-                        right_read_reference_end = right_read.reference_end
-                        right_read_check = 1
-                        match_3    = re.search(soft_clip_3, cigar)
-                        match_5    = re.search(soft_clip_5, cigar)
-                        if match_3:
-                            # frag_end_pos = right_read.reference_end + int(match_3.group(1)) + shift_reverse
-                            right_read_reference_end = right_read.reference_end + int(match_3.group(1)) + shift_reverse
-                        else:
-                            # frag_end_pos = right_read.reference_end + shift_reverse
-                            right_read_reference_end = right_read.reference_end + shift_reverse
-                        if match_5:
-                            right_read.reference_start = right_read.reference_start - int(match_5.group(1))
-                        if match_3 or match_5:
-                            soft_clip_num += 1
-
-                        # ensure reads are within boundaries:
-                        right_read.reference_start = max(1, right_read.reference_start) # reference start must not be 0.
-                        right_read_reference_end   = min(header_len_dict[right_read.reference_name], right_read_reference_end) # reference
-
-                        if not shift_reverse == 0:
-                            right_read.query_sequence = right_read.query_sequence[:shift_reverse]
-                            right_read.query_qualities = read.query_qualities[:shift_reverse]
-                        # right_read.cigar = ((0, frag_end_pos - right_read.reference_start),)
-                        right_read.cigar = ((0, right_read.infer_query_length() + shift_reverse),)
-                        # infer_query_length should always equal to len(query_sequence)
-                    else:
-                        not_properly_mapped_check = 1
-                        if not not_properly_mapped_check:
-                            not_properly_mapped_num += 1 # count the number of fragments that are not properly mapped
-                        continue
-                    if left_read_check and right_read_check:
-                        left_read.next_reference_start  = right_read.reference_start
-                        left_read.template_length       = max(left_read_reference_end,
-                                                              right_read_reference_end) - min(left_read.reference_start,
-                                                                                              right_read.reference_start)
-                        right_read.next_reference_start = left_read.reference_start
-                        right_read.template_length      = -left_read.template_length
-                        # move barcode to tag if in name:
-                        cell_barcode = ''
-                        try:
-                            if barcode_tag == "N/A":
-                                cell_barcode = re.search(barcode_regex, left_read.query_name).group() # this always matchs something
-                                left_read.set_tag(tag = "CB", value = cell_barcode, value_type = "Z")
-                                right_read.set_tag(tag = "CB", value = cell_barcode, value_type = "Z")
-                            else:
-                                cell_barcode = left_read.get_tag(barcode_tag)
-                        except:
-                            continue # barcode can't be determined (some reads with poor quality may not have CB tag.)
-                        if not cell_barcode == "": # valid fragments
-                            fragment_id = ":".join([
-                            cell_barcode,
-                            left_read.reference_name,
-                            str(min(left_read.reference_start, right_read.reference_start)), str(abs(left_read.template_length))
-                            ])
-                            query_quality = int(mean([x for x in left_read.query_qualities + right_read.query_qualities]))
-                            if not fragment_id in unique_fragments_dict:
-                                unique_fragments_dict[fragment_id] = [left_read, right_read] # last element is the count
-                                total_unique_fragment_num += 1
-                            else:
-                                total_duplicate_fragment_num += 1
-                        else:
-                            no_corrected_barcode_num += 1
+                if not shift_reverse == 0:
+                    right_read.query_sequence = right_read.query_sequence[:shift_reverse]
+                    right_read.query_qualities = read.query_qualities[:shift_reverse]
+                # right_read.cigar = ((0, frag_end_pos - right_read.reference_start),)
+                right_read.cigar = ((0, right_read.infer_query_length() + shift_reverse),)
+                # infer_query_length should always equal to len(query_sequence)
             else:
-                not_properly_mapped_num += 1
+                not_properly_mapped_check = 1
+                if not not_properly_mapped_check:
+                    not_properly_mapped_num += 1 # count the number of fragments that are not properly mapped
+                continue
+            if left_read_check and right_read_check:
+                left_read.next_reference_start  = right_read.reference_start
+                left_read.template_length       = max(left_read_reference_end,
+                                                      right_read_reference_end) - min(left_read.reference_start,
+                                                                                      right_read.reference_start)
+                right_read.next_reference_start = left_read.reference_start
+                right_read.template_length      = -left_read.template_length
+                # move barcode to tag if in name:
+                cell_barcode = ''
+                try:
+                    if barcode_tag == "N/A":
+                        cell_barcode = re.search(barcode_regex, left_read.query_name).group() # this always matchs something
+                        left_read.set_tag(tag = "CB", value = cell_barcode, value_type = "Z")
+                        right_read.set_tag(tag = "CB", value = cell_barcode, value_type = "Z")
+                    else:
+                        cell_barcode = left_read.get_tag(barcode_tag)
+                except:
+                    continue # barcode can't be determined (some reads with poor quality may not have CB tag.)
+                if not cell_barcode == "": # valid fragments
+                    fragment_id = ":".join([
+                    cell_barcode,
+                    left_read.reference_name,
+                    str(min(left_read.reference_start, right_read.reference_start)), str(abs(left_read.template_length))
+                    ])
+                    query_quality = int(mean([x for x in left_read.query_qualities + right_read.query_qualities]))
+                    if not fragment_id in unique_fragments_dict:
+                        unique_fragments_dict[fragment_id] = [left_read, right_read] # last element is the count
+                        total_unique_fragment_num += 1
+                    else:
+                        total_duplicate_fragment_num += 1
+                else:
+                    no_corrected_barcode_num += 1
 
-        for fragment in unique_fragments_dict:
-            left_read = unique_fragments_dict[fragment][0]
-            right_read = unique_fragments_dict[fragment][1]
-            outbam.write(left_read)
-            outbam.write(right_read)
+    for fragment in unique_fragments_dict:
+        left_read = unique_fragments_dict[fragment][0]
+        right_read = unique_fragments_dict[fragment][1]
+        outbam.write(left_read)
+        outbam.write(right_read)
 
     inbam.close()
     outbam.close()
@@ -219,9 +201,6 @@ if __name__ == "__main__":
                         help = 'Regular expression (must be double quoted) that matches the barcode in name. (default: "%(default)s")')
     parser.add_argument('--barcode_tag', type = str, default = 'N/A',
                         help = "Bam tag that stores the cell barcode if available (default: %(default)s)")
-    parser.add_argument('--max_frag_len', type = int, default = 5000,
-                        help = "When chunking BAM for parallel computing, extend MAX_FRAG_LEN for each chunk at both ends to include both reads in the fragment.")
-
 
     args = parser.parse_args()
 
@@ -263,8 +242,7 @@ if __name__ == "__main__":
                             shift_reverse = args.shift_reverse,
                             outdir = args.outdir,
                             barcode_regex = args.barcode_regex,
-                            barcode_tag = args.barcode_tag,
-                            max_frag_len = args.max_frag_len),
+                            barcode_tag = args.barcode_tag),
                             intervals.values()).get()
 
     soft_clip_num = 0
