@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
     # read in bam file, close them when done:
     if (os.path.exists(args.inbam)):
-        if os.path.exists(args.inbam + ".bai")
+        if os.path.exists(args.inbam + ".bai"):
             inbam   = pysam.AlignmentFile(args.inbam, "rb")
         else:
             pysam.index(args.inbam)
