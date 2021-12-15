@@ -65,7 +65,6 @@ def rm_dup(intervals, inbam, header_len_dict,
 
     # accounting for soft-clipping and Tn5 shifts:
     for query_name in read_dict.keys():
-        print("test: ", query_name)
         # if len(read_dict[query_name]) == 2: since we count reads by bam chunks, this criteria is no longer valid for determining paired reads.
         right_read_check, left_read_check = 0, 0
         not_properly_mapped_check = 0
@@ -210,11 +209,8 @@ if __name__ == "__main__":
 
     # read in bam file, close them when done:
     if (os.path.exists(args.inbam)):
-        if os.path.exists(args.inbam + ".bai"):
-            inbam   = pysam.AlignmentFile(args.inbam, "rb")
-        else:
-            pysam.index(args.inbam)
-            inbam   = pysam.AlignmentFile(args.inbam, "rb")
+        pysam.index(args.inbam)
+        inbam   = pysam.AlignmentFile(args.inbam, "rb")
     else:
         raise ValueError(args.inbam + " doesn't exist!")
 
