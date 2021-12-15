@@ -65,6 +65,7 @@ def rm_dup(intervals, inbam, header_len_dict,
 
     # accounting for soft-clipping and Tn5 shifts:
     for query_name in read_dict.keys():
+        print("test: ", query_name)
         # if len(read_dict[query_name]) == 2: since we count reads by bam chunks, this criteria is no longer valid for determining paired reads.
         right_read_check, left_read_check = 0, 0
         not_properly_mapped_check = 0
