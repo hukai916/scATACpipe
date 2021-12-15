@@ -209,11 +209,8 @@ if __name__ == "__main__":
 
     # read in bam file, close them when done:
     if (os.path.exists(args.inbam)):
-        try:
-            inbam   = pysam.AlignmentFile(args.inbam, "rb")
-        except:
-            pysam.index(args.inbam)
-            inbam   = pysam.AlignmentFile(args.inbam, "rb")
+        pysam.index(args.inbam)
+        inbam   = pysam.AlignmentFile(args.inbam, "rb")
     else:
         raise ValueError(args.inbam + " doesn't exist!")
 
