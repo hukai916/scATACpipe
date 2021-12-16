@@ -10,6 +10,7 @@ python extract_pair.py inbam outbam_name.bam
 
 import sys
 import pysam
+import os
 
 inname    = sys.argv[1]
 outname   = sys.argv[2]
