@@ -9,7 +9,7 @@ process FILTER_BAM {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'filter_bam', publish_id:'') }
-    container "hukai916/bwa_xenial:0.1"
+    container "hukai916/pysam_xenial:0.1"
 
     input:
     val sample_name
@@ -27,7 +27,7 @@ process FILTER_BAM {
     """
     # Keep only the following reads:
     # 1. Paried reads mapped in the correct orientation.
-    # 2. Fragment size ranges from 38 to 2000 bp.
+    # 2. Fragment size ranges from 38 to 2000 bp. (Note, the samtools solution may end up with unpaired reads since we applied other filtering criteria. Therefore, need extract_pair.py.)
     # 3. The mapq of both reads > 20.
     # 4. Non-mitochondrial reads.
 
@@ -39,7 +39,9 @@ process FILTER_BAM {
     samtools view -h -@ $task.cpus $options.args $bam \${chromosomes[@]} | awk 'BEGIN{FS=OFS="\\t"} \
     function abs(v) {return v < 0 ? -v : v}; \
     /^@/ || (\$7 == "=" && (\$2 == 99 || \$2 == 147 || \$2 == 83 || \$2 == 163) && abs(\$9) <= 2000 && abs(\$9) >= 38 && \$5 >= 20 ) {print}' | \
-    samtools view -h -b -o ${bam.baseName}.filtered.bam
+    samtools view -h -b -o ${bam.baseName}.filtered.tmp.bam
+    extract_pair.py ${bam.baseName}.filtered.tmp.bam ${bam.baseName}.filtered.bam
+    rm ${bam.baseName}.filtered.tmp.bam
 
     num_kept=\$(samtools view -c ${bam.baseName}.filtered.bam)
     num_all=\$(samtools view -c $bam)
@@ -61,6 +63,8 @@ process FILTER_BAM {
     function abs(v) {return v < 0 ? -v : v}; \
     /^@/ || (\$7 == "=" && (\$2 == 99 || \$2 == 147 || \$2 == 83 || \$2 == 163) && abs(\$9) <= 2000 && abs(\$9) >= 38 && \$5 >= 20 ) {print}'| \
     samtools view -h -b -o ${bam.baseName}.filtered.bam
+    extract_pair.py ${bam.baseName}.filtered.tmp.bam ${bam.baseName}.filtered.bam
+    rm ${bam.baseName}.filtered.tmp.bam
 
     num_kept=\$(samtools view -c ${bam.baseName}.filtered.bam)
     num_all=\$(samtools view -c $bam)

@@ -230,8 +230,9 @@ if __name__ == "__main__":
     # Above is to ensure the out-of-boundary issue doesn't exist, otherwise samtools sort/index might be problematic.
 
     # read in bam file, close them when done:
-    if (os.path.exists(args.inbam)):
-        pysam.index(args.inbam)
+    if os.path.exists(args.inbam):
+        if not os.path.exists(args.inbam + ".bai"):
+            pysam.index(args.inbam)
         inbam   = pysam.AlignmentFile(args.inbam, "rb")
     else:
         raise ValueError(args.inbam + " doesn't exist!")
