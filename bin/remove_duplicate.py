@@ -77,7 +77,7 @@ def rm_dup(intervals, inbam, header_len_dict,
                         tokeep.append(query_name)
                         break
 
-        read_dict = { query_name: read_dict[query_name] for query_name in tokeep }
+        # read_dict = { query_name: read_dict[query_name] for query_name in tokeep }
 
         # accounting for soft-clipping and Tn5 shifts:
         for query_name in read_dict.keys():
