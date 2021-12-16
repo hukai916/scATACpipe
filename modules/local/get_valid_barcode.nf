@@ -51,7 +51,7 @@ process GET_VALID_BARCODE {
     fi
 
     # For outfile3:
-    zcat $barcode_fastq | awk 'NR%4==2 {print}' | sort | uniq -c | awk '{print \$2, \$1}' > ${sample_name}_barcode_counts_fastq.txt
+    zcat $barcode_fastq | awk 'NR%4==2 {print}' | sort | uniq -c | awk 'BEGIN { OFS = "\\t" } {print \$2, \$1}' > ${sample_name}_barcode_counts_fastq.txt
     join -t \$'\\t' -1 1 -2 1 <(sort ${sample_name}_valid_barcodes_dedup_bam.txt) <(sort ${sample_name}_barcode_counts_fastq.txt) > ${sample_name}_valid_barcode_counts_fastq.txt
 
     """
