@@ -139,7 +139,7 @@ def rm_dup(intervals, inbam, header_len_dict,
                     else:
                         not_properly_mapped_check = 1
                         if not not_properly_mapped_check:
-                            not_properly_mapped_num += 1 # count the number of fragments that are not properly mapped
+                            not_properly_mapped_num += 1000 # count the number of fragments that are not properly mapped
                         continue
                     if left_read_check and right_read_check:
                         left_read.next_reference_start  = right_read.reference_start
