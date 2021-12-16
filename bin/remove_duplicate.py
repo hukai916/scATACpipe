@@ -15,6 +15,7 @@ Dev notes:
   2.1 When shifting, for forward reads: start - shift_forward
   2.2 When shifting, for reverse reads: end + shift_reverse (shift_reverse is negative)
 3. For paired-read check, since we split BAM into smaller chunks, "len(read_dict[query_name]) == 2" criteria is no longer valid (R1/R2 may end up to different chunks).
+  3.1 To fix this, 'extend' both ends (only extend right-end should be fine) of the chunk by max_frag_len in order to include paired reads.
 
 """
 
@@ -251,7 +252,8 @@ if __name__ == "__main__":
 
     nproc = args.nproc
     bam_temp = pysam.AlignmentFile(args.inbam, "rb")
-    intervals = utils.chunk_bam(bam_temp, nproc)
+    # intervals = utils.chunk_bam(bam_temp, nproc)
+    intervals = utils.chunk_bam_by_chr(bam_temp, nproc)
     bam_temp.close()
 
     with Pool(nproc) as p:

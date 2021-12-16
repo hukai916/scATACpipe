@@ -9,7 +9,7 @@ process DEDUP_BAM {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'dedup_bam', publish_id:'') }
-    container "hukai916/sinto_kai:0.2"
+    container "hukai916/sinto_kai:0.3"
 
     input:
     val sample_name
