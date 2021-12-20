@@ -25,9 +25,9 @@ process SPLIT_FASTQ {
 
     """
     # default to 20M reads (80000000) per chunk
-    zcat $read1_fastq | split --lines=20000000 --filter='gzip > \${FILE}.fastq.gz' - R1_${sample_name}_${sample_count}_ &
-    zcat $read2_fastq | split --lines=20000000 --filter='gzip > \${FILE}.fastq.gz' - R2_${sample_name}_${sample_count}_ &
-    zcat $barcode_fastq | split --lines=20000000 --filter='gzip > \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_ &
+    zcat $read1_fastq | split --lines=80000 --filter='gzip > \${FILE}.fastq.gz' - R1_${sample_name}_${sample_count}_ &
+    zcat $read2_fastq | split --lines=80000 --filter='gzip > \${FILE}.fastq.gz' - R2_${sample_name}_${sample_count}_ &
+    zcat $barcode_fastq | split --lines=80000 --filter='gzip > \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_ &
 
     """
 }
