@@ -107,7 +107,6 @@ workflow PREPROCESS_DEFAULT {
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
     // Module: add barcode to reads
-    read1_chunk.view()
     ADD_BARCODE_TO_READS (sample_name, read1_chunk, read2_chunk, barcode_chunk)
 
     // Module: trim off adapter
