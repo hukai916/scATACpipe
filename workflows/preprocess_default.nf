@@ -106,8 +106,8 @@ workflow PREPROCESS_DEFAULT {
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
-    barcode_chunk.view()
-    println SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } )
+    // barcode_chunk.view()
+    SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
 
     sample_name.view()
     println GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList()
