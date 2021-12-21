@@ -106,12 +106,14 @@ workflow PREPROCESS_DEFAULT {
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
-    // barcode_chunk.view()
-    SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).view()
 
+
+    barcode_chunk.view()
     sample_name.view()
-    println GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList()
 
+    test_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a.getName(), b.getName() -> a.getName() <=> b.getName() } ).flatten()
+
+    test_chunk.view()
 
     // Module: add barcode to reads
     ADD_BARCODE_TO_READS (sample_name, read1_chunk, read2_chunk, barcode_chunk)
