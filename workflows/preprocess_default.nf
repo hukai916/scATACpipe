@@ -34,6 +34,7 @@ include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions' 
 include { SPLIT_FASTQ           } from '../modules/local/split_fastq'
 include { GET_SAMPLE_NAME_PATH  } from '../modules/local/get_sample_name_path'
 include { GET_SAMPLE_NAME_VAL   } from '../modules/local/get_sample_name_val'
+include { MATCH_CHUNK           } from '../modules/local/match_chunk'
 include { GET_WHITELIST_BARCODE } from '../modules/local/get_whitelist_barcode'
 include { GET_VALID_BARCODE } from '../modules/local/get_valid_barcode'
 include { CORRECT_BARCODE       } from '../modules/local/correct_barcode'         addParams( options: modules['correct_barcode'] )
@@ -112,7 +113,6 @@ workflow PREPROCESS_DEFAULT {
     test = MATCH_CHUNK (read1_chunk, read1_chunks, read2_chunks, barcode_chunks)
     test.view()
     barcode_chunk.view()
-    read1_chunk.view()
 
     // getName() only works for file object, , collect()/toSortedList replaces the original filename with the complete order: https://github.com/nextflow-io/nextflow/issues/377
     // Here. collect() is a must, otherwise, read1 will be empty when passed to GET_SAMPLE_NAME_PATH: need more reading
