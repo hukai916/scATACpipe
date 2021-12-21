@@ -20,8 +20,8 @@ process MATCH_CHUNK {
     tuple val("${sample_name}"), path(read1_chunk), path("${read2_chunk}"), path("${barcode_chunk}"), emit: chunk
 
     script:
-    sample_name = read1_chunk.split("_")[1..-3].join("_")
-    suffix      = read1_chunk.split("_")[-2..-1].join("_")
+    sample_name = read1_chunk.name.split("_")[1..-3].join("_")
+    suffix      = read1_chunk.name.split("_")[-2..-1].join("_")
     read2_chunk = "R2_" + sample_name + "_" + suffix
     barcode_chunk = "barcode_" + sample_name + "_" + suffix
 
