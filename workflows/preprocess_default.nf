@@ -109,8 +109,8 @@ workflow PREPROCESS_DEFAULT {
     barcode_chunks= SPLIT_FASTQ.out.barcode_fastq.collect()
 
     test = MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
-    test.view()
-    barcode_chunk.view()
+    test.out.chunk.view()
+    barcode_chunks.view()
 
     // getName() only works for file object, , collect()/toSortedList replaces the original filename with the complete order: https://github.com/nextflow-io/nextflow/issues/377
     // Here. collect() is a must, otherwise, read1 will be empty when passed to GET_SAMPLE_NAME_PATH: need more reading
@@ -220,10 +220,10 @@ workflow PREPROCESS_DEFAULT {
     } else {
       // Module: get valid barcode
       if (!params.whitelist_barcode) {
-        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
+        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunks.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
       } else {
-        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunk.collect(), Channel.fromPath(params.whitelist_barcode).first())
+        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunks.collect(), Channel.fromPath(params.whitelist_barcode).first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
       }
       // Modules: correct barcode
