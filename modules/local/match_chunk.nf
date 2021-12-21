@@ -13,12 +13,11 @@ process MATCH_CHUNK {
 
     input:
     path read1_chunk
-    path read1_chunks
     path read2_chunks
     path barcode_chunks
 
     output:
-    tuple val("${sample_name}"), path("${read2_chunk}"), path("${barcode_chunk}"), emit: chunk
+    tuple val("${sample_name}"), path(read1_chunk), path("${barcode_chunk}"), emit: chunk
 
     script:
     sample_name = read1_chunk.split("_")[1..-3].join("_")
