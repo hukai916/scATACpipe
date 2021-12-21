@@ -26,8 +26,10 @@ process MATCH_CHUNK {
     barcode_chunk = "barcode_" + sample_name + "_" + suffix
 
     """
-    echo $sample_name > result.txt
+    echo $sample_name > chunk_info.txt
+    echo $read1_chunk >> chunk_info.txt
     echo $read2_chunk >> result.txt
+    echo $barcode_chunk >> result.txt
 
     """
 
