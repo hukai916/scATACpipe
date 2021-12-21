@@ -98,9 +98,14 @@ workflow PREPROCESS_DEFAULT {
     // Module: split read into 20M chunks
     // Below is to ensure that sample_name, R1, R2, and barcode matches
     SPLIT_FASTQ (reads, sample_count)
-    read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    read2_chunk   = SPLIT_FASTQ.out.read2_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    barcode_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> a.name <=> b.name } ).flatten()
+    // read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    // read2_chunk   = SPLIT_FASTQ.out.read2_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
+    // barcode_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> a.name <=> b.name } ).flatten()
+
+    read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().flatten()
+    read2_chunk   = SPLIT_FASTQ.out.read2_fastq.collect().flatten()
+    barcode_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().flatten()
+
     barcode_chunk.view()
     read1_chunk.view()
 
