@@ -111,6 +111,7 @@ workflow PREPROCESS_DEFAULT {
     test_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> b.getName() <=> a.getName() } )
     println "testhere"
     println SPLIT_FASTQ.out.barcode_fastq.first().getName()
+    SPLIT_FASTQ.out.barcode_fastq.first().getName().view()
     println "testthere"
 
 
