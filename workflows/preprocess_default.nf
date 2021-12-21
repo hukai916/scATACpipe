@@ -113,7 +113,7 @@ workflow PREPROCESS_DEFAULT {
 
     MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
     MATCH_CHUNK.out.chunk.view()
-    barcode_chunks.view()
+    // barcode_chunks.view()
 
     // getName() only works for file object, , collect()/toSortedList replaces the original filename with the complete order: https://github.com/nextflow-io/nextflow/issues/377
     // Here. collect() is a must, otherwise, read1 will be empty when passed to GET_SAMPLE_NAME_PATH: need more reading
