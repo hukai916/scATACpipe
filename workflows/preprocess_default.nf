@@ -106,8 +106,8 @@ workflow PREPROCESS_DEFAULT {
     GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
-    log.info barcode_chunk.view()
-    log.info sample_name.view()
+    barcode_chunk.view()
+    sample_name.view()
 
 
     // Module: add barcode to reads
