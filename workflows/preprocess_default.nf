@@ -108,7 +108,7 @@ workflow PREPROCESS_DEFAULT {
     sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
 
 
-    test_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toList()
+    test_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList()
     test_chunk.view()
 
 
