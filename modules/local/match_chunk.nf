@@ -25,4 +25,10 @@ process MATCH_CHUNK {
     read2_chunk = "R2_" + sample_name + "_" + suffix
     barcode_chunk = "barcode_" + sample_name + "_" + suffix
 
+    """
+    echo $sample_name > result.txt
+    echo $read2_chunk >> result.txt
+
+    """
+
 }
