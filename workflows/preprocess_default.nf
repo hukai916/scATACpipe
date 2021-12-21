@@ -108,8 +108,8 @@ workflow PREPROCESS_DEFAULT {
     read2_chunks  = SPLIT_FASTQ.out.read2_fastq.collect()
     barcode_chunks= SPLIT_FASTQ.out.barcode_fastq.collect()
 
-    test = MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
-    test.out.chunk.view()
+    MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
+    MATCH_CHUNK.out.chunk.view()
     barcode_chunks.view()
 
     // getName() only works for file object, , collect()/toSortedList replaces the original filename with the complete order: https://github.com/nextflow-io/nextflow/issues/377
