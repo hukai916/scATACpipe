@@ -105,7 +105,12 @@ workflow PREPROCESS_DEFAULT {
     read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().flatten()
     read2_chunk   = SPLIT_FASTQ.out.read2_fastq.collect().flatten()
     barcode_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().flatten()
+    read1_chunks  = SPLIT_FASTQ.out.read1_fastq.collect()
+    read2_chunks  = SPLIT_FASTQ.out.read2_fastq.collect()
+    barcode_chunks= SPLIT_FASTQ.out.barcode_fastq.collect()
 
+    test = MATCH_CHUNK (read1_chunk, read1_chunks, read2_chunks, barcode_chunks)
+    test.view()
     barcode_chunk.view()
     read1_chunk.view()
 
