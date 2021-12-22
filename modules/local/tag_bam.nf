@@ -15,7 +15,7 @@ process TAG_BAM {
     input:
     val sample_name
     path tagfile
-    path dedup_bam
+    path bam
 
     output:
     val sample_name, emit: sample_name
@@ -24,8 +24,8 @@ process TAG_BAM {
     script:
 
     """
-    samtools index ${sample_name}.dedup.bam
-    tag_bam.py ${sample_name}.dedup.bam $tagfile ${sample_name}.tag.bam $task.cpus
+    samtools index ${sample_name}*.bam
+    tag_bam.py ${sample_name}*.bam $tagfile ${sample_name}.tag.bam $task.cpus
 
     """
 }
