@@ -102,7 +102,7 @@ workflow PREPROCESS_DEFAULT {
     barcode_chunks = SPLIT_FASTQ.out.barcode_fastq.collect()
     MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
     sample_name    = MATCH_CHUNK.out.sample_name.collect().unique().flatten()
-
+    sample_name.view()
     // Module: add barcode to reads
     ADD_BARCODE_TO_READS (MATCH_CHUNK.out.chunk)
 
