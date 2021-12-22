@@ -18,8 +18,8 @@ process ADD_BARCODE_TO_READS {
     tuple val(sample_name), path("${read1_barcoded_fastq}"), path("${read2_barcoded_fastq}"), emit: reads_0
 
     script:
-    read1_barcoded_fastq = read1_fastq.split("\\.")[0..-3].join(".") + ".barcoded.fastq.gz"
-    read2_barcoded_fastq = read2_fastq.split("\\.")[0..-3].join(".") + ".barcoded.fastq.gz"
+    read1_barcoded_fastq = read1_fastq.name.split("\\.")[0..-3].join(".") + ".barcoded.fastq.gz"
+    read2_barcoded_fastq = read2_fastq.name.split("\\.")[0..-3].join(".") + ".barcoded.fastq.gz"
 
     """
     # use the first read length from fastq file to determine the length since -b is required by sinto.

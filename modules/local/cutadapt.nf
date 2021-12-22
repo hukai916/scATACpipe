@@ -21,8 +21,8 @@ process CUTADAPT {
     path "log_cutadapt_*.txt", emit: log
 
     script:
-    read1_trimmed_fastq = read1_fastq.split("\\.")[0..-3].join(".") + ".trimmed.fastq.gz"
-    read2_trimmed_fastq = read2_fastq.split("\\.")[0..-3].join(".") + ".trimmed.fastq.gz"
+    read1_trimmed_fastq = read1_fastq.name.split("\\.")[0..-3].join(".") + ".trimmed.fastq.gz"
+    read2_trimmed_fastq = read2_fastq.name.split("\\.")[0..-3].join(".") + ".trimmed.fastq.gz"
 
     """
     cutadapt $options.args -a $read1_adapter -A $read2_adapter -o $read1_trimmed_fastq -p $read2_trimmed_fastq $read1_fastq $read2_fastq
