@@ -38,10 +38,29 @@ process FILTER_BAM {
     samtools index $bam
     samtools view -h -@ $task.cpus $options.args $bam \${chromosomes[@]} | awk 'BEGIN{FS=OFS="\\t"} \
     function abs(v) {return v < 0 ? -v : v}; \
-    /^@/ || (\$7 == "=" && (\$2 == 99 || \$2 == 147 || \$2 == 83 || \$2 == 163) && abs(\$9) <= 2000 && abs(\$9) >= 38 && \$5 >= 20 ) {print}' | \
-    samtools view -h -b -o ${bam.baseName}.filtered.tmp.bam
-    extract_pair.py ${bam.baseName}.filtered.tmp.bam ${bam.baseName}.filtered.bam
-    rm ${bam.baseName}.filtered.tmp.bam
+    /^@/ || (\$7 == "=" && (\$2 == 99 || \$2 == 147 || \$2 == 83 || \$2 == 163) && abs(\$9) <= 2000 && abs(\$9) >= 38 && \$5 >= 20 ) {print}' \
+    > ${bam.baseName}.filtered.tmp.sam
+
+    # Extract paired reads:
+    samtools sort -n -@ $task.cpus ${bam.baseName}.filtered.tmp.sam -o ${bam.baseName}.namesrt.tmp.sam
+    rm ${bam.baseName}.filtered.tmp.sam
+    awk '
+        BEGIN { FS=OFS="\\t" }
+        FNR == 1 { getline nextline < FILENAME; }
+        {
+          getline nextline < FILENAME;
+          # currentline is \$0, nextline is nextline
+          if (\$1 ~ /^@/) { print; next; }
+          split(nextline, a);
+          if (\$1 == a[1] && \$0 != nextline) {
+            print \$0"\\n"nextline;
+          }
+        }' ${bam.baseName}.namesrt.tmp.sam > ${bam.baseName}.paired.tmp.sam
+    rm ${bam.baseName}.namesrt.tmp.sam
+
+    # Output position sorted bam:
+    samtools sort -@ $task.cpus ${bam.baseName}.paired.tmp.sam -o ${bam.baseName}.filtered.bam
+    rm ${bam.baseName}.paired.tmp.sam
 
     num_kept=\$(samtools view -c ${bam.baseName}.filtered.bam)
     num_all=\$(samtools view -c $bam)
@@ -61,10 +80,29 @@ process FILTER_BAM {
     samtools index $bam
     samtools view -h -@ $task.cpus $options.args $bam | awk 'BEGIN{FS=OFS="\\t"} \
     function abs(v) {return v < 0 ? -v : v}; \
-    /^@/ || (\$7 == "=" && (\$2 == 99 || \$2 == 147 || \$2 == 83 || \$2 == 163) && abs(\$9) <= 2000 && abs(\$9) >= 38 && \$5 >= 20 ) {print}'| \
-    samtools view -h -b -o ${bam.baseName}.filtered.bam
-    extract_pair.py ${bam.baseName}.filtered.tmp.bam ${bam.baseName}.filtered.bam
-    rm ${bam.baseName}.filtered.tmp.bam
+    /^@/ || (\$7 == "=" && (\$2 == 99 || \$2 == 147 || \$2 == 83 || \$2 == 163) && abs(\$9) <= 2000 && abs(\$9) >= 38 && \$5 >= 20 ) {print}' \
+    > ${bam.baseName}.filtered.tmp.sam
+
+    # Extract paired reads:
+    samtools sort -n -@ $task.cpus ${bam.baseName}.filtered.tmp.sam -o ${bam.baseName}.namesrt.tmp.sam
+    rm ${bam.baseName}.filtered.tmp.sam
+    awk '
+        BEGIN { FS=OFS="\\t" }
+        FNR == 1 { getline nextline < FILENAME; }
+        {
+          getline nextline < FILENAME;
+          # currentline is \$0, nextline is nextline
+          if (\$1 ~ /^@/) { print; next; }
+          split(nextline, a);
+          if (\$1 == a[1] && \$0 != nextline) {
+            print \$0"\\n"nextline;
+          }
+        }' ${bam.baseName}.namesrt.tmp.sam > ${bam.baseName}.paired.tmp.sam
+    rm ${bam.baseName}.namesrt.tmp.sam
+
+    # Output position sorted bam:
+    samtools sort -@ $task.cpus ${bam.baseName}.paired.tmp.sam -o ${bam.baseName}.filtered.bam
+    rm ${bam.baseName}.paired.tmp.sam
 
     num_kept=\$(samtools view -c ${bam.baseName}.filtered.bam)
     num_all=\$(samtools view -c $bam)

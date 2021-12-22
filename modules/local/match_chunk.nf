@@ -17,6 +17,7 @@ process MATCH_CHUNK {
     path barcode_chunks
 
     output:
+    val "${sample_name}", emit: sample_name
     tuple val("${sample_name}"), path(read1_chunk), path("${read2_chunk}"), path("${barcode_chunk}"), emit: chunk
 
     script:
@@ -28,8 +29,8 @@ process MATCH_CHUNK {
     """
     echo $sample_name > chunk_info.txt
     echo $read1_chunk >> chunk_info.txt
-    echo $read2_chunk >> result.txt
-    echo $barcode_chunk >> result.txt
+    echo $read2_chunk >> chunk_info.txt
+    echo $barcode_chunk >> chunk_info.txt
 
     """
 

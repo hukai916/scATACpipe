@@ -32,8 +32,6 @@ def modules = params.modules.clone()
 // Modules: local
 include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions'   addParams( options: [publish_files : ['csv':'']] )
 include { SPLIT_FASTQ           } from '../modules/local/split_fastq'
-include { GET_SAMPLE_NAME_PATH  } from '../modules/local/get_sample_name_path'
-include { GET_SAMPLE_NAME_VAL   } from '../modules/local/get_sample_name_val'
 include { MATCH_CHUNK           } from '../modules/local/match_chunk'
 include { GET_WHITELIST_BARCODE } from '../modules/local/get_whitelist_barcode'
 include { GET_VALID_BARCODE } from '../modules/local/get_valid_barcode'
@@ -97,32 +95,16 @@ workflow PREPROCESS_DEFAULT {
     FASTQC (reads)
 
     // Module: split read into 20M chunks
-    // Below is to ensure that sample_name, R1, R2, and barcode matches
     SPLIT_FASTQ (reads, sample_count)
-    // read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    // read2_chunk   = SPLIT_FASTQ.out.read2_fastq.collect().toSortedList( { a, b -> a.getName() <=> b.getName() } ).flatten()
-    // barcode_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().toSortedList( { a, b -> a.name <=> b.name } ).flatten()
-
-    read1_chunk   = SPLIT_FASTQ.out.read1_fastq.collect().flatten()
-    read2_chunk   = SPLIT_FASTQ.out.read2_fastq.collect().flatten()
-    barcode_chunk = SPLIT_FASTQ.out.barcode_fastq.collect().flatten()
-
-    read1_chunks  = SPLIT_FASTQ.out.read1_fastq.collect()
-    read2_chunks  = SPLIT_FASTQ.out.read2_fastq.collect()
-    barcode_chunks= SPLIT_FASTQ.out.barcode_fastq.collect()
-
+    // Below is to ensure that sample_name, R1, R2, and barcode matches
+    read1_chunk    = SPLIT_FASTQ.out.read1_fastq.collect().flatten()
+    read2_chunks   = SPLIT_FASTQ.out.read2_fastq.collect()
+    barcode_chunks = SPLIT_FASTQ.out.barcode_fastq.collect()
     MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
-    MATCH_CHUNK.out.chunk.view()
-    // barcode_chunks.view()
-
-    // getName() only works for file object, , collect()/toSortedList replaces the original filename with the complete order: https://github.com/nextflow-io/nextflow/issues/377
-    // Here. collect() is a must, otherwise, read1 will be empty when passed to GET_SAMPLE_NAME_PATH: need more reading
-    GET_SAMPLE_NAME_PATH (read1_chunk)
-    GET_SAMPLE_NAME_VAL (GET_SAMPLE_NAME_PATH.out.sample_name_path)
-    sample_name = GET_SAMPLE_NAME_VAL.out.sample_name_val.collect().toSortedList().flatten()
+    sample_name = MATCH_CHUNK.out.sample_name.collect().unique()
 
     // Module: add barcode to reads
-    ADD_BARCODE_TO_READS (sample_name, read1_chunk, read2_chunk, barcode_chunk)
+    ADD_BARCODE_TO_READS (MATCH_CHUNK.out.chunk)
 
     // Module: trim off adapter
     CUTADAPT (ADD_BARCODE_TO_READS.out.reads_0, params.read1_adapter, params.read2_adapter)
@@ -223,10 +205,10 @@ workflow PREPROCESS_DEFAULT {
     } else {
       // Module: get valid barcode
       if (!params.whitelist_barcode) {
-        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunks.collect(), Channel.fromPath('assets/whitelist_barcodes').first())
+        GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath('assets/whitelist_barcodes').first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
       } else {
-        GET_WHITELIST_BARCODE (sample_name.unique(), barcode_chunks.collect(), Channel.fromPath(params.whitelist_barcode).first())
+        GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath(params.whitelist_barcode).first())
         GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
       }
       // Modules: correct barcode
@@ -235,7 +217,8 @@ workflow PREPROCESS_DEFAULT {
         CORRECT_BARCODE_PHENIQS (GET_VALID_BARCODE.out.sample_name, GET_VALID_BARCODE.out.barcode_fastq, GET_VALID_BARCODE.out.valid_barcode_counts_fastq)
 
         // Module: add CB tag to BAM containg corrected barcodes
-        TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile, DEDUP_BAM.out.bam.collect())
+        // TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile, DEDUP_BAM.out.bam.collect())
+        TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile, COMBINE_BAM.out.bam.collect())
 
         // Module: dedup bam again using "CB" tag
         DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
@@ -245,7 +228,8 @@ workflow PREPROCESS_DEFAULT {
         CORRECT_BARCODE (GET_VALID_BARCODE.out.sample_name, GET_VALID_BARCODE.out.barcode_fastq, GET_VALID_BARCODE.out.valid_barcodes)
 
         // Module: add CB tag to BAM containing corrected barcodes
-        TAG_BAM (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.tagfile, DEDUP_BAM.out.bam.collect())
+        // TAG_BAM (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.tagfile, DEDUP_BAM.out.bam.collect())
+        TAG_BAM (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.tagfile, COMBINE_BAM.out.bam.collect())
 
         // Module: dedup bam again using "CB" tag
         DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
