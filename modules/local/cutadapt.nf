@@ -25,6 +25,10 @@ process CUTADAPT {
     read2_trimmed_fastq = read2_fastq.name.split("\\.")[0..-3].join(".") + ".trimmed.fastq.gz"
 
     """
+    sample_name=$read1_fastq
+    outname1="\${sample_name%%.*}"
+    outname="\${outname1#R1_}"
+
     cutadapt $options.args -a $read1_adapter -A $read2_adapter -o $read1_trimmed_fastq -p $read2_trimmed_fastq $read1_fastq $read2_fastq
     cp .command.log log_cutadapt_\${outname}.txt
 
