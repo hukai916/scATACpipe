@@ -269,7 +269,7 @@ workflow PREPROCESS_DEFAULT {
       if (!params.split_fastq) {
         left = reads
       } else {
-        left = match_chunk.out.chunk
+        left = MATCH_CHUNK.out.chunk
       }
       left
         .combine(GET_VALID_BARCODE.out.valid_barcodes_and_counts)
