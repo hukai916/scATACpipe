@@ -24,7 +24,6 @@ process GET_WHITELIST_BARCODE {
     # Use the first 10,000 barcode reads for quick test:
     # note "|| true" is to capture and skip the SIGPIPE error
     (zcat $barcode_fastq || true) | awk '{ print \$0 } NR==40000 {exit}' | gzip > subset.fastq.gz
-    cat barcode_${sample_name}_*.fastq.gz > barcode_${sample_name}.fastq.gz
 
     get_whitelist_barcode.py $barcode_whitelist_folder subset.fastq.gz whitelist_${sample_name}_
 
