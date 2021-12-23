@@ -267,13 +267,13 @@ workflow PREPROCESS_DEFAULT {
       left
         .combine(GET_VALID_BARCODE.out.valid_barcodes_and_counts)
         .filter({ it[0] == it[4] })
-        .view()
+        // .view()
         .set({ ch_correct_barcode_input })
       ch_correct_barcode_input
-        .map({ it -> [ it[0], it[3], it[5]] })
+        .map({ it -> [ it[0], it[3], it[6]] })
         .set({ ch_correct_barcode_pheniqs_input }) // sample_name, barcode_fastq, valid_barcode_couts_fastq
       ch_correct_barcode_input
-        .map({ it -> [ it[0], it[3], it[4]] })
+        .map({ it -> [ it[0], it[3], it[5]] })
         .set({ ch_correct_barcode_naive_input }) // sample_name, barcode_fastq, valid_barcodes
 
 
