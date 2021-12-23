@@ -215,8 +215,8 @@ workflow PREPROCESS_DEFAULT {
         use_whitelist = "true"
         GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.whitelist_barcode).first())
       }
-      // Module: get_valid_barcode
-      GET_VALID_BARCODE (DEDUP_BAM.out.sample_name_bam.join(GET_WHITELIST_BARCODE.out.sample_name_barcode_whitelist), use_whitelist) // sample_name, whitelist_barcode
+      // Module: get_valid_barcode, note one sample_name may correspond to multiple GET_WHITELIST_BARCODE.out since reads may have multipe lanes, only 1 will be retained by join.
+      GET_VALID_BARCODE (DEDUP_BAM.out.sample_name_bam.join(GET_WHITELIST_BARCODE.out.sample_name_barcode_whitelist), use_whitelist) // sample_name, bam, barcode_fastq, whitelist_barcode
 
       // Module: get valid barcode
       // if (!params.split_fastq) {

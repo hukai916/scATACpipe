@@ -12,7 +12,7 @@ process GET_VALID_BARCODE {
     container "hukai916/r_util:0.2"
 
     input:
-    tuple val(sample_name), path(barcode_fastq), path(whitelist_barcode), path(dedup_bam)
+    tuple val(sample_name), path(dedup_bam), path(barcode_fastq), path(whitelist_barcode)
     val use_whitelist
 
     output:
