@@ -225,7 +225,7 @@ workflow PREPROCESS_DEFAULT {
 
       // Prepare for CORRECT_BARCODE input:
       if (!params.split_fastq) {
-        left = reads
+        left = ADD_BARCODE_TO_READS.out.reads
       } else {
         left = MATCH_CHUNK.out.chunk
       }

@@ -17,6 +17,7 @@ process ADD_BARCODE_TO_READS {
 
     output:
     tuple val(sample_name), path("R1_${sample_name}_${sample_count}.barcoded.fastq.gz"), path("R2_${sample_name}_${sample_count}.barcoded.fastq.gz"), emit: reads_0
+    tuple val(sample_name), path("R1_${sample_name}_${sample_count}.barcoded.fastq.gz"), path("R2_${sample_name}_${sample_count}.barcoded.fastq.gz"), path("barcode_${sample_name}_${sample_count}.fastq.gz"), emit: reads
 
     script:
     read1_barcoded_fastq = read1_fastq.name.split("\\.")[0..-3].join(".") + ".barcoded.fastq.gz"
@@ -30,6 +31,7 @@ process ADD_BARCODE_TO_READS {
     # rename the files:
     mv $read1_barcoded_fastq R1_${sample_name}_${sample_count}.barcoded.fastq.gz
     mv $read2_barcoded_fastq R2_${sample_name}_${sample_count}.barcoded.fastq.gz
+    mv $barcode_fastq barcode_${sample_name}_${sample_count}.fastq.gz
 
     """
 }
