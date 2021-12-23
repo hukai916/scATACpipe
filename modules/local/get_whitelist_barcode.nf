@@ -19,7 +19,7 @@ process GET_WHITELIST_BARCODE {
     tuple val(sample_name), path(barcode_fastq), path("whitelist_*") emit: barcode_whitelist
 
     script:
-
+    
     """
     # Use the first 10,000 barcode reads for quick test:
     # note "|| true" is to capture and skip the SIGPIPE error
