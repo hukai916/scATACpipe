@@ -258,7 +258,7 @@ workflow PREPROCESS_DEFAULT {
         // Module: naive barcode correction
         CORRECT_BARCODE (ch_correct_barcode_naive_input)
         // Module: tag_bam
-        CORRECT_BARCODE_PHENIQS
+        CORRECT_BARCODE
           .out
           .sample_name_chunk_name_tagfile
           .join(FILTER_BAM.out.sample_name_chunk_name_bam, by: [0, 1])
