@@ -274,13 +274,13 @@ workflow PREPROCESS_DEFAULT {
       left
         .combine(GET_VALID_BARCODE.out.valid_barcodes_and_counts)
         .filter({ it[0] == it[4] })
-        .set(ch_correct_barcode_input)
+        .set({ ch_correct_barcode_input })
       ch_correct_barcode_input
         .map({ it -> [ it[0], it[3], it[5]] })
-        .set(ch_correct_barcode_pheniqs_input) // sample_name, barcode_fastq, valid_barcode_couts_fastq
+        .set({ ch_correct_barcode_pheniqs_input }) // sample_name, barcode_fastq, valid_barcode_couts_fastq
       ch_correct_barcode_input
         .map({ it -> [ it[0], it[3], it[4]] })
-        .set(ch_correct_barcode_naive_input) // sample_name, barcode_fastq, valid_barcodes
+        .set({ ch_correct_barcode_naive_input }) // sample_name, barcode_fastq, valid_barcodes
 
       // Modules: correct barcode
       if (params.barcode_correction == "pheniqs") {
@@ -291,7 +291,7 @@ workflow PREPROCESS_DEFAULT {
           .out
           .sample_name_chunk_name_tagfile
           .join(FILTER_BAM.out.sample_name_chunk_name_bam, by: [0, 1])
-          .set(ch_tag_bam_input) // sample_name, file_name, tagfile, bam
+          .set({ ch_tag_bam_input }) // sample_name, file_name, tagfile, bam
       // Module: add CB tag to BAM containg corrected barcodes
         TAG_BAM (ch_tag_bam_input)
       } else if (params.barcode_correction == "naive") {
