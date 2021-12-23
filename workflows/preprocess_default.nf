@@ -209,7 +209,7 @@ workflow PREPROCESS_DEFAULT {
 
     if (!params.barcode_correction) {
       // Module: get fragment file
-      GET_FRAGMENTS (DEDUP_BAM.out.sample_name, DEDUP_BAM.out.bam)
+      GET_FRAGMENTS (DEDUP_BAM.out.sample_name_bam)
     } else {
       // Note, we first obtain valid barcode on a per sample basis no matter split_fastq or not:
       // Module: get_whitelist_barcode
@@ -218,12 +218,10 @@ workflow PREPROCESS_DEFAULT {
         GET_WHITELIST_BARCODE (reads, Channel.fromPath('assets/whitelist_barcodes').first())
       } else {
         use_whitelist = "true"
-        reads.view()
-        log.info "test here"
         GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.whitelist_barcode).first())
       }
       // Module: get_valid_barcode
-      GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.barcode_whitelist.join(DEDUP_BAM.out.bam), use_whitelist) // sample_name, whitelist_barcode
+      GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.barcode_whitelist.join(DEDUP_BAM.out.sample_name_bam), use_whitelist) // sample_name, whitelist_barcode
 
       // Module: get valid barcode
       // if (!params.split_fastq) {
@@ -313,7 +311,7 @@ workflow PREPROCESS_DEFAULT {
         DEDUP_BAM2 (COMBINE_BAM2.out.sample_name, COMBINE_BAM2.out.bam, "CB")
       }
       // Module: get fragments
-      GET_FRAGMENTS (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
+      GET_FRAGMENTS (DEDUP_BAM2.out.sample_name_bam)
     }
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
@@ -328,7 +326,7 @@ workflow PREPROCESS_DEFAULT {
     // GET_FRAGMENTS (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
 
     // Module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
-    QUALIMAP (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
+    QUALIMAP (DEDUP_BAM2.out.sample_name_bam)
 
     // Collect all output results for MultiQC report:
     res_files = Channel.empty()

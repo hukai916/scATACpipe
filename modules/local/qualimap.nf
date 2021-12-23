@@ -12,8 +12,7 @@ process QUALIMAP {
     container "hukai916/qualimap_xenial:0.1"
 
     input:
-    val sample_name
-    path bam
+    tuple val(sample_name), path(bam)
 
     output:
     val sample_name, emit: sample_name
