@@ -197,15 +197,10 @@ workflow PREPROCESS_DEFAULT {
       FILTER_BAM (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
     }
 
-    if (!params.split_fastq) {
-      // Module: dedup bam by barcode seq added in the front
-      DEDUP_BAM (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam, "N/A")
-    } else {
-      // Module: combine bam
-      COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
-      // Module: dedup bam by barcode seq added in the front
-      DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam, "N/A")
-    }
+    // Module: combine bam, must combine_bam first no matter split_fastq or not for each sample may have more than one lane (row) in the sample sheet.
+    COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
+    // Module: dedup bam by barcode seq added in the front
+    DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam, "N/A")
 
     if (!params.barcode_correction) {
       // Module: get fragment file
@@ -221,7 +216,7 @@ workflow PREPROCESS_DEFAULT {
         GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.whitelist_barcode).first())
       }
       // Module: get_valid_barcode
-      GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.barcode_whitelist.join(DEDUP_BAM.out.sample_name_bam), use_whitelist) // sample_name, whitelist_barcode
+      GET_VALID_BARCODE (DEDUP_BAM.out.sample_name_bam.join(GET_WHITELIST_BARCODE.out.sample_name_barcode_whitelist), use_whitelist) // sample_name, whitelist_barcode
 
       // Module: get valid barcode
       // if (!params.split_fastq) {
@@ -272,6 +267,7 @@ workflow PREPROCESS_DEFAULT {
       left
         .combine(GET_VALID_BARCODE.out.valid_barcodes_and_counts)
         .filter({ it[0] == it[4] })
+        .view()
         .set({ ch_correct_barcode_input })
       ch_correct_barcode_input
         .map({ it -> [ it[0], it[3], it[5]] })
@@ -279,6 +275,7 @@ workflow PREPROCESS_DEFAULT {
       ch_correct_barcode_input
         .map({ it -> [ it[0], it[3], it[4]] })
         .set({ ch_correct_barcode_naive_input }) // sample_name, barcode_fastq, valid_barcodes
+
 
       // Modules: correct barcode
       if (params.barcode_correction == "pheniqs") {
