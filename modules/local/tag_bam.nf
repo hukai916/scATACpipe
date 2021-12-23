@@ -13,9 +13,10 @@ process TAG_BAM {
     container "hukai916/sinto_xenial:0.1"
 
     input:
-    val sample_name
-    path tagfile
-    path bam
+    tuple val(sample_name), val(chunk_name), path(tagfile), path(bam)
+    // val sample_name
+    // path tagfile
+    // path bam
 
     output:
     val sample_name, emit: sample_name
@@ -24,8 +25,8 @@ process TAG_BAM {
     script:
 
     """
-    samtools index ${sample_name}*.bam
-    tag_bam.py ${sample_name}*.bam $tagfile ${sample_name}.tag.bam $task.cpus
+    samtools index $bam
+    tag_bam.py $bam $tagfile ${chunk_name}.tag.bam $task.cpus
 
     """
 }

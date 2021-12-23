@@ -17,10 +17,13 @@ process FILTER_BAM {
     val filter // if "yes", will filter mitochondrial reads too.
 
     output:
+    tuple val(sample_name), val(chunk_name), path("*.filtered.bam"), emit: sample_name_chunk_name_bam
     val sample_name, emit: sample_name
     path "*.filtered.bam", emit: bam
 
     script:
+    // In case split_fastq is called, chunk_name remains the same as sample_name if not.
+    chunk_name = bam.name.split("\\.")[0..-3].join(".") // to document "chunk" info if any
 
     // Some codes adapted from Haibo Liu, kudos to him!
     if (filter == 'both') // filter out both mitochondiral and "improper reads"

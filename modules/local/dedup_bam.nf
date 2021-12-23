@@ -17,8 +17,9 @@ process DEDUP_BAM {
     val barcode_tag
 
     output:
-    val sample_name, emit: sample_name
-    path "*.dedup.bam", emit: bam
+    tuple val(sample_name), path("*.dedup.bam"), emit: bam
+    // val sample_name, emit: sample_name
+    // path "*.dedup.bam", emit: bam
 
     script:
 

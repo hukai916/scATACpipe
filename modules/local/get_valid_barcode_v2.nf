@@ -12,12 +12,16 @@ process GET_VALID_BARCODE {
     container "hukai916/r_util:0.2"
 
     input:
-    tuple val(sample_name), path(barcode_fastq), path(whitelist_barcode), path(dedup_bam)
-    val use_whitelist
+    val sample_name
+    path barcode_fastq
+    path dedup_bam
+    path whitelist_barcode
 
     output:
-    tuple val(sample_name), path("*_valid_barcodes_dedup_bam.txt"), path("*_valid_barcode_counts_fastq.txt"), emit: valid_barcodes_and_counts
-    // sample_name, valid_barcodes, valid_barcode_counts_fastq
+    val sample_name, emit: sample_name
+    path barcode_fastq, emit: barcode_fastq
+    path "*_valid_barcode_counts_fastq.txt", emit: valid_barcode_counts_fastq
+    path "*_valid_barcodes_dedup_bam.txt", emit: valid_barcodes
 
     script:
 
@@ -32,7 +36,7 @@ process GET_VALID_BARCODE {
     # For outfile2:
     get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
 
-    if [[ $use_whitelist == false ]]; then
+    if [[ $whitelist_barcode == file_token.txt ]]; then
       cat ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt
       mv ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt ${sample_name}_valid_barcode_counts_dedup_bam.txt
     else

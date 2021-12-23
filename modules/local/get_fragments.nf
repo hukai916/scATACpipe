@@ -12,8 +12,7 @@ process GET_FRAGMENTS {
     container "hukai916/sinto_xenial:0.2"
 
     input:
-    val sample_name
-    path bam
+    tuple val(sample_name), path(bam)
 
     output:
     val sample_name, emit: sample_name
@@ -33,6 +32,6 @@ process GET_FRAGMENTS {
 
     # clean temp file:
     rm fragments.tsv
-    
+
     """
 }

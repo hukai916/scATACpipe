@@ -62,7 +62,7 @@ include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams(
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
 include { COMBINE_FRAGMENTS } from '../modules/local/combine_fragments'
-include { COMBINE_BAM } from '../modules/local/combine_bam'
+include { COMBINE_BAM; COMBINE_BAM as COMBINE_BAM2 } from '../modules/local/combine_bam'
 
 
 ////////////////////////////////////////////////////
@@ -94,17 +94,21 @@ workflow PREPROCESS_DEFAULT {
     // Module: fastQC
     FASTQC (reads)
 
-    // Module: split read into 20M chunks
-    SPLIT_FASTQ (reads, sample_count)
-    // Below is to ensure that sample_name, R1, R2, and barcode matches
-    read1_chunk    = SPLIT_FASTQ.out.read1_fastq.collect().flatten()
-    read2_chunks   = SPLIT_FASTQ.out.read2_fastq.collect()
-    barcode_chunks = SPLIT_FASTQ.out.barcode_fastq.collect()
-    MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
-    sample_name    = MATCH_CHUNK.out.sample_name.unique() // note .collect().unique() won't do the job probably because collect() return a single list, and unique() must work on channel.
+    if (!params.split_fastq) {
+      ADD_BARCODE_TO_READS (reads)
+    } else {
+      // Module: split read into 20M chunks
+      SPLIT_FASTQ (reads, sample_count)
+      // Below is to ensure that sample_name, R1, R2, and barcode matches
+      read1_chunk    = SPLIT_FASTQ.out.read1_fastq.collect().flatten()
+      read2_chunks   = SPLIT_FASTQ.out.read2_fastq.collect()
+      barcode_chunks = SPLIT_FASTQ.out.barcode_fastq.collect()
+      MATCH_CHUNK (read1_chunk, read2_chunks, barcode_chunks)
+      sample_name    = MATCH_CHUNK.out.sample_name.unique() // note .collect().unique() won't do the job probably because collect() return a single list, and unique() must work on channel.
 
-    // Module: add barcode to reads
-    ADD_BARCODE_TO_READS (MATCH_CHUNK.out.chunk)
+      // Module: add barcode to reads
+      ADD_BARCODE_TO_READS (MATCH_CHUNK.out.chunk)
+    }
 
     // Module: trim off adapter
     CUTADAPT (ADD_BARCODE_TO_READS.out.reads_0, params.read1_adapter, params.read2_adapter)
@@ -193,50 +197,121 @@ workflow PREPROCESS_DEFAULT {
       FILTER_BAM (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
     }
 
-    // Module: combine bam
-    COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
-
-    // Module: dedup bam by barcode seq added in the front
-    DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam, "N/A")
+    if (!params.split_fastq) {
+      // Module: dedup bam by barcode seq added in the front
+      DEDUP_BAM (FILTER_BAM.out.sample_name, FILTER_BAM.out.bam, "N/A")
+    } else {
+      // Module: combine bam
+      COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
+      // Module: dedup bam by barcode seq added in the front
+      DEDUP_BAM (COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam, "N/A")
+    }
 
     if (!params.barcode_correction) {
       // Module: get fragment file
       GET_FRAGMENTS (DEDUP_BAM.out.sample_name, DEDUP_BAM.out.bam)
     } else {
-      // Module: get valid barcode
+      // Note, we first obtain valid barcode on a per sample basis no matter split_fastq or not:
+      // Module: get_whitelist_barcode
       if (!params.whitelist_barcode) {
-        GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath('assets/whitelist_barcodes').first())
-        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
+        use_whitelist = "false"
+        GET_WHITELIST_BARCODE (reads, Channel.fromPath('assets/whitelist_barcodes').first())
       } else {
-        GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath(params.whitelist_barcode).first())
-        GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
+        use_whitelist = "true"
+        GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.whitelist_barcode).first())
       }
+      // Module: get_valid_barcode
+      GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.reads_whitelist.join(DEDUP_BAM.out.bam), use_whitelist) // sample_name, whitelist_barcode
+
+      // Module: get valid barcode
+      // if (!params.split_fastq) {
+      //   if (!params.whitelist_barcode) {
+      //     use_whitelist = "false"
+      //     // per sample, need only one whitelist barcode:
+      //     GET_WHITELIST_BARCODE (reads, Channel.fromPath('assets/whitelist_barcodes').first())
+      //     // per sample, need only one valid barcode:
+      //     //sample_name, whitelist_barcode, raw_barcode_fastq, dedup_bam
+      //     GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.whitelist_barcode, use_whitelist) // sample_name, whitelist_barcode
+      //
+      //     // A cross operator is needed here: DEDUP_BAM::sample_name with GET_WHITELIST_BARCODE::sample_name
+      //     // Need: sample_name, raw barcodes, dedup_bam, whitelist; Output: barcode_fastq for that read/chunk, sample_name, valid_counts
+      //     GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, )
+      //
+      //     GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
+      //
+      //     GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath('assets/whitelist_barcodes').first())
+      //     GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
+      //   } else {
+      //     GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath(params.whitelist_barcode).first())
+      //     GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
+      //   }
+      // } else {
+      //   if (!params.whitelist_barcode) {
+      //     GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath('assets/whitelist_barcodes').first())
+      //     GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
+      //   } else {
+      //     GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath(params.whitelist_barcode).first())
+      //     GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
+      //   }
+      // }
+      // Module: get valid barcode
+      // if (!params.whitelist_barcode) {
+      //   GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath('assets/whitelist_barcodes').first())
+      //   GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), Channel.fromPath("assets/file_token.txt").first())
+      // } else {
+      //   GET_WHITELIST_BARCODE (sample_name, barcode_chunks, Channel.fromPath(params.whitelist_barcode).first())
+      //   GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.sample_name, GET_WHITELIST_BARCODE.out.barcode_fastq, DEDUP_BAM.out.bam.collect(), GET_WHITELIST_BARCODE.out.whitelist_barcode)
+      // }
+
+      // Prepare for CORRECT_BARCODE input:
+      if (!params.split_fastq) {
+        left = reads
+      } else {
+        left = match_chunk.out.chunk
+      }
+      left
+        .combine(GET_VALID_BARCODE.out.valid_barcodes_and_counts)
+        .filter({ it[0] == it[4] })
+        .set(ch_correct_barcode_input)
+      ch_correct_barcode_input
+        .map({ it -> [ it[0], it[3], it[5]] })
+        .set(ch_correct_barcode_pheniqs_input) // sample_name, barcode_fastq, valid_barcode_couts_fastq
+      ch_correct_barcode_input
+        .map({ it -> [ it[0], it[3], it[4]] })
+        .set(ch_correct_barcode_naive_input) // sample_name, barcode_fastq, valid_barcodes
+
       // Modules: correct barcode
       if (params.barcode_correction == "pheniqs") {
-        // Module: pheniqs
-        CORRECT_BARCODE_PHENIQS (GET_VALID_BARCODE.out.sample_name, GET_VALID_BARCODE.out.barcode_fastq, GET_VALID_BARCODE.out.valid_barcode_counts_fastq)
-
-        // Module: add CB tag to BAM containg corrected barcodes
-        // TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile, DEDUP_BAM.out.bam.collect())
-        TAG_BAM (CORRECT_BARCODE_PHENIQS.out.sample_name, CORRECT_BARCODE_PHENIQS.out.tagfile, COMBINE_BAM.out.bam.collect())
-
-        // Module: dedup bam again using "CB" tag
-        DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
+      // Module: pheniqs
+        CORRECT_BARCODE_PHENIQS (ch_correct_barcode_pheniqs_input)
+      // Module: tag_bam
+        CORRECT_BARCODE_PHENIQS
+          .out
+          .sample_name_chunk_name_tagfile
+          .join(FILTER_BAM.out.sample_name_chunk_name_bam, by: [0, 1])
+          .set(ch_tag_bam_input) // sample_name, file_name, tagfile, bam
+      // Module: add CB tag to BAM containg corrected barcodes
+        TAG_BAM (ch_tag_bam_input)
       } else if (params.barcode_correction == "naive") {
         // Module: naive barcode correction
         // CORRECT_BARCODE (sample_name, read1_chunk, read2_chunk, barcode_chunk, GET_VALID_BARCODE.out.valid_barcode.collect())
+
+        // NEEDs update:
         CORRECT_BARCODE (GET_VALID_BARCODE.out.sample_name, GET_VALID_BARCODE.out.barcode_fastq, GET_VALID_BARCODE.out.valid_barcodes)
 
         // Module: add CB tag to BAM containing corrected barcodes
         // TAG_BAM (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.tagfile, DEDUP_BAM.out.bam.collect())
         TAG_BAM (CORRECT_BARCODE.out.sample_name, CORRECT_BARCODE.out.tagfile, COMBINE_BAM.out.bam.collect())
-
-        // Module: dedup bam again using "CB" tag
+      }
+      // Module: dedup bam again using "CB" tag
+      if (!params.split_fastq) {
         DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
       } else {
-        log.error "Invalid --barcode_correction value supplied!"
-        exit 1, "EXIT!"
+        COMBINE_BAM2 (TAG_BAM.out.sample_name.unique(), TAG_BAM.out.bam.collect())
+        DEDUP_BAM2 (COMBINE_BAM2.out.sample_name, COMBINE_BAM2.out.bam, "CB")
       }
+      // Module: get fragments
+      GET_FRAGMENTS (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
     }
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
@@ -248,7 +323,7 @@ workflow PREPROCESS_DEFAULT {
     // Module: generate fragment file with sinto
     // use raw bam file since ArchR may take advantage of the duplication info.
     // GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
-    GET_FRAGMENTS (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
+    // GET_FRAGMENTS (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
 
     // Module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
     QUALIMAP (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
