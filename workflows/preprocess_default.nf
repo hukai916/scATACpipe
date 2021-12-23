@@ -267,12 +267,8 @@ workflow PREPROCESS_DEFAULT {
         TAG_BAM (ch_tag_bam_input)
       }
       // Module: dedup bam again using "CB" tag
-      if (!params.split_fastq) {
-        DEDUP_BAM2 (TAG_BAM.out.sample_name, TAG_BAM.out.bam, "CB")
-      } else {
-        COMBINE_BAM2 (TAG_BAM.out.sample_name.unique(), TAG_BAM.out.bam.collect())
-        DEDUP_BAM2 (COMBINE_BAM2.out.sample_name, COMBINE_BAM2.out.bam, "CB")
-      }
+      COMBINE_BAM2 (TAG_BAM.out.sample_name.unique(), TAG_BAM.out.bam.collect())
+      DEDUP_BAM2 (COMBINE_BAM2.out.sample_name, COMBINE_BAM2.out.bam, "CB")
       // Module: get fragments
       GET_FRAGMENTS (DEDUP_BAM2.out.sample_name_bam)
     }
