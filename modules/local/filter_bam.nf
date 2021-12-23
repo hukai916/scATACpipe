@@ -22,6 +22,7 @@ process FILTER_BAM {
     path "*.filtered.bam", emit: bam
 
     path "*.tmp.*", emit: tmp_bam
+    path bam, emit: raw_bam
 
     script:
     // In case split_fastq is called, chunk_name remains the same as sample_name if not.
