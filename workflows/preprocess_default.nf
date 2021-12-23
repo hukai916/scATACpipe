@@ -218,6 +218,8 @@ workflow PREPROCESS_DEFAULT {
         GET_WHITELIST_BARCODE (reads, Channel.fromPath('assets/whitelist_barcodes').first())
       } else {
         use_whitelist = "true"
+        reads.view()
+        log.info "test here"
         GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.whitelist_barcode).first())
       }
       // Module: get_valid_barcode
