@@ -223,7 +223,7 @@ workflow PREPROCESS_DEFAULT {
         GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.whitelist_barcode).first())
       }
       // Module: get_valid_barcode
-      GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.reads_whitelist.join(DEDUP_BAM.out.bam), use_whitelist) // sample_name, whitelist_barcode
+      GET_VALID_BARCODE (GET_WHITELIST_BARCODE.out.barcode_whitelist.join(DEDUP_BAM.out.bam), use_whitelist) // sample_name, whitelist_barcode
 
       // Module: get valid barcode
       // if (!params.split_fastq) {
