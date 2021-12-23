@@ -31,7 +31,7 @@ process ADD_BARCODE_TO_READS {
     # rename the files:
     mv $read1_barcoded_fastq R1_${sample_name}_${sample_count}.barcoded.fastq.gz
     mv $read2_barcoded_fastq R2_${sample_name}_${sample_count}.barcoded.fastq.gz
-    mv $barcode_fastq barcode_${sample_name}_${sample_count}.fastq.gz
+    mv $barcode_fastq barcode_${sample_name}_${sample_count}.fastq.gz # rename input is fine to nextflow
 
     """
 }
