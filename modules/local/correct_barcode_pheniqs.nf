@@ -16,8 +16,6 @@ process CORRECT_BARCODE_PHENIQS {
 
     output:
     tuple val(sample_name), val(chunk_name), path("*.tag.tsv"), emit: sample_name_chunk_name_tagfile
-    val sample_name, emit: sample_name
-    path "*.tag.tsv", emit: tagfile
     path "summary_*.txt", emit: corrected_barcode_summary
 
     script:

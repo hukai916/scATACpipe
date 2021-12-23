@@ -12,25 +12,14 @@ process CORRECT_BARCODE {
     container "hukai916/r_sc_atac:0.1"
 
     input:
-    // val sample_name
-    // path read1_fastq
-    // path read2_fastq
-    // path barcode_fastq
-    // path barcode_whitelist
-    val sample_name
-    path barcode_fastq
-    path valid_barcodes
-
+    tuple val(sample_name), path(barcode_fastq), path(valid_barcodes)
 
     output:
-    val sample_name, emit: sample_name
-    path "tagfile_*.txt", emit: tagfile
+    tuple val(sample_name), val(chunk_name), path("tagfile_*.txt"), emit: sample_name_chunk_name_tagfile
     path "summary_*.txt", emit: corrected_barcode_summary
 
-    // tuple val(sample_name), path(read1_fastq), path(read2_fastq), path("barcode_*"), emit: reads
-    // path "summary_*.txt", emit: corrected_barcode_summary
-
     script:
+    chunk_name = barcode_fastq.name.split("\\.")[0..-3].join(".").split("barcode_").join() // get rid of suffix ".fastq.gz", then remove leading "barcode_" if there.
 
     """
     correct_barcode.R $options.args \
