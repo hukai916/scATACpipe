@@ -60,6 +60,8 @@ def set_tag(intervals, inbam, dict_tag, tag):
             if raw_barcode in dict_tag:
                 read.set_tag(tag, dict_tag[raw_barcode])
                 outbam.write(read)
+            else:
+                print(raw_barcode)
 
     inbam.close()
     outbam.close()
@@ -95,7 +97,7 @@ with Pool(nproc) as p:
 
 merge_param = ["-f", "-@", str(nproc), outname] +  chunk_bam_lists
 pysam.merge(*merge_param)
-print(os.listdir())
+# print(os.listdir())
 
 # clean intermediate files:
 for bam in chunk_bam_lists:
