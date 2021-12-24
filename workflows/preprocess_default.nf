@@ -221,6 +221,7 @@ workflow PREPROCESS_DEFAULT {
         path_whitelist  = Channel.fromPath(params.whitelist_barcode)
       }
       if (!params.split_fastq) {
+        ADD_BARCODE_TO_READS.out.sample_name.unique().view()
         GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READS.out.sample_name.unique(), ADD_BARCODE_TO_READS.out.barcode_fastq.collect(), path_whitelist)
       } else {
         GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READ_CHUNKS.out.sample_name.unique(), ADD_BARCODE_TO_READ_CHUNKS.out.barcode_fastq.collect(), path_whitelist)
