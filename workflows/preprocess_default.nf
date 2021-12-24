@@ -214,11 +214,16 @@ workflow PREPROCESS_DEFAULT {
       // Note, we first obtain valid barcode on a per sample basis no matter split_fastq or not:
       // Module: get_whitelist_barcode
       if (!params.whitelist_barcode) {
-        use_whitelist = "false"
-        GET_WHITELIST_BARCODE (reads, Channel.fromPath('assets/whitelist_barcodes').first())
+        use_whitelist   = "false"
+        path_whitelist  = Channel.fromPath('assets/whitelist_barcodes'
       } else {
-        use_whitelist = "true"
-        GET_WHITELIST_BARCODE (reads, Channel.fromPath(params.whitelist_barcode).first())
+        use_whitelist   = "true"
+        path_whitelist  = Channel.fromPath(params.whitelist_barcode)
+      }
+      if (!params.split_fastq) {
+        GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READS.out.sample_name.unique(), ADD_BARCODE_TO_READS.out.barcode_fastq.collect(), path_whitelist)
+      } else {
+        GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READ_CHUNKS.out.sample_name.unique(), ADD_BARCODE_TO_READ_CHUNKS.out.barcode_fastq.collect(), path_whitelist)
       }
       // Module: get_valid_barcode, note one sample_name may correspond to multiple GET_WHITELIST_BARCODE.out since reads may have multipe lanes, only 1 will be retained by join.
       // GET_WHITELIST_BARCODE.out.sample_name_barcode_whitelist.view()

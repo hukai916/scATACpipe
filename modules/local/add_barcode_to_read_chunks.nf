@@ -16,6 +16,9 @@ process ADD_BARCODE_TO_READ_CHUNKS {
 
     output:
     tuple val(sample_name), path("${read1_barcoded_fastq}"), path("${read2_barcoded_fastq}"), emit: reads_0
+    // Below are for GET_WHITELIST_BARCODE
+    val sample_name, emit: sample_name
+    path barcode_fastq, emit: barcode_fastq
 
     script:
     read1_barcoded_fastq = read1_fastq.name.split("\\.")[0..-3].join(".") + ".barcoded.fastq.gz"

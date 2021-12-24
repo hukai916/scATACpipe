@@ -18,6 +18,9 @@ process ADD_BARCODE_TO_READS {
     output:
     tuple val(sample_name), path("R1_${sample_name}_${sample_count}.barcoded.fastq.gz"), path("R2_${sample_name}_${sample_count}.barcoded.fastq.gz"), emit: reads_0
     tuple val(sample_name), path("R1_${sample_name}_${sample_count}.barcoded.fastq.gz"), path("R2_${sample_name}_${sample_count}.barcoded.fastq.gz"), path("barcode_${sample_name}_${sample_count}.fastq.gz"), emit: reads
+    // Below are for GET_WHITELIST_BARCODE
+    val sample_name, emit: sample_name
+    path "barcode_${sample_name}_${sample_count}.fastq.gz", emit: barcode_fastq
 
     script:
     read1_barcoded_fastq = read1_fastq.name.split("\\.")[0..-3].join(".") + ".barcoded.fastq.gz"

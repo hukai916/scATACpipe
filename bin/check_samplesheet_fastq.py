@@ -124,6 +124,8 @@ def check_samplesheet(file_in, file_out):
         for pair in combinations(sample_names, 2):
             if pair[0] in pair[1] or pair[1] in pair[0]:
                 print_error("certain sample name 'contained' in another sample name!\nSupplied sample names: " + ", ".join(sample_names))
+                # sample_1, sample_11 is not okay
+                # sample_01, sample_11 is fine
 
         out_dir = os.path.dirname(file_out)
         make_dir(out_dir)
