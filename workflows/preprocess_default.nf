@@ -215,15 +215,15 @@ workflow PREPROCESS_DEFAULT {
       // Module: get_whitelist_barcode
       if (!params.whitelist_barcode) {
         use_whitelist   = "false"
-        path_whitelist  = Channel.fromPath('assets/whitelist_barcodes')
+        path_whitelist  = Channel.fromPath('assets/whitelist_barcodes').first()
       } else {
         use_whitelist   = "true"
-        path_whitelist  = Channel.fromPath(params.whitelist_barcode)
+        path_whitelist  = Channel.fromPath(params.whitelist_barcode).first()
       }
       if (!params.split_fastq) {
         GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READS.out.sample_name.unique(), ADD_BARCODE_TO_READS.out.barcode_fastq.collect(), path_whitelist)
       } else {
-        ADD_BARCODE_TO_READ_CHUNKS.out.sample_name.unique().view()
+        // ADD_BARCODE_TO_READ_CHUNKS.out.sample_name.unique().view()
         GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READ_CHUNKS.out.sample_name.unique(), ADD_BARCODE_TO_READ_CHUNKS.out.barcode_fastq.collect(), path_whitelist)
       }
       // Module: get_valid_barcode, note one sample_name may correspond to multiple GET_WHITELIST_BARCODE.out since reads may have multipe lanes, only 1 will be retained by join.
