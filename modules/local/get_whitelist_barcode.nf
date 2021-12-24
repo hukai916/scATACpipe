@@ -14,6 +14,7 @@ process GET_WHITELIST_BARCODE {
     input:
     val sample_name
     path barcode_fastq
+    path barcode_whitelist_folder
     // tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
     // path barcode_whitelist_folder
 
