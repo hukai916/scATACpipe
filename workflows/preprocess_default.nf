@@ -223,7 +223,7 @@ workflow PREPROCESS_DEFAULT {
       if (!params.split_fastq) {
         GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READS.out.sample_name.unique(), ADD_BARCODE_TO_READS.out.barcode_fastq.collect(), path_whitelist)
       } else {
-        ADD_BARCODE_TO_READS.out.sample_name.unique().view()
+        ADD_BARCODE_TO_READ_CHUNKS.out.sample_name.unique().view()
         GET_WHITELIST_BARCODE (ADD_BARCODE_TO_READ_CHUNKS.out.sample_name.unique(), ADD_BARCODE_TO_READ_CHUNKS.out.barcode_fastq.collect(), path_whitelist)
       }
       // Module: get_valid_barcode, note one sample_name may correspond to multiple GET_WHITELIST_BARCODE.out since reads may have multipe lanes, only 1 will be retained by join.
