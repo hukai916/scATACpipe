@@ -19,7 +19,7 @@ process CORRECT_BARCODE_PHENIQS {
     path "summary_*.txt", emit: corrected_barcode_summary
 
     script:
-    // In case split_fastq is called, chunk_name remains the same as sample_name if not.
+    // In split_fastq is not called, chunk_name remains the same as sample_name.
     chunk_name = barcode_fastq.name.split("\\.")[0..-3].join(".").split("barcode_").join() // get rid of suffix ".fastq.gz", then remove leading "barcode_" if there.
 
     """

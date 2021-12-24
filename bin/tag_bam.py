@@ -33,7 +33,7 @@ with open(tagfile, "r") as f:
             if not raw_barcode in dict_tag:
                 dict_tag[raw_barcode] = corrected_barcode
 
-def chunk_bam(bam, nproc):
+def custom_chunk_bam(bam, nproc):
     pysam.index(bam)
     total_reads = int(pysam.idxstats(bam).split()[-1])
     chunk_reads = math.ceil(total_reads / nproc)
