@@ -215,7 +215,7 @@ workflow PREPROCESS_DEFAULT {
       // Module: get_whitelist_barcode
       if (!params.whitelist_barcode) {
         use_whitelist   = "false"
-        path_whitelist  = Channel.fromPath('assets/whitelist_barcodes'
+        path_whitelist  = Channel.fromPath('assets/whitelist_barcodes')
       } else {
         use_whitelist   = "true"
         path_whitelist  = Channel.fromPath(params.whitelist_barcode)
