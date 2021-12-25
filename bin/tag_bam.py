@@ -29,10 +29,7 @@ nproc           = int(sys.argv[4])
 dict_tag = {}
 with open(tagfile, "r") as f:
     for line in f:
-        tem = line.split()
-        query_name      = tem[0]
-        raw_barcode     = tem[1]
-        corrected_barcode = tem[2]
+        query_name, raw_barcode, corrected_barcode = line.split("\t")
         if not corrected_barcode == "undetermined":
             dict_tag[query_name] = [raw_barcode, corrected_barcode]
 
