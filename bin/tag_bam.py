@@ -60,9 +60,16 @@ def set_tag_chunk(chunk, dict_tag, tag):
     chunk_name = os.path.basename(chunk)
 
     print("Processing ", "chunk: " + chunk_name, " ...")
-    outname = os.path.join("tagged_" + chunk_name + ".bam")
-    chunk   = pysam.AlignmentFile(chunk, "rb")
-    outbam  = pysam.AlignmentFile(outname, "wb", template = chunk)
+    outname = os.path.join(chunk_name + ".bam")
+    outname_sorted = os.path.join("srt_" + outname)
+    outname_final  = os.path.join("tagged_" + outname)
+
+    # index to use fetch()
+    pysam.sort("-o", outname_sorted, "-m", "4G", "-@", "1", chunk)
+    pysam.index(outname_sorted)
+
+    chunk   = pysam.AlignmentFile(outname_sorted, "rb")
+    outbam  = pysam.AlignmentFile(outname_final, "wb", template = chunk)
     for read in chunk.fetch():
         if read.query_name in dict_tag:
             read.set_tag(tag, dict_tag[read.query_name][1])
@@ -71,16 +78,16 @@ def set_tag_chunk(chunk, dict_tag, tag):
     outbam.close()
 
     # index for later merging:
-    outname_sorted = os.path.join("srt_" + outname)
-    pysam.sort("-o", outname_sorted, "-m", "4G", "-@", "1", outname)
-    pysam.index(outname_sorted)
+    pysam.index(outname_final)
+
     try:
-        os.remove(outname)
+        os.remove(outname_sorted)
     except:
         pass
 
-    return(outname_sorted)
+    return(outname_final)
 
+print("Splitting BAM into " + str(nproc) + " chunks ...")
 chunks  = split_bam(bam, "tmp_chunk", nproc)
 
 with Pool(nproc) as p:
