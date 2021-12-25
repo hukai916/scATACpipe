@@ -78,9 +78,7 @@ def set_tag_chunk(chunk, dict_tag, tag):
 
     return(outname_sorted)
 
-inbam   = pysam.AlignmentFile(bam, "rb")
-chunks  = split_bam(inbam, "tmp_chunk", nproc)
-inbam.close()
+chunks  = split_bam(bam, "tmp_chunk", nproc)
 
 with Pool(nproc) as p:
     chunk_bam_lists = p.map_async(
