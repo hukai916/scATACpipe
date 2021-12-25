@@ -21,5 +21,6 @@ inbam = pysam.AlignmentFile(bam, "rb", check_sq = False)
 with open(outfile, "w") as f:
     for read in inbam:
         line = "\t".join([read.get_tag(tag) for tag in tag_list])
+        # line = read.query_name + "\t" + line
         f.write(line + "\n")
 inbam.close()
