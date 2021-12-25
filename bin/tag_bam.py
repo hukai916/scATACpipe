@@ -34,7 +34,7 @@ with open(tagfile, "r") as f:
         raw_barcode     = tem[1]
         corrected_barcode = tem[2]
         if not corrected_barcode == "undetermined":
-            dict_tag[query_name] = [raw_barcode, correct_barcode]
+            dict_tag[query_name] = [raw_barcode, corrected_barcode]
 
 def split_bam(infile, prefix, nproc):
     inbam = pysam.AlignmentFile(infile, "rb")
