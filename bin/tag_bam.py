@@ -41,7 +41,7 @@ def split_bam(infile, prefix, nproc):
 
     # initialise all output bam files
     outbam_files = ["".join([prefix + "_", str(i), ".bam"]) for i in range(int(nproc))]
-    outbams      = [pysam.AlignmentFile("".join(outbam_files[i] for i in range(int(nproc))]
+    outbams      = [pysam.AlignmentFile(outbam_files[i], "wb", template = inbam) for i in range(int(nproc))]
 
     # iterate through inbam and output to outbam according to line number
     line_number = 0
