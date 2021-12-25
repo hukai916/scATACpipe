@@ -61,11 +61,13 @@ def set_tag_chunk(chunk, dict_tag, tag):
 
     print("Processing ", "chunk: " + chunk_name, " ...")
     outname = os.path.join("tagged_" + chunk_name + ".bam")
+    chunk   = pysam.AlignmentFile(chunk, "rb")
     outbam  = pysam.AlignmentFile(outname, "wb", template = chunk)
     for read in chunk.fetch():
         if read.query_name in dict_tag:
             read.set_tag(tag, dict_tag[read.query_name][1])
             outbam.write(read)
+    chunk.close()
     outbam.close()
 
     # index for later merging:
