@@ -40,7 +40,8 @@ def split_bam(infile, prefix, nproc):
     inbam = pysam.AlignmentFile(infile, "rb")
 
     # initialise all output bam files
-    outbams = [pysam.AlignmentFile("".join([prefix, "_", str(i), ".bam"]), "wb", template = inbam) for i in range(int(nproc))]
+    outbam_files = ["".join([prefix + "_", str(i), ".bam"]) for i in range(int(nproc))]
+    outbams      = [pysam.AlignmentFile("".join(outbam_files[i] for i in range(int(nproc))]
 
     # iterate through inbam and output to outbam according to line number
     line_number = 0
@@ -53,7 +54,7 @@ def split_bam(infile, prefix, nproc):
     inbam.close()
     [outbam.close() for outbam in outbams]
 
-    return(outbams)
+    return(outbam_files)
 
 def set_tag_chunk(chunk, dict_tag, tag):
     chunk_name = os.path.basename(chunk)
