@@ -21,6 +21,6 @@ inbam = pysam.AlignmentFile(bam, "rb", check_sq = False)
 with open(outfile, "w") as f:
     for read in inbam:
         line = "\t".join([read.get_tag(tag) for tag in tag_list])
-        line = read.query_name + "\t" + line
+        line = read.get_tag(tag_list[0]) + ":\t" + read.query_name + "\t" + line # add raw_barcode:query_name as first column
         f.write(line + "\n")
 inbam.close()

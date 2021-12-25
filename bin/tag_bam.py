@@ -71,8 +71,6 @@ def set_tag_chunk(chunk, dict_tag, tag):
         if read.query_name in dict_tag:
             read.set_tag(tag, dict_tag[read.query_name][1])
             outbam.write(read)
-        else:
-            print(read.query_name)
     chunk.close()
     outbam.close()
 
