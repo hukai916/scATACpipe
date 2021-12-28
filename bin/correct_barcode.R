@@ -149,7 +149,7 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 
 	while (length(fq <- yield(f))) {
 		reads <- fq@sread %>% as.character()
-		id <- fq@id %>% as.character()
+		id <- fq@id %>% as.character() %>% strsplit(split = " +")
 		message(paste0("Processing chunk ", read_chunk, "/", chunk_number, " ..."))
 		keep <- vector(mode = "integer", length = reads_per_chunk)
 
@@ -158,11 +158,11 @@ correct_barcode <- function(barcode_file, whitelist_file, reads_per_chunk, path_
 		for (i in seq(reads)) {
 			if (dict_whitelist$has(reads[i])) {
 				keep[i] <- 1 # indicate barcode perfectly matching whitelist barcode.
-				taglines[i] <- paste0(reads[i], ":", id[i], "\t", reads[i], "\t",  reads[i])
+				taglines[i] <- paste0(reads[i], ":", id[[i]][1], "\t", reads[i], "\t",  reads[i])
 			} else if (dict_invalid_1mismatch$has(reads[i])) {
 				keep[i]  <- 2 # indicate barcode 1 mismatch away from whitelist barcode.
 				corrected <- dict_invalid_1mismatch$get(reads[i])
-				taglines[i] <- paste0(reads[i], ":", id[i], "\t", reads[i], "\t", corrected)
+				taglines[i] <- paste0(reads[i], ":", id[[i]][1], "\t", reads[i], "\t", corrected)
 				reads[i] <- corrected
 			} else {
 				keep[i] <- -1 # indicate barcode more than 2 mismatches from whitelist, should be discarded.

@@ -80,6 +80,7 @@ def set_tag_chunk(chunk, dict_tag, tag):
     try:
         os.remove(outname_sorted)
         os.remove(outname_sorted + ".bai")
+        os.remove(chunk_name)
     except:
         pass
 
@@ -103,7 +104,6 @@ pysam.merge(*merge_param)
 # clean intermediate files:
 for bam in chunk_bam_lists:
     try:
-        continue
         os.remove(bam)
         os.remove(bam + ".bai")
     except:
