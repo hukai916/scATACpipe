@@ -51,8 +51,6 @@ include { BWA_MAP          } from '../modules/local/bwa_map'    addParams( optio
 include { PREP_GENOME } from '../modules/local/prep_genome'
 include { BUILD_GENE_ANNOTATION } from '../modules/local/build_gene_annotation' addParams( options: modules['build_gene_annotation'] )
 include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotation' addParams( options: modules['build_genome_annotation'] )
-include { MINIMAP2_INDEX   } from '../modules/local/minimap2_index'    addParams( options: modules['minimap2_index'] )
-include { MINIMAP2_MAP     } from '../modules/local/minimap2_map'    addParams( options: modules['minimap2_map'] )
 include { FILTER_BAM       } from '../modules/local/filter_bam'    addParams( options: modules['filter_bam'] )
 // include { PREP_BAM         } from '../modules/local/prep_bam'    addParams( options: modules['prep_bam'] )
 include { TAG_BAM          } from '../modules/local/tag_bam'
@@ -64,6 +62,7 @@ include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
 include { COMBINE_FRAGMENTS } from '../modules/local/combine_fragments'
 include { COMBINE_BAM; COMBINE_BAM as COMBINE_BAM2 } from '../modules/local/combine_bam'
+include { FILTER_CELL } from '../modules/local/filter_cell'
 
 
 ////////////////////////////////////////////////////
@@ -76,11 +75,11 @@ workflow PREPROCESS_DEFAULT {
 
   main:
     // Examine if all required parameters supplied:
-    if (!(params.mapper == "bwa") && !(params.mapper == "minimap2")) {
-      log.error "Must supply --mapper [bwa | minimap2]!"
+    if (!(params.mapper == "bwa")) {
+      log.error "Must supply --mapper [bwa]!"
       exit 1, "EXIT!"
-    } else if (!(params.ref_bwa_index) && !(params.ref_minimap2_index) && !(params.ref_fasta) && !(params.ref_fasta_ensembl) && !(params.ref_fasta_ucsc)) {
-      msg = "Must supply one from below: \n" + "  --ref_bwa_index\n" + "  --ref_minimap2_index\n" + "  --ref_fasta\n" + "  --ref_fasta_ensembl\n" + "  --ref_fasta_ucsc\n"
+    } else if (!(params.ref_bwa_index) && !(params.ref_fasta) && !(params.ref_fasta_ensembl) && !(params.ref_fasta_ucsc)) {
+      msg = "Must supply one from below: \n" + "  --ref_bwa_index\n" + "  --ref_fasta\n" + "  --ref_fasta_ensembl\n" + "  --ref_fasta_ucsc\n"
       log.error msg
       exit 1, "EXIT!"
     }
@@ -118,6 +117,8 @@ workflow PREPROCESS_DEFAULT {
       CUTADAPT (ADD_BARCODE_TO_READ_CHUNKS.out.reads_0, params.read1_adapter, params.read2_adapter)
     }
 
+    log.info "DEBUG0"
+
     // Module: mapping with bwa
     if (params.ref_bwa_index) {
       BWA_MAP (CUTADAPT.out.reads_0, params.ref_bwa_index)
@@ -130,7 +131,7 @@ workflow PREPROCESS_DEFAULT {
       // Module : bwa_map
       BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
     } else if (params.ref_fasta_ensembl) {
-      log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
+      log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build index, and map ..."
       // Module : download_from_ensembl
       DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
       // Module: prep_genome
@@ -150,88 +151,11 @@ workflow PREPROCESS_DEFAULT {
     } else {
       exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
     }
-    if (params.mapper == 'bwa') {
-      log.info "INFO: --mapper: bwa"
-      if (params.ref_bwa_index) {
-        BWA_MAP (CUTADAPT.out.reads_0, params.ref_bwa_index)
-      } else if (params.ref_fasta) {
-        log.info "INFO: --ref_fasta provided, use it for building bwa index."
-        // Module : prep_genome
-        PREP_GENOME (params.ref_fasta, "custom_genome")
-        // Module : bwa_index
-        BWA_INDEX (PREP_GENOME.out.genome_fasta)
-        // Module : bwa_map
-        BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
-      } else if (params.ref_fasta_ensembl) {
-        log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
-        // Module : download_from_ensembl
-        DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // Module: prep_genome
-        PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-        // Module : bwa_index
-        BWA_INDEX (PREP_GENOME.out.genome_fasta)
-      } else if (params.ref_fasta_ucsc) {
-        log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build bwa index, and map with bwa ..."
-        // Module : download_from_ucsc
-        DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-        // Module : prep_genome
-        PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
-        // Module : bwa_index
-        BWA_INDEX (PREP_GENOME.out.genome_fasta)
-        // Module : bwa_map
-        BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
-      } else {
-        exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
-      }
-    } else if (params.mapper == "minimap2") {
-      log.info "INFO: --mapper: minimap2"
-      if (params.ref_minimap2_index) {
-        // use user provided bwa index for mapping
-        // Module : minimap2_map
-        MINIMAP2_MAP (CUTADAPT.out.reads_0, params.ref_minimap2_index)
-      } else if (params.ref_fasta) {
-        log.info "INFO: --ref_fasta provided, use it to build minimap2 index."
-        // Module : prep_genome
-        PREP_GENOME (params.ref_fasta, "custom_genome")
-        // Module : bwa_index
-        MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
-        // Module : minimap2_map
-        MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
-      } else if (params.ref_fasta_ensembl) {
-        log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
-        // Module : download_from_ensembl
-        DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // Module: PREP_GENOME
-        PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-        // Module : bwa_index
-        MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
-        // Module : minimap2_map
-        MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
-      } else if (params.ref_fasta_ucsc) {
-        log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
-        // Module : download_from_ucsc
-        DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-        // Module : prep_genome
-        PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_gtf)
-        // Module : bwa_index
-        MINIMAP2_INDEX (PREP_GENOME.out.genome_fasta)
-        // Module : minimap2_map
-        MINIMAP2_MAP (CUTADAPT.out.reads_0, MINIMAP2_INDEX.out.minimap2_index.collect())
-      } else {
-        exit 1, 'Parameter --ref_fasta_ucsc/--ref_fasta_ensembl: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
-      }
-    } else {
-      log.error "--mapper must be supplied!"
-      exit 1, "EXIT!"
-    }
+
+    log.info "DEBUG02"
 
     // Module: filter out poorly mapped reads
-    if (params.mapper == 'bwa') {
-      FILTER_BAM (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
-    } else if (params.mapper == "minimap2") {
-      FILTER_BAM (MINIMAP2_MAP.out.sample_name, MINIMAP2_MAP.out.bam, params.filter)
-    }
-
+    FILTER_BAM (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
     // Module: combine bam, must combine_bam first no matter split_fastq or not for each sample may have more than one lane (row) in the sample sheet.
     COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
     // Module: dedup bam by barcode seq added in the front
@@ -279,7 +203,6 @@ workflow PREPROCESS_DEFAULT {
         .map({ it -> [ it[0], it[3], it[5]] })
         .set({ ch_correct_barcode_naive_input }) // sample_name, barcode_fastq, valid_barcodes
 
-
       // Modules: correct barcode
       if (params.barcode_correction == "pheniqs") {
       // Module: pheniqs
@@ -310,8 +233,17 @@ workflow PREPROCESS_DEFAULT {
       // Module: get fragments
       GET_FRAGMENTS (DEDUP_BAM2.out.sample_name_bam)
     }
-    // Module filter_cell given valid barcode list:
 
+    log.info "DEBUG1"
+    // Module filter_cell given valid barcode list:
+    // DEDUP_BAM2.out.sample_name_bam
+    //   .join(GET_FRAGMENTS.out.sample_name_fragment)
+    //   .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
+    //   .set(sample_name_bam_fragment_valid_barcodes)
+    // log.info "DEBUG2"
+    // sample_name_bam_fragment_valid_barcodes.view()
+    // FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
+    // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     // Module: remove duplicates based on cell barcode, start, end
@@ -384,11 +316,15 @@ workflow PREPROCESS_DEFAULT {
   emit:
     res_files // out[0]: res folders for MultiQC report
     // COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
-    // COMBINE_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
+    // COMBINE_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
     GET_FRAGMENTS.out.fragments // out[1]: for split bed
-    GET_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
+    GET_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
     COMBINE_BAM.out.sample_name // out[3]: for split bam
     COMBINE_BAM.out.bam // out[4]: for split bam
+    // FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
+    // FILTER_CELL.out.sample_name_filtered_fragment  // out[2]: fragment ch for ArchR
+    // FILTER_CELL.out.sample_name           // out[3]: for split bam
+    // FILTER_CELL.out.filtered_bam          // out[4]: for split bam
     prep_genome_name         // out[5]: for DOWNSTREAM_ARCHR
     prep_genome_fasta        // out[6]: for DOWNSTREAM_ARCHR
     prep_gtf_genome          // out[7]: for DOWNSTREAM_ARCHR
