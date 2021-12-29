@@ -88,6 +88,12 @@ workflow PREPROCESS_CHROMAP {
       CHROMAP_ATAC (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CHROMAP_INDEX.out.index.first())
     }
 
+    // GET_VALID_BARCODE
+    //
+    FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
+    // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
+
+
     // Emit PREP_GENOME output if PREP_GENOME is invoked.
     prep_genome_name    = Channel.empty()
     prep_genome_fasta   = Channel.empty()
