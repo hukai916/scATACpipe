@@ -223,6 +223,22 @@ class WorkflowMain {
                   log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
                 }
               }
+          } else if (params.preprocess == "chromap") {
+            if (params.ref_fasta) {
+              if (!params.ref_gtf || !params.species_latin_name) {
+                log.error "Pls supply --ref_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
+                System.exit(0)
+              } else {
+                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
+              }
+            } else if (params.ref_fasta_ensembl || params.ref_fasta_ucsc) {
+              if (!params.species_latin_name) {
+                log.error "Pls also supply --species_latin_name [Must be quoted]"
+                System.exit(0)
+              } else {
+                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
+              }
+            }
           }
         }
 
