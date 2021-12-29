@@ -118,38 +118,8 @@ workflow PREPROCESS_DEFAULT {
       CUTADAPT (ADD_BARCODE_TO_READ_CHUNKS.out.reads_0, params.read1_adapter, params.read2_adapter)
     }
 
-    // Module: mapping with bwa
-    if (params.ref_bwa_index) {
-      BWA_MAP (CUTADAPT.out.reads_0, params.ref_bwa_index)
-    } else if (params.ref_fasta) {
-      log.info "INFO: --ref_fasta provided, use it for building bwa index."
-      // Module : prep_genome
-      PREP_GENOME (params.ref_fasta, "custom_genome")
-      // Module : bwa_index
-      BWA_INDEX (PREP_GENOME.out.genome_fasta)
-      // Module : bwa_map
-      BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
-    } else if (params.ref_fasta_ensembl) {
-      log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build minimap2 index, and map with minimap2 ..."
-      // Module : download_from_ensembl
-      DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-      // Module: prep_genome
-      PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-      // Module : bwa_index
-      BWA_INDEX (PREP_GENOME.out.genome_fasta)
-    } else if (params.ref_fasta_ucsc) {
-      log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build bwa index, and map with bwa ..."
-      // Module : download_from_ucsc
-      DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-      // Module : prep_genome
-      PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
-      // Module : bwa_index
-      BWA_INDEX (PREP_GENOME.out.genome_fasta)
-      // Module : bwa_map
-      BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
-    } else {
-      exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
-    }
+    // Module: mapping with bwa or minimap2: mark duplicate
+    // bwa or minimap2
     if (params.mapper == 'bwa') {
       log.info "INFO: --mapper: bwa"
       if (params.ref_bwa_index) {
@@ -310,8 +280,7 @@ workflow PREPROCESS_DEFAULT {
       // Module: get fragments
       GET_FRAGMENTS (DEDUP_BAM2.out.sample_name_bam)
     }
-    // Module filter_cell given valid barcode list:
-
+    // Module filter_cell gi
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     // Module: remove duplicates based on cell barcode, start, end
