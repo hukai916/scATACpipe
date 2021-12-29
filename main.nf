@@ -93,6 +93,7 @@ workflow SCATACPIPE {
       log.info "Running PREPROCESS + DOWNSTREAM ..."
       log.info "Validating sample sheet ... If pipeline exits, check .nextflow.log file."
       INPUT_CHECK_FASTQ (Channel.fromPath(input_fastq))
+      log.info "check1"
 
       if (params.preprocess == "default") {
         // Determine if PREP_GENOME and PREP_GTF run or not_run:
@@ -144,7 +145,7 @@ workflow SCATACPIPE {
         // DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics")
         DOWNSTREAM_ARCHR (PREPROCESS_CHROMAP.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_10XGENOMICS.out[5], PREPROCESS_10XGENOMICS.out[6], prep_gtf_run, PREPROCESS_10XGENOMICS.out[7], PREPROCESS_10XGENOMICS.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
-        SPLIT_BAM (PREPROCESS_10XGENOMICS.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_10XGENOMICS.out[4].collect(), "NA")
+        // SPLIT_BAM (PREPROCESS_10XGENOMICS.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_10XGENOMICS.out[4].collect(), "NA")
         MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
       } else {
         exit 1, "must supply valid --preprocess option"
