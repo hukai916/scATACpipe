@@ -154,6 +154,7 @@ workflow PREPROCESS_CHROMAP {
     } catch (Exception ex) { }
 
     res_files = Channel.empty()
+    log.info "end of chromap"
 
   emit:
     res_files // out[0]: res folders for MultiQC report
