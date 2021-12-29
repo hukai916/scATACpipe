@@ -158,8 +158,21 @@ class WorkflowMain {
             } else {
               log.info "Validating input params for PREPROCESS_10XGENOMICS, passed."
             }
+          } else if (params.preprocess == "chromap") {
+            if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf)) {
+              println ''
+              def out_string = "Insufficient parameters supplied for PREPROCESS_CHROMAP!\n\n"
+              out_string += "Option1 (custom genome fasta & gtf):\n  --ref_fasta [path to genome fasta file]\n  --ref_gtf [path to gtf file]\n"
+              out_string += "Option2 (UCSC genome):\n  --ref_fasta_ucsc [UCSC genome]\n"
+              out_string += "Option3 (ENSEMBL genome):\n  --ref_fasta_ensembl [ENSEMBL genome name]\n"
+              out_string += "For all options, you can supply '--ref_chromap_index [path to chromap index]' to skip building index.\n\n"
+              log.error out_string
+              System.exit(0)
+            } else {
+              log.info "Validating input params for PREPROCESS_CHROMAP, passed."
+            }
           } else {
-            log.error "Pls supply --preprocess [default | 10xgenomics]"
+            log.error "Pls supply --preprocess [default | 10xgenomics | chromap]"
             System.exit(0)
           }
 
