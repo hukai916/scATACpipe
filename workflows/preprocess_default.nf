@@ -287,13 +287,6 @@ workflow PREPROCESS_DEFAULT {
     try {
       prep_genome_fasta = PREP_GENOME.out.genome_fasta
     } catch (Exception ex) { }
-    try {
-      prep_gtf_genome   = PREP_GTF.out.genome_name
-      // prep_gtf          = Channel.value("run")
-    } catch (Exception ex) {}
-    try {
-      prep_gtf_file = PREP_GTF.out.gtf
-    } catch (Exception ex) { }
 
   emit:
     res_files // out[0]: res folders for MultiQC report
