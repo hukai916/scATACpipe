@@ -17,16 +17,9 @@ process CHROMAP_ATAC {
     path genome_index
     val use_whitelist
 
-    // val sample_name
-    // path sample_fastqs
-    // path genome_fasta
-    // path index
-    // path whitelist_barcode
-
     output:
     tuple val(sample_name), path("chromap_fragment_*"), emit: sample_name_fragments
     path "chromap_fragment_*", emit: fragments
-
 
     script:
 
