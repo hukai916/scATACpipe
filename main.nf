@@ -64,7 +64,7 @@ if (params.input_fastq) {
 ////////////////////////////////////////////////////
 include { PREPROCESS_DEFAULT } from './workflows/preprocess_default'
 include { PREPROCESS_10XGENOMICS } from './workflows/preprocess_10xgenomics'
-include { PREPROCESS_CHROMAP } from './workflows/preprocess_chromap'
+// include { PREPROCESS_CHROMAP } from './workflows/preprocess_chromap'
 include { DOWNSTREAM_ARCHR } from './workflows/downstream_archr'
 include { SPLIT_BED  } from './modules/local/split_bed' addParams( options: modules['split_bed'] )
 include { SPLIT_BAM  } from './modules/local/split_bam' addParams( options: modules['split_bam'] )
@@ -128,6 +128,23 @@ workflow SCATACPIPE {
         DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_10XGENOMICS.out[5], PREPROCESS_10XGENOMICS.out[6], prep_gtf_run, PREPROCESS_10XGENOMICS.out[7], PREPROCESS_10XGENOMICS.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
         SPLIT_BAM (PREPROCESS_10XGENOMICS.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_10XGENOMICS.out[4].collect(), "NA")
+        MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
+      } else if (params.preprocess == "chromap") {
+        // Determine if PREP_GENOME and PREP_GTF run or not_run:
+        // // If index folder supplied: both PREP_GENOME and PREP_GTF must not_run
+        prep_genome_run = "run"
+        prep_gtf_run    = "run"
+        if (params.ref_chromap_index) {
+          prep_genome_run = "not_run"
+          prep_gtf_run    = "not_run"
+        }
+
+        // PREPROCESS_10XGENOMICS (ch_samplesheet)
+        PREPROCESS_CHROMAP (INPUT_CHECK_FASTQ.out.reads, INPUT_CHECK_FASTQ.out.sample_count)
+        // DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics")
+        DOWNSTREAM_ARCHR (PREPROCESS_CHROMAP.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_10XGENOMICS.out[5], PREPROCESS_10XGENOMICS.out[6], prep_gtf_run, PREPROCESS_10XGENOMICS.out[7], PREPROCESS_10XGENOMICS.out[8])
+        SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
+        // SPLIT_BAM (PREPROCESS_10XGENOMICS.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_10XGENOMICS.out[4].collect(), "NA")
         MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
       } else {
         exit 1, "must supply valid --preprocess option"
