@@ -64,9 +64,9 @@ if (params.input_fastq) {
 ////////////////////////////////////////////////////
 include { PREPROCESS_DEFAULT } from './workflows/preprocess_default'
 include { PREPROCESS_10XGENOMICS } from './workflows/preprocess_10xgenomics'
-// include { CHROMAP_INDEX } from './modules/local/chromap_index' addParams( options: modules['chromap_index'] )
+include { CHROMAP_INDEX } from './modules/local/chromap_index' addParams( options: modules['chromap_index'] )
 // include { CHROMAP_ATAC } from './modules/local/chromap_atac' addParams( options: modules['chromap_atac'] )
-include { GET_WHITELIST_CHROMAP } from './modules/local/get_whitelist_chromap' addParams( options: modules['get_whitelist_chromap'] )
+// include { GET_WHITELIST_CHROMAP } from './modules/local/get_whitelist_chromap' addParams( options: modules['get_whitelist_chromap'] )
 
 // include { PREPROCESS_CHROMAP } from './workflows/preprocess_chromap'
 include { DOWNSTREAM_ARCHR } from './workflows/downstream_archr'
