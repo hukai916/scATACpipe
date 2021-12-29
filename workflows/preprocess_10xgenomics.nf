@@ -130,7 +130,7 @@ workflow PREPROCESS_10XGENOMICS {
   emit:
     res_files                             // out[0]: res folders for MultiQC report
     FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
-    FILTER_CELL.out.ch_filtered_fragment  // out[2]: fragment ch for ArchR
+    FILTER_CELL.out.sample_name_filtered_fragment  // out[2]: fragment ch for ArchR
     FILTER_CELL.out.sample_name           // out[3]: for split bam
     FILTER_CELL.out.filtered_bam          // out[4]: for split bam
     prep_genome_name                      // out[5]: for downstream ArchR

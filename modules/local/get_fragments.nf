@@ -17,7 +17,7 @@ process GET_FRAGMENTS {
     output:
     val sample_name, emit: sample_name
     path "*.sorted.tsv.gz", emit: fragments
-    tuple val(sample_name), path("*.sorted.tsv.gz"), emit: ch_fragment
+    tuple val(sample_name), path("*.sorted.tsv.gz"), emit: sample_name_fragment
 
     script:
 

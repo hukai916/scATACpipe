@@ -13,12 +13,12 @@ process FILTER_CELL {
     container "hukai916/sinto_xenial:0.1"
 
     input:
-    tuple val(sample_name), path(sample_files), path(bam), path(fragment), path(filtered_barcode)
+    tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
 
     output:
     val sample_name, emit: sample_name
     path "*_valid_barcode_filtered_fragment.tsv.gz", emit: filtered_fragment
-    tuple val(sample_name), path("*_valid_barcode_filtered_fragment.tsv.gz"), emit: ch_filtered_fragment
+    tuple val(sample_name), path("*_valid_barcode_filtered_fragment.tsv.gz"), emit: sample_name_filtered_fragment
     path "*_valid_barcode_filtered_fragment.bam", emit: filtered_bam
 
     script:
