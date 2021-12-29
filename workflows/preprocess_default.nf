@@ -235,7 +235,6 @@ workflow PREPROCESS_DEFAULT {
       .join(GET_FRAGMENTS.out.sample_name_fragment)
       .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
       .set({ sample_name_bam_fragment_valid_barcodes })
-    log.info "DEBUG2"
     sample_name_bam_fragment_valid_barcodes.view()
     FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
     // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
