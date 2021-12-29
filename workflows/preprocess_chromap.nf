@@ -26,6 +26,7 @@ def modules = params.modules.clone()
 
 // Modules: local
 include { MATCH_SAMPLE_NAME } from '../modules/local/match_sample_name'
+include { MERGE_SAMPLE } from '../modules/local/merge_sample'
 include { CHROMAP_INDEX } from '../modules/local/chromap_index' addParams( options: modules['chromap_index'] )
 include { CHROMAP_ATAC } from '../modules/local/chromap_atac' addParams( options: modules['chromap_atac'] )
 include { GET_WHITELIST_CHROMAP } from '../modules/local/get_whitelist_chromap'
