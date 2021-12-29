@@ -280,7 +280,7 @@ workflow PREPROCESS_DEFAULT {
       // Module: get fragments
       GET_FRAGMENTS (DEDUP_BAM2.out.sample_name_bam)
     }
-    // Module filter_cell gi
+    // Module filter_cl
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
     // Module: remove duplicates based on cell barcode, start, end
