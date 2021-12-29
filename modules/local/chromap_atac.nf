@@ -24,7 +24,9 @@ process CHROMAP_ATAC {
     // path whitelist_barcode
 
     output:
-    path "chromap_fragment_*", emit: fragment
+    tuple val(sample_name), path("chromap_fragment_*"), emit: sample_name_fragments
+    path "chromap_fragment_*", emit: fragments
+
 
     script:
 
