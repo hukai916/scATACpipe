@@ -12,15 +12,44 @@ process CHROMAP_ATAC {
     container "hukai916/chromap_xenial:0.1"
 
     input:
-    tuple val(sample_name), path(fastq), path(index)
+    tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq), path(whitelist_barcode)
+    path genome_fasta
+    path genome_index
+    val use_whitelist
+
+    // val sample_name
+    // path sample_fastqs
+    // path genome_fasta
+    // path index
+    // path whitelist_barcode
 
     output:
-    path "chromap_index_*", emit: index_file
+    path "chromap_fragment_*", emit: fragment
 
     script:
 
     """
-    chromap $options.args -i -r $genome_fasta -o chromap_index_$genome_name
+    if [[ $use_whitelist == false ]]; then
+      option_whitelist=''
+    else
+      if [[ $whitelist_barcode == *.gz ]]; then
+        gunzip -c $whitelist_barcode > whitelist_${sample_name}.txt
+      else
+        mv $whitelist_barcode whitelist_${sample_name}.txt
+      fi
+      option_whitelist='--barcode-whitelist whitelist_${sample_name}.txt'
+    fi
+
+    chromap --preset atac \
+    $options.args \
+    -t $task.cpus \
+    -x $genome_index \
+    -r $genome_fasta \
+    -1 $read1_fastq \
+    -2 $read2_fastq \
+    -o chromap_fragment_${sample_name}.bed \
+    -b $barcode_fastq \
+    \$option_whitelist
 
     """
 }

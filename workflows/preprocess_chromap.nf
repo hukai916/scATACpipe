@@ -27,6 +27,7 @@ def modules = params.modules.clone()
 // Modules: local
 include { CHROMAP_INDEX } from '../modules/local/chromap_index' addParams( options: modules['chromap_index'] )
 include { CHROMAP_ATAC } from '../modules/local/chromap_atac' addParams( options: modules['chromap_atac'] )
+include { GET_WHITELIST_CHROMAP } from '../modules/local/get_whitelist_chromap' addParams( options: modules['get_whitelist_chromap'] )
 
 ////////////////////////////////////////////////////
 /* --           RUN MAIN WORKFLOW              -- */
@@ -46,51 +47,80 @@ workflow PREPROCESS_CHROMAP {
     // Above is redundant to WorkflowMain::initialise()
     // module: staging sample_name in case of inconsistency in sample names
     MATCH_SAMPLE_NAME (reads, sample_count)
-
+    // module: merge samples from different lanes
+    MERGE_SAMPLE (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect()) // merge_sample.out.sample_name_r1_r2_barcode
+    // module: get white list barcode for each sample:
+    if (!params.whitelist_barcode) {
+      use_whitelist   = "false"
+      path_whitelist  = Channel.fromPath('assets/whitelist_barcodes').first()
+    } else {
+      use_whitelist   = "true"
+      path_whitelist  = Channel.fromPath(params.whitelist_barcode).first()
+    }
+    // module: get_whitelist_chromap for each sample
+    GET_WHITELIST_CHROMAP (MERGE_SAMPLE.out.sample_name_barcode, path_whitelist)
+    // Prepare for CHROMAP_ATAC input
+    MERGE_SAMPLE.out.sample_name_r1_r2_barcode
+      .join(GET_WHITELIST_CHROMAP.out.sample_name_whitelist)
+      .set({ sample_name_r1_r2_barcode_whitelist })
+    // Prepare reference genome
+    if (params.ref_fasta) {
+      if (params.ref_gtf) {
+        log.info "Parameter --ref_fasta/ref_gtf supplied, will build index."
+        // Module: prep_genome
+        PREP_GENOME (params.ref_fasta, "custom_genome")
+        // Module: prep_gtf
+        PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, params.ref_gtf)
+      } else {
+        exit 1, "Pls supply --ref_gtf."
+      }
+    } else if (params.ref_fasta_ensembl) {
+      // if ensembl name supplied:
+      // Module: download ensembl genome
+      DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
+      // Module: prep_genome
+      PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
+      // Module: download ensembl gtf
+      DOWNLOAD_FROM_ENSEMBL_GTF (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
+      // Module: prep_gtf
+      PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
+    } else if (params.ref_fasta_ucsc) {
+      // Module: download ucsc genome
+      DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
+      // Module: download ucsc gtf
+      DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
+      // Module: prep_genome
+      PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+      // Module: prep_gtf
+      PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+    } else {
+      log.error "Pls supply reference genome!"
+      exit 1, "EXIT!"
+    }
+    // Prepare chromap index if required
     if (params.ref_chromap_index) {
       // if cellranger index folder provided:
       log.info "Parameter --ref_chromap_index supplied, will use it as index file."
-      CHROMAP_ATAC (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), params.ref_chromap_index)
+      CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), params.ref_chromap_index, use_whitelist)
     } else {
-      if (params.ref_fasta) {
-        if (params.ref_gtf) {
-          log.info "Parameter --ref_fasta/ref_gtf supplied, will build index."
-          // Module: prep_genome
-          PREP_GENOME (params.ref_fasta, "custom_genome")
-          // Module: prep_gtf
-          PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, params.ref_gtf)
-        } else {
-          exit 1, "Pls supply --ref_gtf."
-        }
-      } else if (params.ref_fasta_ensembl) {
-        // if ensembl name supplied:
-        // Module: download ensembl genome
-        DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // Module: prep_genome
-        PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-        // Module: download ensembl gtf
-        DOWNLOAD_FROM_ENSEMBL_GTF (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-        // Module: prep_gtf
-        PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
-      } else if (params.ref_fasta_ucsc) {
-        // Module: download ucsc genome
-        DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-        // Module: download ucsc gtf
-        DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-        // Module: prep_genome
-        PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-        // Module: prep_gtf
-        PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-      }
       // Module: prepare chromap index
       CHROMAP_INDEX (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name)
       // Module: run chromap atac
-      CHROMAP_ATAC (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CHROMAP_INDEX.out.index.first())
+      CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), CHROMAP_INDEX.out.index.first(), use_whitelist)
     }
+
+    // FILTER_CELL is not a must since CORRECT_BARCODE_XXX uses only valid barcodes already:
+    // Module filter_cell given valid barcode list:
+    // DEDUP_BAM2.out.sample_name_bam
+    //   .join(GET_FRAGMENTS.out.sample_name_fragment)
+    //   .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
+    //   .set({ sample_name_bam_fragment_valid_barcodes })
+    // FILTER_CELL (sample_name_bam_fragment_valid_barcodes, "CB")
+
 
     // GET_VALID_BARCODE
     //
-    FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
+    // FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
     // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
 
 
@@ -122,6 +152,11 @@ workflow PREPROCESS_CHROMAP {
     CHROMAP_ATAC.out.ch_fragment // out[2]: fragment ch for ArchR
     "BAM_token1" // COMBINE_BAM.out.sample_name // out[3]: for split bam
     "BAM_token2" // COMBINE_BAM.out.bam // out[4]: for split bam
+
+    // FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
+    // FILTER_CELL.out.sample_name_filtered_fragment  // out[2]: fragment ch for ArchR
+    // FILTER_CELL.out.sample_name           // out[3]: for split bam
+    // FILTER_CELL.out.filtered_bam          // out[4]: for split bam
     prep_genome_name                      // out[5]: for downstream ArchR
     prep_genome_fasta                     // out[6]: for downstream ArchR
     prep_gtf_genome                       // out[7]: for downstream ArchR

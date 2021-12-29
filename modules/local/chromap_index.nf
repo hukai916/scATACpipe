@@ -12,8 +12,7 @@ process CHROMAP_INDEX {
     container "hukai916/chromap_xenial:0.1"
 
     input:
-    path genome_fasta
-    val genome_name
+    tuple path(genome_fasta), val(genome_name)
 
     output:
     path "chromap_index_*", emit: index_file
