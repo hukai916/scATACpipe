@@ -14,6 +14,7 @@ process FILTER_CELL {
 
     input:
     tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
+    val(barcode_tag)
 
     output:
     val sample_name, emit: sample_name
@@ -29,7 +30,7 @@ process FILTER_CELL {
 
     # filter bam file
     samtools index $bam
-    filter_bam.py $bam $filtered_barcode ${sample_name}_valid_barcode_filtered_fragment.bam
+    filter_bam.py $bam $filtered_barcode ${sample_name}_valid_barcode_filtered_fragment.bam $barcode_tag
 
     """
 }

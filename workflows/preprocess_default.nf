@@ -236,7 +236,7 @@ workflow PREPROCESS_DEFAULT {
       .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
       .set({ sample_name_bam_fragment_valid_barcodes })
     sample_name_bam_fragment_valid_barcodes.view()
-    FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
+    FILTER_CELL (sample_name_bam_fragment_valid_barcodes, "CB")
     // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file

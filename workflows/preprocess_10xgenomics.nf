@@ -101,7 +101,7 @@ workflow PREPROCESS_10XGENOMICS {
     }
 
     // Filter raw fragment and bam file based on filtered_peak_bc_matrix/barcodes.tsv
-    FILTER_CELL (CELLRANGER_ATAC_COUNT.out.sample)
+    FILTER_CELL (CELLRANGER_ATAC_COUNT.out.sample, "CR")
 
     // Emit PREP_GENOME output if PREP_GENOME is invoked.
     // prep_genome         = Channel.value("not_run")

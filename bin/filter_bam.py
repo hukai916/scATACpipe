@@ -12,6 +12,7 @@ import pysam
 bam             = sys.argv[1]
 valid_barcode   = sys.argv[2]
 outbam          = sys.argv[3]
+barcode_tag     = sys.argv[4] # "CR" for 10xgenomincs, "CB" for default
 
 dict_valid_barcode = {}
 if valid_barcode.endswith(".gz"):
@@ -31,7 +32,7 @@ samfile = pysam.AlignmentFile(bam, "rb")
 outbam  = pysam.AlignmentFile(outbam, "wb", template=samfile)
 
 for read in samfile.fetch():
-    cr = read.get_tag("CR")
+    cr = read.get_tag(barcode_tag)
     if cr in dict_valid_barcode:
         outbam.write(read)
 outbam.close()
