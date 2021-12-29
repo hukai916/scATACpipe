@@ -114,7 +114,7 @@ workflow PREPROCESS_CHROMAP {
       // Module: prepare chromap index
       CHROMAP_INDEX (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name)
       // Module: run chromap atac
-      CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), CHROMAP_INDEX.out.index.first(), use_whitelist)
+      CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), CHROMAP_INDEX.out.index_file.first(), use_whitelist)
     }
 
     // FILTER_CELL is not a must since CORRECT_BARCODE_XXX uses only valid barcodes already:
