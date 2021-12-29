@@ -355,7 +355,7 @@ workflow PREPROCESS_DEFAULT {
     // COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
     // COMBINE_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
     GET_FRAGMENTS.out.fragments // out[1]: for split bed
-    GET_FRAGMENTS.out.ch_fragment // out[2]: fragment ch for ArchR
+    GET_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
     COMBINE_BAM.out.sample_name // out[3]: for split bam
     COMBINE_BAM.out.bam // out[4]: for split bam
     prep_genome_name         // out[5]: for DOWNSTREAM_ARCHR
