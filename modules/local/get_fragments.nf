@@ -26,7 +26,7 @@ process GET_FRAGMENTS {
     samtools index $options.args $bam
 
     # then, generate the fragments file
-    sinto fragments $options.args --nproc $task.cpus --bam $bam -f fragments.tsv --barcode_regex "[^:]*"
+    sinto fragments $options.args --nproc $task.cpus --bam $bam -f fragments.tsv --barcodetag CB
     # sort the fragment, note that bgzip is a must
     sort -k 1,1 -k2,2n fragments.tsv | bgzip > ${sample_name}.sorted.tsv.gz
 

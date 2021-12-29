@@ -25,31 +25,21 @@ ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multi
 def modules = params.modules.clone()
 
 // Modules: local
-include { GET_SOFTWARE_VERSIONS } from '../modules/local/get_software_versions'   addParams( options: [publish_files : ['csv':'']] )
-include { MATCH_SAMPLE_NAME } from '../modules/local/match_sample_name'
-include { CELLRANGER_ATAC_COUNT } from '../modules/local/cellranger_atac_count'   addParams( options: modules['cellranger_atac_count'] )
-include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
-include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
-include { PREP_GENOME } from '../modules/local/prep_genome'
-include { PREP_GTF } from '../modules/local/prep_gtf'
-include { FILTER_CELL } from '../modules/local/filter_cell'
-include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
-include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
-include { CELLRANGER_INDEX } from '../modules/local/cellranger_index'             addParams( options: modules['cellranger_index'] )
-
+include { CHROMAP_INDEX } from '../modules/local/chromap_index' addParams( options: modules['chromap_index'] )
+include { CHROMAP_ATAC } from '../modules/local/chromap_atac' addParams( options: modules['chromap_atac'] )
 
 ////////////////////////////////////////////////////
 /* --           RUN MAIN WORKFLOW              -- */
 ////////////////////////////////////////////////////
-workflow PREPROCESS_10XGENOMICS {
+workflow PREPROCESS_CHROMAP {
   take:
     reads
     sample_count
 
   main:
     // Examine if all required parameters supplied:
-    if (!params.ref_cellranger_index && !(params.ref_fasta && params.ref_gtf) && !params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {
-      msg = "Must supply one from below:\n" + "Option1:\n  --ref_cellranger_index\n" + "Option2:\n  --ref_fasta\n  --ref_gtf\n" + "Option3:\n  --ref_fasta_ensembl\n" + "Option4:\n  --ref_fasta_ucsc\n"
+    if (!params.ref_chromap_index && !(params.ref_fasta && params.ref_gtf) && !params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {
+      msg = "Must supply one from below:\n" + "Option1:\n  --ref_chromap_index\n" + "Option2:\n  --ref_fasta\n  --ref_gtf\n" + "Option3:\n  --ref_fasta_ensembl\n" + "Option4:\n  --ref_fasta_ucsc\n"
       log.error msg
       exit 1, "EXIT!"
     }
@@ -57,10 +47,10 @@ workflow PREPROCESS_10XGENOMICS {
     // module: staging sample_name in case of inconsistency in sample names
     MATCH_SAMPLE_NAME (reads, sample_count)
 
-    if (params.ref_cellranger_index) {
+    if (params.ref_chromap_index) {
       // if cellranger index folder provided:
-      log.info "Parameter --ref_cellranger_index supplied, will use it as index folder."
-      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), params.ref_cellranger_index)
+      log.info "Parameter --ref_chromap_index supplied, will use it as index file."
+      CHROMAP_ATAC (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), params.ref_chromap_index)
     } else {
       if (params.ref_fasta) {
         if (params.ref_gtf) {
@@ -91,23 +81,16 @@ workflow PREPROCESS_10XGENOMICS {
         PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
         // Module: prep_gtf
         PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-      } else {
-        exit 1, "PREPROCESS_10XGENOMICS: --ref_fasta_ucsc, or --ref_fasta_ensembl, or --ref_fasta/ref_gtf must be specified!"
       }
-      // Module: prepare cellranger index
-      CELLRANGER_INDEX (PREP_GENOME.out.genome_fasta, PREP_GTF.out.gtf, PREP_GENOME.out.genome_name)
-      // Module: run cellranger-atac count
-      CELLRANGER_ATAC_COUNT (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CELLRANGER_INDEX.out.index_folder.first())
+      // Module: prepare chromap index
+      CHROMAP_INDEX (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name)
+      // Module: run chromap atac
+      CHROMAP_ATAC (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect(), CHROMAP_INDEX.out.index.first())
     }
 
-    // Filter raw fragment and bam file based on filtered_peak_bc_matrix/barcodes.tsv
-    FILTER_CELL (CELLRANGER_ATAC_COUNT.out.sample)
-
     // Emit PREP_GENOME output if PREP_GENOME is invoked.
-    // prep_genome         = Channel.value("not_run")
     prep_genome_name    = Channel.empty()
     prep_genome_fasta   = Channel.empty()
-    // prep_gtf            = Channel.value("not_run")
     prep_gtf_genome     = Channel.empty()
     prep_gtf_file       = Channel.empty()
 
@@ -128,20 +111,16 @@ workflow PREPROCESS_10XGENOMICS {
     res_files = Channel.empty()
 
   emit:
-    res_files                             // out[0]: res folders for MultiQC report
-    FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
-    FILTER_CELL.out.ch_filtered_fragment  // out[2]: fragment ch for ArchR
-    FILTER_CELL.out.sample_name           // out[3]: for split bam
-    FILTER_CELL.out.filtered_bam          // out[4]: for split bam
+    res_files // out[0]: res folders for MultiQC report
+    CHROMAP_ATAC.out.fragments // out[1]: for split bed
+    CHROMAP_ATAC.out.ch_fragment // out[2]: fragment ch for ArchR
+    "BAM_token1" // COMBINE_BAM.out.sample_name // out[3]: for split bam
+    "BAM_token2" // COMBINE_BAM.out.bam // out[4]: for split bam
     prep_genome_name                      // out[5]: for downstream ArchR
     prep_genome_fasta                     // out[6]: for downstream ArchR
     prep_gtf_genome                       // out[7]: for downstream ArchR
     prep_gtf_file                         // out[8]: for downstream ArchR
 }
-
-// workflow.onComplete {
-//     Completion.summary(workflow, params, log)
-// }
 
 ////////////////////////////////////////////////////
 /* --                  THE END                 -- */

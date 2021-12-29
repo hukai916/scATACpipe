@@ -28,7 +28,8 @@ process MATCH_SAMPLE_NAME {
     """
     # rename sample names in case of unexpected inconsistency:
     # note that the lane number may not match with original, but it will not hurt anything.
-    # dev note: if you cp softlink to a different filename, the actual file will be copied
+    # dev note: if you cp softlink to a different filename, the actual file will be copied.
+    # need to test and replace cp with mv.
 
     cp $path_fastq_1 ${sample_name}_S1_L${sample_count}_R1_001.fastq.gz
     cp $path_fastq_2 ${sample_name}_S1_L${sample_count}_R3_001.fastq.gz
