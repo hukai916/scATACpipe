@@ -166,7 +166,7 @@ workflow DOWNSTREAM_ARCHR {
         } else {
           exit 1, "ArchR genome required but not supplied!\nOption1:\n  --archr_genome [a genome name]\nOption2:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --archr_blacklist [optional, path to blacklist file]\nOption3:\n  --archr_bsgenome [Bioconductor BSgenome name]\n  --archr_txdb [Bioconductor TxDb name]\n  --archr_org [Bioconductor OrgDb name]\n  --archr_blacklist [optional, path to blacklist file]\nPlease supply the above params to continue.\n"
         }
-      } else if (with_preprocess == "preprocess_default" || with_preprocess == "preprocess_10xgenomics") {
+      } else if (with_preprocess == "preprocess_default" || with_preprocess == "preprocess_10xgenomics" || with_preprocess == "preprocess_chromap") {
         exit_msg = "ArchR genome required but not supplied!\nOption1:\n  --ref_fasta_ucsc [a genome name]\nOption2:\n  --ref_fasta_ensembl [a genome name]\nOption3:\n  --ref_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\nOption4:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --archr_blacklist [optional, path to blacklist file]\nOption5:\n  --archr_bsgenome [path to BSgenome obj]\n  --archr_txdb [path to TxDb obj]\n  --archr_org [path to OrgDb obj]\n  --archr_blacklist [optional, path to blacklist file]\nPlease supply the above params to continue.\n"
         if (params.ref_bwa_index || params.ref_minimap2_index || params.ref_cellranger_index) {
           // Need to download genome and gtf:
@@ -228,7 +228,7 @@ workflow DOWNSTREAM_ARCHR {
             archr_input_type = "genome_gtf"
             // archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
             archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
-          } else if (with_preprocess == "preprocess_10xgenomics") {
+          } else if (with_preprocess == "preprocess_10xgenomics" || with_preprocess == "preprocess_chromap") {
             // If PREPPROCESS_10XGENOMICS: both PREP_GENOME and PREP_GTF should been performed
             if (!(prep_genome == "run") || !(prep_gtf == "run")) {
               log.error "Something must be wrong(2)!"
@@ -258,7 +258,7 @@ workflow DOWNSTREAM_ARCHR {
               // archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
               archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
             }
-          } else if (with_preprocess == "preprocess_10xgenomics") {
+          } else if (with_preprocess == "preprocess_10xgenomics" || with_preprocess == "preprocess_chromap") {
             // If PREPPROCESS_10XGENOMICS: both PREP_GENOME and PREP_GTF should been performed
             if (!(prep_genome == "run") || !(prep_gtf == "run")) {
               log.error "Something must be wrong (2)!"
