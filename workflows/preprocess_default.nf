@@ -117,6 +117,8 @@ workflow PREPROCESS_DEFAULT {
       CUTADAPT (ADD_BARCODE_TO_READ_CHUNKS.out.reads_0, params.read1_adapter, params.read2_adapter)
     }
 
+    log.info "DEBUG0"
+
     // Module: mapping with bwa
     if (params.ref_bwa_index) {
       BWA_MAP (CUTADAPT.out.reads_0, params.ref_bwa_index)
@@ -149,6 +151,9 @@ workflow PREPROCESS_DEFAULT {
     } else {
       exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
     }
+
+    log.info "DEBUG02"
+
 
     // Module: filter out poorly mapped reads
     FILTER_BAM (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
