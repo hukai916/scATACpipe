@@ -117,8 +117,6 @@ workflow PREPROCESS_DEFAULT {
       CUTADAPT (ADD_BARCODE_TO_READ_CHUNKS.out.reads_0, params.read1_adapter, params.read2_adapter)
     }
 
-    log.info "DEBUG0"
-
     // Module: mapping with bwa
     if (params.ref_bwa_index) {
       BWA_MAP (CUTADAPT.out.reads_0, params.ref_bwa_index)
@@ -151,8 +149,6 @@ workflow PREPROCESS_DEFAULT {
     } else {
       exit 1, 'Parameter --ref_fasta_ensembl/--ref_fasta_ucsc: pls supply a genome name, like hg19, mm10 (if ucsc), or homo_sapiens, mus_musculus (if ensembl)!'
     }
-
-    log.info "DEBUG02"
 
     // Module: filter out poorly mapped reads
     FILTER_BAM (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
@@ -234,15 +230,14 @@ workflow PREPROCESS_DEFAULT {
       GET_FRAGMENTS (DEDUP_BAM2.out.sample_name_bam)
     }
 
-    log.info "DEBUG1"
     // Module filter_cell given valid barcode list:
-    // DEDUP_BAM2.out.sample_name_bam
-    //   .join(GET_FRAGMENTS.out.sample_name_fragment)
-    //   .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
-    //   .set(sample_name_bam_fragment_valid_barcodes)
-    // log.info "DEBUG2"
-    // sample_name_bam_fragment_valid_barcodes.view()
-    // FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
+    DEDUP_BAM2.out.sample_name_bam
+      .join(GET_FRAGMENTS.out.sample_name_fragment)
+      .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
+      .set(sample_name_bam_fragment_valid_barcodes)
+    log.info "DEBUG2"
+    sample_name_bam_fragment_valid_barcodes.view()
+    FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
     // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
 
     // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
@@ -317,14 +312,14 @@ workflow PREPROCESS_DEFAULT {
     res_files // out[0]: res folders for MultiQC report
     // COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
     // COMBINE_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
-    GET_FRAGMENTS.out.fragments // out[1]: for split bed
-    GET_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
-    COMBINE_BAM.out.sample_name // out[3]: for split bam
-    COMBINE_BAM.out.bam // out[4]: for split bam
-    // FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
-    // FILTER_CELL.out.sample_name_filtered_fragment  // out[2]: fragment ch for ArchR
-    // FILTER_CELL.out.sample_name           // out[3]: for split bam
-    // FILTER_CELL.out.filtered_bam          // out[4]: for split bam
+    // GET_FRAGMENTS.out.fragments // out[1]: for split bed
+    // GET_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
+    // COMBINE_BAM.out.sample_name // out[3]: for split bam
+    // COMBINE_BAM.out.bam // out[4]: for split bam
+    FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
+    FILTER_CELL.out.sample_name_filtered_fragment  // out[2]: fragment ch for ArchR
+    FILTER_CELL.out.sample_name           // out[3]: for split bam
+    FILTER_CELL.out.filtered_bam          // out[4]: for split bam
     prep_genome_name         // out[5]: for DOWNSTREAM_ARCHR
     prep_genome_fasta        // out[6]: for DOWNSTREAM_ARCHR
     prep_gtf_genome          // out[7]: for DOWNSTREAM_ARCHR
