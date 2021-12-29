@@ -194,34 +194,34 @@ workflow PREPROCESS_DEFAULT {
         .set({ ch_correct_barcode_input })
       ch_correct_barcode_input
         .map({ it -> [ it[0], it[3], it[6]] })
-        .set({ ch_correct_barcode_pheniqs_input }) // sample_name, barcode_fastq, valid_barcode_couts_fastq
+        .set({ sample_name_barcode_fastq_valid_barcode_counts_fastq }) // sample_name, barcode_fastq, valid_barcode_counts_fastq
       ch_correct_barcode_input
         .map({ it -> [ it[0], it[3], it[5]] })
-        .set({ ch_correct_barcode_naive_input }) // sample_name, barcode_fastq, valid_barcodes
+        .set({ sample_name_barcode_fastq_valid_barcodes }) // sample_name, barcode_fastq, valid_barcodes
 
       // Modules: correct barcode
       if (params.barcode_correction == "pheniqs") {
       // Module: pheniqs
-        CORRECT_BARCODE_PHENIQS (ch_correct_barcode_pheniqs_input)
+        CORRECT_BARCODE_PHENIQS (sample_name_barcode_fastq_valid_barcode_counts_fastq)
       // Module: tag_bam
         CORRECT_BARCODE_PHENIQS
           .out
           .sample_name_chunk_name_tagfile
           .join(FILTER_BAM.out.sample_name_chunk_name_bam, by: [0, 1])
-          .set({ ch_tag_bam_input }) // sample_name, chunk_name, tagfile, bam
+          .set({ sample_name_chunk_name_tagfile_bam }) // sample_name, chunk_name, tagfile, bam
       // Module: add CB tag to BAM containg corrected barcodes
-        TAG_BAM (ch_tag_bam_input)
+        TAG_BAM (sample_name_chunk_name_tagfile_bam)
       } else if (params.barcode_correction == "naive") {
         // Module: naive barcode correction
-        CORRECT_BARCODE (ch_correct_barcode_naive_input)
+        CORRECT_BARCODE (sample_name_barcode_fastq_valid_barcodes)
         // Module: tag_bam
         CORRECT_BARCODE
           .out
           .sample_name_chunk_name_tagfile
           .join(FILTER_BAM.out.sample_name_chunk_name_bam, by: [0, 1])
-          .set({ ch_tag_bam_input }) // sample_name, chunk_name, tagfile, bam
+          .set({ sample_name_chunk_name_tagfile_bam }) // sample_name, chunk_name, tagfile, bam
         // Module: add CB tag to BAM containg corrected barcodes
-        TAG_BAM (ch_tag_bam_input)
+        TAG_BAM (sample_name_chunk_name_tagfile_bam)
       }
       // Module: dedup bam again using "CB" tag
       COMBINE_BAM2 (TAG_BAM.out.sample_name.unique(), TAG_BAM.out.bam.collect())
@@ -230,25 +230,13 @@ workflow PREPROCESS_DEFAULT {
       GET_FRAGMENTS (DEDUP_BAM2.out.sample_name_bam)
     }
 
+    // FILTER_CELL is not a must since CORRECT_BARCODE_XXX uses only valid barcodes already:
     // Module filter_cell given valid barcode list:
-    DEDUP_BAM2.out.sample_name_bam
-      .join(GET_FRAGMENTS.out.sample_name_fragment)
-      .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
-      .set({ sample_name_bam_fragment_valid_barcodes })
-    sample_name_bam_fragment_valid_barcodes.view()
-    FILTER_CELL (sample_name_bam_fragment_valid_barcodes, "CB")
-    // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
-
-    // Module: barcode correction (optional) and add barcode: correct barcode fastq given whitelist and barcode fastq file
-    // Module: remove duplicates based on cell barcode, start, end
-    // REMOVE_DUPLICATE(COMBINE_BAM.out.sample_name, COMBINE_BAM.out.bam)
-    // DISCUSS: bamqc with qualimap for raw bam files
-    // QUALIMAP (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
-
-    // Module: generate fragment file with sinto
-    // use raw bam file since ArchR may take advantage of the duplication info.
-    // GET_FRAGMENTS (REMOVE_DUPLICATE.out.sample_name, REMOVE_DUPLICATE.out.bam)
-    // GET_FRAGMENTS (DEDUP_BAM2.out.sample_name, DEDUP_BAM2.out.bam)
+    // DEDUP_BAM2.out.sample_name_bam
+    //   .join(GET_FRAGMENTS.out.sample_name_fragment)
+    //   .join(GET_VALID_BARCODE.out.sample_name_valid_barcodes)
+    //   .set({ sample_name_bam_fragment_valid_barcodes })
+    // FILTER_CELL (sample_name_bam_fragment_valid_barcodes, "CB")
 
     // Module: run Qualimap on the final filtered, deduplicated, combined, and sorted bam file.
     QUALIMAP (DEDUP_BAM2.out.sample_name_bam)
@@ -309,16 +297,14 @@ workflow PREPROCESS_DEFAULT {
 
   emit:
     res_files // out[0]: res folders for MultiQC report
-    // COMBINE_FRAGMENTS.out.fragments // out[1]: for split bed
-    // COMBINE_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
-    // GET_FRAGMENTS.out.fragments // out[1]: for split bed
-    // GET_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
-    // COMBINE_BAM.out.sample_name // out[3]: for split bam
-    // COMBINE_BAM.out.bam // out[4]: for split bam
-    FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
-    FILTER_CELL.out.sample_name_filtered_fragment  // out[2]: fragment ch for ArchR
-    FILTER_CELL.out.sample_name           // out[3]: for split bam
-    FILTER_CELL.out.filtered_bam          // out[4]: for split bam
+    GET_FRAGMENTS.out.fragments // out[1]: for split bed
+    GET_FRAGMENTS.out.sample_name_fragment // out[2]: fragment ch for ArchR
+    COMBINE_BAM.out.sample_name // out[3]: for split bam
+    COMBINE_BAM.out.bam // out[4]: for split bam
+    // FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
+    // FILTER_CELL.out.sample_name_filtered_fragment  // out[2]: fragment ch for ArchR
+    // FILTER_CELL.out.sample_name           // out[3]: for split bam
+    // FILTER_CELL.out.filtered_bam          // out[4]: for split bam
     prep_genome_name         // out[5]: for DOWNSTREAM_ARCHR
     prep_genome_fasta        // out[6]: for DOWNSTREAM_ARCHR
     prep_gtf_genome          // out[7]: for DOWNSTREAM_ARCHR
