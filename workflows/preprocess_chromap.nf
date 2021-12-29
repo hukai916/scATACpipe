@@ -27,6 +27,12 @@ def modules = params.modules.clone()
 // Modules: local
 include { MATCH_SAMPLE_NAME } from '../modules/local/match_sample_name'
 include { MERGE_SAMPLE } from '../modules/local/merge_sample'
+include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
+include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
+include { PREP_GENOME } from '../modules/local/prep_genome'
+include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
+include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
+include { PREP_GTF } from '../modules/local/prep_gtf'
 include { CHROMAP_INDEX } from '../modules/local/chromap_index' addParams( options: modules['chromap_index'] )
 include { CHROMAP_ATAC } from '../modules/local/chromap_atac' addParams( options: modules['chromap_atac'] )
 include { GET_WHITELIST_CHROMAP } from '../modules/local/get_whitelist_chromap'
