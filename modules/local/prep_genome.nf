@@ -20,7 +20,7 @@ process PREP_GENOME {
     val genome_name, emit: genome_name
 
     script:
-    
+
     """
     if [[ $genome_fasta == *.gz ]]; then
       gunzip -c $genome_fasta > genome.fa
@@ -38,6 +38,7 @@ process PREP_GENOME {
     # add 'chr' to each chromosome:
     cat primary_genome.fa | perl -p -e 's{>(chr)?([^\\s+]+).*}{>chr\$2} if /^>/' | gzip > Genome.primary.chrPrefixed.fa.gz
 
+    # clean up:
     rm genome.fa genome.fa.fai primary_genome.fa
     """
 }

@@ -109,7 +109,6 @@ workflow PREPROCESS_CHROMAP {
     if (params.ref_chromap_index) {
       // if cellranger index folder provided:
       log.info "Parameter --ref_chromap_index supplied, will use it as index file."
-      sample_name_r1_r2_barcode_whitelist.view()
       CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), params.ref_chromap_index, use_whitelist)
     } else {
       // Module: prepare chromap index

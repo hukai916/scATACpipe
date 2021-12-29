@@ -308,7 +308,6 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.user_rlib)
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project)
     } else if (archr_input_type == "genome_gtf") {
-      log.info "debug: genome_gtf"
       if (params.species_latin_name) {
         // Build BSgenome:
         if (prep_genome == "run") {
@@ -342,7 +341,6 @@ workflow DOWNSTREAM_ARCHR {
         ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
 
         ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, BUILD_GENE_ANNOTATION.out.gene_annotation, BUILD_GENOME_ANNOTATION.out.genome_annotation, BUILD_BSGENOME.out.user_rlib)
-        log.info "debug: before ARCHR_ARCHRPROJECT_QC"
         ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project)
       } else {
         exit 1, "Pls also supply --species_latin_name."
