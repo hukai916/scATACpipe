@@ -107,7 +107,7 @@ workflow DOWNSTREAM_ARCHR {
         log.error msg
         exit 1, "EXIT!"
       }
-    } else if ((with_preprocess == "preprocess_default") || (with_preprocess == "preprocess_10xgenomics")) {
+    } else if ((with_preprocess == "preprocess_default") || (with_preprocess == "preprocess_10xgenomics") || (with_preprocess == "preprocess_chromap")) {
       msg = "ArchR genome required but not supplied!\nOption1:\n  --ref_fasta_ucsc [a genome name]\nOption2:\n  --ref_fasta_ensembl [a genome name]\nOption3:\n  --ref_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\nOption4:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --archr_blacklist [optional, path to blacklist file]\nOption5:\n  --archr_bsgenome [path to BSgenome obj]\n  --archr_txdb [path to TxDb obj]\n  --archr_org [path to OrgDb obj]\n  --archr_blacklist [optional, path to blacklist file]\nPlease supply the above params to continue.\n"
       if (params.ref_bwa_index || params.ref_minimap2_index || params.ref_cellranger_index) {
         if (!params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {

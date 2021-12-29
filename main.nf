@@ -132,15 +132,11 @@ workflow SCATACPIPE {
         // // If index folder supplied: both PREP_GENOME and PREP_GTF must not_run
         prep_genome_run = "run"
         prep_gtf_run    = "run"
-        if (params.ref_chromap_index) {
-          prep_genome_run = "not_run"
-          prep_gtf_run    = "not_run"
-        }
 
         // PREPROCESS_10XGENOMICS (ch_samplesheet)
         PREPROCESS_CHROMAP (INPUT_CHECK_FASTQ.out.reads, INPUT_CHECK_FASTQ.out.sample_count)
         // DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics")
-        DOWNSTREAM_ARCHR (PREPROCESS_CHROMAP.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_CHROMAP.out[5], PREPROCESS_CHROMAP.out[6], prep_gtf_run, PREPROCESS_CHROMAP.out[7], PREPROCESS_CHROMAP.out[8])
+        DOWNSTREAM_ARCHR (PREPROCESS_CHROMAP.out[2], "preprocess_chromap", prep_genome_run, PREPROCESS_CHROMAP.out[5], PREPROCESS_CHROMAP.out[6], prep_gtf_run, PREPROCESS_CHROMAP.out[7], PREPROCESS_CHROMAP.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
         // SPLIT_BAM (PREPROCESS_10XGENOMICS.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_10XGENOMICS.out[4].collect(), "NA")
         MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
