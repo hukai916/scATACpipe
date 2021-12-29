@@ -102,8 +102,6 @@ workflow SCATACPIPE {
         prep_gtf_run    = "not_run"
         if ((params.mapper == "bwa") && params.ref_bwa_index) {
           prep_genome_run = "not_run"
-        } else if ((params.mapper == "minimap2") && params.ref_minimap2_index) {
-          prep_genome_run = "not_run"
         }
 
         // PREPROCESS_DEFAULT (ch_samplesheet)
@@ -142,7 +140,7 @@ workflow SCATACPIPE {
         // PREPROCESS_10XGENOMICS (ch_samplesheet)
         PREPROCESS_CHROMAP (INPUT_CHECK_FASTQ.out.reads, INPUT_CHECK_FASTQ.out.sample_count)
         // DOWNSTREAM_ARCHR (PREPROCESS_10XGENOMICS.out[2], "preprocess_10xgenomics")
-        DOWNSTREAM_ARCHR (PREPROCESS_CHROMAP.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_10XGENOMICS.out[5], PREPROCESS_10XGENOMICS.out[6], prep_gtf_run, PREPROCESS_10XGENOMICS.out[7], PREPROCESS_10XGENOMICS.out[8])
+        DOWNSTREAM_ARCHR (PREPROCESS_CHROMAP.out[2], "preprocess_10xgenomics", prep_genome_run, PREPROCESS_CHROMAP.out[5], PREPROCESS_CHROMAP.out[6], prep_gtf_run, PREPROCESS_CHROMAP.out[7], PREPROCESS_CHROMAP.out[8])
         SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
         // SPLIT_BAM (PREPROCESS_10XGENOMICS.out[3], DOWNSTREAM_ARCHR.out[2].collect(), PREPROCESS_10XGENOMICS.out[4].collect(), "NA")
         MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
