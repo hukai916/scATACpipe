@@ -24,27 +24,8 @@ process CHROMAP_ATAC {
     script:
 
     """
-    if [[ $use_whitelist == false ]]; then
-      option_whitelist=''
-    else
-      if [[ $whitelist_barcode == *.gz ]]; then
-        gunzip -c $whitelist_barcode > whitelist_${sample_name}.txt
-      else
-        mv $whitelist_barcode whitelist_${sample_name}.txt
-      fi
-      option_whitelist='--barcode-whitelist whitelist_${sample_name}.txt'
-    fi
+    echo "test"
 
-    chromap --preset atac \
-    $options.args \
-    -t $task.cpus \
-    -x $genome_index \
-    -r $genome_fasta \
-    -1 $read1_fastq \
-    -2 $read2_fastq \
-    -o chromap_fragment_${sample_name}.bed \
-    -b $barcode_fastq \
-    \$option_whitelist
 
     """
 }
