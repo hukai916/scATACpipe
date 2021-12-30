@@ -98,7 +98,7 @@ workflow PREPROCESS_CHROMAP {
       // Module: download ucsc gtf
       DOWNLOAD_FROM_UCSC_GTF (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
       // Module: prep_genome
-      PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+      PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
       // Module: prep_gtf
       PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
     } else {
@@ -112,9 +112,6 @@ workflow PREPROCESS_CHROMAP {
       CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), params.ref_chromap_index, use_whitelist)
     } else {
       // Module: prepare chromap index
-      PREP_GENOME.out.genome_fasta.view()
-      PREP_GENOME.out.genome_name.view()
-
       CHROMAP_INDEX (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name)
       // Module: run chromap atac
       CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), CHROMAP_INDEX.out.index_file.first(), use_whitelist)
