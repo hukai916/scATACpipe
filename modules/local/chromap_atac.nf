@@ -19,7 +19,7 @@ process CHROMAP_ATAC {
 
     output:
     tuple val(sample_name), path("chromap_fragment_*"), emit: sample_name_fragments
-    path "chromap_fragment_*", emit: fragments
+    path "chromap_fragment_*.sorted.tsv.gz", emit: fragments
 
     script:
 
@@ -45,6 +45,9 @@ process CHROMAP_ATAC {
     -o chromap_fragment_${sample_name}.bed \
     -b $barcode_fastq \
     \$option_whitelist
+
+    # sort and bgzip:
+    sort -k 1,1 -k2,2n chromap_fragment_${sample_name}.bed | bgzip > chromap_fragment_${sample_name}.sorted.tsv.gz
 
     """
 }

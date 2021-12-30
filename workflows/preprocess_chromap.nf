@@ -36,6 +36,10 @@ include { PREP_GTF } from '../modules/local/prep_gtf'
 include { CHROMAP_INDEX } from '../modules/local/chromap_index' addParams( options: modules['chromap_index'] )
 include { CHROMAP_ATAC } from '../modules/local/chromap_atac' addParams( options: modules['chromap_atac'] )
 include { GET_WHITELIST_CHROMAP } from '../modules/local/get_whitelist_chromap'
+include { FRAG_TO_FREQ } from '../modules/local/frag_to_freq'
+include { GET_VALID_BARCODE_CHROMAP } from '../modules/local/get_valid_barcode_chromap'
+include { FILTER_CELL_CHROMAP } from '../modules/local/filter_cell_chromap'
+
 
 ////////////////////////////////////////////////////
 /* --           RUN MAIN WORKFLOW              -- */
@@ -117,6 +121,13 @@ workflow PREPROCESS_CHROMAP {
       CHROMAP_ATAC (sample_name_r1_r2_barcode_whitelist, PREP_GENOME.out.genome_fasta.first(), CHROMAP_INDEX.out.index_file.first(), use_whitelist)
     }
 
+    // Module: fragment to freq file
+    FRAG_TO_FREQ (CHROMAP_ATAC.out.sample_name_fragments)
+    // Module: get valid barcode
+    GET_VALID_BARCODE_CHROMAP (FRAG_TO_FREQ.out.sample_name_freq)
+    // Module: filter cells
+    FILTER_CELL_CHROMAP (GET_VALID_BARCODE_CHROMAP.out.sample_name_valid_barcodes)
+
     // FILTER_CELL is not a must since CORRECT_BARCODE_XXX uses only valid barcodes already:
     // Module filter_cell given valid barcode list:
     // DEDUP_BAM2.out.sample_name_bam
@@ -156,8 +167,8 @@ workflow PREPROCESS_CHROMAP {
 
   emit:
     res_files // out[0]: res folders for MultiQC report
-    CHROMAP_ATAC.out.fragments // out[1]: for split bed
-    CHROMAP_ATAC.out.sample_name_fragments // out[2]: fragment ch for ArchR
+    FILTER_CELL_CHROMAP.out.fragments // out[1]: for split bed
+    FILTER_CELL_CHROMAP.out.sample_name_fragments // out[2]: fragment ch for ArchR
     "BAM_token1" // COMBINE_BAM.out.sample_name // out[3]: for split bam
     "BAM_token2" // COMBINE_BAM.out.bam // out[4]: for split bam
     // FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
