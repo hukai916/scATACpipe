@@ -20,15 +20,8 @@ process GET_VALID_BARCODE_CHROMAP {
     script:
 
     """
-    #  Outfile1: valid barcode counts
-
-
-    # For outfile1:
-    samtools view ${sample_name}.dedup.bam | awk 'BEGIN { OFS = "\\t" } match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH) }' | sort | uniq -c | awk 'BEGIN { OFS = "\\t" } { print \$2, \$1 }' > ${sample_name}_barcode_counts_dedup_bam.txt
-
-    # For outfile2:
-    get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
-
+    # output valida barcodes:
+    get_valid_barcode_inflection.R --freq $fragments --outfile ${sample_name}_valid_barcodes.txt
 
     """
 }
