@@ -18,7 +18,7 @@ process CHROMAP_ATAC {
     val use_whitelist
 
     output:
-    tuple val(sample_name), path("chromap_fragment_*"), emit: sample_name_fragments
+    tuple val(sample_name), path("chromap_fragment_*.sorted.tsv.gz"), emit: sample_name_fragments
     path "chromap_fragment_*.sorted.tsv.gz", emit: fragments
 
     script:
