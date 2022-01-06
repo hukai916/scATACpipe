@@ -14,7 +14,7 @@ f_frag = sys.argv[1]
 f_out  = sys.argv[2]
 
 if f_frag.endswith(".gz"):
-    f_in = gzip.open(f_frag)
+    f_in = gzip.open(f_frag, "rb")
 else:
     f_in = open(f_frag)
 
