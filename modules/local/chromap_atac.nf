@@ -47,7 +47,8 @@ process CHROMAP_ATAC {
     \$option_whitelist
 
     # sort and bgzip:
-    sort -k 1,1 -k2,2n chromap_fragment_${sample_name}.bed | bgzip > chromap_fragment_${sample_name}.sorted.tsv.gz
+    sort -k 1,1 -k2,2n chromap_fragment_${sample_name}.bed | gzip > chromap_fragment_${sample_name}.sorted.tsv.gz
+    # Note that used gzip here, bgzip creates another layer of complexity for Python to handle.
 
     """
 }
