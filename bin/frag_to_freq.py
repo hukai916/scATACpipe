@@ -29,6 +29,7 @@ for line in f_in:
 freq_dict_sorted = {k: v for k, v in sorted(freq_dict.items(), reverse=True, key=lambda item: item[1])}
 with open(f_out, "w") as f:
   for key in freq_dict_sorted:
+      print(key, freq_dict_sorted[key])
       f.write(key + "\t" + str(freq_dict_sorted[key]) + "\n")
 
 f_in.close()
