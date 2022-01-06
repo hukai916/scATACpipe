@@ -167,8 +167,8 @@ workflow PREPROCESS_CHROMAP {
 
   emit:
     res_files // out[0]: res folders for MultiQC report
-    FILTER_CELL_CHROMAP.out.fragments // out[1]: for split bed
-    FILTER_CELL_CHROMAP.out.sample_name_fragments // out[2]: fragment ch for ArchR
+    FILTER_CELL_CHROMAP.out.filtered_fragment // out[1]: for split bed
+    FILTER_CELL_CHROMAP.out.sample_name_filtered_fragment // out[2]: fragment ch for ArchR
     "BAM_token1" // COMBINE_BAM.out.sample_name // out[3]: for split bam
     "BAM_token2" // COMBINE_BAM.out.bam // out[4]: for split bam
     // FILTER_CELL.out.filtered_fragment     // out[1]: for split bed
