@@ -15,7 +15,7 @@ process GET_VALID_BARCODE_CHROMAP {
     tuple val(sample_name), path(fragments)
 
     output:
-    tuple val(sample_name), path("*_valid_barcodes.txt"), emit: sample_name_valid_barcodes
+    tuple val(sample_name), path(fragments), path("*_valid_barcodes.txt"), emit: sample_name_fragments_valid_barcodes
 
     script:
 
