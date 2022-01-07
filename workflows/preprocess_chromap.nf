@@ -124,9 +124,9 @@ workflow PREPROCESS_CHROMAP {
     // Module: fragment to freq file
     FRAG_TO_FREQ (CHROMAP_ATAC.out.sample_name_fragments)
     // Module: get valid barcode
-    GET_VALID_BARCODE_CHROMAP (FRAG_TO_FREQ.out.sample_name_freq)
+    GET_VALID_BARCODE_CHROMAP (FRAG_TO_FREQ.out.sample_name_frag_freq)
     // Module: filter cells
-    FILTER_CELL_CHROMAP (GET_VALID_BARCODE_CHROMAP.out.sample_name_fragments_valid_barcodes)
+    FILTER_CELL_CHROMAP (GET_VALID_BARCODE_CHROMAP.out.sample_name_frag_valid_barcodes)
 
     // FILTER_CELL is not a must since CORRECT_BARCODE_XXX uses only valid barcodes already:
     // Module filter_cell given valid barcode list:

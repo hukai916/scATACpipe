@@ -12,16 +12,16 @@ process GET_VALID_BARCODE_CHROMAP {
     container "hukai916/r_util:0.2"
 
     input:
-    tuple val(sample_name), path(fragments)
+    tuple val(sample_name), path(frag), path(freq)
 
     output:
-    tuple val(sample_name), path(fragments), path("*_valid_barcodes.txt"), emit: sample_name_fragments_valid_barcodes
+    tuple val(sample_name), path(frag), path("*_valid_barcodes.txt"), emit: sample_name_frag_valid_barcodes
 
     script:
 
     """
     # output valida barcodes:
-    get_valid_barcode_inflection.R --freq $fragments --outfile ${sample_name}_valid_barcodes.txt
+    get_valid_barcode_inflection.R --freq $freq --outfile ${sample_name}_valid_barcodes.txt
 
     """
 }

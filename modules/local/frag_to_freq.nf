@@ -15,7 +15,7 @@ process FRAG_TO_FREQ {
     tuple val(sample_name), path(fragments)
 
     output:
-    tuple val(sample_name), path("freq_${sample_name}.sorted.tsv.gz"), emit: sample_name_freq
+    tuple val(sample_name), path(fragments), path("freq_${sample_name}.sorted.tsv.gz"), emit: sample_name_frag_freq
 
     script:
 
