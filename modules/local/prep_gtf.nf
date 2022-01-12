@@ -38,14 +38,17 @@ process PREP_GTF {
     sort_gtf.py annotation.v2.gtf > sorted.gtf
 
     # add 'chr' prefix: required by ArchR
-    cat sorted.gtf | awk 'BEGIN{FS=OFS="\\t"}/^#/{print; next} NF==9{\$1 = gensub(/(chr)?(.+).*/, "chr\\\\2", "g", \$1); print}' > sorted.chrPrefixed.gtf
+    cat sorted.gtf | awk 'BEGIN{FS=OFS="\\t"}/^#/{print; next} NF==9{\$1 = gensub(/(chr)?(.+).*/, "chr\\\\2", "g", \$1); print}' > chrPrefixed.sorted.gtf
 
     # make sure gtf config is a subset of genome.fa config, required for cellranger_index step
-    extract_gtf.py $genome_fasta sorted.chrPrefixed.gtf > sorted.subset.chrPrefixed.gtf
+    extract_gtf.py $genome_fasta chrPrefixed.sorted.gtf > subset.chrPrefixed.sorted.gtf
+
+    # make sure feature end coordinates don't exceed config boundaries, required for cellranger_index step
+    filter_gtf.py $genome_fasta subset.chrPrefixed.sorted.gtf > filtered.subset.chrPrefixed.sorted.gtf
 
     # add 'gene' entries in case not there
     ## step1: add 'gene' with gffread, output to gff3
-    gffread -E --keep-genes sorted.subset.chrPrefixed.gtf -o- > final.gff3
+    gffread -E --keep-genes filtered.subset.chrPrefixed.sorted.gtf -o- > final.gff3
     ## step2: convert back to gtf with bioinfokit since the conversion using gffread is buggy
     gff3_to_gtf.py final.gff3
 
