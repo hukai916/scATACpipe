@@ -43,14 +43,11 @@ process PREP_GTF {
     # make sure gtf config is a subset of genome.fa config, required for cellranger_index step
     extract_gtf.py $genome_fasta chrPrefixed.sorted.gtf > subset.chrPrefixed.sorted.gtf
 
-    # make sure feature end coordinates don't exceed config boundaries, required for cellranger_index step
-    # filter_gtf.py $genome_fasta subset.chrPrefixed.sorted.gtf > filtered.subset.chrPrefixed.sorted.gtf
-
     # add 'gene' entries in case not there
       ## step1: add 'gene' with gffread, output to gff3
-    gffread -E --keep-genes filtered.subset.chrPrefixed.sorted.gtf -o- > filtered.subset.chrPrefixed.sorted.gff3
+    gffread -E --keep-genes subset.chrPrefixed.sorted.gtf -o- > subset.chrPrefixed.sorted.gff3
       ## step2: correct the 'gene range' added by gffread: psudo-autosomals: https://github.com/gpertea/gffread/issues/86
-    correct_gtf_gene_range.py filtered.subset.chrPrefixed.sorted.gff3 gene_ranges.tsv > final.gff3
+    correct_gtf_gene_range.py subset.chrPrefixed.sorted.gff3 gene_ranges.tsv > final.gff3
       ## step3: convert back to gtf with bioinfokit since the conversion using gffread is buggy
     gff3_to_gtf.py final.gff3
 
