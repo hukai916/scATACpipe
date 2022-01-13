@@ -31,7 +31,7 @@ process PREP_GTF {
       fi
     fi
 
-    # convert to GTF in case GFF3 is supplied, which seems not compatible with ArchR
+    # convert to GTF in case GFF3 is supplied: ArchR seems only allow GTF
     gffread annotation.gtf -T -o- > annotation.v2.gtf
 
     # sort the gtf by gene_id in case some entries that belong to the same gene are not in order, also output gene_ranges.tsv
@@ -52,5 +52,8 @@ process PREP_GTF {
     gff3_to_gtf.py final.gff3
 
     gzip final.gtf
+
+    # clean-up
+    rm annotation.gtf annotation.v2.gtf chrPrefixed.sorted.gtf final.gff3 sorted.gtf subset.chrPrefixed.sorted.gff3 subset.chrPrefixed.sorted.gtf gene_ranges.tsv
     """
 }
