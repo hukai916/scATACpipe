@@ -34,6 +34,8 @@ include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotati
 include { PREP_FRAGMENT } from '../modules/local/prep_fragment'
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
+include { AMULET_FILTER_DOUBLETS } from '../modules/local/amulet_filter_doublets'    addParams( options: modules['amulet_filter_doublets'] )
+include { AMULET_MERGE_DOUBLETS } from '../modules/local/amulet_merge_doublets' )
 // For ArchR functions:
 include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
 include { ARCHR_CREATE_ARROWFILES } from '../modules/local/archr_create_arrowfiles' addParams( options: modules['archr_create_arrowfiles'] )
@@ -81,7 +83,7 @@ include { ARCHR_GET_CLUSTERING_TSV } from '../modules/local/archr_get_clustering
 
 workflow DOWNSTREAM_ARCHR {
   take:
-    fragments
+    fragments // tuple val(sample_name), path(fragment)
     with_preprocess // string value: "preprocess_null", "preprocess_default", or "preprocess_10xgenomics"
     prep_genome // string value: "run" or "not_run"
     prep_genome_name // PREP_GENOME.out.genome_name if prep_genome == 'run' else Channel.empty()
@@ -345,6 +347,19 @@ workflow DOWNSTREAM_ARCHR {
       } else {
         exit 1, "Pls also supply --species_latin_name."
       }
+    }
+
+    // Module: AMULET doublet filtering
+    if (params.doublet_removal_algorithm == "amulet") {
+      if (archr_input_type == "genome_gtf") {
+        // Use prep_fragment.out.fragments
+        AMULET_FILTER_DOUBLETS(PREP_FRAGMENT.out.fragments, params.amulet_rmsk_bed, params.amulet_autosomes)
+      } else {
+        // Use fragments
+        AMULET_FILTER_DOUBLETS(fragments, params.amulet_rmsk_bed, params.amulet_autosomes)
+      }
+      // Module: generate Doublet cell list input to ArchR
+      AMULET_MERGE_DOUBLETS(AMULET_FILTER_DOUBLETS.out.sample_name_fragments.collect())
     }
 
     // Module: filterDoublets depending on user option.
