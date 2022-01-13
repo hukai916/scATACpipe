@@ -34,7 +34,7 @@ process PREP_GTF {
     # convert to GTF in case GFF3 is supplied, which seems not compatible with ArchR
     gffread annotation.gtf -T -o- > annotation.v2.gtf
 
-    # sort the gtf by gene_id in case some entries that belong to the same gene are not in order
+    # sort the gtf by gene_id in case some entries that belong to the same gene are not in order, also output gene_ranges.tsv
     sort_gtf.py annotation.v2.gtf > sorted.gtf
 
     # add 'chr' prefix: required by ArchR
@@ -44,12 +44,14 @@ process PREP_GTF {
     extract_gtf.py $genome_fasta chrPrefixed.sorted.gtf > subset.chrPrefixed.sorted.gtf
 
     # make sure feature end coordinates don't exceed config boundaries, required for cellranger_index step
-    filter_gtf.py $genome_fasta subset.chrPrefixed.sorted.gtf > filtered.subset.chrPrefixed.sorted.gtf
+    # filter_gtf.py $genome_fasta subset.chrPrefixed.sorted.gtf > filtered.subset.chrPrefixed.sorted.gtf
 
     # add 'gene' entries in case not there
-    ## step1: add 'gene' with gffread, output to gff3
-    gffread -E --keep-genes filtered.subset.chrPrefixed.sorted.gtf -o- > final.gff3
-    ## step2: convert back to gtf with bioinfokit since the conversion using gffread is buggy
+      ## step1: add 'gene' with gffread, output to gff3
+    gffread -E --keep-genes filtered.subset.chrPrefixed.sorted.gtf -o- > filtered.subset.chrPrefixed.sorted.gff3
+      ## step2: correct the 'gene range' added by gffread: psudo-autosomals: https://github.com/gpertea/gffread/issues/86
+    correct_gtf_gene_range.py filtered.subset.chrPrefixed.sorted.gff3 gene_ranges.tsv > final.gff3
+      ## step3: convert back to gtf with bioinfokit since the conversion using gffread is buggy
     gff3_to_gtf.py final.gff3
 
     gzip final.gtf
