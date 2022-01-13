@@ -359,7 +359,7 @@ workflow DOWNSTREAM_ARCHR {
         AMULET_FILTER_DOUBLETS(fragments, params.amulet_rmsk_bed, params.amulet_autosomes)
       }
       // Module: generate Doublet cell list input to ArchR
-      AMULET_MERGE_DOUBLETS(AMULET_FILTER_DOUBLETS.out.sample_name_fragments.collect())
+      // AMULET_MERGE_DOUBLETS(AMULET_FILTER_DOUBLETS.out.sample_name_fragments.collect())
     }
 
     // Module: filterDoublets depending on user option.
