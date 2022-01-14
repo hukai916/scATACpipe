@@ -359,7 +359,7 @@ workflow DOWNSTREAM_ARCHR {
         AMULET_DETECT_DOUBLETS(fragments, Channel.fromPath(params.amulet_rmsk_bed).first(), Channel.fromPath(params.amulet_autosomes).first())
       }
       // Module: generate Doublet cell list input to ArchR
-      AMULET_MERGE_DOUBLETS(AMULET_DETECT_DOUBLETS.out.doublets.collect())
+      AMULET_MERGE_DOUBLETS(AMULET_DETECT_DOUBLETS.out.cells_filter.collect())
     }
 
     // Module: filter doublets depending on user option.
