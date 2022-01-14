@@ -111,7 +111,7 @@ workflow DOWNSTREAM_ARCHR {
       }
     } else if ((with_preprocess == "preprocess_default") || (with_preprocess == "preprocess_10xgenomics") || (with_preprocess == "preprocess_chromap")) {
       msg = "ArchR genome required but not supplied!\nOption1:\n  --ref_fasta_ucsc [a genome name]\nOption2:\n  --ref_fasta_ensembl [a genome name]\nOption3:\n  --ref_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\nOption4:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --archr_blacklist [optional, path to blacklist file]\nOption5:\n  --archr_bsgenome [path to BSgenome obj]\n  --archr_txdb [path to TxDb obj]\n  --archr_org [path to OrgDb obj]\n  --archr_blacklist [optional, path to blacklist file]\nPlease supply the above params to continue.\n"
-      if (params.ref_bwa_index || params.ref_minimap2_index || params.ref_cellranger_index) {
+      if (params.ref_bwa_index || params.ref_cellranger_index) {
         if (!params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {
           log.error msg
           exit 1, "EXIT!"
@@ -170,7 +170,7 @@ workflow DOWNSTREAM_ARCHR {
         }
       } else if (with_preprocess == "preprocess_default" || with_preprocess == "preprocess_10xgenomics" || with_preprocess == "preprocess_chromap") {
         exit_msg = "ArchR genome required but not supplied!\nOption1:\n  --ref_fasta_ucsc [a genome name]\nOption2:\n  --ref_fasta_ensembl [a genome name]\nOption3:\n  --ref_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\nOption4:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --archr_blacklist [optional, path to blacklist file]\nOption5:\n  --archr_bsgenome [path to BSgenome obj]\n  --archr_txdb [path to TxDb obj]\n  --archr_org [path to OrgDb obj]\n  --archr_blacklist [optional, path to blacklist file]\nPlease supply the above params to continue.\n"
-        if (params.ref_bwa_index || params.ref_minimap2_index || params.ref_cellranger_index) {
+        if (params.ref_bwa_index || params.ref_cellranger_index) {
           // Need to download genome and gtf:
           if (params.ref_fasta_ensembl) {
             DOWNLOAD_FROM_ENSEMBL(params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
@@ -366,7 +366,7 @@ workflow DOWNSTREAM_ARCHR {
     if (!params.archr_filter_doublets_ratio) {
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(ARCHR_ARCHRPROJECT_QC.out.archr_project)
-    } else if (params.doublet_removal_algorithm == "archr") {
+    } else if (params.doublet_removal_algorithm == "amulet") { // for test only
       // Module: filtering doublets
       ARCHR_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_filter_doublets_ratio)
       // Module: dimension reduction
