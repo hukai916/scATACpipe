@@ -28,6 +28,7 @@ process AMULET_FILTER_DOUBLETS {
 
     cellsFilter <- scan("$cells_filter", what = "character")
     proj@cellColData <- proj@cellColData[rownames(proj@cellColData) %ni% cellsFilter,,drop=FALSE]
+    
     saveRDS(proj, file = "proj_doublet_filtered.rds")
 
     ' > run.R

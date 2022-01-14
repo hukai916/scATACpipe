@@ -374,7 +374,8 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project)
     } else if (params.doublet_removal_algorithm == "amulet") {
       // Module: filtering doublets
-      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_DETECT_DOUBLETS.out.cells_filter)
+      ARCHR_ARCHRPROJECT_QC.out.archr_project.view()
+      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project)
     }

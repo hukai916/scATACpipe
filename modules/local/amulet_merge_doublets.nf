@@ -15,7 +15,7 @@ process AMULET_MERGE_DOUBLETS {
     path doublets
 
     output:
-    path "cells_filter.txt", emit: cells_filter_txt
+    path "cells_filter.txt", emit: cells_filter
 
     script:
 
