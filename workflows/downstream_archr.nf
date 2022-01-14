@@ -36,6 +36,7 @@ include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
 include { AMULET_DETECT_DOUBLETS } from '../modules/local/amulet_detect_doublets'    addParams( options: modules['amulet_detect_doublets'] )
 include { AMULET_MERGE_DOUBLETS } from '../modules/local/amulet_merge_doublets'
+include { AMULET_FILTER_DOUBLETS } from '../modules/local/amulet_filter_doublets'
 // For ArchR functions:
 include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
 include { ARCHR_CREATE_ARROWFILES } from '../modules/local/archr_create_arrowfiles' addParams( options: modules['archr_create_arrowfiles'] )
