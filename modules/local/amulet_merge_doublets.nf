@@ -12,15 +12,15 @@ process AMULET_MERGE_DOUBLETS {
     container "hukai916/amulet_xenial:0.1"
 
     input:
-    tuple val(sample_name), path(doublets)
+    path doublets
 
     output:
-    tuple val(sample_name), path("merged.txt"), emit: doublets
+    path "cells_filter.txt", emit: cells_filter_txt
 
     script:
 
     """
-    # to do here
-    touch merged.txt
+    cat cells_filter_*.txt > cells_filter.txt
+
     """
 }

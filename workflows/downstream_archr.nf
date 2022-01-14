@@ -34,8 +34,8 @@ include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotati
 include { PREP_FRAGMENT } from '../modules/local/prep_fragment'
 include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
 include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
-include { AMULET_FILTER_DOUBLETS } from '../modules/local/amulet_filter_doublets'    addParams( options: modules['amulet_filter_doublets'] )
-// include { AMULET_MERGE_DOUBLETS } from '../modules/local/amulet_merge_doublets' )
+include { AMULET_DETECT_DOUBLETS } from '../modules/local/amulet_detect_doublets'    addParams( options: modules['amulet_detect_doublets'] )
+include { AMULET_MERGE_DOUBLETS } from '../modules/local/amulet_merge_doublets'
 // For ArchR functions:
 include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
 include { ARCHR_CREATE_ARROWFILES } from '../modules/local/archr_create_arrowfiles' addParams( options: modules['archr_create_arrowfiles'] )
@@ -353,24 +353,29 @@ workflow DOWNSTREAM_ARCHR {
     if (params.doublet_removal_algorithm == "amulet") {
       if (archr_input_type == "genome_gtf") {
         // Use prep_fragment.out.fragments
-        AMULET_FILTER_DOUBLETS(PREP_FRAGMENT.out.fragments, params.amulet_rmsk_bed, params.amulet_autosomes)
+        AMULET_DETECT_DOUBLETS(PREP_FRAGMENT.out.fragments, Channel.fromPath(params.amulet_rmsk_bed), Channel.fromPath(params.amulet_autosomes))
       } else {
         // Use fragments
-        AMULET_FILTER_DOUBLETS(fragments, params.amulet_rmsk_bed, params.amulet_autosomes)
+        AMULET_DETECT_DOUBLETS(fragments, Channel.fromPath(params.amulet_rmsk_bed), Channel.fromPath(params.amulet_autosomes))
       }
       // Module: generate Doublet cell list input to ArchR
-      // AMULET_MERGE_DOUBLETS(AMULET_FILTER_DOUBLETS.out.sample_name_fragments.collect())
+      AMULET_MERGE_DOUBLETS(AMULET_FILTER_DOUBLETS.out.doublets.collect())
     }
 
-    // Module: filterDoublets depending on user option.
+    // Module: filter doublets depending on user option.
     if (!params.archr_filter_doublets_ratio) {
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(ARCHR_ARCHRPROJECT_QC.out.archr_project)
-    } else {
+    } else if (params.doublet_removal_algorithm == "archr") {
       // Module: filtering doublets
       ARCHR_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_filter_doublets_ratio)
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project)
+    } else if (params.doublet_removal_algorithm == "amulet") {
+      // Module: filtering doublets
+      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_DETECT_DOUBLETS.out.cells_filter)
+      // Module: dimension reduction
+      ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project)
     }
 
     // Module: batch correction with harmony

@@ -9,32 +9,30 @@ process AMULET_FILTER_DOUBLETS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'amulet_filter_doublets', publish_id:'') }
-    container "hukai916/amulet_xenial:0.1"
+    container "hukai916/r_sc:0.5"
 
     input:
-    tuple val(sample_name), path(fragment)
-    path amulet_rmsk_bed
-    path amulet_autosomes
+    path archr_project
+    path cells_filter
 
     output:
-    tuple val(sample_name), path("MultipletBarcodes_${sample_name}.txt"), emit: sample_name_doublets
+    path "proj_doublet_filtered.rds", emit: archr_project
+    // path "summary_filter_doublets.txt", emit: summary
 
     script:
 
     """
-    # prepare singlecell.csv that is required by AMULET:
-    # since fragments are already filtered, all fragments are from valid cells.
-    echo "barcode,is__cell_barcode" > singlecell_${sample_name}.csv
-    zcat $fragment | grep -v "#" | cut -f 4 | sort | uniq | awk '{ print \$1",1" }' >> singlecell_${sample_name}.csv
+    echo '
+    library(ArchR)
+    proj <- readRDS("$archr_project", refhook = NULL)
 
-    mkdir doublets_${sample_name}
+    proj2 <- filterDoublets(proj, filterRatio = $archr_filter_ratio)
+    saveRDS(proj2, file = "proj_doublet_filtered.rds")
 
-    # find overlappings:
-    FragmentFileOverlapCounter.py $fragment singlecell_${sample_name}.csv $amulet_autosomes doublets_${sample_name}
-    # detect multiplets :
-    AMULET.py $options.args --rfilter $amulet_rmsk_bed doublets_${sample_name}/Overlaps.txt doublets_${sample_name}/OverlapSummary.txt doublets_${sample_name}
-    # rename output:
-    mv doublets_${sample_name}/MultipletBarcodes_01.txt doublets_${sample_name}/MultipletBarcodes_${sample_name}.txt
+    ' > run.R
 
+    Rscript run.R
+
+    cp .command.log summary_filter_doublets.txt
     """
 }
