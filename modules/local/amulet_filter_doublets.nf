@@ -26,13 +26,14 @@ process AMULET_FILTER_DOUBLETS {
     library(ArchR)
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    proj2 <- filterDoublets(proj, filterRatio = $archr_filter_ratio)
-    saveRDS(proj2, file = "proj_doublet_filtered.rds")
-
+    cellFilter <- scan("$cells_filter", what = "character")
+    proj@cellColData <- proj@cellColData[rownames(proj@cellColData) %ni% cellsFilter,,drop=FALSE]
+    saveRDS(proj, file = "proj_doublet_filtered.rds")
+    
     ' > run.R
 
     Rscript run.R
 
-    cp .command.log summary_filter_doublets.txt
+    cp .command.log summary_amulet_filter_doublets.txt
     """
 }
