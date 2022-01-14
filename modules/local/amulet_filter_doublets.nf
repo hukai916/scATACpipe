@@ -18,6 +18,7 @@ process AMULET_FILTER_DOUBLETS {
     output:
     path "proj_doublet_filtered.rds", emit: archr_project
     // path "summary_filter_doublets.txt", emit: summary
+    tuple path(archr_project), path(cells_filter), emit: test_input
 
     script:
 
@@ -28,7 +29,7 @@ process AMULET_FILTER_DOUBLETS {
 
     cellsFilter <- scan("$cells_filter", what = "character")
     proj@cellColData <- proj@cellColData[rownames(proj@cellColData) %ni% cellsFilter,,drop=FALSE]
-    
+
     saveRDS(proj, file = "proj_doublet_filtered.rds")
 
     ' > run.R
