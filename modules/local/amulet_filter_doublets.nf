@@ -26,10 +26,10 @@ process AMULET_FILTER_DOUBLETS {
     library(ArchR)
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    cellFilter <- scan("$cells_filter", what = "character")
+    cellsFilter <- scan("$cells_filter", what = "character")
     proj@cellColData <- proj@cellColData[rownames(proj@cellColData) %ni% cellsFilter,,drop=FALSE]
     saveRDS(proj, file = "proj_doublet_filtered.rds")
-    
+
     ' > run.R
 
     Rscript run.R

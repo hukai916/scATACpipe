@@ -17,7 +17,7 @@ process AMULET_DETECT_DOUBLETS {
     path amulet_autosomes
 
     output:
-    path "cells_filter_${sample_name}.txt", emit: doublets
+    path "cells_filter_${sample_name}.txt", emit: cells_filter
 
     script:
 
