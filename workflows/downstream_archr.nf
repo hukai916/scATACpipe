@@ -295,6 +295,7 @@ workflow DOWNSTREAM_ARCHR {
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
       ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
+      ARCHR_ARCHRPROJECT.out.archr_project.first().view()
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
     } else if (archr_input_type == "bsgenome_txdb_org") {
       // Note that for this option, all supplied package names must be available from Bioconductor per .requirePackage() requirement.
@@ -375,8 +376,7 @@ workflow DOWNSTREAM_ARCHR {
     } else if (params.doublet_removal_algorithm == "amulet") {
       // Module: filtering doublets
       // ARCHR_ARCHRPROJECT_QC.out.archr_project.collect().view()
-      // ARCHR_ARCHRPROJECT_QC.out.archr_project.first().view()
-      AMULET_DETECT_DOUBLETS.out.cells_filter.first().view()
+      // ARCHR_ARCHRPROJECT.out.archr_project.first().view()
       // AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
       AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT.out.archr_project, AMULET_DETECT_DOUBLETS.out.cells_filter)
       // AMULET_FILTER_DOUBLETS(Channel.fromPath("/home/kh45w/workflow/scATACpipe_test1/work/9c/b1b51251aa3d46c2c7659f74643aa9/proj.rds"), AMULET_DETECT_DOUBLETS.out.cells_filter)
