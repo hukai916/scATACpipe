@@ -19,6 +19,7 @@ process ARCHR_ARCHRPROJECT {
     output:
     path "ArchRProject", emit: archrproject_dir
     path "proj.rds", emit: archr_project
+    path "arrowfiles.txt", emit: test_file
 
     script:
     // note the double quote is intentionally used here for echo command, otherwise if single quote, the $arrow is problematic.
