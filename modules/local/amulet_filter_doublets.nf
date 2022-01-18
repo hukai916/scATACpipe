@@ -12,7 +12,7 @@ process AMULET_FILTER_DOUBLETS {
     container "hukai916/r_sc:0.5"
 
     input:
-    val archr_project
+    path archr_project
     path cells_filter
 
     output:
