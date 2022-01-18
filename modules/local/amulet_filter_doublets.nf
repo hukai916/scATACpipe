@@ -37,5 +37,6 @@ process AMULET_FILTER_DOUBLETS {
     Rscript run.R
 
     cp .command.log summary_amulet_filter_doublets.txt
+    ls -lat * > files.txt
     """
 }
