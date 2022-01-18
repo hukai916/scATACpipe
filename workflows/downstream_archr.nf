@@ -295,9 +295,8 @@ workflow DOWNSTREAM_ARCHR {
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
       ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
-      ARCHR_ARCHRPROJECT.out.arrow_files.first().view()
       // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
-      // ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
+      ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
     } else if (archr_input_type == "bsgenome_txdb_org") {
       // Note that for this option, all supplied package names must be available from Bioconductor per .requirePackage() requirement.
       // Run ArchR with ANNOTATION option
@@ -385,6 +384,7 @@ workflow DOWNSTREAM_ARCHR {
 
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project)
+      ARCHR_DIMENSION_REDUCTION.out.archr_project.first().view()
     }
 
     // Module: batch correction with harmony
