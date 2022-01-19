@@ -20,6 +20,6 @@ process ARCHR_TEST {
     script:
 
     """
-    echo $archr_project > file.txt
+    touch file.txt
     """
 }
