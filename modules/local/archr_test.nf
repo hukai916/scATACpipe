@@ -15,7 +15,7 @@ process ARCHR_TEST {
     path archr_project
 
     output:
-    path "file.txt", emit: test_file
+    path archr_project, emit: test_file
 
     script:
 
