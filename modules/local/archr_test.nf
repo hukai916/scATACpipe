@@ -12,7 +12,7 @@ process ARCHR_TEST {
     container "hukai916/r_sc:0.5"
 
     input:
-    path archr_project
+    val archr_project
 
     output:
     path "file.txt", emit: test_file
