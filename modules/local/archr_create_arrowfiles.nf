@@ -6,6 +6,7 @@ options        = initOptions(params.options)
 
 process ARCHR_CREATE_ARROWFILES {
     label 'process_low'
+    label 'archr'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_create_arrowfiles', publish_id:'') }
@@ -22,13 +23,9 @@ process ARCHR_CREATE_ARROWFILES {
     path "*.arrow", emit: arrowfile
     path "report_*", emit: report
 
-    // beforeScript "'" + params.archr_beforescript + "'"
-    beforeScript 'export HDF5_USE_FILE_LOCKING=FALSE ; export RHDF5_USE_FILE_LOCKING=FALSE'
-
     script:
 
     """
-    export HDF5_USE_FILE_LOCKING=FALSE ; export RHDF5_USE_FILE_LOCKING=FALSE
     echo \$HDF5_USE_FILE_LOCKING > test.txt
 
     echo '
