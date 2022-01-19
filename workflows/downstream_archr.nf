@@ -300,7 +300,7 @@ workflow DOWNSTREAM_ARCHR {
       // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
       // ARCHR_ARCHRPROJECT.out.test_file.first().view()
       // ARCHR_TEST (ARCHR_ARCHRPROJECT.out.archr_project)
-      ARCHR_TEST (Channel.fromPath("asdfadf"))
+      ARCHR_TEST (ARCHR_CREATE_ARROWFILES.out.arrowfile)
 
       ARCHR_TEST.out.test_file.first().view()
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
