@@ -22,7 +22,9 @@ process ARCHR_CREATE_ARROWFILES {
     path "*.arrow", emit: arrowfile
     path "report_*", emit: report
 
-    beforeScript "'" + params.archr_beforescript + "'"
+    // beforeScript "'" + params.archr_beforescript + "'"
+    beforeScript 'export HDF5_USE_FILE_LOCKING=FALSE ; export RHDF5_USE_FILE_LOCKING=FALSE'
+
 
     script:
 
