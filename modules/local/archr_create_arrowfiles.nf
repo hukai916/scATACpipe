@@ -25,10 +25,10 @@ process ARCHR_CREATE_ARROWFILES {
     // beforeScript "'" + params.archr_beforescript + "'"
     beforeScript 'export HDF5_USE_FILE_LOCKING=FALSE ; export RHDF5_USE_FILE_LOCKING=FALSE'
 
-
     script:
 
     """
+    export HDF5_USE_FILE_LOCKING=FALSE ; export RHDF5_USE_FILE_LOCKING=FALSE
     echo \$HDF5_USE_FILE_LOCKING > test.txt
 
     echo '
