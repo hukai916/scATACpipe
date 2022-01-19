@@ -22,7 +22,7 @@ process ARCHR_CREATE_ARROWFILES {
     path "*.arrow", emit: arrowfile
     path "report_*", emit: report
 
-    beforeScript params.archr_beforescript
+    beforeScript "'" + params.archr_beforescript + "'"
 
     script:
 
