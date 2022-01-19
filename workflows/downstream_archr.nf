@@ -301,6 +301,7 @@ workflow DOWNSTREAM_ARCHR {
       // ARCHR_ARCHRPROJECT.out.test_file.first().view()
       println ARCHR_ARCHRPROJECT.out.archrproject_dir
       println ARCHR_ADD_DOUBLETSCORES.out.arrowfile
+      println ARCHR_ADD_DOUBLETSCORES.out.sample_name
       ARCHR_TEST (ARCHR_ARCHRPROJECT.out.archrproject_dir)
       // ARCHR_TEST (ARCHR_ADD_DOUBLETSCORES.out.arrowfile)
 
