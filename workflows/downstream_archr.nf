@@ -299,8 +299,8 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
       // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
       // ARCHR_ARCHRPROJECT.out.test_file.first().view()
-      // ARCHR_TEST (ARCHR_ARCHRPROJECT.out.archr_project)
-      ARCHR_TEST (ARCHR_ADD_DOUBLETSCORES.out.arrowfile)
+      ARCHR_TEST (ARCHR_ARCHRPROJECT.out.archr_project)
+      // ARCHR_TEST (ARCHR_ADD_DOUBLETSCORES.out.arrowfile)
 
       ARCHR_TEST.out.test_file.first().view()
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
