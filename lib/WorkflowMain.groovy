@@ -117,6 +117,8 @@ class WorkflowMain {
             System.exit(0)
         } else if (params.input_fragment) {
           // 3 DOWNSTREAM options
+            // Check if DOWNSTREAM parameters satisfied
+            log.info "Validating input params for DOWNSTREAM_ARCHR ..."
             if ((!params.archr_genome) && (!params.archr_genome_fasta || !params.ref_gtf || !params.species_latin_name) && (!params.archr_bsgenome || !params.archr_txdb || !params.archr_org)) {
               println ''
               def out_string = "Insufficient parameters supplied for DOWNSTREAM analysis!\nPls choose one:\n\n"
@@ -127,12 +129,12 @@ class WorkflowMain {
               log.error out_string
               println ''
               System.exit(0)
-            } else {
-            log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
             }
+            log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
         } else if (params.input_fastq) {
-          // First check if PREPROCESS parameters satisfied
+          // Check if PREPROCESS parameters satisfied
           if (params.preprocess == "default") {
+            log.info "Validating input params for PREPROCESS_DEFAULT ..."
             if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf) && (!params.ref_bwa_index)) {
               println ''
               def out_string = "Insufficient parameters supplied for PREPROCESS_DEFAULT!\n\n"
@@ -142,10 +144,10 @@ class WorkflowMain {
               out_string += "Option4 (ENSEMBL genome):\n  --ref_fasta_ensembl [ENSEMBL genome name]\n\n"
               log.error out_string
               System.exit(0)
-            } else {
-              log.info "Validating input params for PREPROCESS_DEFAULT, passed."
             }
+            log.info "Validating input params for PREPROCESS_DEFAULT, passed."
           } else if (params.preprocess == "10xgenomics") {
+            log.info "Validating input params for PREPROCESS_10XGENOMICS ..."
             if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf) && (!params.ref_cellranger_index)) {
               println ''
               def out_string = "Insufficient parameters supplied for PREPROCESS_10XGENOMICS!\n\n"
@@ -155,10 +157,10 @@ class WorkflowMain {
               out_string += "Option4 (ENSEMBL genome):\n  --ref_fasta_ensembl [ENSEMBL genome name]\n\n"
               log.error out_string
               System.exit(0)
-            } else {
-              log.info "Validating input params for PREPROCESS_10XGENOMICS, passed."
             }
+            log.info "Validating input params for PREPROCESS_10XGENOMICS, passed."
           } else if (params.preprocess == "chromap") {
+            log.info "Validating input params for PREPROCESS_CHROMAP ..."
             if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf)) {
               println ''
               def out_string = "Insufficient parameters supplied for PREPROCESS_CHROMAP!\n\n"
@@ -168,36 +170,30 @@ class WorkflowMain {
               out_string += "For all options, you can supply '--ref_chromap_index [path to chromap index]' to skip building index.\n\n"
               log.error out_string
               System.exit(0)
-            } else {
-              log.info "Validating input params for PREPROCESS_CHROMAP, passed."
             }
+            log.info "Validating input params for PREPROCESS_CHROMAP, passed."
           } else {
             log.error "Pls supply --preprocess [default | 10xgenomics | chromap]"
             System.exit(0)
           }
 
           // Also check if DOWNSTREAM_ARCHR parameters satisfied
+          log.info "Validating input params for DOWNSTREAM_ARCHR ..."
           if (params.preprocess == "default") {
             if (params.ref_bwa_index) {
               if (!(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name)) {
                 log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]\nPls also supply --species_latin_name [Must be quoted]"
                 System.exit(0)
-              } else {
-                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             } else if (params.ref_fasta) {
               if (!params.ref_gtf || !params.species_latin_name) {
                 log.error "Pls supply --ref_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
                 System.exit(0)
-              } else {
-                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             } else if (params.ref_fasta_ensembl || params.ref_fasta_ucsc) {
               if (!params.species_latin_name) {
                 log.error "Pls also supply --species_latin_name [Must be quoted]"
                 System.exit(0)
-              } else {
-                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             }
           } else if (params.preprocess == "10xgenomics") {
@@ -205,22 +201,16 @@ class WorkflowMain {
                 if (!(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name)) {
                   log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]\nPls also supply --species_latin_name [Must be quoted]"
                   System.exit(0)
-                } else {
-                  log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
                 }
               } else if (params.ref_fasta) {
                 if (!params.ref_gtf || !params.species_latin_name) {
                   log.error "Pls supply --ref_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
                   System.exit(0)
-                } else {
-                  log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
                 }
               } else if (params.ref_fasta_ensembl || params.ref_fasta_ucsc) {
                 if (!params.species_latin_name) {
                   log.error "Pls also supply --species_latin_name [Must be quoted]"
                   System.exit(0)
-                } else {
-                  log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
                 }
               }
           } else if (params.preprocess == "chromap") {
@@ -228,21 +218,19 @@ class WorkflowMain {
               if (!params.ref_gtf || !params.species_latin_name) {
                 log.error "Pls supply --ref_gtf [path to gtf file] AND --species_latin_name [Must be quoted]"
                 System.exit(0)
-              } else {
-                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             } else if (params.ref_fasta_ensembl || params.ref_fasta_ucsc) {
               if (!params.species_latin_name) {
                 log.error "Pls also supply --species_latin_name [Must be quoted]"
                 System.exit(0)
-              } else {
-                log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
               }
             }
           }
+          log.info "Validating input params for DOWNSTREAM_ARCHR, passed."
         }
 
         // Check if other parameters are acceptable
+        log.info "Validating other parameters ..."
         if (params.mapper) {
           if (!(params.mapper == "bwa") && !(params.mapper == "bowtie2")) {
             log.error "--mapper must be from 'bwa', 'bowtie2(todo)'."
@@ -277,6 +265,7 @@ class WorkflowMain {
             }
           }
         }
+        log.info "Validating other parameters, passed."
     }
 
     //
