@@ -26,7 +26,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 ////////////////////////////////////////////////////
 
 def modules = params.modules.clone()
-log.info "Load modules ..."
+log.info "Loading modules ..."
 include { PREPROCESS_DEFAULT } from './workflows/preprocess_default'
 include { PREPROCESS_10XGENOMICS } from './workflows/preprocess_10xgenomics'
 include { PREPROCESS_CHROMAP } from './workflows/preprocess_chromap'
@@ -36,7 +36,7 @@ include { SPLIT_BAM  } from './modules/local/split_bam' addParams( options: modu
 include { MULTIQC    } from './modules/local/multiqc' addParams( options: modules['multiqc'] )
 include { INPUT_CHECK_FRAGMENT } from './subworkflows/local/input_check_fragment'
 include { INPUT_CHECK_FASTQ } from './subworkflows/local/input_check_fastq'
-log.info "Load modules, done."
+log.info "Loading modules, done."
 
 ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
 
@@ -47,13 +47,13 @@ workflow SCATACPIPE {
 
   main:
     if (input_fragment) {
-      log.info "DOWNSTREAM starts ... if pipeline exits, check .nextflow.log file."
+      log.info "DOWNSTREAM starts ... if exits, check .nextflow.log file."
       INPUT_CHECK_FRAGMENT (Channel.fromPath(input_fragment))
       DOWNSTREAM_ARCHR (INPUT_CHECK_FRAGMENT.out.fragment, "preprocess_null", "token1", "token2", "token3", "token4", "token5", "token6")
       SPLIT_BED (DOWNSTREAM_ARCHR.out[1])
       MULTIQC (DOWNSTREAM_ARCHR.out[0].ifEmpty([]).mix(Channel.from(ch_multiqc_config)).collect())
     } else if (input_fastq) {
-      log.info "PREPROCESS + DOWNSTREAM start ... if pipeline exits, check .nextflow.log file."
+      log.info "PREPROCESS + DOWNSTREAM start ... if exits, check .nextflow.log file."
       INPUT_CHECK_FASTQ (Channel.fromPath(input_fastq))
 
       if (params.preprocess == "default") {

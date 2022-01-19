@@ -22,9 +22,13 @@ process ARCHR_CREATE_ARROWFILES {
     path "*.arrow", emit: arrowfile
     path "report_*", emit: report
 
+    beforeScript params.archr_beforescript
+
     script:
 
     """
+    echo \$HDF5_USE_FILE_LOCKING > test.txt
+
     echo '
     library(ArchR)
 

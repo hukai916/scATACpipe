@@ -528,6 +528,11 @@
             "description": "Number of threads used for ArchR.",
             "default": 4
         },
+        "archr_beforescript": {
+            "type": "string",
+            "description": "Commands to execute before launching ArchR analysis.",
+            "default": "export HDF5_USE_FILE_LOCKING=FALSE ; export RHDF5_USE_FILE_LOCKING=FALSE"
+        },
         "archr_scrnaseq": {
             "type": "string",
             "hidden": true
