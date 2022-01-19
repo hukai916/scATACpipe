@@ -38,7 +38,6 @@ include { AMULET_DETECT_DOUBLETS } from '../modules/local/amulet_detect_doublets
 include { AMULET_MERGE_DOUBLETS } from '../modules/local/amulet_merge_doublets'
 include { AMULET_FILTER_DOUBLETS } from '../modules/local/amulet_filter_doublets'
 // For ArchR functions:
-include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
 include { ARCHR_TEST } from '../modules/local/archr_test'
 
 include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
@@ -301,6 +300,7 @@ workflow DOWNSTREAM_ARCHR {
       // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
       // ARCHR_ARCHRPROJECT.out.test_file.first().view()
       ARCHR_TEST (ARCHR_ARCHRPROJECT.out.test_file)
+
       ARCHR_TEST.out.test_file.first().view()
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
     } else if (archr_input_type == "bsgenome_txdb_org") {
