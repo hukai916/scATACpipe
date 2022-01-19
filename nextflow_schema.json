@@ -139,7 +139,7 @@
                 },
                 "mapper": {
                     "type": "string",
-                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)', 'minimap2'.",
+                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)'.",
                     "default": "bwa"
                 },
                 "barcode_whitelist": {
@@ -188,7 +188,7 @@
                 },
                 "mapper": {
                     "type": "string",
-                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)', 'minimap2'.",
+                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)'.",
                     "default": "bwa"
                 },
                 "barcode_whitelist": {
@@ -227,7 +227,7 @@
                     "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
-                "--ref_bwa_index|--ref_minimap2_index": {
+                "--ref_bwa_index": {
                     "type": "string",
                     "description": "Path to refernce index folder."
                 },
@@ -237,7 +237,7 @@
                 },
                 "mapper": {
                     "type": "string",
-                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)', 'minimap2'.",
+                    "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)'.",
                     "default": "bwa"
                 },
                 "barcode_whitelist": {
@@ -496,8 +496,26 @@
         },
         "filter": {
             "type": "string",
-            "description": "Algorithm for filtering bam file. Choose from 'false', 'both', 'improper'",
+            "description": "Algorithm for filtering bam file. Choose from 'both', 'improper', or false to skip.",
             "default": "both"
+        },
+        "doublet_removal_algorithm": {
+            "type": "string",
+            "description": "Doublet removel method. Choose from 'amulet', 'archr', or false to skip.",
+            "default": "archr"
+        },
+        "archr_filter_doublets_ratio": {
+            "type": "number",
+            "description": "For '--doublet_removal_algorithm archr' only.",
+            "default": 1.5
+        },
+        "amulet_rmsk_bed": {
+            "type": "string",
+            "description": "For '--doublet_removal_algorithm amulet' only. Path to bed file containing repeat regions."
+        },
+        "amulet_autosomes": {
+            "type": "string",
+            "description": "For '--doublet_removal_algorithm amulet' only. Path to text file containing autosomal chromosome names."
         },
         "barcode_regex": {
             "type": "string",
@@ -509,11 +527,6 @@
             "type": "integer",
             "description": "Number of threads used for ArchR.",
             "default": 4
-        },
-        "archr_filter_doublets_ratio": {
-            "type": "number",
-            "default": 1.5,
-            "hidden": true
         },
         "archr_scrnaseq": {
             "type": "string",

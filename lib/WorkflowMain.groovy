@@ -133,10 +133,10 @@ class WorkflowMain {
         } else if (params.input_fastq) {
           // First check if PREPROCESS parameters satisfied
           if (params.preprocess == "default") {
-            if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf) && (!params.ref_bwa_index || !params.ref_minimap2_index)) {
+            if ((!params.ref_fasta_ucsc) && (!params.ref_fasta_ensembl) && (!params.ref_fasta || !params.ref_gtf) && (!params.ref_bwa_index)) {
               println ''
               def out_string = "Insufficient parameters supplied for PREPROCESS_DEFAULT!\n\n"
-              out_string += "Option1 (index folder):\n  --ref_bwa_index | --ref_minimap2_index [path to index folder]\n"
+              out_string += "Option1 (index folder):\n  --ref_bwa_index [path to index folder]\n"
               out_string += "Option2 (custom genome fasta & gtf):\n  --ref_fasta [path to genome fasta file]\n  --ref_gtf [path to gtf file]\n"
               out_string += "Option3 (UCSC genome):\n  --ref_fasta_ucsc [UCSC genome]\n"
               out_string += "Option4 (ENSEMBL genome):\n  --ref_fasta_ensembl [ENSEMBL genome name]\n\n"
@@ -178,7 +178,7 @@ class WorkflowMain {
 
           // Also check if DOWNSTREAM_ARCHR parameters satisfied
           if (params.preprocess == "default") {
-            if (params.ref_bwa_index || params.ref_minimap2_index) {
+            if (params.ref_bwa_index) {
               if (!(params.ref_fasta_ensembl && params.species_latin_name) && !(params.ref_fasta_ucsc && params.species_latin_name)) {
                 log.error "Pls supply --ref_fasta_ensembl [ENSEMBL genome name] | --ref_fasta_ucsc [UCSC genome name]\nPls also supply --species_latin_name [Must be quoted]"
                 System.exit(0)
@@ -244,8 +244,8 @@ class WorkflowMain {
 
         // Check if other parameters are acceptable
         if (params.mapper) {
-          if (!(params.mapper == "bwa") && !(params.mapper == "minimap2") && !(params.mapper == "bowtie2")) {
-            log.error "--mapper must be from 'bwa', 'minimap2', 'bowtie2(todo)'."
+          if (!(params.mapper == "bwa") && !(params.mapper == "bowtie2")) {
+            log.error "--mapper must be from 'bwa', 'bowtie2(todo)'."
             System.exit(0)
           }
         }
@@ -261,7 +261,22 @@ class WorkflowMain {
             System.exit(0)
           }
         }
-
+        if (params.doublet_removal_algorithm) {
+          if (!(params.doublet_removal_algorithm == 'archr') && !(params.doublet_removal_algorithm == 'amulet')) {
+            log.error "--doublet_removal_algorithm must be from 'archr', 'amulet', or false."
+            System.exit(0)
+          } else if (params.doublet_removal_algorithm == 'archr') {
+            if (!params.archr_filter_doublets_ratio) {
+              log.error "--archr_filter_doublets_ratio must be supplied!"
+              System.exit(0)
+            }
+          } else if (params.doublet_removal_algorithm == 'amulet') {
+            if (!(params.amulet_rmsk_bed) || !(params.amulet_autosomes)) {
+              log.error "both --amulet_rmsk_bed and --amulet_autosomes must be supplied!"
+              System.exit(0)
+            }
+          }
+        }
     }
 
     //
