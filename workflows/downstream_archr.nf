@@ -39,6 +39,9 @@ include { AMULET_MERGE_DOUBLETS } from '../modules/local/amulet_merge_doublets'
 include { AMULET_FILTER_DOUBLETS } from '../modules/local/amulet_filter_doublets'
 // For ArchR functions:
 include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
+include { ARCHR_TEST } from '../modules/local/archr_test'
+
+include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
 include { ARCHR_CREATE_ARROWFILES } from '../modules/local/archr_create_arrowfiles' addParams( options: modules['archr_create_arrowfiles'] )
 include { ARCHR_CREATE_ARROWFILES_ANNOTATION } from '../modules/local/archr_create_arrowfiles_annotation' addParams( options: modules['archr_create_arrowfiles_annotation'] )
 include { ARCHR_ADD_DOUBLETSCORES } from '../modules/local/archr_add_doubletscores' addParams( options: modules['archr_add_doubletscores'] )
@@ -296,8 +299,9 @@ workflow DOWNSTREAM_ARCHR {
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
       ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
       // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
-      ARCHR_ARCHRPROJECT.out.test_file.first().view()
-
+      // ARCHR_ARCHRPROJECT.out.test_file.first().view()
+      ARCHR_TEST (ARCHR_ARCHRPROJECT.out.test_file)
+      ARCHR_TEST.out.test_file.first().view()
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
     } else if (archr_input_type == "bsgenome_txdb_org") {
       // Note that for this option, all supplied package names must be available from Bioconductor per .requirePackage() requirement.
