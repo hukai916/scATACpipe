@@ -297,7 +297,7 @@ workflow DOWNSTREAM_ARCHR {
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
       // ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
-      ARCHR_ARCHRPROJECT(ARCHR_ADD_DOUBLETSCORES.out.arrowfile.collect(), archr_input_list[0], params.archr_thread)
+      ARCHR_ARCHRPROJECT(ARCHR_ADD_DOUBLETSCORES.out.arrowfile.collect(), archr_input_list[0], 8)
 
       // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
       // ARCHR_ARCHRPROJECT.out.test_file.first().view()
