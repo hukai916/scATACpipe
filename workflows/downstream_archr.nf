@@ -92,42 +92,14 @@ workflow DOWNSTREAM_ARCHR {
     prep_gtf   // string value: "run" or "not_run"
     prep_gtf_genome // PREP_GTF.out.genome_name if prep_gtf == 'run' else Channel.empty()
     prep_gtf_file // PREP_GTF.out.gtf if prep_gtf == 'run' else Channel.empty()
-    // Won't take tuple as input
+    // won't take tuple as input
 
   main:
-    // Examine if all required parameters supplied:
+    // Determine ArchR input_type and input_list:
     def archr_input_type = "" // "naive", "genome_gtf", "bsgenome_txdb_org"
-    def archr_input_list = []
-    // for "genome_gtf": [genome_name, genome_fasta, gtf]
-    // for "bsgenome_txdb_org"" [bsgenome, txdb, org]
-    if (params.archr_bsgenome && params.archr_org && params.archr_txdb) {
-      archr_input_type = "bsgenome_txdb_org"
-    } else if (params.archr_genome_fasta && params.ref_gtf) {
-      archr_input_type = "genome_gtf"
-    } else if (with_preprocess == "preprocess_null") {
-      if (!params.archr_genome) {
-        msg = "ArchR genome required but not supplied!\nOption1:\n  --archr_genome [a genome name]\nOption2:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --archr_blacklist [optional, path to blacklist file]\nOption3:\n  --archr_bsgenome [Bioconductor BSgenome name]\n  --archr_txdb [Bioconductor TxDb name]\n  --archr_org [Bioconductor OrgDb name]\n  --archr_blacklist [optional, path to blacklist file]\nPlease supply the above params to continue.\n"
-        log.error msg
-        exit 1, "EXIT!"
-      }
-    } else if ((with_preprocess == "preprocess_default") || (with_preprocess == "preprocess_10xgenomics") || (with_preprocess == "preprocess_chromap")) {
-      msg = "ArchR genome required but not supplied!\nOption1:\n  --ref_fasta_ucsc [a genome name]\nOption2:\n  --ref_fasta_ensembl [a genome name]\nOption3:\n  --ref_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\nOption4:\n  --archr_genome_fasta [path to genome fasta]\n  --ref_gtf [path to gtf file]\n  --archr_blacklist [optional, path to blacklist file]\nOption5:\n  --archr_bsgenome [path to BSgenome obj]\n  --archr_txdb [path to TxDb obj]\n  --archr_org [path to OrgDb obj]\n  --archr_blacklist [optional, path to blacklist file]\nPlease supply the above params to continue.\n"
-      if (params.ref_bwa_index || params.ref_cellranger_index) {
-        if (!params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {
-          log.error msg
-          exit 1, "EXIT!"
-        }
-      } else if (params.ref_fasta) {
-        if (!params.ref_gtf) {
-          log.error msg
-          exit 1, "EXIT!"
-        }
-      } else if (!params.ref_fasta_ensembl && !params.ref_fasta_ucsc) {
-        log.error msg
-        exit 1, "EXIT!"
-      }
-    }
-    // Above is redundant to WorkflowMain::initialise()
+    def archr_input_list = [] // stores input files
+      // for "genome_gtf": [genome_name, genome_fasta, gtf]
+      // for "bsgenome_txdb_org"" [bsgenome, txdb, org]
 
     if (params.archr_bsgenome && params.archr_org && params.archr_txdb) {
       log.info "INFO: --archr_bsgenome, --archr_txdb, and --archr_org supplied."
@@ -162,7 +134,7 @@ workflow DOWNSTREAM_ARCHR {
               PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
               PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
               archr_input_type = "genome_gtf"
-              archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
+              archr_input_list = [PREP_GENOME.out.genome_name.first(), PREP_GENOME.out.genome_fasta.first(), PREP_GTF.out.gtf.collect()]
           } else {
               exit 1, "Pls use the --support_genome to show a list of supported genomes!"
           }
@@ -179,14 +151,14 @@ workflow DOWNSTREAM_ARCHR {
             PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
             PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
             archr_input_type = "genome_gtf"
-            archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
+            archr_input_list = [PREP_GENOME.out.genome_name.first(), PREP_GENOME.out.genome_fasta.first(), PREP_GTF.out.gtf.first()]
           } else if (params.ref_fasta_ucsc) {
             DOWNLOAD_FROM_UCSC(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
             DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
             PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
             PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
             archr_input_type = "genome_gtf"
-            archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
+            archr_input_list = [PREP_GENOME.out.genome_name.first(), PREP_GENOME.out.genome_fasta.first(), PREP_GTF.out.gtf.first()]
           } else {
             exit 1, exit_msg
           }
