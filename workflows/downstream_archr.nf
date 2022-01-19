@@ -295,9 +295,9 @@ workflow DOWNSTREAM_ARCHR {
       // Module: add DoubletScores
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES.out.sample_name, ARCHR_CREATE_ARROWFILES.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
-      ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
+      // ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
       // ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
-      ARCHR_ARCHRPROJECT(Channel.fromPath("DSFDS"), archr_input_list[0], params.archr_thread)
+      ARCHR_ARCHRPROJECT(ARCHR_ADD_DOUBLETSCORES.out.arrowfile.first(), archr_input_list[0], params.archr_thread)
       // ARCHR_ARCHRPROJECT(ARCHR_ADD_DOUBLETSCORES.out.arrowfile.collect(), archr_input_list[0], 8)
 
       // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
