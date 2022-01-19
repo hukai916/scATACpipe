@@ -38,8 +38,6 @@ include { AMULET_DETECT_DOUBLETS } from '../modules/local/amulet_detect_doublets
 include { AMULET_MERGE_DOUBLETS } from '../modules/local/amulet_merge_doublets'
 include { AMULET_FILTER_DOUBLETS } from '../modules/local/amulet_filter_doublets'
 // For ArchR functions:
-include { ARCHR_TEST } from '../modules/local/archr_test'
-
 include { ARCHR_GET_ANNOTATION_BIOC } from '../modules/local/archr_get_annotation_bioc' addParams( options: modules['archr_get_annotation_bioc'] )
 include { ARCHR_CREATE_ARROWFILES } from '../modules/local/archr_create_arrowfiles' addParams( options: modules['archr_create_arrowfiles'] )
 include { ARCHR_CREATE_ARROWFILES_ANNOTATION } from '../modules/local/archr_create_arrowfiles_annotation' addParams( options: modules['archr_create_arrowfiles_annotation'] )
@@ -295,23 +293,8 @@ workflow DOWNSTREAM_ARCHR {
       // Module: add DoubletScores
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES.out.sample_name, ARCHR_CREATE_ARROWFILES.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
-      // ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
-      // ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
-      ARCHR_ARCHRPROJECT(ARCHR_ADD_DOUBLETSCORES.out.arrowfile.first(), archr_input_list[0], params.archr_thread)
-      // ARCHR_ARCHRPROJECT(ARCHR_ADD_DOUBLETSCORES.out.arrowfile.collect(), archr_input_list[0], 8)
-
-      // ARCHR_ADD_DOUBLETSCORES.out.summary.first().view()
-      // ARCHR_ARCHRPROJECT.out.test_file.first().view()
-
-      println ARCHR_ARCHRPROJECT.out.archrproject_dir
-      println ARCHR_ADD_DOUBLETSCORES.out.arrowfile.first()
-      println ARCHR_ADD_DOUBLETSCORES.out.arrowfile
-      println ARCHR_ADD_DOUBLETSCORES.out.sample_name
-
-      // ARCHR_TEST (ARCHR_ARCHRPROJECT.out.archrproject_dir)
-      ARCHR_TEST (ARCHR_ADD_DOUBLETSCORES.out.arrowfile.collect())
-
-      ARCHR_TEST.out.test_file.first().view()
+      ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
+      ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
     } else if (archr_input_type == "bsgenome_txdb_org") {
       // Note that for this option, all supplied package names must be available from Bioconductor per .requirePackage() requirement.
@@ -324,7 +307,6 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
-
       ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.user_rlib)
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project)
     } else if (archr_input_type == "genome_gtf") {
@@ -391,13 +373,7 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project)
     } else if (params.doublet_removal_algorithm == "amulet") {
       // Module: filtering doublets
-      // ARCHR_ARCHRPROJECT_QC.out.archr_project.collect().view()
-      // ARCHR_ARCHRPROJECT.out.archr_project.first().view()
-      // AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
-      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_DETECT_DOUBLETS.out.cells_filter)
-      // AMULET_FILTER_DOUBLETS(Channel.fromPath("/home/kh45w/workflow/scATACpipe_test1/work/9c/b1b51251aa3d46c2c7659f74643aa9/proj.rds"), AMULET_DETECT_DOUBLETS.out.cells_filter)
-      AMULET_FILTER_DOUBLETS.out.test_input.view()
-
+      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project)
     }
@@ -605,7 +581,6 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: prepare clustering tsv file for spliting using sinto fragment
     if (params.groupby_cluster == "Clusters") {
-      // ARCHR_CLUSTERING.out.archr_project.view()
       if (archr_input_type == "genome_gtf") {
         ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters")
       } else {
@@ -617,7 +592,6 @@ workflow DOWNSTREAM_ARCHR {
       } else {
         ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragments, "Clusters2")
       }
-
     }
 
     // Collect all output results for MultiQC report:
