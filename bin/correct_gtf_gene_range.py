@@ -34,6 +34,7 @@ for line in open(gff3):
         cols = line.split("\t")
         if cols[2] == "gene":
             unique_id = cols[0] + "\t" + cols[8].split("ID=")[1].split(";")[0]
+            unique_id = unique_id.strip()
             # print(unique_id)
             if not unique_id in gene_ranges:
                 print(unique_id)
