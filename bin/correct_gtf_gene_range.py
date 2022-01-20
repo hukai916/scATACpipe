@@ -24,6 +24,7 @@ gene_ranges = {}
 for line in open(gr):
     cols = line.split("\t")
     unique_id = cols[0] + "\t" + cols[1]
+    unique_id = unique_id.strip()
     assert unique_id not in gene_ranges, "Duplicated gene id detected!"
     gene_ranges[unique_id] = [int(cols[2]), int(cols[3])]
 # second iterate GFF3 to fix the wrong ranges
@@ -35,13 +36,9 @@ for line in open(gff3):
         if cols[2] == "gene":
             unique_id = cols[0] + "\t" + cols[8].split("ID=")[1].split(";")[0]
             unique_id = unique_id.strip()
-            # print(unique_id)
-            if not unique_id in gene_ranges:
-                print(unique_id)
-                for key in gene_ranges:
-                    print(key, key == unique_id, "\"" + key +  "\", \"" + unique_id + "\"" )
-                # print(gene_ranges)
-                exit()
+            # above is to deal with the first case below where there is no ;:
+                # chr1	havana	gene	89295	133723	.	-	.	ID=ENSG00000238009
+                # chr1	havana	transcript	89295	120932	.	-	.	ID=ENST00000466430;Parent=ENSG00000238009
             assert unique_id in gene_ranges, "Undetected gene_id from GTF!"
             if [int(cols[3]), int(cols[4])] != gene_ranges[unique_id]:
                 cols[3], cols[4] = gene_ranges[unique_id]
