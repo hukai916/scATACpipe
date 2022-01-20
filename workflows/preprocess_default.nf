@@ -136,6 +136,8 @@ workflow PREPROCESS_DEFAULT {
       PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
       // Module : bwa_index
       BWA_INDEX (PREP_GENOME.out.genome_fasta)
+      // Module : bwa_map
+      BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
     } else if (params.ref_fasta_ucsc) {
       log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build bwa index, and map with bwa ..."
       // Module : download_from_ucsc

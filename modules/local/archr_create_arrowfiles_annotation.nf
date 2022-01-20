@@ -51,7 +51,7 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
       subThreading = FALSE,
       $options.args
     )
-' > run.R
+    ' > run.R
 
     Rscript run.R
 
@@ -70,7 +70,6 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     # For reporting:
     mkdir -p report_archr_create_arrowfiles_annotation_$sample_name/archr_create_arrowfiles_annotation
     cp -r QualityControl_$sample_name/jpeg report_archr_create_arrowfiles_annotation_$sample_name/archr_create_arrowfiles_annotation
-
 
     """
 }

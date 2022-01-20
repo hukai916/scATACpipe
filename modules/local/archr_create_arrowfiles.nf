@@ -6,7 +6,6 @@ options        = initOptions(params.options)
 
 process ARCHR_CREATE_ARROWFILES {
     label 'process_low'
-    label 'archr'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_create_arrowfiles', publish_id:'') }
@@ -26,8 +25,6 @@ process ARCHR_CREATE_ARROWFILES {
     script:
 
     """
-    echo \$HDF5_USE_FILE_LOCKING > test.txt
-
     echo '
     library(ArchR)
 
@@ -45,8 +42,7 @@ process ARCHR_CREATE_ARROWFILES {
       subThreading = FALSE,
       $options.args
     )
-
-' > run.R
+    ' > run.R
 
     Rscript run.R
 
