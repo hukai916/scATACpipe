@@ -34,7 +34,10 @@ for line in open(gff3):
         cols = line.split("\t")
         if cols[2] == "gene":
             unique_id = cols[0] + "\t" + cols[8].split("ID=")[1].split(";")[0]
-            print(unique_id)
+            # print(unique_id)
+            if not unique_id in gene_ranges:
+                print(unique_id)
+                exit()
             assert unique_id in gene_ranges, "Undetected gene_id from GTF!"
             if [int(cols[3]), int(cols[4])] != gene_ranges[unique_id]:
                 cols[3], cols[4] = gene_ranges[unique_id]
