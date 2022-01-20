@@ -16,7 +16,7 @@ process PREP_FRAGMENT {
     path gtf
 
     output:
-    tuple val(sample_name), path("final.*.fragment.bed.gz"), emit: fragments
+    tuple val(sample_name), path("final.*.fragment.tsv.gz"), emit: fragments
 
     script:
 
