@@ -37,6 +37,7 @@ for line in open(gff3):
             # print(unique_id)
             if not unique_id in gene_ranges:
                 print(unique_id)
+                print(gene_ranges)
                 exit()
             assert unique_id in gene_ranges, "Undetected gene_id from GTF!"
             if [int(cols[3]), int(cols[4])] != gene_ranges[unique_id]:
