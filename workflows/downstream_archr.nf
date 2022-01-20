@@ -125,9 +125,6 @@ workflow DOWNSTREAM_ARCHR {
               DOWNLOAD_FROM_ENSEMBL (params.archr_genome, Channel.fromPath('assets/genome_ensembl.json'))
               DOWNLOAD_FROM_ENSEMBL_GTF (params.archr_genome, Channel.fromPath('assets/genome_ensembl.json'))
               PREP_GENOME (DOWNLOAD_FROM_ENSEMBL.out.genome_fasta, DOWNLOAD_FROM_ENSEMBL.out.genome_name)
-              println PREP_GENOME.out.genome_fasta
-              println PREP_GENOME.out.genome_name
-              println DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf
               PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
               archr_input_type = "genome_gtf"
               archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
@@ -202,7 +199,7 @@ workflow DOWNSTREAM_ARCHR {
               exit 1, "EXIT!"
             }
             DOWNLOAD_FROM_ENSEMBL_GTF(params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
-            PREP_GTF (prep_genome_name, prep_genome_fasta, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
+            PREP_GTF (prep_genome_fasta, prep_genome_name, DOWNLOAD_FROM_ENSEMBL_GTF.out.gtf)
             archr_input_type = "genome_gtf"
             // archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
             archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
