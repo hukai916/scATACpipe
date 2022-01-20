@@ -15,6 +15,7 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
     path archr_project
     val useGroups
     val bgdGroups
+    val archr_thread
 
     output:
     path "Plots/*-Markers-MA-Volcano.pdf", emit: archr_markers_ma_volcano
@@ -27,6 +28,8 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project")
 

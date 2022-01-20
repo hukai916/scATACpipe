@@ -13,6 +13,7 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2 {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "Plots/Plot-Tracks-With-Features.pdf", emit: plot_tracks_with_features
@@ -25,6 +26,9 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     seGroupMotif <- getGroupSE(ArchRProj = proj, useMatrix = "MotifMatrix", groupBy = "Clusters2")

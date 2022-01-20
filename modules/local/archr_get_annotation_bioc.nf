@@ -15,6 +15,7 @@ process ARCHR_GET_ANNOTATION_BIOC {
     path txdb
     path org
     path bsgenome
+    val archr_thread
 
     output:
     path "genomeAnnotation.rds", emit: genomeAnnotation
@@ -29,6 +30,8 @@ process ARCHR_GET_ANNOTATION_BIOC {
     library(ArchR)
     library(tools)
     library(AnnotationDbi)
+    
+    addArchRThreads(threads = $archr_thread)
 
     # Prepare genome/gene annotation
     dir.create("user_rlib", recursive = TRUE)

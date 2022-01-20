@@ -14,6 +14,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
     input:
     path archr_project
     val trajectory_groups
+    val archr_thread
 
     output:
     path "archr_trajectory_project.rds", emit: archr_project
@@ -30,6 +31,9 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     trajectory = c($trajectory_groups)

@@ -14,6 +14,7 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     input:
     path archr_project
     val custom_peaks
+    val archr_thread
 
     output:
     path "archr_motif_deviation_project.rds", emit: archr_project
@@ -31,6 +32,9 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     # Plot deviations

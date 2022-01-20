@@ -13,6 +13,7 @@ process ARCHR_COACCESSIBILITY_CLUSTERS2 {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "archr_coaccessibility_project.rds", emit: archr_project
@@ -25,6 +26,9 @@ process ARCHR_COACCESSIBILITY_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     proj2 <- addCoAccessibility(

@@ -13,6 +13,7 @@ process ARCHR_BATCH_CORRECTION {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "proj_batch_correct.rds", emit: archr_project
@@ -22,6 +23,9 @@ process ARCHR_BATCH_CORRECTION {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
     proj2 <- addHarmony(
       ArchRProj = proj,

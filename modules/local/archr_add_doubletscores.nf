@@ -14,6 +14,7 @@ process ARCHR_ADD_DOUBLETSCORES {
     input:
     val sample_name
     path arrowfile
+    val archr_thread
 
     output:
     val sample_name, emit: sample_name
@@ -35,6 +36,8 @@ process ARCHR_ADD_DOUBLETSCORES {
 
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
 
     addDoubletScores(
     input  = "${sample_name}_doublet.arrow",

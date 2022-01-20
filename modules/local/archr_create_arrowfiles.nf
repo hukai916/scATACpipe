@@ -27,12 +27,12 @@ process ARCHR_CREATE_ARROWFILES {
     """
     echo '
     library(ArchR)
+    
+    addArchRGenome("$archr_genome")
+    addArchRThreads(threads = $archr_thread)
 
     inputFiles <- "$fragment"
     names(inputFiles) <- "$sample_name"
-
-    addArchRGenome("$archr_genome")
-    addArchRThreads(threads = $archr_thread)
 
     ArrowFiles <- createArrowFiles(
       inputFiles = inputFiles,

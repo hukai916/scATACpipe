@@ -29,6 +29,8 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
 
     # Include the installed custom BSgenome if supplied:
     if (!("$user_rlib" == "file_token.txt")) {

@@ -18,6 +18,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
     val useGroups
     val bgdGroups
     val custom_peaks
+    val archr_thread
 
     output:
     path "archr_motif_enrichment_project.rds", emit: archr_project
@@ -31,8 +32,10 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
     """
     echo '
     library(ArchR)
-    options(timeout=10000)
 
+    options(timeout=10000)
+    addArchRThreads(threads = $archr_thread)
+    
     proj <- readRDS("$archr_project", refhook = NULL)
     markerTest <- readRDS("$marker_test")
     markersPeaks <- readRDS("$markers_peaks")

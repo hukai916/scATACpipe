@@ -13,6 +13,7 @@ process ARCHR_EMBEDDING {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "proj_embedding.rds", emit: archr_project
@@ -26,10 +27,13 @@ process ARCHR_EMBEDDING {
     path "report_jpeg/archr_embedding", emit: report
 
     script:
-    
+
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     proj2 <- addUMAP(

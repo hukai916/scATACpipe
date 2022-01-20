@@ -14,6 +14,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     input:
     path archr_project
     path obj_scrnaseq
+    val archr_thread
 
     output:
     path "proj_scrnaseq_unconstrained.rds", emit: archr_project
@@ -28,6 +29,9 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     seRNA <- readRDS("$obj_scrnaseq")
     proj <- readRDS("$archr_project", refhook = NULL)
 

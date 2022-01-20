@@ -13,6 +13,7 @@ process ARCHR_CALL_PEAKS_CLUSTERS2 {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "proj_call_peaks.rds", emit: archr_project
@@ -24,6 +25,9 @@ process ARCHR_CALL_PEAKS_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     # Add called peaks:

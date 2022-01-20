@@ -13,6 +13,7 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "Plots/Heatmap-Marker-Genes-with-Peak2GeneLinks.pdf", emit: heatmap_marker_genes_with_peaks2genelinks
@@ -26,6 +27,9 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     proj2 <- addPeak2GeneLinks(

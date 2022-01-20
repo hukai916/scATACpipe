@@ -13,6 +13,7 @@ process ARCHR_ARCHRPROJECT_QC {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "Plots/TSS-vs-Frags.pdf", emit: pdf_tss_vs_frags
@@ -27,6 +28,9 @@ process ARCHR_ARCHRPROJECT_QC {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     # Create QC plot: log10(Unique Fragments) vs TSS enrichment score:

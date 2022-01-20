@@ -13,6 +13,7 @@ process ARCHR_MARKER_GENE {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "proj_marker_gene.rds", emit: archr_project
@@ -28,6 +29,9 @@ process ARCHR_MARKER_GENE {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     # Find marker genes:

@@ -13,6 +13,7 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS2 {
 
     input:
     path archr_project
+    val archr_thread
 
     output:
     path "marker_peaks.rds", emit: archr_marker_peaks
@@ -26,6 +27,9 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     markersPeaks <- getMarkerFeatures(

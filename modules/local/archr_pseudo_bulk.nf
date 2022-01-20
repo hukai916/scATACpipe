@@ -14,6 +14,7 @@ process ARCHR_PSEUDO_BULK {
     input:
     path archr_project
     val groupby
+    val archr_thread
 
     output:
     path "proj_pseudo_bulk.rds", emit: archr_project
@@ -23,6 +24,9 @@ process ARCHR_PSEUDO_BULK {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     # Add pseudo-bulk:

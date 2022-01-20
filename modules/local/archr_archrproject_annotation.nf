@@ -16,6 +16,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
     path gene_annotation
     path genome_annotation
     path user_rlib
+    val archr_thread
 
     output:
     path "ArchRProject", emit: archrproject_dir
@@ -30,6 +31,8 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
 
     echo "
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
 
     # Include the installed custom BSgenome if supplied:
     if (!('$user_rlib' == 'file_token.txt')) {

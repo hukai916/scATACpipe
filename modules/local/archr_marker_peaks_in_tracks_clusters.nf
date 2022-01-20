@@ -16,6 +16,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     path marker_peaks
     val gene_symbol
     val cluster_name
+    val archr_thread
 
     output:
     path "Plots/Plot-Tracks-With-Features.pdf", emit: archr_tracks_with_features
@@ -27,6 +28,9 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     markersPeaks <- readRDS("$marker_peaks")
     proj <- readRDS("$archr_project")
 

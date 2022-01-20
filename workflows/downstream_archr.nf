@@ -228,7 +228,7 @@ workflow DOWNSTREAM_ARCHR {
             } else {
               DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
               // PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-              PREP_GTF (prep_genome_fasta, prep_genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+              PREP_GTF(prep_genome_fasta, prep_genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
               archr_input_type = "genome_gtf"
               // archr_input_list = [PREP_GENOME.out.genome_name.collect(), PREP_GENOME.out.genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
               archr_input_list = [prep_genome_name.collect(), prep_genome_fasta.collect(), PREP_GTF.out.gtf.collect()]
@@ -263,24 +263,24 @@ workflow DOWNSTREAM_ARCHR {
 
       ARCHR_CREATE_ARROWFILES(fragments, archr_input_list[0], params.archr_thread)
       // Module: add DoubletScores
-      ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES.out.sample_name, ARCHR_CREATE_ARROWFILES.out.arrowfile)
+      ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES.out.sample_name, ARCHR_CREATE_ARROWFILES.out.arrowfile, params.archr_thread)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
       ARCHR_ARCHRPROJECT(ch_arrowfile_list, archr_input_list[0], params.archr_thread)
-      ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project)
+      ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT.out.archr_project, params.archr_thread)
     } else if (archr_input_type == "bsgenome_txdb_org") {
       // Note that for this option, all supplied package names must be available from Bioconductor per .requirePackage() requirement.
       // Run ArchR with ANNOTATION option
       log.info "INFO: ArchR will build gene/genomeAnnotation files with custom TxDb, Org, and BSgenome files supplied by user."
 
-      ARCHR_GET_ANNOTATION_BIOC(params.archr_txdb, params.archr_org, params.archr_bsgenome)
+      ARCHR_GET_ANNOTATION_BIOC(params.archr_txdb, params.archr_org, params.archr_bsgenome, params.archr_thread)
       ARCHR_CREATE_ARROWFILES_ANNOTATION(fragments, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation.collect(), ARCHR_GET_ANNOTATION_BIOC.out.user_rlib.collect(), params.archr_thread)
       // Module: add DoubletScores
-      ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile)
+      ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile, params.archr_thread)
       // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
-      ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.user_rlib)
-      ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project)
+      ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.user_rlib, params.archr_thread)
+      ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project, params.archr_thread)
     } else if (archr_input_type == "genome_gtf") {
       if (params.species_latin_name) {
         // Build BSgenome:
@@ -310,12 +310,12 @@ workflow DOWNSTREAM_ARCHR {
         PREP_FRAGMENT(fragments, archr_input_list[2])
         ARCHR_CREATE_ARROWFILES_ANNOTATION(PREP_FRAGMENT.out.fragments, BUILD_GENE_ANNOTATION.out.gene_annotation.collect(), BUILD_GENOME_ANNOTATION.out.genome_annotation.collect(), BUILD_BSGENOME.out.user_rlib.collect(), params.archr_thread)
         // Module: add DoubletScores
-        ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile)
+        ARCHR_ADD_DOUBLETSCORES(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.sample_name, ARCHR_CREATE_ARROWFILES_ANNOTATION.out.arrowfile, params.archr_thread)
         // ch_samplename_list = ARCHR_ADD_DOUBLETSCORES.out.sample_name.toSortedList()
         ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
 
-        ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, BUILD_GENE_ANNOTATION.out.gene_annotation, BUILD_GENOME_ANNOTATION.out.genome_annotation, BUILD_BSGENOME.out.user_rlib)
-        ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project)
+        ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, BUILD_GENE_ANNOTATION.out.gene_annotation, BUILD_GENOME_ANNOTATION.out.genome_annotation, BUILD_BSGENOME.out.user_rlib, params.archr_thread)
+        ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project, params.archr_thread)
       } else {
         exit 1, "Pls also supply --species_latin_name."
       }
@@ -337,43 +337,43 @@ workflow DOWNSTREAM_ARCHR {
     // Module: filter doublets depending on user option.
     if (!params.archr_filter_doublets_ratio) {
       // Module: dimension reduction
-      ARCHR_DIMENSION_REDUCTION(ARCHR_ARCHRPROJECT_QC.out.archr_project)
+      ARCHR_DIMENSION_REDUCTION(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_thread)
     } else if (params.doublet_removal_algorithm == "archr") { // for test only
       // Module: filtering doublets
-      ARCHR_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_filter_doublets_ratio)
+      ARCHR_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_filter_doublets_ratio, params.archr_thread)
       // Module: dimension reduction
-      ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project)
+      ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project, params.archr_thread)
     } else if (params.doublet_removal_algorithm == "amulet") {
       // Module: filtering doublets
-      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
+      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter, params.archr_thread)
       // Module: dimension reduction
-      ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project)
+      ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project, params.archr_thread)
     }
 
     // Module: batch correction with harmony
-    ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project)
+    ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread)
 
     // Module: clustering with Seurat's FindClusters() function
-    ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project)
+    ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, params.archr_thread)
 
     // Module: single-cell embeddings
-    ARCHR_EMBEDDING(ARCHR_CLUSTERING.out.archr_project)
+    ARCHR_EMBEDDING(ARCHR_CLUSTERING.out.archr_project, params.archr_thread)
 
     // Module: find marker gene
-    ARCHR_MARKER_GENE(ARCHR_EMBEDDING.out.archr_project)
+    ARCHR_MARKER_GENE(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
 
     // Module: integrate with matching scRNAseq data
     if (!(params.archr_scrnaseq)) {
       params.groupby_cluster = "Clusters"
       log.info "NOTICE: --archr_scrnaseq: not supplied, skip integrative analysis with scRNA-seq!"
       // ARCHR_PSEUDO_BULK(ARCHR_MARKER_GENE.out.archr_project, params.groupby_cluster)
-      ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project)
+      ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, params.archr_thread)
       // For each Arrorproject, you can have only one set of peak set unless you copy arrow files and create another arrowproject. That is why we implemented ARCHR_PSEUDO_BULK_CLUSTERS and ARCHR_PSEUDO_BULK_CLUSTERS2
     } else {
         params.groupby_cluster = "Clusters2"
         log.info "NOTICE: --archr_scrnaseq: supplied, will perform integrative analysis with scRNA-seq!"
-        ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project)
-        ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_MARKER_GENE.out.archr_project, params.archr_scrnaseq)
+        ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, params.archr_thread)
+        ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_MARKER_GENE.out.archr_project, params.archr_scrnaseq, params.archr_thread)
         // log.info "INFO: use the following cluster names to define --archr_scrnaseq_grouplist."
         ARCHR_SCRNASEQ_UNCONSTRAINED.out.cell_type_scrna
           .splitText()
@@ -382,32 +382,32 @@ workflow DOWNSTREAM_ARCHR {
         if ((!params.archr_scrnaseq_grouplist)) {
           log.info "NOTICE: --archr_scrnaseq_grouplist: not supplied, skip constrained integration!"
           // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.groupby_cluster)
-          ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project)
+          ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_thread)
         } else {
             log.info "NOTICE: --archr_scrnaseq_grouplist: supplied, will perform constrained integration!"
-            ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, params.archr_scrnaseq_grouplist)
+            ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, params.archr_scrnaseq_grouplist, params.archr_thread)
             // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, params.groupby_cluster)
-            ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project)
+            ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, params.archr_thread)
         }
     }
 
     // Module: call peaks
     if (params.groupby_cluster == "Clusters") {
-      ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project)
+      ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, params.archr_thread)
     } else if (params.groupby_cluster == "Clusters2") {
-      ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project)
-      ARCHR_CALL_PEAKS_CLUSTERS2(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project)
+      ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, params.archr_thread)
+      ARCHR_CALL_PEAKS_CLUSTERS2(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project, params.archr_thread)
     }
 
     // Module: identify marker peaks and perform MA/Volcano plots
     if (params.groupby_cluster == "Clusters") {
-      ARCHR_GET_MARKER_PEAKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project)
+      ARCHR_GET_MARKER_PEAKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
       ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.group_names
         .splitText()
         .subscribe onNext: { String str -> println "Group name from scATAC-seq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --pairwise_test_clusters_1/2 and --marker_peak_clusters***\n"}
     } else if (params.groupby_cluster == "Clusters2") {
-      ARCHR_GET_MARKER_PEAKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project)
-      ARCHR_GET_MARKER_PEAKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project)
+      ARCHR_GET_MARKER_PEAKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
+      ARCHR_GET_MARKER_PEAKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.archr_thread)
       ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.group_names
         .splitText()
         .subscribe onNext: { String str -> println "Group name from scATAC-seq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --pairwise_test_clusters_1/2 ***\n"}
@@ -423,7 +423,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
         // Perform plotting
         log.info "NOTICE: --marker_peak_geneSymbol and --marker_peak_clusters: supplied, will perform marker peak plotting on browser tracks!"
-        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters)
+        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters, params.archr_thread)
       }
     } else if (params.groupby_cluster == "Clusters2") {
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters)) {
@@ -431,7 +431,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
           // Perform plotting
           log.info "NOTICE: --marker_peak_geneSymbol and --marker_peak_clusters: supplied, will perform marker peak plotting on browser tracks!"
-          ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters)
+          ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters, params.archr_thread)
       }
 
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters2)) {
@@ -439,7 +439,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
         // Perform plotting
         log.info "NOTICE: --marker_peak_geneSymbol and --marker_peak_clusters2: supplied, will perform marker peak plotting on browser tracks!"
-        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters2)
+        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters2, params.archr_thread)
       }
     }
 
@@ -450,7 +450,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
         // Perform plotting
         log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
-        ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2)
+        ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
       }
     } else if (params.groupby_cluster == "Clusters2") {
         if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
@@ -458,7 +458,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
           // Perform plotting
           log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
-          ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2)
+          ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
       }
 
       if (!(params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
@@ -466,7 +466,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
         // Perform plotting
         log.info "NOTICE: --pairwise_test_clusters2_1/2: supplied, perform pairwise plotting!"
-        ARCHR_PAIRWISE_TEST_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2)
+        ARCHR_PAIRWISE_TEST_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.archr_thread)
       }
     }
 
@@ -477,7 +477,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
           // Perform plotting
           log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks)
+          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
       }
     } else if (params.groupby_cluster == "Clusters2") {
         if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
@@ -485,7 +485,7 @@ workflow DOWNSTREAM_ARCHR {
         } else {
           // Perform plotting
           log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks)
+          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
         }
 
       if (!(params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
@@ -493,48 +493,48 @@ workflow DOWNSTREAM_ARCHR {
       } else {
           // Perform plotting
           log.info "NOTICE: --pairwise_test_clusters2_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.archr_marker_peaks, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.custom_peaks)
+          ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.archr_marker_peaks, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.custom_peaks, params.archr_thread)
       }
     }
 
     if ((params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2) || (params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
       // Module: motif deviation,require motif enrichment result
       if (params.groupby_cluster == "Clusters") {
-        ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, params.custom_peaks)
+        ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, params.custom_peaks, params.archr_thread)
       } else if (params.groupby_cluster == "Clusters2") {
-          ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, params.custom_peaks)
-          ARCHR_MOTIF_DEVIATIONS_CLUSTERS2(ARCHR_MOTIF_ENRICHMENT_CLUSTERS2.out.archr_project, params.custom_peaks)
+          ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, params.custom_peaks, params.archr_thread)
+          ARCHR_MOTIF_DEVIATIONS_CLUSTERS2(ARCHR_MOTIF_ENRICHMENT_CLUSTERS2.out.archr_project, params.custom_peaks, params.archr_thread)
       }
 
       // Module: footprinting
       if (params.groupby_cluster == "Clusters") {
-        ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_dir)
+        ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_dir, params.archr_thread)
       } else if (params.groupby_cluster == "Clusters2") {
-          ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_dir)
-          ARCHR_FOOTPRINTING_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_dir)
+          ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_dir, params.archr_thread)
+          ARCHR_FOOTPRINTING_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_dir, params.archr_thread)
       }
 
       // Module: integrative analysis
       // Below are for integrative analysis: co-accessibility; peak2genelinkage; positive TF regulators.
       // Module: co-accessibility (for both clusters and clusters2)
       if (params.groupby_cluster == "Clusters") {
-        ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project)
+        ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
       } else if (params.groupby_cluster == "Clusters2") {
-          ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project)
-          ARCHR_COACCESSIBILITY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project)
+          ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+          ARCHR_COACCESSIBILITY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
       }
 
       // Module: peak2genelinkage: for clusters2 only
       if (params.groupby_cluster == "Clusters2") {
-        ARCHR_PEAK2GENELINKAGE_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project)
+        ARCHR_PEAK2GENELINKAGE_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
       }
 
       // Module: identify "positive" TF-regulators
       if (params.groupby_cluster == "Clusters") {
-        ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project)
+        ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
       } else if (params.groupby_cluster == "Clusters2") {
-          ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project)
-          ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project)
+          ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+          ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
       }
 
       // Module: trajectory analysis: for Clusters2 only
@@ -544,7 +544,7 @@ workflow DOWNSTREAM_ARCHR {
           log.info "Parameter --trajectory_groups not supplied, checking trajectory analysis!"
         } else {
             log.info "Parameter --trajectory_groups supplied, will perform trajectory analysis!"
-            ARCHR_TRAJECTORY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.trajectory_groups)
+            ARCHR_TRAJECTORY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.trajectory_groups, params.archr_thread)
         }
       } else {
         log.info "Parameter --scrnaseq not supplied, skip trajectory analysis!"
@@ -554,15 +554,15 @@ workflow DOWNSTREAM_ARCHR {
     // Module: prepare clustering tsv file for spliting using sinto fragment
     if (params.groupby_cluster == "Clusters") {
       if (archr_input_type == "genome_gtf") {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters", params.archr_thread)
       } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, "Clusters")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, "Clusters", params.archr_thread)
       }
     } else if (params.groupby_cluster == "Clusters2") {
       if (archr_input_type == "genome_gtf") {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters2")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters2", params.archr_thread)
       } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragments, "Clusters2")
+        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragments, "Clusters2", params.archr_thread)
       }
     }
 

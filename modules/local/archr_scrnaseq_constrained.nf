@@ -15,6 +15,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     path archr_project
     path obj_scrnaseq
     val group_list
+    val archr_thread
 
     output:
     path "proj_scrnaseq_constrained.rds", emit: archr_project
@@ -29,6 +30,8 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     echo '
     library(ArchR)
     library(collections)
+    
+    addArchRThreads(threads = $archr_thread)
 
     seRNA <- readRDS("$obj_scrnaseq")
     proj <- readRDS("$archr_project", refhook = NULL)

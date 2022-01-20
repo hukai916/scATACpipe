@@ -14,16 +14,20 @@ process ARCHR_FILTER_DOUBLETS {
     input:
     path archr_project
     val archr_filter_ratio
+    val archr_thread
 
     output:
     path "proj_doublet_filtered.rds", emit: archr_project
     path "summary_filter_doublets.txt", emit: summary
 
     script:
-    
+
     """
     echo '
     library(ArchR)
+    
+    addArchRThreads(threads = $archr_thread)
+
     proj <- readRDS("$archr_project", refhook = NULL)
 
     proj2 <- filterDoublets(proj, filterRatio = $archr_filter_ratio)

@@ -15,6 +15,7 @@ process ARCHR_GET_CLUSTERING_TSV {
     path archr_project
     tuple val(sample_name), path(fragment)
     val cluster
+    val archr_thread
 
     output:
     tuple val(sample_name), path(fragment), path("*.tsv"), emit: res
@@ -26,6 +27,8 @@ process ARCHR_GET_CLUSTERING_TSV {
     echo '
     library(ArchR)
     library(stringr)
+
+    addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
