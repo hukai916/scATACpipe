@@ -38,7 +38,7 @@ for line in open(gff3):
             if not unique_id in gene_ranges:
                 print(unique_id)
                 for key in gene_ranges:
-                    print(key, key == unique_id)
+                    print(key, key == unique_id, "\"" + key +  "\", " + unique_id + "\"" )
                 # print(gene_ranges)
                 exit()
             assert unique_id in gene_ranges, "Undetected gene_id from GTF!"
