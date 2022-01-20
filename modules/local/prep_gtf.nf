@@ -54,6 +54,6 @@ process PREP_GTF {
     gzip final.gtf
 
     # clean-up
-    rm annotation.gtf annotation.v2.gtf chrPrefixed.sorted.gtf final.gff3 sorted.gtf subset.chrPrefixed.sorted.gff3 subset.chrPrefixed.sorted.gtf gene_ranges.tsv
+    rm annotation.gtf annotation.v2.gtf chrPrefixed.gtf subset.chrPrefixed.gtf sorted.subset.chrPrefixed.gff3 sorted.subset.chrPrefixed.gtf final.gff3 gene_ranges.tsv
     """
 }
