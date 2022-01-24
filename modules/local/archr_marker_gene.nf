@@ -80,9 +80,10 @@ process ARCHR_MARKER_GENE {
 
     markerGenes2labeled <- sort(markerGenes_clean[markerGenes_clean %in% all_symbol_cleaned])
     markerGenes_raw <- sort(all_symbol[all_symbol_cleaned %in% markerGenes_clean])
-    all_symbol_cleaned_unique <- unique(all_symbol_cleaned)
-    all_symbol_unique <- match(all_symbol_cleaned_unique, all_symbol)
 
+    all_symbol_cleaned_unique <- unique(all_symbol_cleaned)
+    all_symbol_unique <- all_symbol[match(all_symbol_cleaned_unique, all_symbol_cleaned)]
+    markerGenes_raw <- sort(all_symbol_unique[all_symbol_cleaned_unique %in% markerGenes_clean])
 
     if (length(markerGenes2labeled) == 0) {
       message(markerGenes2labeled)
