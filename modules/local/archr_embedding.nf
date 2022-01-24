@@ -28,9 +28,9 @@ process ARCHR_EMBEDDING {
 
     addArchRThreads(threads = $archr_thread)
 
-    proj <- readRDS("$archr_project", refhook = NULL)
+    proj2 <- readRDS("$archr_project", refhook = NULL)
 
-    embedMethods <- c("UMAP", "TSNE")
+    embedMethods <- c("UMAP", "TSNE") # TSNA may not work for some cases, use tryCatch below.
     if ("Harmony" %in% names(proj@reducedDims)) {
       reducedDims  <- c("IterativeLSI", "Harmony")
     } else {
@@ -39,50 +39,80 @@ process ARCHR_EMBEDDING {
 
     for (embedMethod in embedMethods) {
       for (reducedDim in reducedDims) {
-        if (embedMethod == "UMAP") {
-          proj2 <- addUMAP(
-            ArchRProj = proj,
-            reducedDims = reducedDim,
-            name = paste0(embedMethod, "_", reducedDim),
-            $options.args
-          )
-        } else if (embedMethod == "TSNE") {
-          proj2 <- addTSNE(
-            ArchRProj = proj,
-            reducedDims = reducedDim,
-            name = paste0(embedMethod, "_", reducedDim),
-            $options.args
-          )
-        }
+        tryCatch({
+          if (embedMethod == "UMAP") {
+            proj2 <- addUMAP(
+              ArchRProj = proj2,
+              reducedDims = reducedDim,
+              name = paste0(embedMethod, "_", reducedDim),
+              $options.args
+            )
+          } else if (embedMethod == "TSNE") {
+            proj2 <- addTSNE(
+              ArchRProj = proj2,
+              reducedDims = reducedDim,
+              name = paste0(embedMethod, "_", reducedDim),
+              $options.args
+            )
+          }
+        },
+          error=function(e) {
+            message(paste0(embedMethod, "_", reducedDim, ": failed to embed!"))
+          }
+        )
       }
     }
 
     saveRDS(proj2, file = "proj_embedding.rds")
 
     # Plotting UMAP_IterativeLSI
-    p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_IterativeLSI")
-    p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "UMAP_IterativeLSI")
-    p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_IterativeLSI", embedding = "UMAP_IterativeLSI")
-    plotPDF(p1, p2, p3, name = "Plot-UMAP-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    tryCatch({
+      p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_IterativeLSI")
+      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "UMAP_IterativeLSI")
+      p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_IterativeLSI", embedding = "UMAP_IterativeLSI")
+      plotPDF(p1, p2, p3, name = "Plot-UMAP-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    },
+      error=function(e) {
+        message("Plotting failed: UMAP_IterativeLSI!")
+      }
+    )
 
     # Plotting TSNE_IterativeLSI
-    p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_IterativeLSI")
-    p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "TSNE_IterativeLSI")
-    p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_IterativeLSI", embedding = "TSNE_IterativeLSI")
-    plotPDF(p1, p2, p3, name = "Plot-TNSE-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    tryCatch({
+      p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_IterativeLSI")
+      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "TSNE_IterativeLSI")
+      p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_IterativeLSI", embedding = "TSNE_IterativeLSI")
+      plotPDF(p1, p2, p3, name = "Plot-TNSE-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    },
+      error=function(e) {
+        message("Plotting failed: TSNE_IterativeLSI!")
+      }
+    )
 
     if ("Harmony" %in% names(proj@reducedDims)) {
       # Ploting UMAP_Harmony
-      p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_Harmony")
-      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "UMAP_Harmony")
-      p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_Harmony", embedding = "UMAP_Harmony")
-      plotPDF(p1, p2, p3, name = "Plot-UMAP-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-
+      tryCatch({
+        p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_Harmony")
+        p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "UMAP_Harmony")
+        p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_Harmony", embedding = "UMAP_Harmony")
+        plotPDF(p1, p2, p3, name = "Plot-UMAP-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      },
+        error=function(e) {
+          message("Plotting failed: UMAP_Harmony!")
+        }
+      )
+      
       # Plotting TSNE_Harmony
-      p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_Harmony")
-      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "TSNE_Harmony")
-      p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_Harmony", embedding = "TSNE_Harmony")
-      plotPDF(p1, p2, p3, name = "Plot-TSNE-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      tryCatch({
+        p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_Harmony")
+        p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "TSNE_Harmony")
+        p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_Harmony", embedding = "TSNE_Harmony")
+        plotPDF(p1, p2, p3, name = "Plot-TSNE-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      },
+        error=function(e) {
+          message("Plotting failed: TSNE_Harmony!")
+        }
+      )
     }
 
     ' > run.R
