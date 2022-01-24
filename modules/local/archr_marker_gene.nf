@@ -78,7 +78,7 @@ process ARCHR_MARKER_GENE {
       markerGenes <- str_remove(markerGenes, paste0("_", all_id[i])) # not very efficient, but works
     }
 
-    markerGenes2labeled <- sort(all_symbol_cleaned[all_symbol_cleaned %in% markerGenes])
+    markerGenes2labeled <- sort(markerGenes[markerGenes %in% all_symbol_cleaned])
     if (length(markerGenes2labeled) == 0) {
       message(markerGenes2labeled)
       stop("Invalid marker gene names!")
