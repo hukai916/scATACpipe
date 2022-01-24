@@ -256,7 +256,7 @@ workflow DOWNSTREAM_ARCHR {
       }
     }
 
-    log.info "archr_input_type: " + archr_input_type
+    // log.info "archr_input_type: " + archr_input_type
     // Depending on ArchR input type, prepare ArchR annotation files accordingly:
     if (archr_input_type == "naive") {
       // Run ArchR normally:
@@ -379,9 +379,9 @@ workflow DOWNSTREAM_ARCHR {
     if (params.archr_batch_correction_harmony) {
       ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread)
       // Module: clustering with seurat and scran, auto check if Harmony performed
-      ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, params.archr_thread, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony)
+      ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony, params.archr_thread)
     } else {
-      ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony)
+      ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony, params.archr_thread)
     }
 
     // Module: single-cell embeddings
@@ -392,13 +392,12 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: integrate with matching scRNAseq data
     if (!(params.archr_scrnaseq)) {
-      params.groupby_cluster = "Clusters"
-      log.info "NOTICE: --archr_scrnaseq: not supplied, skip integrative analysis with scRNA-seq!"
-      // ARCHR_PSEUDO_BULK(ARCHR_MARKER_GENE.out.archr_project, params.groupby_cluster)
+      params.groupby_cluster = "Clusters" // downstream uses clusters inferred from scATAC data only
+      log.info "INFO: --archr_scrnaseq: not supplied, skip integrative analysis with scRNA-seq!"
       ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, params.archr_thread)
       // For each Arrorproject, you can have only one set of peak set unless you copy arrow files and create another arrowproject. That is why we implemented ARCHR_PSEUDO_BULK_CLUSTERS and ARCHR_PSEUDO_BULK_CLUSTERS2
     } else {
-        params.groupby_cluster = "Clusters2"
+        params.groupby_cluster = "Clusters2" // downstream uses clusters inferred from both data
         log.info "NOTICE: --archr_scrnaseq: supplied, will perform integrative analysis with scRNA-seq!"
         ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, params.archr_thread)
         ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_MARKER_GENE.out.archr_project, params.archr_scrnaseq, params.archr_thread)
