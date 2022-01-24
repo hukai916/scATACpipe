@@ -14,7 +14,6 @@ process ARCHR_GET_CLUSTERING_TSV {
     input:
     path archr_project
     tuple val(sample_name), path(fragment)
-    val cluster
     val archr_thread
 
     output:
@@ -34,18 +33,14 @@ process ARCHR_GET_CLUSTERING_TSV {
 
     index <- which(proj\$Sample == "$sample_name")
     barcodes <- str_sub(proj\$cellNames[index], nchar("$sample_name") + 2, end = -1)
-    clustering <- proj\$Clusters[index]
 
-    df <- data.frame(barcodes = barcodes, clustering = clustering)
-    write.table(df, file=paste0("Clusters_", "$sample_name", ".tsv"), quote=FALSE, sep="\t", col.names = FALSE, row.names = FALSE)
+    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony",)
 
-    if ("$cluster" == "Clusters2") {
-      clustering <- proj\$Clusters2[index]
-
+    for (cluster in clusters) {
+      eval(str2lang(paste0("clustering <- proj$", cluster, "[index]")))
       df <- data.frame(barcodes = barcodes, clustering = clustering)
-      write.table(df, file=paste0("Clusters2_", "$sample_name", ".tsv"), quote=FALSE, sep="\t", col.names = FALSE, row.names = FALSE)
+      write.table(df, file=paste0(cluster, "_", "$sample_name", ".tsv"), quote=FALSE, sep="\t", col.names = FALSE, row.names = FALSE)
     }
-
     ' > run.R
 
     Rscript run.R

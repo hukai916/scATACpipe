@@ -44,14 +44,16 @@ process ARCHR_EMBEDDING {
             proj2 <- addUMAP(
               ArchRProj = proj2,
               reducedDims = reducedDim,
-              name = paste0(embedMethod, "_", reducedDim), force = TRUE,
+              name = paste0(embedMethod, "_", reducedDim),
+              force = TRUE,
               $options.args
             )
           } else if (embedMethod == "TSNE") {
             proj2 <- addTSNE(
               ArchRProj = proj2,
               reducedDims = reducedDim,
-              name = paste0(embedMethod, "_", reducedDim), force = TRUE,
+              name = paste0(embedMethod, "_", reducedDim),
+              force = TRUE,
               $options.args
             )
           }

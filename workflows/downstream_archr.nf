@@ -579,19 +579,25 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: prepare clustering tsv file for spliting using sinto fragment
-    if (params.groupby_cluster == "Clusters") {
-      if (archr_input_type == "genome_gtf") {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters", params.archr_thread)
-      } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, "Clusters", params.archr_thread)
-      }
-    } else if (params.groupby_cluster == "Clusters2") {
-      if (archr_input_type == "genome_gtf") {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters2", params.archr_thread)
-      } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragments, "Clusters2", params.archr_thread)
-      }
+    if (archr_input_type == "genome_gtf") {
+      ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, params.archr_thread)
+    } else {
+      ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, params.archr_thread)
     }
+
+    // if (params.groupby_cluster == "Clusters") {
+    //   if (archr_input_type == "genome_gtf") {
+    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters", params.archr_thread)
+    //   } else {
+    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, "Clusters", params.archr_thread)
+    //   }
+    // } else if (params.groupby_cluster == "Clusters2") {
+    //   if (archr_input_type == "genome_gtf") {
+    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters2", params.archr_thread)
+    //   } else {
+    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragments, "Clusters2", params.archr_thread)
+    //   }
+    // }
 
     // Collect all output results for MultiQC report:
     res_files = Channel.empty()
