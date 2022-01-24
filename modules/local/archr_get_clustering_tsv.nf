@@ -43,7 +43,7 @@ process ARCHR_GET_CLUSTERING_TSV {
         write.table(df, file=paste0(cluster, "_", "$sample_name", ".tsv"), quote=FALSE, sep="\t", col.names = FALSE, row.names = FALSE)
       },
         error=function(e) {
-          message(paste0(embedMethod, "_", reducedDim, ": failed to embed!"))
+          message(paste0("Skipping generating tsv for ", cluster, "!"))
         }
       )
     }
