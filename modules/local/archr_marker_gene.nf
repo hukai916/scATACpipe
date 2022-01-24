@@ -18,10 +18,6 @@ process ARCHR_MARKER_GENE {
     output:
     path "proj_marker_gene.rds", emit: archr_project
     path "marker_list.txt", emit: marker_list
-    path "Plots/GeneScores-Marker-Heatmap.pdf", emit: pdf_genescores_marker_heatmap
-    path "Plots/Plot-UMAP-Marker-Genes-WO-Imputation.pdf", emit: pdf_umap_markder_genes_wo_imputation
-    path "Plots/Plot-UMAP-Marker-Genes-W-Imputation.pdf", emit: pdf_umap_markder_genes_w_imputation
-    path "Plots/Plot-Tracks-Marker-Genes.pdf", emit: pdf_tracks_marker_genes
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_marker_gene", emit: report
 
@@ -92,34 +88,49 @@ process ARCHR_MARKER_GENE {
     )
     plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
 
-    # Plot marker genes on embedding:
-    p <- plotEmbedding(
-      ArchRProj = proj,
-      name = markerGenes,
-      imputeWeights = NULL,
-      $options.args2
-    )
-    plotPDF(plotList = p, name = "Plot-UMAP-Marker-Genes-WO-Imputation.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    # Plot marker genes on embeddings without imputation:
+    for (embedding in names(proj@embeddings)) {
+      p <- plotEmbedding(
+        ArchRProj = proj,
+        name = markerGenes,
+        imputeWeights = NULL,
+        embedding = embedding,
+        $options.args2
+      )
+      plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-WO-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    }
 
-    # Add Marker Genes Imputation and replot:
+    # Plot marker genes on embeddings with imputation:
     proj2 <- addImputeWeights(proj)
     saveRDS(proj2, file = "proj_marker_gene.rds")
-
-    p <- plotEmbedding(
-      ArchRProj = proj2,
-      name = markerGenes,
-      imputeWeights = getImputeWeights(proj2),
-      $options.args2
-    )
-    plotPDF(plotList = p, name = "Plot-UMAP-Marker-Genes-W-Imputation.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    for (embedding in names(proj@embeddings)) {
+      p <- plotEmbedding(
+        ArchRProj = proj2,
+        name = markerGenes,
+        imputeWeights = getImputeWeights(proj2),
+        embedding = embedding,
+        $options.args2
+      )
+      plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-W-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    }
 
     # Plot: track plotting with ArchRBrowser
-    p <- plotBrowserTrack(
-      ArchRProj = proj2,
-      geneSymbol = markerGenes,
-      $options.args3
-    )
-    plotPDF(plotList = p, name = "Plot-Tracks-Marker-Genes.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
+    for (cluster in clusters) {
+      tryCatch({
+        p <- plotBrowserTrack(
+          ArchRProj = proj2,
+          geneSymbol = markerGenes,
+          groupBy = cluster,
+          $options.args3
+        )
+        plotPDF(plotList = p, name = "Plot-Tracks-Marker-Genes.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      },
+        error=function(e) {
+          message(paste0("Skipping track plotting for ", cluster, "!"))
+        }
+      )
+    }
 
     ' > run.R
 
