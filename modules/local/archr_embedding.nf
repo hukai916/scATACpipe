@@ -44,14 +44,14 @@ process ARCHR_EMBEDDING {
             proj2 <- addUMAP(
               ArchRProj = proj2,
               reducedDims = reducedDim,
-              name = paste0(embedMethod, "_", reducedDim),
+              name = paste0(embedMethod, "_", reducedDim), force = TRUE
               $options.args
             )
           } else if (embedMethod == "TSNE") {
             proj2 <- addTSNE(
               ArchRProj = proj2,
               reducedDims = reducedDim,
-              name = paste0(embedMethod, "_", reducedDim),
+              name = paste0(embedMethod, "_", reducedDim), force = TRUE
               $options.args
             )
           }
@@ -101,7 +101,7 @@ process ARCHR_EMBEDDING {
           message("Plotting failed: UMAP_Harmony!")
         }
       )
-      
+
       # Plotting TSNE_Harmony
       tryCatch({
         p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_Harmony")
