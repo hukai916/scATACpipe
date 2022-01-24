@@ -31,7 +31,7 @@ process ARCHR_EMBEDDING {
     proj2 <- readRDS("$archr_project", refhook = NULL)
 
     embedMethods <- c("UMAP", "TSNE") # TSNA may not work for some cases, use tryCatch below.
-    if ("Harmony" %in% names(proj@reducedDims)) {
+    if ("Harmony" %in% names(proj2@reducedDims)) {
       reducedDims  <- c("IterativeLSI", "Harmony")
     } else {
       reducedDims  <- c("IterativeLSI")
@@ -44,14 +44,14 @@ process ARCHR_EMBEDDING {
             proj2 <- addUMAP(
               ArchRProj = proj2,
               reducedDims = reducedDim,
-              name = paste0(embedMethod, "_", reducedDim), force = TRUE
+              name = paste0(embedMethod, "_", reducedDim), force = TRUE,
               $options.args
             )
           } else if (embedMethod == "TSNE") {
             proj2 <- addTSNE(
               ArchRProj = proj2,
               reducedDims = reducedDim,
-              name = paste0(embedMethod, "_", reducedDim), force = TRUE
+              name = paste0(embedMethod, "_", reducedDim), force = TRUE,
               $options.args
             )
           }
@@ -89,7 +89,7 @@ process ARCHR_EMBEDDING {
       }
     )
 
-    if ("Harmony" %in% names(proj@reducedDims)) {
+    if ("Harmony" %in% names(proj2@reducedDims)) {
       # Ploting UMAP_Harmony
       tryCatch({
         p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_Harmony")
