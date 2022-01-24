@@ -57,7 +57,7 @@ process ARCHR_CLUSTERING {
     if ("Harmony" %in% names(proj@reducedDims)) {
       # Clustering with Seurat using Harmony
       proj2 <- addClusters(
-        input = proj,
+        input = proj2,
         reducedDims = "Harmony",
         method = "Seurat",
         name = "Clusters_Seurat_Harmony",
@@ -119,6 +119,11 @@ process ARCHR_CLUSTERING {
         border_color = "black",
         cellheight = cellheight
       )
+
+      height <- nrow(cM) * cellheight * 1/72 + 4
+      height <- min(11, height)
+      # 1/72: inches per point, 11.5 inches per page; 8.5 width per page.
+
       plotPDF(p1, name = paste0(cluster, "_heatmap.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 7, height = height)
     }
     ' > run.R
