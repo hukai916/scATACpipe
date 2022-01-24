@@ -34,12 +34,18 @@ process ARCHR_GET_CLUSTERING_TSV {
     index <- which(proj\$Sample == "$sample_name")
     barcodes <- str_sub(proj\$cellNames[index], nchar("$sample_name") + 2, end = -1)
 
-    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony",)
+    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
 
     for (cluster in clusters) {
-      eval(str2lang(paste0("clustering <- proj\$", cluster, "[index]")))
-      df <- data.frame(barcodes = barcodes, clustering = clustering)
-      write.table(df, file=paste0(cluster, "_", "$sample_name", ".tsv"), quote=FALSE, sep="\t", col.names = FALSE, row.names = FALSE)
+      tryCatch({
+        eval(str2lang(paste0("clustering <- proj\$", cluster, "[index]")))
+        df <- data.frame(barcodes = barcodes, clustering = clustering)
+        write.table(df, file=paste0(cluster, "_", "$sample_name", ".tsv"), quote=FALSE, sep="\t", col.names = FALSE, row.names = FALSE)
+      },
+        error=function(e) {
+          message(paste0(embedMethod, "_", reducedDim, ": failed to embed!"))
+        }
+      )
     }
     ' > run.R
 
