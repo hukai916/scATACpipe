@@ -30,6 +30,7 @@ process ARCHR_MARKER_GENE {
     """
     echo '
     library(ArchR)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 
