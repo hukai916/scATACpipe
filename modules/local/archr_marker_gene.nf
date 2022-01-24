@@ -65,16 +65,24 @@ process ARCHR_MARKER_GENE {
         markerGenes <- c(markerGenes, cluster\$name)
       }
     } else {
-      markerGenes <- c($options.marker_genes)
+      markerGenes <- c("$options.marker_genes")
     }
+    markerGenes <- unique(markerGenes)
+
     ## below is to make sure genes to label are valid gene symbols in the dataset:
     all_id <- getGenes(proj)\$gene_id
     all_symbol <- getGenes(proj)\$symbol
     all_symbol_cleaned <- character(length(all_id))
     for (i in 1:length(all_id)) {
     	all_symbol_cleaned[i] <- str_remove(all_symbol[i], paste0("_", all_id[i]))
+      markerGenes <- str_remove(markerGenes, paste0("_", all_id[i])) # not very efficient, but works
     }
-    markerGenes2labeled <- sort(all_symbol_cleaned %in% markerGenes)
+
+    markerGenes2labeled <- sort(all_symbol_cleaned[all_symbol_cleaned %in% markerGenes])
+    if (length(markerGenes2labeled) == 0) {
+      message(markerGenes2labeled)
+      stop("Invalid marker gene names!")
+    }
 
     heatmapGS <- markerHeatmap(
       seMarker = markersGS,
