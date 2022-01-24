@@ -64,6 +64,7 @@ process ARCHR_MARKER_GENE {
       markerGenes <- c("$options.marker_genes")
     }
     markerGenes <- unique(markerGenes)
+    markerGenes_clean <- markerGenes
 
     ## below is to make sure genes to label are valid gene symbols in the dataset:
     all_id <- getGenes(proj)\$gene_id
@@ -71,10 +72,11 @@ process ARCHR_MARKER_GENE {
     all_symbol_cleaned <- character(length(all_id))
     for (i in 1:length(all_id)) {
     	all_symbol_cleaned[i] <- str_remove(all_symbol[i], paste0("_", all_id[i]))
-      markerGenes <- str_remove(markerGenes, paste0("_", all_id[i])) # not very efficient, but works
+      markerGenes_clean <- str_remove(markerGenes_clean, paste0("_", all_id[i])) # not very efficient, but works
     }
 
-    markerGenes2labeled <- sort(markerGenes[markerGenes %in% all_symbol_cleaned])
+    markerGenes2labeled <- sort(markerGenes_clean[markerGenes_clean %in% all_symbol_cleaned])
+    markerGenes_raw <- sort(all_symbol[all_symbol_cleaned %in% markerGenes_clean])
     if (length(markerGenes2labeled) == 0) {
       message(markerGenes2labeled)
       stop("Invalid marker gene names!")
@@ -92,7 +94,7 @@ process ARCHR_MARKER_GENE {
     for (embedding in names(proj@embeddings)) {
       p <- plotEmbedding(
         ArchRProj = proj,
-        name = markerGenes,
+        name = markerGenes_raw,
         imputeWeights = NULL,
         embedding = embedding,
         $options.args2
@@ -106,7 +108,7 @@ process ARCHR_MARKER_GENE {
     for (embedding in names(proj@embeddings)) {
       p <- plotEmbedding(
         ArchRProj = proj2,
-        name = markerGenes,
+        name = markerGenes_raw,
         imputeWeights = getImputeWeights(proj2),
         embedding = embedding,
         $options.args2
@@ -120,7 +122,7 @@ process ARCHR_MARKER_GENE {
       tryCatch({
         p <- plotBrowserTrack(
           ArchRProj = proj2,
-          geneSymbol = markerGenes,
+          geneSymbol = markerGenes_raw,
           groupBy = cluster,
           $options.args3
         )
