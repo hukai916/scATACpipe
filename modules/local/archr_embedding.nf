@@ -17,12 +17,6 @@ process ARCHR_EMBEDDING {
 
     output:
     path "proj_embedding.rds", emit: archr_project
-    path "Plots/Plot-UMAP-Sample-Clusters.pdf", emit: pdf_umap_sample_clusters
-    path "Plots/Plot-UMAP-Sample-ScranClusters.pdf", emit: pdf_umap_sample_scranclusters
-    path "Plots/Plot-tSNE-Sample-Clusters.pdf", emit: pdf_tsne_sample_clusters
-    path "Plots/Plot-tSNE-Sample-ScranClusters.pdf", emit: pdf_tsne_sample_scranclusters
-    path "Plots/Plot-UMAP2Harmony-Sample-Clusters.pdf", emit: pdf_umap2harmony_sample_clusters
-    path "Plots/Plot-TSNE2Harmony-Sample-Clusters.pdf", emit: pdf_tsne2harmony_sample_clusters
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_embedding", emit: report
 
@@ -31,72 +25,65 @@ process ARCHR_EMBEDDING {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    proj2 <- addUMAP(
-      ArchRProj = proj,
-      reducedDims = "IterativeLSI",
-      name = "UMAP",
-      $options.args
-    )
+    embedMethods <- c("UMAP", "TSNE")
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      reducedDims  <- c("IterativeLSI", "Harmony")
+    } else {
+      reducedDims  <- c("IterativeLSI")
+    }
 
-    proj2 <- addTSNE(
-      ArchRProj = proj2,
-      reducedDims = "IterativeLSI",
-      name = "TSNE",
-      $options.args2
-    )
-
-    proj2 <- addUMAP(
-      ArchRProj = proj2,
-      reducedDims = "Harmony",
-      name = "UMAPHarmony",
-      $options.args
-    )
-
-    proj2 <- addTSNE(
-      ArchRProj = proj2,
-      reducedDims = "Harmony",
-      name = "TSNEHarmony",
-      $options.args2
-    )
+    for (embedMethod in embedMethods) {
+      for (reducedDim in reducedDims) {
+        if (embedMethod == "UMAP") {
+          proj2 <- addUMAP(
+            ArchRProj = proj,
+            reducedDims = reducedDim,
+            name = paste0(embedMethod, "_", reducedDim),
+            $options.args
+          )
+        } else if (embedMethod == "TSNE") {
+          proj2 <- addTSNE(
+            ArchRProj = proj,
+            reducedDims = reducedDim,
+            name = paste0(embedMethod, "_", reducedDim),
+            $options.args
+          )
+        }
+      }
+    }
 
     saveRDS(proj2, file = "proj_embedding.rds")
 
-    # Plotting for UMAP with seurat clustering:
-    p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP")
-    p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "UMAP")
-    plotPDF(p1, p2, name = "Plot-UMAP-Sample-Clusters.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    # Plotting UMAP_IterativeLSI
+    p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_IterativeLSI")
+    p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "UMAP_IterativeLSI")
+    p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_IterativeLSI", embedding = "UMAP_IterativeLSI")
+    plotPDF(p1, p2, p3, name = "Plot-UMAP-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
-    # Plotting for UMAP with scran clustering:
-    p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP")
-    p4 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "ScranClusters", embedding = "UMAP")
-    plotPDF(p3, p4, name = "Plot-UMAP-Sample-ScranClusters.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    # Plotting TSNE_IterativeLSI
+    p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_IterativeLSI")
+    p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "TSNE_IterativeLSI")
+    p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_IterativeLSI", embedding = "TSNE_IterativeLSI")
+    plotPDF(p1, p2, p3, name = "Plot-TNSE-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      # Ploting UMAP_Harmony
+      p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_Harmony")
+      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "UMAP_Harmony")
+      p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_Harmony", embedding = "UMAP_Harmony")
+      plotPDF(p1, p2, p3, name = "Plot-UMAP-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
-    # Plotting for tSNE with seurat clustering:
-    p11 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE")
-    p22 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "TSNE")
-    plotPDF(p11, p22, name = "Plot-tSNE-Sample-Clusters.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-
-    # Plotting for tSNE with scran clustering:
-    p33 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE")
-    p44 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "ScranClusters", embedding = "TSNE")
-    plotPDF(p33, p44, name = "Plot-tSNE-Sample-ScranClusters.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-
-
-    # Plotting for batch correctd UMAP with seurat clustering:
-    p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "UMAPHarmony")
-    p4 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "UMAPHarmony")
-    plotPDF(p1,p2,p3,p4, name = "Plot-UMAP2Harmony-Sample-Clusters.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-
-    # Plotting for batch corrected tSNE with seurat clustering:
-    p33 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "TSNEHarmony")
-    p44 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "TSNEHarmony")
-    plotPDF(p11,p22,p33,p44, name = "Plot-TSNE2Harmony-Sample-Clusters.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      # Plotting TSNE_Harmony
+      p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_Harmony")
+      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "TSNE_Harmony")
+      p3 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Scran_Harmony", embedding = "TSNE_Harmony")
+      plotPDF(p1, p2, p3, name = "Plot-TSNE-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    }
 
     ' > run.R
 

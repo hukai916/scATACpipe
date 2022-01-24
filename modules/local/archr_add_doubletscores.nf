@@ -36,13 +36,14 @@ process ARCHR_ADD_DOUBLETSCORES {
 
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     addDoubletScores(
-    input  = "${sample_name}_doublet.arrow",
-    outDir = paste0("doublet_qc_", "$sample_name"),
-    $options.args)
+      input  = "${sample_name}_doublet.arrow",
+      outDir = paste0("doublet_qc_", "$sample_name"),
+      $options.args
+    )
     ' > run.R
 
     Rscript run.R

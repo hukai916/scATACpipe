@@ -44,8 +44,9 @@ include { ARCHR_CREATE_ARROWFILES_ANNOTATION } from '../modules/local/archr_crea
 include { ARCHR_ADD_DOUBLETSCORES } from '../modules/local/archr_add_doubletscores' addParams( options: modules['archr_add_doubletscores'] )
 include { ARCHR_ARCHRPROJECT } from '../modules/local/archr_archrproject' addParams( options: modules['archr_archrproject'] )
 include { ARCHR_ARCHRPROJECT_ANNOTATION } from '../modules/local/archr_archrproject_annotation' addParams( options: modules['archr_archrproject_annotation'] )
-include { ARCHR_FILTER_DOUBLETS } from '../modules/local/archr_filter_doublets' addParams( options: modules['archr_filter_doublets'] )
 include { ARCHR_ARCHRPROJECT_QC } from '../modules/local/archr_archrproject_qc' addParams( options: modules['archr_archrproject_qc'] )
+include { ARCHR_FILTER_CELLS } from '../modules/local/archr_filter_cells' addParams( options: modules['archr_filter_cells'] )
+include { ARCHR_FILTER_DOUBLETS } from '../modules/local/archr_filter_doublets' addParams( options: modules['archr_filter_doublets'] )
 include { ARCHR_DIMENSION_REDUCTION } from '../modules/local/archr_dimension_reduction' addParams( options: modules['archr_dimension_reduction'] )
 include { ARCHR_BATCH_CORRECTION } from '../modules/local/archr_batch_correction' addParams( options: modules['archr_batch_correction'] )
 include { ARCHR_CLUSTERING } from '../modules/local/archr_clustering' addParams( options: modules['archr_clustering'] )
@@ -334,27 +335,54 @@ workflow DOWNSTREAM_ARCHR {
       AMULET_MERGE_DOUBLETS(AMULET_DETECT_DOUBLETS.out.cells_filter.collect())
     }
 
+    // Module: filter low quality cells.
+    ARCHR_FILTER_CELLS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_thread)
+
     // Module: filter doublets depending on user option.
     if (!params.archr_filter_doublets_ratio) {
       // Module: dimension reduction
-      ARCHR_DIMENSION_REDUCTION(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_thread)
+      ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_CELLS.out.archr_project, params.archr_thread)
     } else if (params.doublet_removal_algorithm == "archr") { // for test only
       // Module: filtering doublets
-      ARCHR_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_filter_doublets_ratio, params.archr_thread)
+      ARCHR_FILTER_DOUBLETS(ARCHR_FILTER_CELLS.out.archr_project, params.archr_filter_doublets_ratio, params.archr_thread)
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project, params.archr_thread)
     } else if (params.doublet_removal_algorithm == "amulet") {
       // Module: filtering doublets
-      AMULET_FILTER_DOUBLETS(ARCHR_ARCHRPROJECT_QC.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
+      AMULET_FILTER_DOUBLETS(ARCHR_FILTER_CELLS.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project, params.archr_thread)
     }
 
     // Module: batch correction with harmony
-    ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread)
-
-    // Module: clustering with Seurat's FindClusters() function
-    ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, params.archr_thread)
+    // Module: clustering
+    if (params.filter_seurat_ilsi) {
+      seurat_ilsi = params.filter_seurat_ilsi
+    } else {
+      seurat_ilsi = "NA"
+    }
+    if (params.filter_seurat_harmony) {
+      seurat_harmony = params.filter_seurat_harmony
+    } else {
+      seurat_harmony = "NA"
+    }
+    if (params.filter_scran_ilsi) {
+      scran_ilsi = params.filter_scran_ilsi
+    } else {
+      scran_ilsi = "NA"
+    }
+    if (params.filter_scran_harmony) {
+      scran_harmory = params.filter_scran_harmony
+    } else {
+      scran_harmony = "NA"
+    }
+    if (params.archr_batch_correction_harmony) {
+      ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread)
+      // Module: clustering with seurat and scran, auto check if Harmony performed
+      ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, params.archr_thread, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony)
+    } else {
+      ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony)
+    }
 
     // Module: single-cell embeddings
     ARCHR_EMBEDDING(ARCHR_CLUSTERING.out.archr_project, params.archr_thread)

@@ -27,7 +27,7 @@ process ARCHR_CREATE_ARROWFILES {
     """
     echo '
     library(ArchR)
-    
+
     addArchRGenome("$archr_genome")
     addArchRThreads(threads = $archr_thread)
 
@@ -37,7 +37,6 @@ process ARCHR_CREATE_ARROWFILES {
     ArrowFiles <- createArrowFiles(
       inputFiles = inputFiles,
       sampleNames = names(inputFiles),
-      threads = 1,
       QCDir = paste0("QualityControl_", "$sample_name"),
       subThreading = FALSE,
       $options.args

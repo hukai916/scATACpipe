@@ -17,6 +17,7 @@ process ARCHR_MARKER_GENE {
 
     output:
     path "proj_marker_gene.rds", emit: archr_project
+    path "marker_list.txt", emit: marker_list
     path "Plots/GeneScores-Marker-Heatmap.pdf", emit: pdf_genescores_marker_heatmap
     path "Plots/Plot-UMAP-Marker-Genes-WO-Imputation.pdf", emit: pdf_umap_markder_genes_wo_imputation
     path "Plots/Plot-UMAP-Marker-Genes-W-Imputation.pdf", emit: pdf_umap_markder_genes_w_imputation
@@ -29,25 +30,55 @@ process ARCHR_MARKER_GENE {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    # Find marker genes:
-    markersGS <- getMarkerFeatures(
-      ArchRProj = proj,
-      $options.args
-    )
+    # Find marker genes: default to use Seurat
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      markersGS <- getMarkerFeatures(
+        ArchRProj = proj,
+        groupBy = "Clusters_Seurat_Harmony",
+        $options.args
+      )
+    } else {
+      markersGS <- getMarkerFeatures(
+        ArchRProj = proj,
+        groupBy = "Clusters_Seurat_IterativeLSI",
+        $options.args
+      )
+    }
 
     markerList <- getMarkers(markersGS, cutOff = "FDR <= 0.01 & Log2FC >= 1.25")
+    sink(file = "marker_list.txt")
+    for (cluster in markerList@listData) {
+      cat(cluster\$name, "\n")
+    }
+    sink()
 
-    # Draw heatmap:
-    markerGenes  <- c($options.marker_genes)
+    # Draw heatmap: default to use all marker_genes
+    if ("$options.marker_genes" == "all") {
+      markerGenes <- c()
+      for (cluster in markerList@listData) {
+        markerGenes <- c(markerGenes, cluster\$name)
+      }
+    } else {
+      markerGenes <- c($options.marker_genes)
+    }
+    ## below is to make sure genes to label are valid gene symbols in the dataset:
+    all_id <- getGenes(proj)\$gene_id
+    all_symbol <- getGenes(proj)\$symbol
+    all_symbol_cleaned <- character(length(all_id))
+    for (i in 1:length(all_id)) {
+    	all_symbol_cleaned[i] <- str_remove(all_symbol[i], paste0("_", all_id[i]))
+    }
+    markerGenes2labeled <- sort(all_symbol_cleaned %in% markerGenes)
+
     heatmapGS <- markerHeatmap(
       seMarker = markersGS,
       cutOff = "FDR <= 0.01 & Log2FC >= 1.25",
-      labelMarkers = markerGenes,
+      labelMarkers = markerGenes2labeled,
       transpose = TRUE
     )
     plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)

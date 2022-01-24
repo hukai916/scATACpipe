@@ -23,10 +23,15 @@ process ARCHR_BATCH_CORRECTION {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
+
+    if (length(proj@sampleColData[[1]]) < 2) {
+      stop("Only 1 sample detected for Harmony!")
+    }
+
     proj2 <- addHarmony(
       ArchRProj = proj,
       reducedDims = "IterativeLSI",

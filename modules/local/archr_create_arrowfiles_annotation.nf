@@ -29,7 +29,7 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     # Include the installed custom BSgenome if supplied:
@@ -48,7 +48,6 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
       sampleNames = names(inputFiles),
       geneAnnotation = geneAnnotation,
       genomeAnnotation = genomeAnnotation,
-      threads = 1,
       QCDir = paste0("QualityControl_", "$sample_name"),
       subThreading = FALSE,
       $options.args

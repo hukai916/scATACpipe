@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_CLUSTERING {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_clustering', publish_id:'') }
@@ -13,14 +13,16 @@ process ARCHR_CLUSTERING {
 
     input:
     path archr_project
+    val filter_seurat_iLSI
+    val filter_seurat_harmony
+    val filter_scran_iLSI
+    val filter_scran_harmony
     val archr_thread
 
     output:
     path "proj_clustering.rds", emit: archr_project
-    path "Cluster-seurat-matrix.csv", emit: csv_cluster_seurat_matrix
-    path "Cluster-scran-matrix.csv", emit: csv_cluster_scran_matrix
-    path "Plots/Cluster-heatmap.pdf", emit: pdf_cluster_heatmap
-    path "Plots/Cluster-scran-heatmap.pdf", emit: pdf_cluster_scran_heatmap
+    path "*.csv", emit: csv_cluster_matrix
+    path "Plots/*.pdf", emit: pdf_cluster_heatmap
     path "Plots/jpeg", emit: jpeg
     path "report_jpeg/archr_clustering", emit: report
 
@@ -29,63 +31,96 @@ process ARCHR_CLUSTERING {
     """
     echo '
     library(ArchR)
-    
+    library(pheatmap)
+
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
+    # Clustering with Seurat using IterativeLSI
     proj2 <- addClusters(
       input = proj,
-      reducedDims = "Harmony",
+      reducedDims = "IterativeLSI",
       method = "Seurat",
-      name = "Clusters",
+      name = "Clusters_Seurat_IterativeLSI",
       $options.args
     )
+    # Clustering with Scran using IterativeLSI
     proj2 <- addClusters(
       input = proj2,
-      reducedDims = "Harmony",
+      reducedDims = "IterativeLSI",
       method = "scran",
-      name = "ScranClusters",
+      name = "Clusters_Scran_IterativeLSI",
       $options.args2
     )
+
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      # Clustering with Seurat using Harmony
+      proj2 <- addClusters(
+        input = proj,
+        reducedDims = "Harmony",
+        method = "Seurat",
+        name = "Clusters_Seurat_Harmony",
+        $options.args
+      )
+      # Clustering with Scran using Harmony
+      proj2 <- addClusters(
+        input = proj2,
+        reducedDims = "Harmony",
+        method = "scran",
+        name = "Clusters_Scran_Harmony",
+        $options.args2
+      )
+    }
+
+    # get rid of undesired clusters if supplied:
+    if (!($filter_seurat_iLSI == "NA")) {
+      idxPass <- which(!proj2\$Clusters_Seurat_IterativeLSI %in% c($filter_seurat_iLSI))
+      cellsPass <- proj2\$cellNames[idxPass]
+      proj2 <- proj2[cellsPass,]
+    }
+    if (!($filter_scran_iLSI == "NA")) {
+      idxPass <- which(!proj2\$Clusters_Scran_IterativeLSI %in% c($filter_scran_iLSI))
+      cellsPass <- proj2\$cellNames[idxPass]
+      proj2 <- proj2[cellsPass,]
+    }
+
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      if (!($filter_seurat_harmony == "NA")) {
+        idxPass <- which(!proj2\$Clusters_Seurat_Harmony %in% c($filter_seurat_harmony))
+        cellsPass <- proj2\$cellNames[idxPass]
+        proj2 <- proj2[cellsPass,]
+      }
+      if (!($filter_scran_harmony == "NA")) {
+        idxPass <- which(!proj2\$Clusters_Scran_Harmony %in% c($filter_scran_harmony))
+        cellsPass <- proj2\$cellNames[idxPass]
+        proj2 <- proj2[cellsPass,]
+      }
+    }
 
     saveRDS(proj2, file = "proj_clustering.rds")
 
     # Save text summary and heatmap summary
-    cM <- confusionMatrix(paste0(proj2\$Clusters), paste0(proj2\$Sample))
-    cM_scran <- confusionMatrix(paste0(proj2\$ScranClusters), paste0(proj2\$Sample))
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_IterativeLSI", "Clusters_Scran_Harmony")
+    } else {
+      clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI")
+    }
 
-    write.csv(cM, file="Cluster-seurat-matrix.csv")
-    write.csv(cM_scran, file="Cluster-scran-matrix.csv")
-
-    library(pheatmap)
-    cM <- cM / Matrix::rowSums(cM)
-    cM_scran <- cM_scran / Matrix::rowSums(cM_scran)
-    cellheight <- 18 # 0.25 inch
-
-    p1 <- pheatmap::pheatmap(
-      mat = as.matrix(cM),
-      color = paletteContinuous("whiteBlue"),
-      border_color = "black",
-      cellheight = cellheight
-    )
-    p2 <- pheatmap::pheatmap(
-      mat = as.matrix(cM_scran),
-      color = paletteContinuous("whiteBlue"),
-      border_color = "black",
-      cellheight = cellheight
-    )
-
-    height <- nrow(cM) * cellheight * 1/72 + 4
-    height <- min(11, height)
-    # 1/72: inches per point, 11.5 inches per page; 8.5 width per page.
-
-    height_scran <- nrow(cM_scran) * cellheight * 1/72 + 4
-    height_scran <- min(11, height_scran)
-
-    plotPDF(p1, name = "Cluster-heatmap.pdf", ArchRProj = NULL, addDOC = FALSE, width = 7, height = height)
-    plotPDF(p2, name = "Cluster-scran-heatmap.pdf", ArchRProj = NULL, addDOC = FALSE, width = 7, height = height_scran)
-
+    for (cluster in clusters) {
+      cmd <- paste0("cM <- confusionMatrix(paste0(proj2\$", cluster, "), paste0(proj2\$Sample))")
+      eval(str2lang(cmd))
+      write.csv(cM, file=paste0(cluster, "_matrix.csv"))
+      cM <- cM / Matrix::rowSums(cM)
+      cellheight <- 18 # 0.25 inch
+      p1 <- pheatmap::pheatmap(
+        mat = as.matrix(cM),
+        color = paletteContinuous("whiteBlue"),
+        border_color = "black",
+        cellheight = cellheight
+      )
+      plotPDF(p1, name = paste0(cluster, "_heatmap.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 7, height = height)
+    }
     ' > run.R
 
     Rscript run.R

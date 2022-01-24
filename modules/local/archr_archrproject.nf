@@ -42,6 +42,7 @@ process ARCHR_ARCHRPROJECT {
             )
 
     saveRDS(proj, file = \\"proj.rds\\")
+
     " > run.R
 
     Rscript run.R
