@@ -74,24 +74,24 @@ process ARCHR_CLUSTERING {
     }
 
     # get rid of undesired clusters if supplied:
-    if (!($filter_seurat_iLSI == "NA")) {
+    if (!("$filter_seurat_iLSI" == "NA")) {
       idxPass <- which(!proj2\$Clusters_Seurat_IterativeLSI %in% c($filter_seurat_iLSI))
       cellsPass <- proj2\$cellNames[idxPass]
       proj2 <- proj2[cellsPass,]
     }
-    if (!($filter_scran_iLSI == "NA")) {
+    if (!("$filter_scran_iLSI" == "NA")) {
       idxPass <- which(!proj2\$Clusters_Scran_IterativeLSI %in% c($filter_scran_iLSI))
       cellsPass <- proj2\$cellNames[idxPass]
       proj2 <- proj2[cellsPass,]
     }
 
     if ("Harmony" %in% names(proj@reducedDims)) {
-      if (!($filter_seurat_harmony == "NA")) {
+      if (!("$filter_seurat_harmony" == "NA")) {
         idxPass <- which(!proj2\$Clusters_Seurat_Harmony %in% c($filter_seurat_harmony))
         cellsPass <- proj2\$cellNames[idxPass]
         proj2 <- proj2[cellsPass,]
       }
-      if (!($filter_scran_harmony == "NA")) {
+      if (!("$filter_scran_harmony" == "NA")) {
         idxPass <- which(!proj2\$Clusters_Scran_Harmony %in% c($filter_scran_harmony))
         cellsPass <- proj2\$cellNames[idxPass]
         proj2 <- proj2[cellsPass,]
