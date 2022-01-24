@@ -55,14 +55,15 @@ process ARCHR_MARKER_GENE {
     sink()
 
     # Draw heatmap: default to use all marker_genes
-    if (!is.na(strtoi(\\'$options.marker_genes\\'))) {
-      markerGenes <- c($options.marker_genes)
+    if (!is.na(strtoi("$options.marker_genes"))) {
+      markerGenes <- str_trim(str_split("$options.marker_genes", ","), side = "both")
+      #markerGenes <- c($options.marker_genes)
     } else {
       markerGenes <- c()
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
-      sel <- min(length(markerGenes), strtoi(\\'$options.marker_genes\\'))
+      sel <- min(length(markerGenes), strtoi("$options.marker_genes"))
       markerGenes <- [1:sel]
     }
 
