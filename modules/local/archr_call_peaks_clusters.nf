@@ -34,15 +34,24 @@ process ARCHR_CALL_PEAKS_CLUSTERS {
 
     # Add called peaks:
     pathToMacs2 <- findMacs2()
-    proj2 <- addReproduciblePeakSet(
-      ArchRProj = proj,
-      groupBy = "Clusters",
-      pathToMacs2 = pathToMacs2,
-      $options.args
-    )
+    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
+    for (cluster in clusters) {
+      tryCatch({
+        proj <- addReproduciblePeakSet(
+          ArchRProj = proj,
+          groupBy = cluster,
+          pathToMacs2 = pathToMacs2,
+          $options.args
+        )
+        proj <- addPeakMatrix(proj, force = TRUE)
+      },
+        error=function(e) {
+          message(paste0("Skipping calling peaks for ", cluster, "!"))
+        }
+      )
+    }
 
-    proj2 <- addPeakMatrix(proj2, force = TRUE)
-    saveRDS(proj2, file = "proj_call_peaks.rds")
+    saveRDS(proj, file = "proj_call_peaks.rds")
 
     ' > run.R
 
