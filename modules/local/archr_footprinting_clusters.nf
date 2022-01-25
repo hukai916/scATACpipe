@@ -79,7 +79,6 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
       }
     )
 
-
     ' > run.R
 
     Rscript run.R
