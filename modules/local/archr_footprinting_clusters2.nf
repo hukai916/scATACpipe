@@ -13,7 +13,6 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
 
     input:
     path archr_project
-    path archr_dir
     val archr_thread
 
     output:
@@ -25,7 +24,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)

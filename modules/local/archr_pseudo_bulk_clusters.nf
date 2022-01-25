@@ -17,8 +17,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
     val archr_thread
 
     output:
-    path "archr_project.rds", emit: archr_project
-    path "save_archr_project", emit: archr_dir
+    path "archr_project_pseudobulk.rds", emit: archr_project
 
     script:
 
@@ -34,7 +33,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
     clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
     for (cluster in clusters) {
       tryCatch({
-        proj2 <- addGroupCoverages(ArchRProj = proj, groupBy = "Clusters", force = TRUE)
+        proj <- addGroupCoverages(ArchRProj = proj, groupBy = cluster, force = TRUE)
       },
         error=function(e) {
           message(paste0("Skipping adding pseudo-bulk for ", cluster, "!"))
@@ -42,7 +41,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
       )
     }
 
-    saveRDS(proj2, file = "archr_project.rds")
+    saveRDS(proj, file = "archr_project_pseudobulk.rds")
 
     ' > run.R
 
