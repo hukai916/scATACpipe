@@ -13,6 +13,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
 
     input:
     path archr_project
+    path user_rlib
     val archr_thread
 
     output:
@@ -24,16 +25,23 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
     """
     echo '
     library(ArchR)
-    
+    .libPaths("user_rlib") # for user installed packages
+
     addArchRThreads(threads = $archr_thread)
 
-    proj <- readRDS("$archr_project", refhook = NULL)
-    proj2 <- saveArchRProject(ArchRProj = proj, outputDirectory = "save_archr_project", load = TRUE)
+    proj  <- readRDS("$archr_project", refhook = NULL)
 
-    # Add pseudo-bulk:
-    # addGroupCoverages(ArchRProj = proj2, groupBy = "Clusters", force = TRUE)
-    # Tested, above will add GroupCoverage, but wont update proj2 automatically, must use below
-    proj2 <- addGroupCoverages(ArchRProj = proj2, groupBy = "Clusters", force = TRUE)
+    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
+    for (cluster in clusters) {
+      tryCatch({
+        proj2 <- addGroupCoverages(ArchRProj = proj, groupBy = "Clusters", force = TRUE)
+      },
+        error=function(e) {
+          message(paste0("Skipping adding pseudo-bulk for ", cluster, "!"))
+        }
+      )
+    }
+
     saveRDS(proj2, file = "archr_project.rds")
 
     ' > run.R

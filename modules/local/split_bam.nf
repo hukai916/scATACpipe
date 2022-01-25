@@ -25,7 +25,6 @@ process SPLIT_BAM {
     script:
 
     """
-    #bam=rm_dup_${sample_name}.*.bam
     bam=*${sample_name}*.bam
     tsv=(\$(ls *${sample_name}*.tsv))
 
@@ -45,12 +44,12 @@ process SPLIT_BAM {
 
       # make bw file:
       cd ../
-      mkdir bigWig_${sample_name}
+      mkdir bigWig_\$f
       bamfile=(\$(ls -1 split_\$f/*.bam))
       for (( j=0; j<\${#bamfile[@]}; j++ )); do
         filename="\$(basename \${bamfile[\$j]} .bam)"
         samtools index \${bamfile[\$j]}
-        bamCoverage -b \${bamfile[\$j]} -o bigWig_${sample_name}/\${filename}.bw -of bigwig $options.bam_coverage 2>bamCoverage.stderr
+        bamCoverage -b \${bamfile[\$j]} -o bigWig_\$f/\${filename}.bw -of bigwig $options.bam_coverage 2>bamCoverage.stderr
       done
     done
 

@@ -258,6 +258,7 @@ workflow DOWNSTREAM_ARCHR {
 
     // log.info "archr_input_type: " + archr_input_type
     // Depending on ArchR input type, prepare ArchR annotation files accordingly:
+    user_rlib = Channel.fromPath('assets/whitelist_barcodes').first() // simply a placeholder
     if (archr_input_type == "naive") {
       // Run ArchR normally:
       log.info "Naively supported ArchR genome: " + archr_input_list[0] + " will be used."
@@ -282,9 +283,12 @@ workflow DOWNSTREAM_ARCHR {
       ch_arrowfile_list = ARCHR_ADD_DOUBLETSCORES.out.arrowfile.toSortedList( { a, b -> a.getName() <=> b.getName() })
       ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, ARCHR_GET_ANNOTATION_BIOC.out.geneAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.genomeAnnotation, ARCHR_GET_ANNOTATION_BIOC.out.user_rlib, params.archr_thread)
       ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project, params.archr_thread)
+      // keep track of installed R packages
+      user_rlib = ARCHR_GET_ANNOTATION_BIOC.out.user_rlib.collect()
     } else if (archr_input_type == "genome_gtf") {
       if (params.species_latin_name) {
         // Build BSgenome:
+        build_bsgenome = true
         if (prep_genome == "run") {
           BUILD_BSGENOME(prep_genome_fasta)
         } else if (prep_genome == "not_run") {
@@ -317,6 +321,8 @@ workflow DOWNSTREAM_ARCHR {
 
         ARCHR_ARCHRPROJECT_ANNOTATION(ch_arrowfile_list, BUILD_GENE_ANNOTATION.out.gene_annotation, BUILD_GENOME_ANNOTATION.out.genome_annotation, BUILD_BSGENOME.out.user_rlib, params.archr_thread)
         ARCHR_ARCHRPROJECT_QC(ARCHR_ARCHRPROJECT_ANNOTATION.out.archr_project, params.archr_thread)
+
+        user_rlib = BUILD_BSGENOME.out.user_rlib.collect()
       } else {
         exit 1, "Pls also supply --species_latin_name."
       }
@@ -394,7 +400,8 @@ workflow DOWNSTREAM_ARCHR {
     if (!(params.archr_scrnaseq)) {
       params.groupby_cluster = "Clusters" // downstream uses clusters inferred from scATAC data only
       log.info "INFO: --archr_scrnaseq: not supplied, skip integrative analysis with scRNA-seq!"
-      ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, params.archr_thread)
+      ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, user_rlib, params.archr_thread)
+
       // For each Arrorproject, you can have only one set of peak set unless you copy arrow files and create another arrowproject. That is why we implemented ARCHR_PSEUDO_BULK_CLUSTERS and ARCHR_PSEUDO_BULK_CLUSTERS2
     } else {
         params.groupby_cluster = "Clusters2" // downstream uses clusters inferred from both data
