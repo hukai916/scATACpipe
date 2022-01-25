@@ -18,6 +18,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
 
     output:
     path "archr_project_pseudobulk.rds", emit: archr_project
+    path user_rlib, emit: user_rlib
 
     script:
 
