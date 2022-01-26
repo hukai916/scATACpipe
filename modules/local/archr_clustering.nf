@@ -78,11 +78,7 @@ process ARCHR_CLUSTERING {
     saveRDS(proj, file = "proj_clustering.rds")
 
     # Save text summary and heatmap summary
-    if ("Harmony" %in% names(proj@reducedDims)) {
-      cluster <- "Clusters_Seurat_Harmony"
-    } else {
-      cluster <- "Clusters_Seurat_IterativeLSI"
-    }
+    cluster <- "Clusters"
 
     cmd <- paste0("cM <- confusionMatrix(paste0(proj\$", cluster, "), paste0(proj\$Sample))")
     eval(str2lang(cmd))
