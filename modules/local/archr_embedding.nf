@@ -5,6 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_EMBEDDING {
+  // 4 embeddings for a single clustering ("Clusters"): UMAP/TSNE vs ILSI/Harmony
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -70,7 +71,7 @@ process ARCHR_EMBEDDING {
     # Plotting UMAP_IterativeLSI
     tryCatch({
       p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_IterativeLSI")
-      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "UMAP_IterativeLSI")
+      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "UMAP_IterativeLSI")
       plotPDF(p1, p2, name = "Plot-UMAP-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
     },
       error=function(e) {
@@ -81,7 +82,7 @@ process ARCHR_EMBEDDING {
     # Plotting TSNE_IterativeLSI
     tryCatch({
       p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_IterativeLSI")
-      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_IterativeLSI", embedding = "TSNE_IterativeLSI")
+      p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "TSNE_IterativeLSI")
       plotPDF(p1, p2, name = "Plot-TNSE-Sample-Clusters-ILSI.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
     },
       error=function(e) {
@@ -93,7 +94,7 @@ process ARCHR_EMBEDDING {
       # Ploting UMAP_Harmony
       tryCatch({
         p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "UMAP_Harmony")
-        p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "UMAP_Harmony")
+        p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "UMAP_Harmony")
         plotPDF(p1, p2, name = "Plot-UMAP-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
       },
         error=function(e) {
@@ -104,7 +105,7 @@ process ARCHR_EMBEDDING {
       # Plotting TSNE_Harmony
       tryCatch({
         p1 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Sample", embedding = "TSNE_Harmony")
-        p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters_Seurat_Harmony", embedding = "TSNE_Harmony")
+        p2 <- plotEmbedding(ArchRProj = proj2, colorBy = "cellColData", name = "Clusters", embedding = "TSNE_Harmony")
         plotPDF(p1, p2, name = "Plot-TSNE-Sample-Clusters-Harmony.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
       },
         error=function(e) {
@@ -118,7 +119,7 @@ process ARCHR_EMBEDDING {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
     for item in "\${x[@]}"
     do
@@ -130,8 +131,8 @@ process ARCHR_EMBEDDING {
     done
 
     # For reporting:
-      mkdir -p report_jpeg/archr_embedding
-      cp -r Plots/jpeg report_jpeg/archr_embedding
+    mkdir -p report_jpeg/archr_embedding
+    cp -r Plots/jpeg report_jpeg/archr_embedding
 
     """
 }
