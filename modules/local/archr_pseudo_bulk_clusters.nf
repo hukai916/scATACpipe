@@ -10,7 +10,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_pseudo_bulk_clusters', publish_id:'') }
     // container "hukai916/r_sc:0.5"
-    container "hukai916/r_archr:0.1"
+    container "hukai916/r_archr:0.1" // Haibo fixed a bug in addGroupCoverages() to deal with chr contig with no reads
 
     input:
     path archr_project
@@ -34,18 +34,9 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
 
     proj <- readRDS("$archr_project", refhook = NULL)
     proj2 <- saveArchRProject(ArchRProj = proj, outputDirectory = "archr_project_pseudobulk", load = TRUE)
-    # Note that saveArchRProject is a must here in order to copy the arrowfiles since bulk info goes with arrowfiles.
+    # Note that saveArchRProject is a must here since each ArchRProj can only have one set of PeakSet, duplicate the proj for cluster2
 
-    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
-    for (cluster in clusters) {
-      tryCatch({
-        proj2 <- addGroupCoverages(ArchRProj = proj2, groupBy = cluster, force = TRUE)
-      },
-        error=function(e) {
-          message(paste0("Skipping adding pseudo-bulk for ", cluster, "!"))
-        }
-      )
-    }
+    proj2 <- addGroupCoverages(ArchRProj = proj2, groupBy = "Clusters", force = TRUE)
 
     saveRDS(proj2, file = "archr_project_pseudobulk.rds")
 

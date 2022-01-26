@@ -40,36 +40,62 @@ process ARCHR_CLUSTERING {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
+    # Clustering with Seurat using IterativeLSI
+    proj2 <- addClusters(
+      input = proj,
+      reducedDims = "IterativeLSI",
+      method = "Seurat",
+      name = "Clusters_Seurat_IterativeLSI",
+      $options.args
+    )
+    # Clustering with Scran using IterativeLSI
+    proj2 <- addClusters(
+      input = proj2,
+      reducedDims = "IterativeLSI",
+      method = "scran",
+      name = "Clusters_Scran_IterativeLSI",
+      $options.args2
+    )
+
     if ("Harmony" %in% names(proj@reducedDims)) {
       # Clustering with Seurat using Harmony
       proj2 <- addClusters(
         input = proj2,
         reducedDims = "Harmony",
         method = "Seurat",
-        name = "Clusters",
+        name = "Clusters_Seurat_Harmony",
         $options.args
       )
-    } else {
-      # Clustering with Seurat using IterativeLSI
+      # Clustering with Scran using Harmony
       proj2 <- addClusters(
-        input = proj,
-        reducedDims = "IterativeLSI",
-        method = "Seurat",
-        name = "Clusters",
-        $options.args
+        input = proj2,
+        reducedDims = "Harmony",
+        method = "scran",
+        name = "Clusters_Scran_Harmony",
+        $options.args2
       )
     }
 
     # get rid of undesired clusters if supplied:
+    if (!("$filter_seurat_iLSI" == "NA")) {
+      idxPass <- which(!proj2\$Clusters_Seurat_IterativeLSI %in% c($filter_seurat_iLSI))
+      cellsPass <- proj2\$cellNames[idxPass]
+      proj2 <- proj2[cellsPass,]
+    }
+    if (!("$filter_scran_iLSI" == "NA")) {
+      idxPass <- which(!proj2\$Clusters_Scran_IterativeLSI %in% c($filter_scran_iLSI))
+      cellsPass <- proj2\$cellNames[idxPass]
+      proj2 <- proj2[cellsPass,]
+    }
+
     if ("Harmony" %in% names(proj@reducedDims)) {
       if (!("$filter_seurat_harmony" == "NA")) {
-        idxPass <- which(!proj2\$Clusters %in% c($filter_seurat_harmony))
+        idxPass <- which(!proj2\$Clusters_Seurat_Harmony %in% c($filter_seurat_harmony))
         cellsPass <- proj2\$cellNames[idxPass]
         proj2 <- proj2[cellsPass,]
       }
-    } else {
-      if (!("$filter_seurat_iLSI" == "NA")) {
-        idxPass <- which(!proj2\$Clusters %in% c($filter_seurat_iLSI))
+      if (!("$filter_scran_harmony" == "NA")) {
+        idxPass <- which(!proj2\$Clusters_Scran_Harmony %in% c($filter_scran_harmony))
         cellsPass <- proj2\$cellNames[idxPass]
         proj2 <- proj2[cellsPass,]
       }
@@ -79,29 +105,30 @@ process ARCHR_CLUSTERING {
 
     # Save text summary and heatmap summary
     if ("Harmony" %in% names(proj@reducedDims)) {
-      cluster <- "Clusters_Seurat_Harmony"
+      clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_IterativeLSI", "Clusters_Scran_Harmony")
     } else {
-      cluster <- "Clusters_Seurat_IterativeLSI"
+      clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI")
     }
 
-    cmd <- paste0("cM <- confusionMatrix(paste0(proj2\$", cluster, "), paste0(proj2\$Sample))")
-    eval(str2lang(cmd))
-    write.csv(cM, file=paste0(cluster, "_matrix.csv"))
-    cM <- cM / Matrix::rowSums(cM)
-    cellheight <- 18 # 0.25 inch
-    p1 <- pheatmap::pheatmap(
-      mat = as.matrix(cM),
-      color = paletteContinuous("whiteBlue"),
-      border_color = "black",
-      cellheight = cellheight
-    )
+    for (cluster in clusters) {
+      cmd <- paste0("cM <- confusionMatrix(paste0(proj2\$", cluster, "), paste0(proj2\$Sample))")
+      eval(str2lang(cmd))
+      write.csv(cM, file=paste0(cluster, "_matrix.csv"))
+      cM <- cM / Matrix::rowSums(cM)
+      cellheight <- 18 # 0.25 inch
+      p1 <- pheatmap::pheatmap(
+        mat = as.matrix(cM),
+        color = paletteContinuous("whiteBlue"),
+        border_color = "black",
+        cellheight = cellheight
+      )
 
-    height <- nrow(cM) * cellheight * 1/72 + 4
-    height <- min(11, height)
-    # 1/72: inches per point, 11.5 inches per page; 8.5 width per page.
+      height <- nrow(cM) * cellheight * 1/72 + 4
+      height <- min(11, height)
+      # 1/72: inches per point, 11.5 inches per page; 8.5 width per page.
 
-    plotPDF(p1, name = paste0(cluster, "_heatmap.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 7, height = height)
-
+      plotPDF(p1, name = paste0(cluster, "_heatmap.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 7, height = height)
+    }
     ' > run.R
 
     Rscript run.R

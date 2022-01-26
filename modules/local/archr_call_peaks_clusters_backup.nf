@@ -35,18 +35,33 @@ process ARCHR_CALL_PEAKS_CLUSTERS {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
+    # Add called peaks:
     pathToMacs2 <- findMacs2()
+    # note that each proj can only have one set of called peak
+
+    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
+
     genomeSizeCmd <- paste0("sum(", getGenome(proj), "@seqinfo@seqlengths)")
     genomeSize <- eval(str2lang(genomeSizeCmd))
 
-    proj <- addReproduciblePeakSet(
-      ArchRProj = proj,
-      groupBy = "Clusters",
-      pathToMacs2 = pathToMacs2,
-      genomeSize = genomeSize
-      $options.args
-    )
-    proj <- addPeakMatrix(proj, force = TRUE)
+
+
+    for (cluster in clusters) {
+      tryCatch({
+        proj <- addReproduciblePeakSet(
+          ArchRProj = proj,
+          groupBy = cluster,
+          pathToMacs2 = pathToMacs2,
+          genomeSize = genomeSize
+          $options.args
+        )
+        proj <- addPeakMatrix(proj, force = TRUE)
+      },
+        error=function(e) {
+          message(paste0("Skipping calling peaks for ", cluster, "!"))
+        }
+      )
+    }
 
     saveRDS(proj, file = "proj_call_peaks.rds")
 

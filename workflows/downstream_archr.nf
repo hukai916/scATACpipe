@@ -405,7 +405,7 @@ workflow DOWNSTREAM_ARCHR {
     if (!(params.archr_scrnaseq)) {
       params.groupby_cluster = "Clusters" // downstream uses clusters inferred from scATAC data only
       log.info "INFO: --archr_scrnaseq: not supplied, skip integrative analysis with scRNA-seq!"
-      ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, user_rlib, params.archr_thread)
+      ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
 
       // For each Arrorproject, you can have only one set of peak set unless you copy arrow files and create another arrowproject. That is why we implemented ARCHR_PSEUDO_BULK_CLUSTERS and ARCHR_PSEUDO_BULK_CLUSTERS2
     } else {
