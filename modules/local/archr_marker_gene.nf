@@ -5,6 +5,8 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_MARKER_GENE {
+  // Find marker genes for "Clusters" only.
+
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -32,20 +34,11 @@ process ARCHR_MARKER_GENE {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    # Find marker genes: default to use Seurat
-    if ("Harmony" %in% names(proj@reducedDims)) {
-      markersGS <- getMarkerFeatures(
-        ArchRProj = proj,
-        groupBy = "Clusters_Seurat_Harmony",
-        $options.args
-      )
-    } else {
-      markersGS <- getMarkerFeatures(
-        ArchRProj = proj,
-        groupBy = "Clusters_Seurat_IterativeLSI",
-        $options.args
-      )
-    }
+    markersGS <- getMarkerFeatures(
+      ArchRProj = proj,
+      groupBy = "Clusters",
+      $options.args
+    )
 
     markerList <- getMarkers(markersGS, cutOff = "FDR <= 0.01 & Log2FC >= 1.25")
     sink(file = "marker_list.txt")
@@ -54,7 +47,7 @@ process ARCHR_MARKER_GENE {
     }
     sink()
 
-    # Draw heatmap: default to use all marker_genes
+    # Draw heatmap: default to use first 10 marker_genes
     if (is.na(strtoi("$options.marker_genes"))) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
@@ -126,7 +119,7 @@ process ARCHR_MARKER_GENE {
 
     # Plot: track plotting with ArchRBrowser
     # clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
-    clusters <- c("Clusters", "Clusters2")
+    clusters <- c("Clusters")
 
     for (cluster in clusters) {
       tryCatch({
