@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_PSEUDO_BULK_CLUSTERS {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_pseudo_bulk_clusters', publish_id:'') }
@@ -18,7 +18,6 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
 
     output:
     path "archr_project_pseudobulk.rds", emit: archr_project
-    path "archr_project_pseudobulk", emit: archr_dir
     path user_rlib, emit: user_rlib
 
     script:
@@ -30,14 +29,12 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
 
     addArchRThreads(threads = $archr_thread)
 
-    proj <- readRDS("$archr_project", refhook = NULL)
-    proj2 <- saveArchRProject(ArchRProj = proj, outputDirectory = "archr_project_pseudobulk", load = TRUE)
-    # Note that saveArchRProject is a must here in order to copy the arrowfiles since bulk info goes with arrowfiles.
+    proj  <- readRDS("$archr_project", refhook = NULL)
 
     clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
     for (cluster in clusters) {
       tryCatch({
-        proj2 <- addGroupCoverages(ArchRProj = proj2, groupBy = cluster, force = TRUE)
+        proj <- addGroupCoverages(ArchRProj = proj, groupBy = cluster, force = TRUE)
       },
         error=function(e) {
           message(paste0("Skipping adding pseudo-bulk for ", cluster, "!"))
@@ -45,7 +42,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
       )
     }
 
-    saveRDS(proj2, file = "archr_project_pseudobulk.rds")
+    saveRDS(proj, file = "archr_project_pseudobulk.rds")
 
     ' > run.R
 

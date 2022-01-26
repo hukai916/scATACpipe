@@ -393,7 +393,7 @@ workflow DOWNSTREAM_ARCHR {
     // Module: single-cell embeddings
     ARCHR_EMBEDDING(ARCHR_CLUSTERING.out.archr_project, params.archr_thread)
 
-    // Module: find marker gene
+    // Module: find marker gene: use Seurat and prefer to use Harmony if avail.
     ARCHR_MARKER_GENE(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
 
     // Module: integrate with matching scRNAseq data
