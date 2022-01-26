@@ -42,8 +42,8 @@ process ARCHR_CLUSTERING {
 
     if ("Harmony" %in% names(proj@reducedDims)) {
       # Clustering with Seurat using Harmony
-      proj2 <- addClusters(
-        input = proj2,
+      proj <- addClusters(
+        input = proj,
         reducedDims = "Harmony",
         method = "Seurat",
         name = "Clusters",
@@ -51,7 +51,7 @@ process ARCHR_CLUSTERING {
       )
     } else {
       # Clustering with Seurat using IterativeLSI
-      proj2 <- addClusters(
+      proj <- addClusters(
         input = proj,
         reducedDims = "IterativeLSI",
         method = "Seurat",
@@ -63,19 +63,19 @@ process ARCHR_CLUSTERING {
     # get rid of undesired clusters if supplied:
     if ("Harmony" %in% names(proj@reducedDims)) {
       if (!("$filter_seurat_harmony" == "NA")) {
-        idxPass <- which(!proj2\$Clusters %in% c($filter_seurat_harmony))
-        cellsPass <- proj2\$cellNames[idxPass]
-        proj2 <- proj2[cellsPass,]
+        idxPass <- which(!proj\$Clusters %in% c($filter_seurat_harmony))
+        cellsPass <- proj\$cellNames[idxPass]
+        proj <- proj[cellsPass,]
       }
     } else {
       if (!("$filter_seurat_iLSI" == "NA")) {
-        idxPass <- which(!proj2\$Clusters %in% c($filter_seurat_iLSI))
-        cellsPass <- proj2\$cellNames[idxPass]
-        proj2 <- proj2[cellsPass,]
+        idxPass <- which(!proj\$Clusters %in% c($filter_seurat_iLSI))
+        cellsPass <- proj\$cellNames[idxPass]
+        proj <- proj[cellsPass,]
       }
     }
 
-    saveRDS(proj2, file = "proj_clustering.rds")
+    saveRDS(proj, file = "proj_clustering.rds")
 
     # Save text summary and heatmap summary
     if ("Harmony" %in% names(proj@reducedDims)) {
@@ -84,7 +84,7 @@ process ARCHR_CLUSTERING {
       cluster <- "Clusters_Seurat_IterativeLSI"
     }
 
-    cmd <- paste0("cM <- confusionMatrix(paste0(proj2\$", cluster, "), paste0(proj2\$Sample))")
+    cmd <- paste0("cM <- confusionMatrix(paste0(proj\$", cluster, "), paste0(proj\$Sample))")
     eval(str2lang(cmd))
     write.csv(cM, file=paste0(cluster, "_matrix.csv"))
     cM <- cM / Matrix::rowSums(cM)
