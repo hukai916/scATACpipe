@@ -36,6 +36,7 @@ process ARCHR_CALL_PEAKS_CLUSTERS {
     proj <- readRDS("$archr_project", refhook = NULL)
 
     pathToMacs2 <- findMacs2()
+    eval(str2lang(paste0("library(", getGenome(proj), ")")))
     genomeSizeCmd <- paste0("sum(", getGenome(proj), "@seqinfo@seqlengths)")
     genomeSize <- eval(str2lang(genomeSizeCmd))
 
