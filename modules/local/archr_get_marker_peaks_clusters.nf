@@ -32,49 +32,35 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    get_marker_peaks <- function(proj, cluster) {
-      markersPeaks <- getMarkerFeatures(
-        ArchRProj = proj,
-        useMatrix = "PeakMatrix",
-        groupBy = cluster,
-        $options.args
-      )
-      saveRDS(markersPeaks, file = paste0(cluster, "_marker_peaks.rds"))
+    cluster <- "Clusters"
+    markersPeaks <- getMarkerFeatures(
+      ArchRProj = proj,
+      useMatrix = "PeakMatrix",
+      groupBy = cluster,
+      $options.args
+    )
+    saveRDS(markersPeaks, file = paste0(cluster, "_marker_peaks.rds"))
 
-      markerList <- getMarkers(markersPeaks, cutOff = "$options.cutoff", returnGR = TRUE)
-      fileConn <- file(paste0(cluster, "_group_names.txt"))
-      writeLines(unique(names(markerList)), fileConn)
-      close(fileConn)
+    markerList <- getMarkers(markersPeaks, cutOff = "$options.cutoff", returnGR = TRUE)
+    fileConn <- file(paste0(cluster, "_group_names.txt"))
+    writeLines(unique(names(markerList)), fileConn)
+    close(fileConn)
 
-      heatmapPeaks <- markerHeatmap(
-        seMarker = markersPeaks,
-        cutOff = "$options.cutoff",
-        transpose = TRUE
-      )
+    heatmapPeaks <- markerHeatmap(
+      seMarker = markersPeaks,
+      cutOff = "$options.cutoff",
+      transpose = TRUE
+    )
 
-      # height <- nrow(cM) * cellheight * 1/72 + 4
-      # height <- min(11, height)
-      plotPDF(heatmapPeaks, name = paste0(cluster, "-Peak-Marker-Heatmap"), width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+    # height <- nrow(cM) * cellheight * 1/72 + 4
+    # height <- min(11, height)
+    plotPDF(heatmapPeaks, name = paste0(cluster, "-Peak-Marker-Heatmap"), width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
 
-      # Plot MA and Vocalno plots for each group:
-      for (group in unique(names(markerList))) {
-        pma <- markerPlot(seMarker = markersPeaks, cutOff = "$options.cutoff", name = group, plotAs = "MA")
-        pv <- markerPlot(seMarker = markersPeaks, cutOff = "$options.cutoff", name = group, plotAs = "Volcano")
-        plotPDF(pma, pv, name = paste0(cluster, "-", group, "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
-      }
-
-      return(proj)
-    }
-
-    clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
-    for (cluster in clusters) {
-      tryCatch({
-        proj <- get_marker_peaks(proj, cluster)
-      },
-        error=function(e) {
-          message(paste0("Skipping getting marker peaks for ", cluster, "!"))
-        }
-      )
+    # Plot MA and Vocalno plots for each group:
+    for (group in unique(names(markerList))) {
+      pma <- markerPlot(seMarker = markersPeaks, cutOff = "$options.cutoff", name = group, plotAs = "MA")
+      pv <- markerPlot(seMarker = markersPeaks, cutOff = "$options.cutoff", name = group, plotAs = "Volcano")
+      plotPDF(pma, pv, name = paste0(cluster, "-", group, "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
     }
 
     saveRDS(proj, file = "archr_proj_marker_peaks.rds")
