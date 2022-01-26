@@ -390,6 +390,11 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony, params.archr_thread)
     }
 
+    // Only use Seurat for clustering. And depending on sample number, use Harmony or LSI
+    // Clustering only generate one cluster for downstream.
+    // For BULK_CLUSTERING: depens on EMBEDDING.
+
+
     // Module: single-cell embeddings
     ARCHR_EMBEDDING(ARCHR_CLUSTERING.out.archr_project, params.archr_thread)
 
