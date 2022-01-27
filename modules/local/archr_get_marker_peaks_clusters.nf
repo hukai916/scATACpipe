@@ -17,7 +17,6 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
 
     output:
     path "archr_proj_marker_peaks.rds", emit: archr_marker_peaks
-    path "Plots/Peak-Marker-Heatmap.pdf", emit: archr_peak_marker_heatmap
     path "group_names.txt", emit: group_names
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_get_marker_peaks_clusters", emit: report
