@@ -5,6 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
+  //
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -17,7 +18,7 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
 
     output:
     path "archr_proj_marker_peaks.rds", emit: archr_marker_peaks
-    path "group_names.txt", emit: group_names
+    path "*_group_names.txt", emit: group_names
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_get_marker_peaks_clusters", emit: report
 
@@ -45,13 +46,12 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     writeLines(unique(names(markerList)), fileConn)
     close(fileConn)
 
-    tryCatch({
+    tryCatch({ # use tryCatch in case no peak pass cutoff
       heatmapPeaks <- markerHeatmap(
         seMarker = markersPeaks,
         cutOff = "$options.cutoff",
         transpose = TRUE
       )
-
       # height <- nrow(cM) * cellheight * 1/72 + 4
       # height <- min(11, height)
       plotPDF(heatmapPeaks, name = paste0(cluster, "-Peak-Marker-Heatmap"), width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
@@ -60,8 +60,6 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
         message(paste0("Skipping plotting heatmaps!"))
       }
     )
-
-
 
     # Plot MA and Vocalno plots for each group:
     for (group in unique(names(markerList))) {
