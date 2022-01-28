@@ -17,7 +17,7 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     val archr_thread
 
     output:
-    path "archr_proj_marker_peaks.rds", emit: archr_marker_peaks
+    path "Clusters_marker_peaks.rds", emit: archr_marker_peaks
     path "*_group_names.txt", emit: group_names
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_get_marker_peaks_clusters", emit: report
@@ -73,8 +73,6 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
         }
       )
     }
-
-    saveRDS(proj, file = "archr_proj_marker_peaks.rds")
 
     ' > run.R
 
