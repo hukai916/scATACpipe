@@ -89,11 +89,15 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     x=( \$(find ./save_archr_project/Plots -name "*.pdf") )
     for item in "\${x[@]}"
     do
-      filename=\$(basename -- "\$item")
-      filename="\${filename%.*}"
-      pdftoppm -jpeg -r 300 \$item ./save_archr_project/Plots/jpeg/\$filename
-      convert -append ./save_archr_project/Plots/jpeg/\${filename}* ./save_archr_project/Plots/jpeg/\${filename}.jpg
-      rm ./save_archr_project/Plots/jpeg/\${filename}-*.jpg
+      {
+        filename=\$(basename -- "\$item")
+        filename="\${filename%.*}"
+        pdftoppm -jpeg -r 300 \$item ./save_archr_project/Plots/jpeg/\$filename
+        convert -append ./save_archr_project/Plots/jpeg/\${filename}* ./save_archr_project/Plots/jpeg/\${filename}.jpg
+        rm ./save_archr_project/Plots/jpeg/\${filename}-*.jpg
+      } || {
+        echo "Pdf to jpeg failed!" > bash.log
+      }
     done
 
     # For reporting:

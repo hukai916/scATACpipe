@@ -28,7 +28,7 @@ process ARCHR_ARCHRPROJECT_QC {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
@@ -93,11 +93,15 @@ process ARCHR_ARCHRPROJECT_QC {
     x=( \$(find ./Plots -name "*.pdf") )
     for item in "\${x[@]}"
     do
-      filename=\$(basename -- "\$item")
-      filename="\${filename%.*}"
-      pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
-      convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
-      rm ./Plots/jpeg/\${filename}-*.jpg
+      {
+        filename=\$(basename -- "\$item")
+        filename="\${filename%.*}"
+        pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
+        convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
+        rm ./Plots/jpeg/\${filename}-*.jpg
+      } || else {
+        echo "Pdf to jpeg failed!" > bash.log
+      }
     done
 
     # For reporting:

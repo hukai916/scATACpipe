@@ -53,11 +53,15 @@ process ARCHR_ADD_DOUBLETSCORES {
     x=( \$(find ./doublet_qc_$sample_name -name "*.pdf") )
     for item in "\${x[@]}"
     do
-      filename=\$(basename -- "\$item")
-      filename="\${filename%.*}"
-      pdftoppm -jpeg -r 300 \$item ./doublet_qc_$sample_name/jpeg/\$filename
-      convert -append ./doublet_qc_$sample_name/jpeg/\${filename}* ./doublet_qc_$sample_name/jpeg/\${filename}.jpg
-      rm ./doublet_qc_$sample_name/jpeg/\${filename}-*.jpg
+      {
+        filename=\$(basename -- "\$item")
+        filename="\${filename%.*}"
+        pdftoppm -jpeg -r 300 \$item ./doublet_qc_$sample_name/jpeg/\$filename
+        convert -append ./doublet_qc_$sample_name/jpeg/\${filename}* ./doublet_qc_$sample_name/jpeg/\${filename}.jpg
+        rm ./doublet_qc_$sample_name/jpeg/\${filename}-*.jpg
+      } || {
+        echo "Pdf to jpeg failed!" > bash.log
+      }
     done
 
     # For reporting:

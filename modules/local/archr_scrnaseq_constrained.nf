@@ -30,7 +30,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     echo '
     library(ArchR)
     library(collections)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     seRNA <- readRDS("$obj_scrnaseq")
@@ -146,11 +146,15 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     x=( \$(find ./Plots -name "*.pdf") )
     for item in "\${x[@]}"
     do
-      filename=\$(basename -- "\$item")
-      filename="\${filename%.*}"
-      pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
-      convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
-      rm ./Plots/jpeg/\${filename}-*.jpg
+      {
+        filename=\$(basename -- "\$item")
+        filename="\${filename%.*}"
+        pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
+        convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
+        rm ./Plots/jpeg/\${filename}-*.jpg
+      } || {
+        echo "Pdf to jpeg failed!" > bash.log
+      }
     done
 
     # For reporting:

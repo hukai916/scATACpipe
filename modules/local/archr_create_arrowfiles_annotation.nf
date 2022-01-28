@@ -61,11 +61,15 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     x=( \$(find ./QualityControl_$sample_name -name "*.pdf") )
     for item in "\${x[@]}"
     do
-      filename=\$(basename -- "\$item")
-      filename="\${filename%.*}"
-      pdftoppm -jpeg -r 300 \$item ./QualityControl_$sample_name/jpeg/\$filename
-      convert -append ./QualityControl_$sample_name/jpeg/\${filename}* ./QualityControl_$sample_name/jpeg/\${filename}.jpg
-      rm ./QualityControl_$sample_name/jpeg/\${filename}-*.jpg
+      {
+        filename=\$(basename -- "\$item")
+        filename="\${filename%.*}"
+        pdftoppm -jpeg -r 300 \$item ./QualityControl_$sample_name/jpeg/\$filename
+        convert -append ./QualityControl_$sample_name/jpeg/\${filename}* ./QualityControl_$sample_name/jpeg/\${filename}.jpg
+        rm ./QualityControl_$sample_name/jpeg/\${filename}-*.jpg
+      } || {
+        echo "Pdf to jpeg failed!" > bash.log
+      }
     done
 
     # For reporting:
