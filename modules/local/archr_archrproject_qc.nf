@@ -99,7 +99,7 @@ process ARCHR_ARCHRPROJECT_QC {
         pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
         convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
         rm ./Plots/jpeg/\${filename}-*.jpg
-      } || else {
+      } || {
         echo "Pdf to jpeg failed!" > bash.log
       }
     done

@@ -4,13 +4,13 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-process ARCHR_MARKER_GENE {
+process ARCHR_MARKER_GENE_CLUSTERS2 {
   // Find marker genes for "Clusters" only.
 
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
-        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_marker_gene', publish_id:'') }
+        saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_marker_gene_clusters2', publish_id:'') }
     container "hukai916/r_sc:0.5"
 
     input:
@@ -36,7 +36,7 @@ process ARCHR_MARKER_GENE {
 
     markersGS <- getMarkerFeatures(
       ArchRProj = proj,
-      groupBy = "Clusters",
+      groupBy = "Clusters2",
       $options.args
     )
 
@@ -119,7 +119,7 @@ process ARCHR_MARKER_GENE {
 
     # Plot: track plotting with ArchRBrowser
     # clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
-    clusters <- c("Clusters")
+    clusters <- c("Clusters2")
 
     for (cluster in clusters) {
       tryCatch({

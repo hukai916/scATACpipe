@@ -51,7 +51,8 @@ include { ARCHR_DIMENSION_REDUCTION } from '../modules/local/archr_dimension_red
 include { ARCHR_BATCH_CORRECTION } from '../modules/local/archr_batch_correction' addParams( options: modules['archr_batch_correction'] )
 include { ARCHR_CLUSTERING } from '../modules/local/archr_clustering' addParams( options: modules['archr_clustering'] )
 include { ARCHR_EMBEDDING } from '../modules/local/archr_embedding' addParams( options: modules['archr_embedding'] )
-include { ARCHR_MARKER_GENE } from '../modules/local/archr_marker_gene' addParams( options: modules['archr_marker_gene'] )
+include { ARCHR_MARKER_GENE_CLUSTERS } from '../modules/local/archr_marker_gene_clusters' addParams( options: modules['archr_marker_gene_clusters'] )
+include { ARCHR_MARKER_GENE_CLUSTERS2 } from '../modules/local/archr_marker_gene_clusters2' addParams( options: modules['archr_marker_gene_clusters2'] )
 include { ARCHR_SCRNASEQ_UNCONSTRAINED } from '../modules/local/archr_scrnaseq_unconstrained' addParams( options: modules['archr_scrnaseq_unconstrained'] )
 include { ARCHR_SCRNASEQ_CONSTRAINED } from '../modules/local/archr_scrnaseq_constrained' addParams( options: modules['archr_scrnaseq_constrained'] )
 include { ARCHR_PSEUDO_BULK_CLUSTERS } from '../modules/local/archr_pseudo_bulk_clusters' addParams( options: modules['archr_pseudo_bulk_clusters'] )
@@ -398,21 +399,17 @@ workflow DOWNSTREAM_ARCHR {
     // Module: single-cell embeddings
     ARCHR_EMBEDDING(ARCHR_CLUSTERING.out.archr_project, params.archr_thread)
 
-    // Module: find marker gene: use Seurat and prefer to use Harmony if avail.
-    ARCHR_MARKER_GENE(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
-
     // Module: integrate with matching scRNAseq data
     if (!(params.archr_scrnaseq)) {
       groupby_cluster = "Clusters" // downstream uses clusters inferred from scATAC data only
       log.info "INFO: --archr_scrnaseq: not supplied, skip integrative analysis with scRNA-seq!"
       ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
-
       // For each Arrorproject, you can have only one set of peak set unless you copy arrow files and create another arrowproject. That is why we implemented ARCHR_PSEUDO_BULK_CLUSTERS and ARCHR_PSEUDO_BULK_CLUSTERS2
     } else {
         groupby_cluster = "Clusters2" // downstream uses clusters inferred from both data
         log.info "NOTICE: --archr_scrnaseq: supplied, will perform integrative analysis with scRNA-seq!"
-        ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_MARKER_GENE.out.archr_project, params.archr_thread)
-        ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_MARKER_GENE.out.archr_project, params.archr_scrnaseq, params.archr_thread)
+        ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
+        ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_EMBEDDING.out.archr_project, params.archr_scrnaseq, params.archr_thread)
         // log.info "INFO: use the following cluster names to define --archr_scrnaseq_grouplist."
         ARCHR_SCRNASEQ_UNCONSTRAINED.out.cell_type_scrna
           .splitText()
@@ -428,6 +425,13 @@ workflow DOWNSTREAM_ARCHR {
             // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, groupby_cluster)
             ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, params.archr_thread)
         }
+    }
+
+    // Module: find marker gene: use "Clusters" or "Clusters2" for getMarkerFeatures()
+    if (groupby_cluster == "Clusters") {
+      ARCHR_MARKER_GENE_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
+    } else if (groupby_cluster == "Clusters2") {
+      ARCHR_MARKER_GENE_CLUSTERS2(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
     }
 
     // Module: call peaks
@@ -635,7 +639,10 @@ workflow DOWNSTREAM_ARCHR {
     } catch (Exception ex) {}
     // ARCHR_MARKER_GENE:
     try {
-      res_files = res_files.mix(ARCHR_MARKER_GENE.out.report.collect().ifEmpty([]))
+      res_files = res_files.mix(ARCHR_MARKER_GENE_CLUSTERS.out.report.collect().ifEmpty([]))
+    } catch (Exception ex) {}
+    try {
+      res_files = res_files.mix(ARCHR_MARKER_GENE_CLUSTERS2.out.report.collect().ifEmpty([]))
     } catch (Exception ex) {}
     // ARCHR_SCRNASEQ_UNCONSTRAINED:
     try {

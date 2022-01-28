@@ -5,6 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
+  // also default to plot the first 10, like marker_gene_clusters
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -40,12 +41,10 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
       geneSymbol = c("$gene_symbol"),
       features =  getMarkers(markersPeaks, cutOff = "$options.cutoff", returnGR = TRUE)["$cluster_name"],
       $options.args
-    )
+    ) # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
 
     plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
     message("Skipping plotting tracks-with-features!")
-
-    # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
 
     ' > run.R
 
