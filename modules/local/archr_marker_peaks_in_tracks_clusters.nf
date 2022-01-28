@@ -28,7 +28,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     markersPeaks <- readRDS("$marker_peaks")
@@ -43,6 +43,9 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     )
 
     plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+    message("Skipping plotting tracks-with-features!")
+
+    # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
 
     ' > run.R
 
@@ -53,11 +56,15 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     x=( \$(find ./Plots -name "*.pdf") )
     for item in "\${x[@]}"
     do
-      filename=\$(basename -- "\$item")
-      filename="\${filename%.*}"
-      pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
-      convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
-      rm ./Plots/jpeg/\${filename}-*.jpg
+      {
+        filename=\$(basename -- "\$item")
+        filename="\${filename%.*}"
+        pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
+        convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
+        rm ./Plots/jpeg/\${filename}-*.jpg
+      } || {
+        echo "Pdf to jpeg failed!" > bash.log
+      }
     done
 
     # For reporting:
