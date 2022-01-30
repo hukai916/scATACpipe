@@ -41,7 +41,7 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
       groupBy = cluster,
       $options.args
     )
-    markerList <- getMarkers(markersPeaks, cutOff = "$options.getMarkers_cutoff", returnGR = TRUE)
+    markerList <- getMarkers(markersPeaks, returnGR = TRUE, $options.getMarkers_cutoff)
 
     saveRDS(markerList, file = paste0(cluster, "_markerList.rds"))
     saveRDS(markersPeaks, file = paste0(cluster, "_marker_peaks.rds"))
@@ -53,8 +53,8 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     tryCatch({ # use tryCatch in case no peak pass cutoff
       heatmapPeaks <- markerHeatmap(
         seMarker = markersPeaks,
-        cutOff = "$options.getMarkers_cutoff",
-        transpose = TRUE
+        transpose = TRUE,
+        $options.getMarkers_cutoff
       )
       # height <- nrow(cM) * cellheight * 1/72 + 4
       # height <- min(11, height)
@@ -68,8 +68,8 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     # Plot MA and Vocalno plots for each group:
     for (group in unique(names(markerList))) {
       tryCatch({
-        pma <- markerPlot(seMarker = markersPeaks, cutOff = "$options.getMarkers_cutoff", name = group, plotAs = "MA")
-        pv <- markerPlot(seMarker = markersPeaks, cutOff = "$options.getMarkers_cutoff", name = group, plotAs = "Volcano")
+        pma <- markerPlot(seMarker = markersPeaks, name = group, plotAs = "MA", $options.getMarkers_cutoff)
+        pv <- markerPlot(seMarker = markersPeaks, name = group, plotAs = "Volcano", $options.getMarkers_cutoff)
         plotPDF(pma, pv, name = paste0(cluster, "-", group, "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
       },
         error=function(e) {

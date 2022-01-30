@@ -83,7 +83,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
         ArchRProj = proj,
         groupBy = "Clusters",
         geneSymbol = markerGenes_raw,
-        features =  getMarkers(markersPeaks, $options.getMarkers_cutoff, returnGR = TRUE)[cluster_name],
+        features =  getMarkers(markersPeaks, returnGR = TRUE, $options.getMarkers_cutoff)[cluster_name],
         $options.args
       ) # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
 
