@@ -13,8 +13,6 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
 
     input:
     path archr_project
-    val useGroups
-    val bgdGroups
     val archr_thread
 
     output:
@@ -32,20 +30,32 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
 
     proj <- readRDS("$archr_project")
 
+    # Determine the useGroups and bgdGroups, default to the first and second:
+    if ("$options.use_groups" == "default") {
+      useGroups <- unique(proj\$Clusters)[1]
+    } else {
+      useGroups <- "$optins.use_groups"
+    }
+    if ("$options.bgd_groups" == "default") {
+      bdgGroups <- unique(proj\$Clusters)[2]
+    } else {
+      bgdGroups <- "$optins.bgd_groups"
+    }
+
     markerTest <- getMarkerFeatures(
       ArchRProj = proj,
       useMatrix = "PeakMatrix",
       groupBy = "Clusters",
-      useGroups = "$useGroups",
-      bgdGroups = "$bgdGroups",
+      useGroups = useGroups,
+      bgdGroups = bgdGroups,
       $options.args
     )
     saveRDS(markerTest, file = "markerTest.rds")
 
-    pma <- markerPlot(seMarker = markerTest, name = "$useGroups", cutOff = "$options.cutoff", plotAs = "MA")
-    pv <- markerPlot(seMarker = markerTest, name = "$useGroups", cutOff = "$options.cutoff", plotAs = "Volcano")
+    pma <- markerPlot(seMarker = markerTest, name = useGroups, plotAs = "MA", $options.cutoff)
+    pv <- markerPlot(seMarker = markerTest, name = useGroups, plotAs = "Volcano", $options.cutoff)
 
-    plotPDF(pma, pv, name = paste0("$useGroups", "-vs-", "$bgdGroups", "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+    plotPDF(pma, pv, name = paste0(useGroups, "-vs-", bgdGroup, "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     ' > run.R
 

@@ -478,13 +478,15 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: perform pairwise test
     if (groupby_cluster == "Clusters") {
-      if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
-        log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip pairwise plotting!"
-      } else {
-        // Perform plotting
-        log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
-        ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
-      }
+      ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
+
+      // if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
+      //   log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip pairwise plotting!"
+      // } else {
+      //   // Perform plotting
+      //   log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
+      //   ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
+      // }
     } else if (groupby_cluster == "Clusters2") {
         if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
           log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip pairwise plotting!"

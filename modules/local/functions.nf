@@ -25,6 +25,8 @@ def initOptions(Map args) {
     options.cluster_name  = args.cluster_name ?: ''
     options.cutoff        = args.cutoff ?: ''
     options.getMarkers_cutoff = args.getMarkers_cutoff ?: ''
+    options.use_groups     = args.use_groups ?: ''
+    options.bgd_groups     = args.bgd_groups ?: ''
     options.motifs        = args.motifs ?: ''
     options.norm_method   = args.norm_method ?: ''
     options.tss_norm_method = args.tss_norm_method ?: ''
