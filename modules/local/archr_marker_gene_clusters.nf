@@ -82,7 +82,8 @@ process ARCHR_MARKER_GENE_CLUSTERS {
 
     if (length(markerGenes2labeled) == 0) {
       message(markerGenes2labeled)
-      stop("Invalid marker gene names!")
+      message("Invalid marker gene names!")
+      message("Skipping plotting!")
     } else {
       heatmapGS <- markerHeatmap(
         seMarker = markersGS,
