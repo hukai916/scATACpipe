@@ -43,8 +43,8 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     # Read in test group info: second line is background
     conn <- file("$test_group", open = "r")
     lines <- readLines(conn)
-    useGroups <- lines[1]
-    bgdGroups <- lines[2]
+    useGroups <- trimws(lines[1], "both")
+    bgdGroups <- trimws(lines[2], "both")
     close(conn)
 
     proj <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = "$species_latin_name", $options.args)
