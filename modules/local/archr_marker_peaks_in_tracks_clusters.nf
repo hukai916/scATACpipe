@@ -45,7 +45,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
-      sel <- min(length(markerGenes), strtoi("$options.marker_genes"))
+      sel <- min(length(markerGenes), 10)
       markerGenes <- markerGenes[1:sel]
     }
 
