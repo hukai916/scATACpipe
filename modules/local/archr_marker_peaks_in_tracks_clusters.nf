@@ -35,10 +35,33 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     markersPeaks <- readRDS("$marker_peaks")
     proj <- readRDS("$archr_project")
 
+    # below is to make sure geneSymbol is subset of getGenes(proj)\$symbol
+    all_id <- getGenes(proj)\$gene_id
+    all_symbol <- getGenes(proj)\$symbol
+    all_symbol_cleaned <- character(length(all_id))
+    markerGenes <- c("$gene_symbol")
+    markerGenes_clean <- markerGenes
+    for (i in 1:length(all_id)) {
+      all_symbol_cleaned[i] <- str_remove(all_symbol[i], paste0("_", all_id[i]))
+      markerGenes_clean <- str_remove(markerGenes_clean, paste0("_", all_id[i])) # not very efficient, but works
+    }
+
+    markerGenes2labeled <- sort(markerGenes_clean[markerGenes_clean %in% all_symbol_cleaned])
+    markerGenes_raw <- sort(all_symbol[all_symbol_cleaned %in% markerGenes_clean])
+
+    all_symbol_cleaned_unique <- unique(all_symbol_cleaned)
+    all_symbol_unique <- all_symbol[match(all_symbol_cleaned_unique, all_symbol_cleaned)]
+    markerGenes_raw <- sort(all_symbol_unique[all_symbol_cleaned_unique %in% markerGenes_clean])
+
+    if (length(markerGenes2labeled) == 0) {
+      message(markerGenes2labeled)
+      stop("Invalid marker gene names!")
+    }
+
     p <- plotBrowserTrack(
       ArchRProj = proj,
       groupBy = "Clusters",
-      geneSymbol = c("$gene_symbol"),
+      geneSymbol = markerGenes_raw,
       features =  getMarkers(markersPeaks, cutOff = "$options.cutoff", returnGR = TRUE)["$cluster_name"],
       $options.args
     ) # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
