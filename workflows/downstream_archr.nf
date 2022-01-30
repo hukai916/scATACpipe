@@ -507,7 +507,7 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: motif enrichment: note that ARCHR_MOTIF_ENRICHMENT_CLUSTERS and ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 are exactly the same except for the outdir name.
     if (groupby_cluster == "Clusters") {
-      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, params.custom_peaks, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, params.custom_peaks, params.species_latin_name, params.archr_thread)
 
       // if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
       //   log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip motif enrichment!"
