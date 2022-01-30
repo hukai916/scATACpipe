@@ -16,7 +16,9 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     path marker_test
     path markers_peaks
     path test_group
+    path user_rlib
     val custom_peaks
+    val species_latin_name
     val archr_thread
 
     output:
@@ -29,6 +31,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     """
     echo '
     library(ArchR)
+    .libPaths("user_rlib") # for user installed packages
 
     options(timeout=10000)
     addArchRThreads(threads = $archr_thread)
@@ -44,7 +47,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     bgdGroups <- lines[2]
     close(conn)
 
-    proj2 <- addMotifAnnotations(ArchRProj = proj, name = "Motif", $options.args)
+    proj2 <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = "$species_latin_name", $options.args)
 
     # Motif enrichment in Differential peaks:
     motifsUp <- peakAnnoEnrichment(
