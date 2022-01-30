@@ -99,7 +99,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
       seMarker = markersPeaks,
       ArchRProj = proj,
       peakAnnotation = "Motif",
-      $options.cutOff
+      $options.cutoff
     )
     heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 7, transpose = TRUE)
     plotPDF(heatmapEM, name = "Motifs-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
