@@ -80,6 +80,9 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     all_symbol_unique <- all_symbol[match(all_symbol_cleaned_unique, all_symbol_cleaned)]
     markerGenes_raw <- sort(all_symbol_unique[all_symbol_cleaned_unique %in% markerGenes_clean])
 
+    proj2 <- addImputeWeights(proj)
+    saveRDS(proj2, file = "proj_marker_gene.rds")
+
     if (length(markerGenes2labeled) == 0) {
       message(markerGenes2labeled)
       message("Invalid marker gene names!")
@@ -106,8 +109,6 @@ process ARCHR_MARKER_GENE_CLUSTERS {
       }
 
       # Plot marker genes on embeddings with imputation:
-      proj2 <- addImputeWeights(proj)
-      saveRDS(proj2, file = "proj_marker_gene.rds")
       for (embedding in names(proj@embeddings)) {
         p <- plotEmbedding(
           ArchRProj = proj2,
@@ -148,9 +149,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     # Convert to jpeg:
     mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    #for item in "\${x[@]}"
-    for item in \${x[@]+"\${x[@]}"}
-    do
+do
       {
         filename=\$(basename -- "\$item")
         filename="\${filename%.*}"
