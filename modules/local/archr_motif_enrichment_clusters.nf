@@ -101,8 +101,15 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
       peakAnnotation = "Motif",
       $options.cutoff
     )
-    heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 7, transpose = TRUE)
-    plotPDF(heatmapEM, name = "Motifs-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+
+    tryCatch({ # use tryCatch in case no result passes cutoff
+      heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 7, transpose = TRUE)
+      plotPDF(heatmapEM, name = "Motifs-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+    },
+      error=function(e) {
+        message(paste0("Skipping plotting motifs-enriched-marker heatmaps!"))
+      }
+    )
 
     # ArchR enrichments # is problematic when downloading using inside docker, skip it for now
 
@@ -119,8 +126,14 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
         peakAnnotation = "Custom",
         $options.cutoff
       )
-      heatmapRegions <- plotEnrichHeatmap(enrichRegions, n = 7, transpose = TRUE)
-      plotPDF(heatmapRegions, name = "Regions-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+      tryCatch({ # use tryCatch in case no result passes cutoff
+        heatmapRegions <- plotEnrichHeatmap(enrichRegions, n = 7, transpose = TRUE)
+        plotPDF(heatmapRegions, name = "Regions-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+      },
+        error=function(e) {
+          message(paste0("Skipping plotting motifs-enriched-marker heatmaps!"))
+        }
+      )
     }
 
     saveRDS(proj, file = "archr_motif_enrichment_project.rds")
