@@ -21,6 +21,7 @@ def initOptions(Map args) {
     options.args3         = args.args3 ?: ''
     options.read_count_cutoff = args.read_count_cutoff ?: ''
     options.marker_genes  = args.marker_genes ?: ''
+    options.cluster_name  = args.cluster_name ?: ''
     options.cutoff        = args.cutoff ?: ''
     options.motifs        = args.motifs ?: ''
     options.norm_method   = args.norm_method ?: ''

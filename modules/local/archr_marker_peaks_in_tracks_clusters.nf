@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
-  // also default to plot the first 10, like marker_gene_clusters
+  // Defaul to plot the first 10 marker genes and the first Cluster
     label 'process_low'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -29,6 +29,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     """
     echo '
     library(ArchR)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 
@@ -36,11 +37,24 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     proj <- readRDS("$archr_project")
 
     # below is to make sure geneSymbol is subset of getGenes(proj)\$symbol
+    # Draw heatmap: default to use first 10 marker_genes
+    if (is.na(strtoi("$options.marker_genes"))) {
+      markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
+    } else {
+      markerGenes <- c()
+      for (cluster in markerList@listData) {
+        markerGenes <- c(markerGenes, cluster\$name)
+      }
+      sel <- min(length(markerGenes), strtoi("$options.marker_genes"))
+      markerGenes <- markerGenes[1:sel]
+    }
+
+    markerGenes <- unique(markerGenes)
+    markerGenes_clean <- markerGenes
+
     all_id <- getGenes(proj)\$gene_id
     all_symbol <- getGenes(proj)\$symbol
     all_symbol_cleaned <- character(length(all_id))
-    markerGenes <- c("$gene_symbol")
-    markerGenes_clean <- markerGenes
     for (i in 1:length(all_id)) {
       all_symbol_cleaned[i] <- str_remove(all_symbol[i], paste0("_", all_id[i]))
       markerGenes_clean <- str_remove(markerGenes_clean, paste0("_", all_id[i])) # not very efficient, but works
@@ -62,7 +76,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
       ArchRProj = proj,
       groupBy = "Clusters",
       geneSymbol = markerGenes_raw,
-      features =  getMarkers(markersPeaks, cutOff = "$options.cutoff", returnGR = TRUE)["$cluster_name"],
+      features =  getMarkers(markersPeaks, cutOff = "$options.cutoff", returnGR = TRUE)["$options.cluster_name"],
       $options.args
     ) # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
 
