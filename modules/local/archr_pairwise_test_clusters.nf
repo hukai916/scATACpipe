@@ -55,7 +55,7 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
     pma <- markerPlot(seMarker = markerTest, name = useGroups, plotAs = "MA", $options.cutoff)
     pv <- markerPlot(seMarker = markerTest, name = useGroups, plotAs = "Volcano", $options.cutoff)
 
-    plotPDF(pma, pv, name = paste0(useGroups, "-vs-", bgdGroup, "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+    plotPDF(pma, pv, name = paste0(useGroups, "-vs-", bgdGroups, "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     ' > run.R
 
