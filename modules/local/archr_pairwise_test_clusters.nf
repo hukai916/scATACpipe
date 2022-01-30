@@ -37,7 +37,7 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
       useGroups <- "$options.use_groups"
     }
     if ("$options.bgd_groups" == "default") {
-      bdgGroups <- unique(proj\$Clusters)[2]
+      bgdGroups <- unique(proj\$Clusters)[2]
     } else {
       bgdGroups <- "$options.bgd_groups"
     }
