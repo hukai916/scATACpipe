@@ -90,7 +90,6 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
       plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
     }
 
-
     ' > run.R
 
     Rscript run.R
