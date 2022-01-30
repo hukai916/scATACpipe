@@ -18,8 +18,6 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
 
     output:
     path "proj_scrnaseq_unconstrained.rds", emit: archr_project
-    path "Plots/Plot-UMAP-Marker-Genes-RNA-W-Imputation.pdf", emit: pdf_umap_marker_genes_rna_w_imputation
-    path "Plots/Plot-UMAP-Remap-Clusters.pdf", emit: pdf_umap_remap_clusters
     path "cell_type_scRNA.txt", emit: cell_type_scrna
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_scrnaseq_unconstrained", emit: report
@@ -83,9 +81,9 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

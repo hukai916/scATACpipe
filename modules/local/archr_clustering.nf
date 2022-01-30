@@ -25,7 +25,6 @@ process ARCHR_CLUSTERING {
     output:
     path "proj_clustering.rds", emit: archr_project
     path "*.csv", emit: csv_cluster_matrix
-    path "Plots/*.pdf", emit: pdf_cluster_heatmap
     path "Plots/jpeg", emit: jpeg
     path "report_jpeg/archr_clustering", emit: report
 
@@ -103,9 +102,9 @@ process ARCHR_CLUSTERING {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

@@ -18,7 +18,6 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
     val archr_thread
 
     output:
-    path "Plots/*-Markers-MA-Volcano.pdf", emit: archr_markers_ma_volcano
     path "markerTest.rds", emit: archr_marker_test
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_pairwise_test_clusters2", emit: report
@@ -53,9 +52,9 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

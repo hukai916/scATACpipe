@@ -80,9 +80,9 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

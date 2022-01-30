@@ -57,9 +57,9 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir QualityControl_$sample_name/jpeg
+    mkdir -p QualityControl_$sample_name/jpeg
     x=( \$(find ./QualityControl_$sample_name -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

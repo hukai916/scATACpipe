@@ -16,8 +16,6 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
     val archr_thread
 
     output:
-    path "Plots/Heatmap-Marker-Genes-with-Peak2GeneLinks.pdf", emit: heatmap_marker_genes_with_peaks2genelinks
-    path "Plots/Plot-Tracks-Marker-Genes-with-Peak2GeneLinks.pdf", emit: plot_tracks_marker_genes_with_peak2genelinks
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "archr_peak2genelinkage_clusters2", emit: res_dir
     path "report_jpeg/archr_peak2genelinkage_clusters2", emit: report
@@ -68,9 +66,9 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

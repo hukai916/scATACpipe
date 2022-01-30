@@ -49,9 +49,9 @@ process ARCHR_ADD_DOUBLETSCORES {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir doublet_qc_$sample_name/jpeg
+    mkdir -p doublet_qc_$sample_name/jpeg
     x=( \$(find ./doublet_qc_$sample_name -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

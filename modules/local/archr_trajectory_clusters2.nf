@@ -18,10 +18,6 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     output:
     path "archr_trajectory_project.rds", emit: archr_project
-    path "Plots/Plot-Traj-UMAP.pdf", emit: plot_traj_umap
-    path "Plots/Plot-Traj-Heatmaps.pdf", emit: plot_traj_heatmap
-    path "Plots/Plot-Traj-Paired-Heatmaps-w-GeneScore.pdf", emit: plot_traj_paired_heatmaps_w_genescore
-    path "Plots/Plot-Traj-Paired-Heatmaps-w-GeneExpression.pdf", emit: plot_traj_paired_heatmaps_w_geneexpression
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "archr_trajectory_clusters2", emit: res_dir
     path "report_jpeg/archr_trajectory_clusters2", emit: report
@@ -108,9 +104,9 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

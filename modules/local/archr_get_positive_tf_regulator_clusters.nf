@@ -16,7 +16,6 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
     val archr_thread
 
     output:
-    path "Plots/Plot-Tracks-With-Features.pdf", emit: plot_tracks_with_features
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_get_positive_tf_regulator_clusters", emit: report
 
@@ -69,9 +68,9 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

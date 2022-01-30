@@ -18,13 +18,6 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS2 {
 
     output:
     path "archr_motif_deviation_project.rds", emit: archr_project
-    path "Plots/Variable-Motif-Deviation-Scores.pdf", emit: variable_motif_deviation_scores
-    path "Plots/Plot-Groups-Deviations-w-Imputation.pdf", emit: plot_groups_deviations_w_imputation
-    path "Plots/Plot-Groups-Deviations-w-Imputation-UMAP-Embedding.pdf", emit: plot_groups_deviations_w_imputation_umap_embedding
-    path "Plots/Plot-Groups-Deviations-w-Imputation-UMAP-Embedding-w-Gene-Scores.pdf", emit: plot_groups_deviations_w_imputation_umap_embedding_w_gene_scores
-    path "Plots/Plot-Groups-Deviations-w-Imputation-UMAP-Embedding-w-Gene-Expression.pdf", emit: plot_groups_deviations_w_imputation_umap_embedding_w_gene_expression
-    // path "Plots/Variable-Custom-Deviation-Scores.pdf", emit: variable_custom_deviation_scores
-    // path "Plots/Plot-Groups-Deviations-w-Imputation-UMAP-Embedding-w-z-scores.pdf", emit: plot_groups_deviations_w_imputation_umap_embedding_w_z_scores
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_motif_deviations_clusters2", emit: report
 
@@ -132,9 +125,9 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS2 {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

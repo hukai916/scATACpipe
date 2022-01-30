@@ -16,9 +16,6 @@ process ARCHR_ARCHRPROJECT_QC {
     val archr_thread
 
     output:
-    path "Plots/TSS-vs-Frags.pdf", emit: pdf_tss_vs_frags
-    path "Plots/QC-Sample-Statistics.pdf", emit: pdf_qc_sample_statistics
-    path "Plots/QC-Sample-FragSizes-TSSProfile.pdf", emit: pdf_qc_sample_fragsizes_tssprofile
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path archr_project, emit: archr_project
     path "report_jpeg/archr_archrproject_qc", emit: report
@@ -89,9 +86,9 @@ process ARCHR_ARCHRPROJECT_QC {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

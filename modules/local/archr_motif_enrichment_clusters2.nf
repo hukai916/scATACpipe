@@ -22,8 +22,6 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
 
     output:
     path "archr_motif_enrichment_project.rds", emit: archr_project
-    path "Plots/*-vs-*-Markers-Motifs-Enriched.pdf", emit: markers_motifs_enriched
-    path "Plots/Motifs-Enriched-Marker-Heatmap.pdf", emit: motifs_enriched_marker_heatmap
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_motif_enrichment_clusters2", emit: report
 
@@ -123,9 +121,9 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

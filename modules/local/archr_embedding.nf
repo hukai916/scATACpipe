@@ -121,7 +121,7 @@ process ARCHR_EMBEDDING {
     # Convert to jpeg:
     mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

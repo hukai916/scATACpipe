@@ -17,7 +17,6 @@ process ARCHR_COACCESSIBILITY_CLUSTERS {
 
     output:
     path "archr_coaccessibility_project.rds", emit: archr_project
-    path "Plots/Plot-Tracks-Marker-Genes-with-CoAccessibility.pdf", emit: plot_tracks_marker_genes_with_coaccessibility
     path "report_jpeg/archr_coaccessibility_clusters", emit: report
 
     script:
@@ -63,9 +62,9 @@ process ARCHR_COACCESSIBILITY_CLUSTERS {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

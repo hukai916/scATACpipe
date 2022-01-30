@@ -19,7 +19,6 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     val archr_thread
 
     output:
-    path "Plots/Plot-Tracks-With-Features.pdf", emit: archr_tracks_with_features
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_marker_peaks_in_tracks_clusters", emit: report
 

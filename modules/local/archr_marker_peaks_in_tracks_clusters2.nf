@@ -19,7 +19,6 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2 {
     val archr_thread
 
     output:
-    path "Plots/Plot-Tracks-With-Features.pdf", emit: archr_tracks_with_features
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_marker_peaks_in_tracks_clusters2", emit: report
 
@@ -49,9 +48,9 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2 {
     Rscript run.R
 
     # Convert to jpeg:
-    mkdir Plots/jpeg
+    mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")

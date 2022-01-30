@@ -86,9 +86,9 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
 
     # Convert to jpeg:
     rm -rf save_archr_project/Plots/jpeg
-    mkdir save_archr_project/Plots/jpeg
+    mkdir -p save_archr_project/Plots/jpeg
     x=( \$(find ./save_archr_project/Plots -name "*.pdf") )
-    for item in "\${x[@]}"
+    for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")
