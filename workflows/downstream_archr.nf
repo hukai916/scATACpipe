@@ -461,7 +461,7 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: plot peaks in browser tracks
     if (groupby_cluster == "Clusters") {
-      ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.markerList, params.archr_thread)
+      ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters)) {
         log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters."

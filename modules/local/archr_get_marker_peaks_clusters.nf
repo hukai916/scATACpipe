@@ -19,7 +19,6 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     output:
     path archr_project, emit: archr_project
     path "*_marker_peaks.rds", emit: marker_peaks
-    path "*_markerList.rds", emit: markerList
     path "*_group_names.txt", emit: group_names
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_get_marker_peaks_clusters", emit: report
@@ -42,8 +41,6 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
       $options.args
     )
     markerList <- getMarkers(markersPeaks, returnGR = TRUE, $options.getMarkers_cutoff)
-
-    saveRDS(markerList, file = paste0(cluster, "_markerList.rds"))
     saveRDS(markersPeaks, file = paste0(cluster, "_marker_peaks.rds"))
 
     fileConn <- file(paste0(cluster, "_group_names.txt"))

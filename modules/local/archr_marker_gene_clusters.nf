@@ -20,6 +20,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     output:
     path "proj_marker_gene.rds", emit: archr_project
     path "marker_list.txt", emit: marker_list
+    path "Clusters_markerList.rds", emit: markerList
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_marker_gene", emit: report
 
@@ -46,6 +47,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
       cat(cluster\$name, "\n")
     }
     sink()
+    saveRDS(markerList, file = paste0("Clusters", "_markerList.rds"))
 
     # Draw heatmap: default to use first 10 marker_genes
     if (!("$options.marker_genes" == "default")) {
