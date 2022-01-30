@@ -16,7 +16,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     path archr_project
     path marker_peaks
     path markerList
-    path archr_thread
+    val archr_thread
 
     output:
     path "Plots/Plot-Tracks-With-Features.pdf", emit: archr_tracks_with_features
