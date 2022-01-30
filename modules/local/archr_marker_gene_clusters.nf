@@ -81,61 +81,62 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     if (length(markerGenes2labeled) == 0) {
       message(markerGenes2labeled)
       stop("Invalid marker gene names!")
-    }
-
-    heatmapGS <- markerHeatmap(
-      seMarker = markersGS,
-      cutOff = "FDR <= 0.01 & Log2FC >= 1.25",
-      labelMarkers = markerGenes2labeled,
-      transpose = TRUE
-    )
-    plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
-
-    # Plot marker genes on embeddings without imputation:
-    for (embedding in names(proj@embeddings)) {
-      p <- plotEmbedding(
-        ArchRProj = proj,
-        name = markerGenes_raw,
-        imputeWeights = NULL,
-        embedding = embedding,
-        $options.args2
+    } else {
+      heatmapGS <- markerHeatmap(
+        seMarker = markersGS,
+        cutOff = "FDR <= 0.01 & Log2FC >= 1.25",
+        labelMarkers = markerGenes2labeled,
+        transpose = TRUE
       )
-      plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-WO-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-    }
+      plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
 
-    # Plot marker genes on embeddings with imputation:
-    proj2 <- addImputeWeights(proj)
-    saveRDS(proj2, file = "proj_marker_gene.rds")
-    for (embedding in names(proj@embeddings)) {
-      p <- plotEmbedding(
-        ArchRProj = proj2,
-        name = markerGenes_raw,
-        imputeWeights = getImputeWeights(proj2),
-        embedding = embedding,
-        $options.args2
-      )
-      plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-W-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-    }
-
-    # Plot: track plotting with ArchRBrowser
-    # clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
-    clusters <- c("Clusters")
-
-    for (cluster in clusters) {
-      tryCatch({
-        p <- plotBrowserTrack(
-          ArchRProj = proj2,
-          geneSymbol = markerGenes_raw,
-          groupBy = cluster,
-          $options.args3
+      # Plot marker genes on embeddings without imputation:
+      for (embedding in names(proj@embeddings)) {
+        p <- plotEmbedding(
+          ArchRProj = proj,
+          name = markerGenes_raw,
+          imputeWeights = NULL,
+          embedding = embedding,
+          $options.args2
         )
-        plotPDF(plotList = p, name = "Plot-Tracks-Marker-Genes.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-      },
-        error=function(e) {
-          message(paste0("Skipping track plotting for ", cluster, "!"))
-        }
-      )
+        plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-WO-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      }
+
+      # Plot marker genes on embeddings with imputation:
+      proj2 <- addImputeWeights(proj)
+      saveRDS(proj2, file = "proj_marker_gene.rds")
+      for (embedding in names(proj@embeddings)) {
+        p <- plotEmbedding(
+          ArchRProj = proj2,
+          name = markerGenes_raw,
+          imputeWeights = getImputeWeights(proj2),
+          embedding = embedding,
+          $options.args2
+        )
+        plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-W-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      }
+
+      # Plot: track plotting with ArchRBrowser
+      # clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
+      clusters <- c("Clusters")
+
+      for (cluster in clusters) {
+        tryCatch({
+          p <- plotBrowserTrack(
+            ArchRProj = proj2,
+            geneSymbol = markerGenes_raw,
+            groupBy = cluster,
+            $options.args3
+          )
+          plotPDF(plotList = p, name = "Plot-Tracks-Marker-Genes.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+        },
+          error=function(e) {
+            message(paste0("Skipping track plotting for ", cluster, "!"))
+          }
+        )
+      }
     }
+
 
     ' > run.R
 

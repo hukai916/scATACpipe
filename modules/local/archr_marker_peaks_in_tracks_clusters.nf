@@ -69,26 +69,27 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
 
     if (length(markerGenes2labeled) == 0) {
       message(markerGenes2labeled)
-      stop("Invalid marker gene names!")
-    }
-
-    # Below is to decide cluster_name, default to use the first one
-    if ("$options.cluster_name" == "default") {
-      cluster_name <- 1
+      message("Invalid marker gene names!")
+      message("Skipping plotting tracks-with-features!")
     } else {
-      cluster_name <- "$options.cluster_name"
+      # Below is to decide cluster_name, default to use the first one
+      if ("$options.cluster_name" == "default") {
+        cluster_name <- 1
+      } else {
+        cluster_name <- "$options.cluster_name"
+      }
+
+      p <- plotBrowserTrack(
+        ArchRProj = proj,
+        groupBy = "Clusters",
+        geneSymbol = markerGenes_raw,
+        features =  getMarkers(markersPeaks, cutOff = "$options.getMarkers_cutoff", returnGR = TRUE)[cluster_name],
+        $options.args
+      ) # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
+
+      plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
     }
 
-    p <- plotBrowserTrack(
-      ArchRProj = proj,
-      groupBy = "Clusters",
-      geneSymbol = markerGenes_raw,
-      features =  getMarkers(markersPeaks, cutOff = "$options.getMarkers_cutoff", returnGR = TRUE)[cluster_name],
-      $options.args
-    ) # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
-
-    plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
-    message("Skipping plotting tracks-with-features!")
 
     ' > run.R
 
