@@ -39,7 +39,7 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
     if ("$options.bgd_groups" == "default") {
       bdgGroups <- unique(proj\$Clusters)[2]
     } else {
-      bgdGroups <- "$optins.bgd_groups"
+      bgdGroups <- "$options.bgd_groups"
     }
 
     markerTest <- getMarkerFeatures(
