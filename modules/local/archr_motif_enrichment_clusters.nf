@@ -47,18 +47,18 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     bgdGroups <- lines[2]
     close(conn)
 
-    proj2 <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = "$species_latin_name", $options.args)
+    proj <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = "$species_latin_name", $options.args)
 
     # Motif enrichment in Differential peaks:
     motifsUp <- peakAnnoEnrichment(
       seMarker = markerTest,
-      ArchRProj = proj2,
+      ArchRProj = proj,
       peakAnnotation = "Motif",
       $options.cutoff
     )
     motifsDo <- peakAnnoEnrichment(
       seMarker = markerTest,
-      ArchRProj = proj2,
+      ArchRProj = proj,
       peakAnnotation = "Motif",
       $options.cutoff
     )
@@ -97,7 +97,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     # Motif enrichment in Marker peaks:
     enrichMotifs <- peakAnnoEnrichment(
       seMarker = markersPeaks,
-      ArchRProj = proj2,
+      ArchRProj = proj,
       peakAnnotation = "Motif",
       $options.cutOff
     )
@@ -112,10 +112,10 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     # if (customPeaks[1] != "") { # if custome_peaks == '', NULL will be passed
     if (!(is.null(customPeaks[1]))) {
       customPeaks <- customPeaks
-      proj2 <- addPeakAnnotations(ArchRProj = proj2, regions = customPeaks, name = "Custom")
+      proj <- addPeakAnnotations(ArchRProj = proj, regions = customPeaks, name = "Custom")
       enrichRegions <- peakAnnoEnrichment(
         seMarker = markersPeaks,
-        ArchRProj = proj2,
+        ArchRProj = proj,
         peakAnnotation = "Custom",
         $options.cutoff
       )
@@ -123,7 +123,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
       plotPDF(heatmapRegions, name = "Regions-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
     }
 
-    saveRDS(proj2, file = "archr_motif_enrichment_project.rds")
+    saveRDS(proj, file = "archr_motif_enrichment_project.rds")
 
     ' > run.R
 
