@@ -149,7 +149,8 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     # Convert to jpeg:
     mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-do
+    for item in \${x[@]+"\${x[@]}"} # https://stackoverflow.com/questions/7577052/bash-empty-array-expansion-with-set-u
+    do
       {
         filename=\$(basename -- "\$item")
         filename="\${filename%.*}"
