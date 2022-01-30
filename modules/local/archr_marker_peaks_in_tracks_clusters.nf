@@ -15,9 +15,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     input:
     path archr_project
     path marker_peaks
-    val gene_symbol
-    val cluster_name
-    val archr_thread
+    path markerList
 
     output:
     path "Plots/Plot-Tracks-With-Features.pdf", emit: archr_tracks_with_features
@@ -34,11 +32,12 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     addArchRThreads(threads = $archr_thread)
 
     markersPeaks <- readRDS("$marker_peaks")
+    markerList   <- readRDS("$markerList")
     proj <- readRDS("$archr_project")
 
-    # below is to make sure geneSymbol is subset of getGenes(proj)\$symbol
+    # Below is to make sure geneSymbol is subset of getGenes(proj)\$symbol
     # Draw heatmap: default to use first 10 marker_genes
-    if (is.na(strtoi("$options.marker_genes"))) {
+    if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
       markerGenes <- c()
@@ -72,11 +71,18 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
       stop("Invalid marker gene names!")
     }
 
+    # Below is to decide cluster_name, default to use the first one
+    if ("$options.cluster_name" == "default") {
+      cluster_name <- 1
+    } else {
+      cluster_name <- "$options.cluster_name"
+    }
+
     p <- plotBrowserTrack(
       ArchRProj = proj,
       groupBy = "Clusters",
       geneSymbol = markerGenes_raw,
-      features =  getMarkers(markersPeaks, cutOff = "$options.cutoff", returnGR = TRUE)["$options.cluster_name"],
+      features =  getMarkers(markersPeaks, cutOff = "$options.getMarkers_cutoff", returnGR = TRUE)[cluster_name],
       $options.args
     ) # if p == 0, the pdf will be empty, and the converting to jpeg is problematic.
 

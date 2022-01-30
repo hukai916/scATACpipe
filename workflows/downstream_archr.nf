@@ -461,22 +461,18 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: plot peaks in browser tracks
     if (groupby_cluster == "Clusters") {
-      if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters)) {
-        log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters."
-      } else {
-        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters, params.archr_thread)
-      }
+      ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.markerList)
     } else if (groupby_cluster == "Clusters2") {
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters)) {
         log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters."
       } else {
-          ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters, params.archr_thread)
+          ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters, params.archr_thread)
       }
 
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters2)) {
         log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters2."
       } else {
-        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.archr_marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters2, params.archr_thread)
+        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters2, params.archr_thread)
       }
     }
 
@@ -514,7 +510,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
           // Perform plotting
           log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
+          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
       }
     } else if (groupby_cluster == "Clusters2") {
         if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
@@ -522,7 +518,7 @@ workflow DOWNSTREAM_ARCHR {
         } else {
           // Perform plotting
           log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
+          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
         }
 
       if (!(params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
@@ -530,7 +526,7 @@ workflow DOWNSTREAM_ARCHR {
       } else {
           // Perform plotting
           log.info "NOTICE: --pairwise_test_clusters2_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.archr_marker_peaks, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.custom_peaks, params.archr_thread)
+          ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.custom_peaks, params.archr_thread)
       }
     }
 

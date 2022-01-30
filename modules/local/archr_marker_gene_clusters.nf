@@ -40,8 +40,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
       $options.args
     )
 
-    markerList <- getMarkers(markersGS, cutOff = "FDR <= 0.01 & Log2FC >= 1.25")
-    # TODO: here need to strip the ENSG suffix from the geneSymbol
+    markerList <- getMarkers(markersGS, cutOff = "$options.getMarkers_cutoff")
     sink(file = "marker_list.txt")
     for (cluster in markerList@listData) {
       cat(cluster\$name, "\n")
@@ -49,7 +48,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     sink()
 
     # Draw heatmap: default to use first 10 marker_genes
-    if (is.na(strtoi("$options.marker_genes"))) {
+    if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
       markerGenes <- c()
