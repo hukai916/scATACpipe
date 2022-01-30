@@ -40,7 +40,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
       $options.args
     )
 
-    markerList <- getMarkers(markersGS, cutOff = "$options.getMarkers_cutoff")
+    markerList <- getMarkers(markersGS, $options.getMarkers_cutoff)
     sink(file = "marker_list.txt")
     for (cluster in markerList@listData) {
       cat(cluster\$name, "\n")
@@ -84,9 +84,9 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     } else {
       heatmapGS <- markerHeatmap(
         seMarker = markersGS,
-        cutOff = "FDR <= 0.01 & Log2FC >= 1.25",
         labelMarkers = markerGenes2labeled,
-        transpose = TRUE
+        transpose = TRUE,
+        $options.getMarkers_cutoff
       )
       plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
 
