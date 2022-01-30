@@ -507,13 +507,15 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: motif enrichment: note that ARCHR_MOTIF_ENRICHMENT_CLUSTERS and ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 are exactly the same except for the outdir name.
     if (groupby_cluster == "Clusters") {
-      if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
-        log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip motif enrichment!"
-      } else {
-          // Perform plotting
-          log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
-      }
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, params.custom_peaks, params.archr_thread)
+
+      // if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
+      //   log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip motif enrichment!"
+      // } else {
+      //     // Perform plotting
+      //     log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
+      //     ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
+      // }
     } else if (groupby_cluster == "Clusters2") {
         if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
           log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip motif enrichment!"

@@ -17,6 +17,7 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
 
     output:
     path "markerTest.rds", emit: archr_marker_test
+    path "test_group.txt", emit: test_group
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_pairwise_test_clusters", emit: report
 
@@ -41,6 +42,10 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
     } else {
       bgdGroups <- "$options.bgd_groups"
     }
+    sink(file = "test_group.txt") # first line
+    cat(useGroups, "\n")
+    cat(bgdGroups, "\n")
+    sink()
 
     markerTest <- getMarkerFeatures(
       ArchRProj = proj,

@@ -15,8 +15,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     path archr_project
     path marker_test
     path markers_peaks
-    val useGroups
-    val bgdGroups
+    path test_group
     val custom_peaks
     val archr_thread
 
@@ -38,6 +37,13 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     markerTest <- readRDS("$marker_test")
     markersPeaks <- readRDS("$markers_peaks")
 
+    # Read in test group info: second line is background
+    conn <- file("$test_group", open = "r")
+    lines <- readLines(conn)
+    useGroups <- lines[1]
+    bgdGroups <- line2[2]
+    close(conn)
+
     proj2 <- addMotifAnnotations(ArchRProj = proj, name = "Motif", $options.args)
 
     # Motif enrichment in Differential peaks:
@@ -45,13 +51,13 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
       seMarker = markerTest,
       ArchRProj = proj2,
       peakAnnotation = "Motif",
-      cutOff = "$options.cutoff"
+      $options.cutoff
     )
     motifsDo <- peakAnnoEnrichment(
       seMarker = markerTest,
       ArchRProj = proj2,
       peakAnnotation = "Motif",
-      cutOff = "$options.cutoff"
+      $options.cutoff
     )
     df <- data.frame(TF = rownames(motifsUp), mlog10Padj = assay(motifsUp)[,1])
     df <- df[order(df\$mlog10Padj, decreasing = TRUE),]
@@ -83,14 +89,14 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
       xlab("Rank Sorted TFs Enriched") +
       scale_color_gradientn(colors = paletteContinuous(set = "comet"))
 
-    plotPDF(ggUp, ggDo, name = paste0("$useGroups", "-vs-", "$bgdGroups", "-Markers-Motifs-Enriched"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+    plotPDF(ggUp, ggDo, name = paste0(useGroups, "-vs-", bgdGroups, "-Markers-Motifs-Enriched"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     # Motif enrichment in Marker peaks:
     enrichMotifs <- peakAnnoEnrichment(
       seMarker = markersPeaks,
       ArchRProj = proj2,
       peakAnnotation = "Motif",
-      cutOff = "$options.cutoff"
+      $options.cutOff
     )
     heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 7, transpose = TRUE)
     plotPDF(heatmapEM, name = "Motifs-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
@@ -108,7 +114,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
         seMarker = markersPeaks,
         ArchRProj = proj2,
         peakAnnotation = "Custom",
-        cutOff = "$options.cutoff"
+        $options.cutoff
       )
       heatmapRegions <- plotEnrichHeatmap(enrichRegions, n = 7, transpose = TRUE)
       plotPDF(heatmapRegions, name = "Regions-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
