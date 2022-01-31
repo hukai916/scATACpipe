@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process BUILD_GENE_ANNOTATION {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'build_gene_annotation', publish_id:'') }
@@ -30,6 +30,7 @@ process BUILD_GENE_ANNOTATION {
     # first, get gene symbol SimpleList
     id2symbol <- get_geneID_symbol(gtf = "$gtf", species_latin_name = "$species_latin_name")
 
+    # use Strategy 2: only keep unique gene symbols, details see id2symbol in create_ArchR_geneannotation_WO_OrgDb
     create_ArchR_geneannotation_WO_OrgDb(TxDb = txdb,
                                   geneID2Symbol = id2symbol,
                                   out_dir = "./",

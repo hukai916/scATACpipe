@@ -50,8 +50,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
               $options.args
             )
 
-    # Fix the gene_symbol containing ENSEMBLE id issue:
-    
+    # Fix the gene_symbol containing ENSEMBLE id issue: update codes in create_geneAnnotation_genomeAnnotation.R 
 
     saveRDS(proj, file = \\"proj.rds\\")
     " > run.R
