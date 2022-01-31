@@ -542,13 +542,42 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: footprinting
-    if (groupby_cluster = "Clusters") {
-
+    if (groupby_cluster == "Clusters") {
+      ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
 
     }
 
-    // Module:
+    // Module: archr_coaccessibility
+    if (groupby_cluster == "Clusters_todo") {
+      ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+    } else if (groupby_cluster == "Clusters2") {
+
+    }
+
+    // Module: peak2genelinkage: for clusters2 only
+    if (groupby_cluster == "Clusters2") {
+      ARCHR_PEAK2GENELINKAGE_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
+    }
+
+    // Module: identify "positive" TF-regulators
+    if (groupby_cluster == "Clusters_todo") {
+      ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+    } else if (groupby_cluster == "Clusters2") {
+        ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+        ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
+    }
+
+    if (groupby_cluster == "Clusters2") {
+      if (!params.trajectory_groups) {
+        log.info "Parameter --trajectory_groups not supplied, checking trajectory analysis!"
+      } else {
+          log.info "Parameter --trajectory_groups supplied, will perform trajectory analysis!"
+          ARCHR_TRAJECTORY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.trajectory_groups, params.archr_thread)
+      }
+    } else {
+      log.info "Parameter --scrnaseq not supplied, skip trajectory analysis!"
+    }
 
 
     if ((params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2) || (params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {

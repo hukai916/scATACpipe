@@ -39,8 +39,6 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     } else {
       motifs <- str_trim(str_split("$options.motifs", ",")[[1]], side = "both")
     }
-
-    motifs <- c($options.motifs)
     markerMotifs <- unlist(lapply(motifs, function(x) grep(x, names(motifPositions), value = TRUE)))
 
     seFoot <- getFootprints(
