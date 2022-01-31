@@ -406,25 +406,25 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
       // For each Arrorproject, you can have only one set of peak set unless you copy arrow files and create another arrowproject. That is why we implemented ARCHR_PSEUDO_BULK_CLUSTERS and ARCHR_PSEUDO_BULK_CLUSTERS2
     } else {
-        groupby_cluster = "Clusters2" // downstream uses clusters inferred from both data
-        log.info "NOTICE: --archr_scrnaseq: supplied, will perform integrative analysis with scRNA-seq!"
-        ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
-        ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_EMBEDDING.out.archr_project, params.archr_scrnaseq, params.archr_thread)
-        // log.info "INFO: use the following cluster names to define --archr_scrnaseq_grouplist."
-        ARCHR_SCRNASEQ_UNCONSTRAINED.out.cell_type_scrna
-          .splitText()
-          .subscribe onNext: { String str -> println "Cluster name from scRNAseq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --archr_scrnaseq_grouplist ***\n"}
+      groupby_cluster = "Clusters2" // downstream uses clusters inferred from both data
+      log.info "INFO: --archr_scrnaseq: supplied, will perform integrative analysis with scRNA-seq!"
+      ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
+      ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_EMBEDDING.out.archr_project, params.archr_scrnaseq, params.archr_thread)
 
-        if ((!params.archr_scrnaseq_grouplist)) {
-          log.info "NOTICE: --archr_scrnaseq_grouplist: not supplied, skip constrained integration!"
-          // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, groupby_cluster)
-          ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_thread)
-        } else {
-            log.info "NOTICE: --archr_scrnaseq_grouplist: supplied, will perform constrained integration!"
-            ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, params.archr_scrnaseq_grouplist, params.archr_thread)
-            // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, groupby_cluster)
-            ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, params.archr_thread)
-        }
+      ARCHR_SCRNASEQ_UNCONSTRAINED.out.cell_type_scrna
+        .splitText()
+        .subscribe onNext: { String str -> println "Cluster name from scRNAseq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --archr_scrnaseq_grouplist ***\n"}
+
+      if ((!params.archr_scrnaseq_grouplist)) {
+        log.info "NOTICE: --archr_scrnaseq_grouplist: not supplied, skip constrained integration!"
+        // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, groupby_cluster)
+        ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_thread)
+      } else {
+        log.info "NOTICE: --archr_scrnaseq_grouplist: supplied, will perform constrained integration!"
+        ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, params.archr_scrnaseq_grouplist, params.archr_thread)
+        // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, groupby_cluster)
+        ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, params.archr_thread)
+      }
     }
 
     // Module: find marker gene: use "Clusters" or "Clusters2" for getMarkerFeatures()
@@ -639,20 +639,6 @@ workflow DOWNSTREAM_ARCHR {
     } else {
       ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, params.archr_thread)
     }
-
-    // if (groupby_cluster == "Clusters") {
-    //   if (archr_input_type == "genome_gtf") {
-    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters", params.archr_thread)
-    //   } else {
-    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, "Clusters", params.archr_thread)
-    //   }
-    // } else if (groupby_cluster == "Clusters2") {
-    //   if (archr_input_type == "genome_gtf") {
-    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, "Clusters2", params.archr_thread)
-    //   } else {
-    //     ARCHR_GET_CLUSTERING_TSV(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project.collect(), fragments, "Clusters2", params.archr_thread)
-    //   }
-    // }
 
     // Collect all output results for MultiQC report:
     res_files = Channel.empty()
