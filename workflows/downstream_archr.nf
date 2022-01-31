@@ -538,8 +538,18 @@ workflow DOWNSTREAM_ARCHR {
     if (groupby_cluster == "Clusters") {
       ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, params.custom_peaks, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-      
+
     }
+
+    // Module: footprinting
+    if (groupby_cluster = "Clusters") {
+
+    } else if (groupby_cluster == "Clusters2") {
+
+    }
+
+    // Module:
+
 
     if ((params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2) || (params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
       // Module: motif deviation,require motif enrichment result
