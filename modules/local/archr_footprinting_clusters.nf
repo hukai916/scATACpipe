@@ -32,7 +32,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     # Footprinting of motif:
     motifPositions <- getPositions(proj)
 
-    if ('$options.motifs' == 'default') { # single quote here
+    if ("$options.motifs" == "default") {
       plotVarDev <- getVarDeviations(proj, name = "MotifMatrix", plot = TRUE)
       VarDev     <- getVarDeviations(proj, name = "MotifMatrix", plot = FALSE)
       motifs     <- VarDev\$name[1:min(10, length(VarDev\$name))]

@@ -18,6 +18,7 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
 
     output:
     path "archr_motif_deviation_project.rds", emit: archr_project
+    path "motif_names.txt", emit: motif_names
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_motif_deviations_clusters", emit: report
 
@@ -42,6 +43,11 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
 
     plotVarDev <- getVarDeviations(proj2, name = "MotifMatrix", plot = TRUE)
     VarDev     <- getVarDeviations(proj2, name = "MotifMatrix", plot = FALSE)
+    sink(file = "motif_names.txt")
+    for (motif in VarDev\$name) {
+      cat(motif, "\n")
+    }
+    sink()
 
     plotPDF(plotVarDev, name = "Variable-Motif-Deviation-Scores", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
@@ -86,13 +92,11 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
       # With gene expression overlay on the UMAP: for clusters2 only.
       # ArchR deviations, skipped before fixing the Nextflow download.file problem.
     }
-
     ' > run.R
 
     if [[ '$options.custom_peaks' != 'default' ]] # Custom enrichment if supplied
     then
       echo '
-      customPeaks <- c($options.custom_peaks)
       customPeaks <- c($options.custom_peaks)
       proj2 <- addPeakAnnotations(ArchRProj = proj2, regions = customPeaks, name = "Custom")
       proj2 <- addDeviationsMatrix(
