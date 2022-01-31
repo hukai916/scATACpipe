@@ -62,8 +62,6 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
-      markerList   <- readRDS("$markerList")
-
       markersGS <- getMarkerFeatures(
         ArchRProj = proj,
         groupBy = "Clusters",
