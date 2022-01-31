@@ -208,18 +208,19 @@ get_geneID_symbol <- function(gtf = NULL, species_latin_name = NULL)
         id2symbol <- data.frame(gene_id = unlist(id2symbol_dict$keys()),
                                      symbol = unlist(id2symbol_dict$values()))
 
-        # To deal with: many gene_id share the same gene_symbol
-        ## Strategy 1: modify gene_symbol by appending gene_id: might be problematic to downstream analysis
-        # id2symbol$symbol <- paste(id2symbol$symbol, id2symbol$gene_id, sep = "_")
-
-        ## Strategy 2: only keep unique ones (first occurrence):
+        # To deal with: many gene_id share the same gene_symbol: genes that have multiple loci on genome.
+        # Indeed, should always use gene_id for best stability.
+        ## Strategy 1: only keep unique ones (first occurrence):
         keep <- match(unique(id2symbol$symbol), id2symbol$symbol)
         id2symbol_unique <- data.frame(matrix(ncol=2, nrow=length(keep), dimnames=list(NULL, c("gene_id", "symbol"))))
         id2symbol_unique$gene_id <- id2symbol$gene_id[keep]
         id2symbol_unique$symbol  <- id2symbol$symbol[keep]
 
-        # return(id2symbol)
-        return(id2symbol_unique)
+        ## Strategy 2: modify gene_symbol by appending gene_id: might be problematic to downstream analysis
+        # id2symbol$symbol <- paste(id2symbol$symbol, id2symbol$gene_id, sep = "_")
+
+        # return(id2symbol_unique) # for strategy 1
+        return(id2symbol) # for strategy 2
     }
 }
 
