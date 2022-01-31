@@ -438,7 +438,7 @@ workflow DOWNSTREAM_ARCHR {
     if (groupby_cluster == "Clusters") {
       ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.user_rlib, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-      ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, params.archr_thread)
+      ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.user_rlib, params.archr_thread)
       ARCHR_CALL_PEAKS_CLUSTERS2(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project, params.archr_thread)
     }
 
@@ -466,7 +466,7 @@ workflow DOWNSTREAM_ARCHR {
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters)) {
         log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters."
       } else {
-          ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters, params.archr_thread)
+        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
       }
 
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters2)) {
