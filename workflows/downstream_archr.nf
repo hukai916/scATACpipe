@@ -409,7 +409,7 @@ workflow DOWNSTREAM_ARCHR {
       groupby_cluster = "Clusters2" // downstream uses clusters inferred from both data
       log.info "INFO: --archr_scrnaseq: supplied, will perform integrative analysis with scRNA-seq!"
       ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
-      ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_EMBEDDING.out.archr_project, params.archr_scrnaseq, params.archr_thread)
+      ARCHR_SCRNASEQ_UNCONSTRAINED(ARCHR_EMBEDDING.out.archr_project, params.archr_scrnaseq, Channel.fromPath('assets/ArchR'), params.archr_thread)
 
       ARCHR_SCRNASEQ_UNCONSTRAINED.out.cell_type_scrna
         .splitText()

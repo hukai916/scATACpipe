@@ -14,6 +14,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     input:
     path archr_project
     path obj_scrnaseq
+    path archr
     val archr_thread
 
     output:
@@ -27,6 +28,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     """
     echo '
     library(ArchR)
+    devtools::load_all("ArchR") # to use .getFeatureDF() function
 
     addArchRThreads(threads = $archr_thread)
 
@@ -78,6 +80,10 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
       sel <- min(length(markerGenes), 10)
       markerGenes <- markerGenes[1:sel]
     }
+    # markerGenes must also be a subset of .getFeatureDF(getArrowFiles(proj2), "GeneIntegrationMatrix")\$name
+    geneDF <- .getFeatureDF(getArrowFiles(proj2), "GeneScoreMatrix")
+    geneDF <- geneDF[geneDF\$name %in% rownames(seRNA), , drop = FALSE]
+    markerGenes <- markerGenes[markerGenes %in% geneDF\$name]
 
     # Plotting for embedding: can only choose one embedding, default to use UMAP.
     embedding <- paste0("UMAP_", reducedDims)
