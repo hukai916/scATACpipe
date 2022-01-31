@@ -88,7 +88,7 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     }
 
     # Custom enrichment if supplied
-    if (!('$options.custom_peaks' == 'default')) {
+    if (!(\'$options.custom_peaks\' == 'default')) {
       customPeaks <- c($options.custom_peaks)
       proj2 <- addPeakAnnotations(ArchRProj = proj2, regions = customPeaks, name = "Custom")
       proj2 <- addDeviationsMatrix(
