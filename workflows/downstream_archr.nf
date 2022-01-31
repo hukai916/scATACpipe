@@ -430,14 +430,15 @@ workflow DOWNSTREAM_ARCHR {
     // Module: find marker gene: use "Clusters" or "Clusters2" for getMarkerFeatures()
     if (groupby_cluster == "Clusters") {
       ARCHR_MARKER_GENE_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2") {
+    } else if (groupby_cluster == "Clusters2-todo") {
+      ARCHR_MARKER_GENE_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
       ARCHR_MARKER_GENE_CLUSTERS2(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
     }
 
     // Module: call peaks
     if (groupby_cluster == "Clusters") {
       ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.user_rlib, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2") {
+    } else if (groupby_cluster == "Clusters2-todo") {
       ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.user_rlib, params.archr_thread)
       ARCHR_CALL_PEAKS_CLUSTERS2(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project, params.archr_thread)
     }
@@ -448,7 +449,7 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.group_names
         .splitText()
         .subscribe onNext: { String str -> println "Group name from scATAC-seq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --pairwise_test_clusters_1/2 and --marker_peak_clusters***\n"}
-    } else if (groupby_cluster == "Clusters2") {
+    } else if (groupby_cluster == "Clusters2-todo") {
       ARCHR_GET_MARKER_PEAKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
       ARCHR_GET_MARKER_PEAKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.archr_thread)
       ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.group_names
@@ -462,7 +463,7 @@ workflow DOWNSTREAM_ARCHR {
     // Module: plot peaks in browser tracks
     if (groupby_cluster == "Clusters") {
       ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2") {
+    } else if (groupby_cluster == "Clusters2-todo") {
       if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters)) {
         log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters."
       } else {
@@ -487,23 +488,23 @@ workflow DOWNSTREAM_ARCHR {
       //   log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
       //   ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
       // }
-    } else if (groupby_cluster == "Clusters2") {
+    } else if (groupby_cluster == "Clusters2-todo") {
         if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
           log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip pairwise plotting!"
-      } else {
-          // Perform plotting
-          log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
-          ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
-      }
+        } else {
+            // Perform plotting
+            log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
+            ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
+        }
 
-      if (!(params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
-        log.info "NOTICE: --pairwise_test_clusters2_1/2: not supplied, skip pairwise plotting!"
-      } else {
-        // Perform plotting
-        log.info "NOTICE: --pairwise_test_clusters2_1/2: supplied, perform pairwise plotting!"
-        ARCHR_PAIRWISE_TEST_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.archr_thread)
+        if (!(params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
+          log.info "NOTICE: --pairwise_test_clusters2_1/2: not supplied, skip pairwise plotting!"
+        } else {
+          // Perform plotting
+          log.info "NOTICE: --pairwise_test_clusters2_1/2: supplied, perform pairwise plotting!"
+          ARCHR_PAIRWISE_TEST_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.archr_thread)
+        }
       }
-    }
 
     // Module: motif enrichment: note that ARCHR_MOTIF_ENRICHMENT_CLUSTERS and ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 are exactly the same except for the outdir name.
     if (groupby_cluster == "Clusters") {
@@ -516,7 +517,7 @@ workflow DOWNSTREAM_ARCHR {
       //     log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
       //     ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
       // }
-    } else if (groupby_cluster == "Clusters2") {
+    } else if (groupby_cluster == "Clusters2-todo") {
         if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
           log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip motif enrichment!"
         } else {
@@ -579,6 +580,7 @@ workflow DOWNSTREAM_ARCHR {
       log.info "Parameter --scrnaseq not supplied, skip trajectory analysis!"
     }
 
+    // below to del:
     if ((params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2) || (params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
       // Module: motif deviation,require motif enrichment result
       if (groupby_cluster == "Clusters") {
