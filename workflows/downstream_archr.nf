@@ -564,12 +564,12 @@ workflow DOWNSTREAM_ARCHR {
     // Module: identify "positive" TF-regulators
     if (groupby_cluster == "Clusters") {
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2") {
+    } else if (groupby_cluster == "Clusters2-todo") {
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
     }
 
-    if (groupby_cluster == "Clusters2") {
+    if (groupby_cluster == "Clusters2-todo") {
       if (!params.trajectory_groups) {
         log.info "Parameter --trajectory_groups not supplied, checking trajectory analysis!"
       } else {
