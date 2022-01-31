@@ -89,7 +89,7 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
 
     ' > run.R
 
-    if [[ "$options.custom_peaks" != "default" ]] # Custom enrichment if supplied
+    if [[ '$options.custom_peaks' != 'default' ]] # Custom enrichment if supplied
     then
       echo '
       customPeaks <- c($options.custom_peaks)
