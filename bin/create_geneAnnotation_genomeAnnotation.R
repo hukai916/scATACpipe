@@ -214,10 +214,10 @@ get_geneID_symbol <- function(gtf = NULL, species_latin_name = NULL)
 
         ## Strategy 2: only keep unique ones (first occurrence):
         keep <- match(unique(id2symbol$symbol), id2symbol$symbol)
-        id2symbol_unique <- data.frame(matrix(ncol=2, nrow=length(keep), dimnames=list(NULL, c("gene_id", "gene_symbol"))))
+        id2symbol_unique <- data.frame(matrix(ncol=2, nrow=length(keep), dimnames=list(NULL, c("gene_id", "symbol"))))
         id2symbol_unique$gene_id <- id2symbol$gene_id[keep]
         id2symbol_unique$symbol  <- id2symbol$symbol[keep]
-        
+
         # return(id2symbol)
         return(id2symbol_unique)
     }
