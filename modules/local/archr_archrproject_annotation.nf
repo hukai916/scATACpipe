@@ -31,7 +31,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
 
     echo "
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     # Include the installed custom BSgenome if supplied:
@@ -49,6 +49,9 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
               outputDirectory = \\"ArchRProject\\",
               $options.args
             )
+
+    # Fix the gene_symbol containing ENSEMBLE id issue:
+    
 
     saveRDS(proj, file = \\"proj.rds\\")
     " > run.R
