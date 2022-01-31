@@ -37,6 +37,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS {
     # Note that saveArchRProject is a must here since each ArchRProj can only have one set of PeakSet, duplicate the proj for cluster2
 
     proj2 <- addGroupCoverages(ArchRProj = proj2, groupBy = "Clusters", force = TRUE)
+    proj2 <- addImputeWeights(proj2)
 
     saveRDS(proj2, file = "archr_project_pseudobulk.rds")
 

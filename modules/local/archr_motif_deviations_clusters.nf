@@ -45,10 +45,10 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
 
     plotPDF(plotVarDev, name = "Variable-Motif-Deviation-Scores", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
-    if ("$options.motifs" == "default") {
-      motifs <- VarDev\$name[1:min(10, length(VarDev\$name))]
+    if ('$options.motifs' == 'default') { # single quote here
+      motifs <- gsub("_.+", "", VarDev\$name[1:min(10, length(VarDev\$name))])
     } else {
-      motifs <- str_trim(str_split("$options.motifs", ",")[[1]], side = "both")
+      motifs <- gsub("_.+", "", str_trim(str_split("$options.motifs", ",")[[1]], side = "both"))
     }
 
     markerMotifs <- getFeatures(proj2, select = paste(motifs, collapse="|"), useMatrix = "MotifMatrix")
@@ -88,13 +88,14 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     }
 
     # Custom enrichment if supplied
-    if (!("$options.custom_peaks" == "default")) {
+    if (!('$options.custom_peaks' == 'default')) {
       customPeaks <- c($options.custom_peaks)
+      proj2 <- addPeakAnnotations(ArchRProj = proj2, regions = customPeaks, name = "Custom")
       proj2 <- addDeviationsMatrix(
-        ArchRProj = proj2,
-        peakAnnotation = "Custom",
-        force = TRUE
-        )
+                ArchRProj = proj2,
+                peakAnnotation = "Custom",
+                force = TRUE
+               )
       plotVarDev <- getVarDeviations(proj2, plot = TRUE, name = "CustomMatrix")
       plotPDF(plotVarDev, name = "Variable-Custom-Deviation-Scores", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 

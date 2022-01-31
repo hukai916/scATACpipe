@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_FOOTPRINTING_CLUSTERS {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_footprinting_clusters', publish_id:'') }
@@ -31,22 +31,31 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
 
     # Footprinting of motif:
     motifPositions <- getPositions(proj)
+
+    if ('$options.motifs' == 'default') { # single quote here
+      plotVarDev <- getVarDeviations(proj, name = "MotifMatrix", plot = TRUE)
+      VarDev     <- getVarDeviations(proj, name = "MotifMatrix", plot = FALSE)
+      motifs     <- VarDev\$name[1:min(10, length(VarDev\$name))]
+    } else {
+      motifs <- str_trim(str_split("$options.motifs", ",")[[1]], side = "both")
+    }
+
     motifs <- c($options.motifs)
     markerMotifs <- unlist(lapply(motifs, function(x) grep(x, names(motifPositions), value = TRUE)))
 
     seFoot <- getFootprints(
-      ArchRProj = proj,
-      positions = motifPositions[markerMotifs],
-      groupBy = "Clusters"
-      )
+                ArchRProj = proj,
+                positions = motifPositions[markerMotifs],
+                groupBy   = "Clusters"
+              )
     plotName <- paste0("Footprints", "-", "$options.norm_method", "-Bias")
     out <- tryCatch(
       expr = {
         plotFootprints(
-          seFoot = seFoot,
-          ArchRProj = proj,
-          normMethod = "$options.norm_method",
-          plotName = plotName,
+          seFoot      = seFoot,
+          ArchRProj   = proj,
+          normMethod  = "$options.norm_method",
+          plotName    = plotName,
           $options.args
         )
       },
@@ -57,21 +66,21 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
 
     # Footprinting of TSS (custom) Features
     seTSS <- getFootprints(
-      ArchRProj = proj,
-      positions = GRangesList(TSS = getTSS(proj)),
-      groupBy = "Clusters",
-      flank = $options.tss_flank
-      )
+              ArchRProj = proj,
+              positions = GRangesList(TSS = getTSS(proj)),
+              groupBy   = "Clusters",
+              flank     = $options.tss_flank
+             )
     out <- tryCatch(
       expr = {
         plotFootprints(
-          seFoot = seTSS,
-          ArchRProj = proj,
-          normMethod = "$options.tss_norm_method",
-          plotName = paste0("TSS-", "$options.tss_norm_method", "-Normalization"),
-          addDOC = FALSE,
-          flank = $options.tss_flank,
-          flankNorm = $options.flank_norm
+          seFoot      = seTSS,
+          ArchRProj   = proj,
+          normMethod  = "$options.tss_norm_method",
+          plotName    = paste0("TSS-", "$options.tss_norm_method", "-Normalization"),
+          addDOC      = FALSE,
+          flank       = $options.tss_flank,
+          flankNorm   = $options.flank_norm
           )
       },
       error = function(e) {
