@@ -543,7 +543,7 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: footprinting
     if (groupby_cluster == "Clusters") {
-      ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+      ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, user_rlib, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
 
     }

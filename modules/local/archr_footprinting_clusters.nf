@@ -13,6 +13,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
 
     input:
     path archr_project
+    path user_rlib
     val archr_thread
 
     output:
@@ -24,6 +25,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     """
     echo '
     library(ArchR)
+    .libPaths("user_rlib") # for user installed packages
 
     addArchRThreads(threads = $archr_thread)
 
