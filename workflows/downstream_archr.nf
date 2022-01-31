@@ -579,7 +579,6 @@ workflow DOWNSTREAM_ARCHR {
       log.info "Parameter --scrnaseq not supplied, skip trajectory analysis!"
     }
 
-
     if ((params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2) || (params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
       // Module: motif deviation,require motif enrichment result
       if (groupby_cluster == "Clusters") {

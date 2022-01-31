@@ -54,8 +54,6 @@ process ARCHR_COACCESSIBILITY_CLUSTERS {
       markerGenes <- markerGenes[1:sel]
     }
 
-    markerGenes <- c($options.marker_genes)
-
     p <- plotBrowserTrack(
       ArchRProj = proj2,
       groupBy = "Clusters",
