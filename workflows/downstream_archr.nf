@@ -549,8 +549,8 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: archr_coaccessibility
-    if (groupby_cluster == "Clusters_todo") {
-      ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+    if (groupby_cluster == "Clusters") {
+      ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
 
     }
@@ -561,11 +561,11 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: identify "positive" TF-regulators
-    if (groupby_cluster == "Clusters_todo") {
+    if (groupby_cluster == "Clusters") {
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-        ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
-        ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
+      ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+      ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
     }
 
     if (groupby_cluster == "Clusters2") {
