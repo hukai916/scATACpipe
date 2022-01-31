@@ -557,7 +557,7 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: peak2genelinkage: for clusters2 only
-    if (groupby_cluster == "Clusters2") {
+    if (groupby_cluster == "Clusters2-todo") {
       ARCHR_PEAK2GENELINKAGE_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
     }
 
