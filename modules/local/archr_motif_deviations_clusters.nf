@@ -89,36 +89,34 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
 
     ' > run.R
 
-    if [[ "$options.custom_peaks" != "default" ]]
+    if [[ "$options.custom_peaks" != "default" ]] # Custom enrichment if supplied
     then
       echo '
-      # Custom enrichment if supplied
       customPeaks <- c($options.custom_peaks)
-      if (!(customPeaks[1] == 'default')) {
-        customPeaks <- c($options.custom_peaks)
-        proj2 <- addPeakAnnotations(ArchRProj = proj2, regions = customPeaks, name = "Custom")
-        proj2 <- addDeviationsMatrix(
-                  ArchRProj = proj2,
-                  peakAnnotation = "Custom",
-                  force = TRUE
-                 )
-        plotVarDev <- getVarDeviations(proj2, plot = TRUE, name = "CustomMatrix")
-        plotPDF(plotVarDev, name = "Variable-Custom-Deviation-Scores", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+      customPeaks <- c($options.custom_peaks)
+      proj2 <- addPeakAnnotations(ArchRProj = proj2, regions = customPeaks, name = "Custom")
+      proj2 <- addDeviationsMatrix(
+                ArchRProj = proj2,
+                peakAnnotation = "Custom",
+                force = TRUE
+               )
+      plotVarDev <- getVarDeviations(proj2, plot = TRUE, name = "CustomMatrix")
+      plotPDF(plotVarDev, name = "Variable-Custom-Deviation-Scores", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
-        markerCustom <- getFeatures(proj2, useMatrix = "CustomMatrix")
-        markerCustom <- sort(grep("z:", markerCustom, value = TRUE))
+      markerCustom <- getFeatures(proj2, useMatrix = "CustomMatrix")
+      markerCustom <- sort(grep("z:", markerCustom, value = TRUE))
 
-        for (embedding in names(proj@embeddings)) {
-          p <- plotEmbedding(
-            ArchRProj = proj2,
-            colorBy = "CustomMatrix",
-            name = markerCustom,
-            embedding = embedding,
-            imputeWeights = getImputeWeights(proj2)
-            )
-          plotPDF(p, name = paste0("Plot-Groups-Deviations-w-Imputation-", embedding, "-Embedding-w-z-scores") , width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
-        }
+      for (embedding in names(proj@embeddings)) {
+        p <- plotEmbedding(
+          ArchRProj = proj2,
+          colorBy = "CustomMatrix",
+          name = markerCustom,
+          embedding = embedding,
+          imputeWeights = getImputeWeights(proj2)
+          )
+        plotPDF(p, name = paste0("Plot-Groups-Deviations-w-Imputation-", embedding, "-Embedding-w-z-scores") , width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
       }
+
       ' >> run.R
     fi
 
