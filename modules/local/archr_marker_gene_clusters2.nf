@@ -20,6 +20,7 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
     output:
     path "proj_marker_gene.rds", emit: archr_project
     path "marker_list.txt", emit: marker_list
+    path "Clusters2_markerList.rds", emit: markerList
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_marker_gene", emit: report
 
@@ -40,22 +41,23 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
       $options.args
     )
 
-    markerList <- getMarkers(markersGS, cutOff = "FDR <= 0.01 & Log2FC >= 1.25")
+    markerList <- getMarkers(markersGS, $options.getMarkers_cutoff)
     sink(file = "marker_list.txt")
     for (cluster in markerList@listData) {
       cat(cluster\$name, "\n")
     }
     sink()
+    saveRDS(markerList, file = paste0("Clusters2", "_markerList.rds"))
 
     # Draw heatmap: default to use first 10 marker_genes
-    if (is.na(strtoi("$options.marker_genes"))) {
+    if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
       markerGenes <- c()
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
-      sel <- min(length(markerGenes), strtoi("$options.marker_genes"))
+      sel <- min(length(markerGenes), 10)
       markerGenes <- markerGenes[1:sel]
     }
 
@@ -78,64 +80,67 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
     all_symbol_unique <- all_symbol[match(all_symbol_cleaned_unique, all_symbol_cleaned)]
     markerGenes_raw <- sort(all_symbol_unique[all_symbol_cleaned_unique %in% markerGenes_clean])
 
-    if (length(markerGenes2labeled) == 0) {
-      message(markerGenes2labeled)
-      stop("Invalid marker gene names!")
-    }
-
-    heatmapGS <- markerHeatmap(
-      seMarker = markersGS,
-      cutOff = "FDR <= 0.01 & Log2FC >= 1.25",
-      labelMarkers = markerGenes2labeled,
-      transpose = TRUE
-    )
-    plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
-
-    # Plot marker genes on embeddings without imputation:
-    for (embedding in names(proj@embeddings)) {
-      p <- plotEmbedding(
-        ArchRProj = proj,
-        name = markerGenes_raw,
-        imputeWeights = NULL,
-        embedding = embedding,
-        $options.args2
-      )
-      plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-WO-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-    }
-
-    # Plot marker genes on embeddings with imputation:
     proj2 <- addImputeWeights(proj)
     saveRDS(proj2, file = "proj_marker_gene.rds")
-    for (embedding in names(proj@embeddings)) {
-      p <- plotEmbedding(
-        ArchRProj = proj2,
-        name = markerGenes_raw,
-        imputeWeights = getImputeWeights(proj2),
-        embedding = embedding,
-        $options.args2
+
+    if (length(markerGenes2labeled) == 0) {
+      message(markerGenes2labeled)
+      message("Invalid marker gene names!")
+      message("Skipping plotting!")
+    } else {
+      heatmapGS <- markerHeatmap(
+        seMarker = markersGS,
+        labelMarkers = markerGenes2labeled,
+        transpose = TRUE,
+        $options.getMarkers_cutoff
       )
-      plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-W-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-    }
+      plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
 
-    # Plot: track plotting with ArchRBrowser
-    # clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
-    clusters <- c("Clusters2")
-
-    for (cluster in clusters) {
-      tryCatch({
-        p <- plotBrowserTrack(
-          ArchRProj = proj2,
-          geneSymbol = markerGenes_raw,
-          groupBy = cluster,
-          $options.args3
+      # Plot marker genes on embeddings without imputation:
+      for (embedding in names(proj@embeddings)) {
+        p <- plotEmbedding(
+          ArchRProj = proj,
+          name = markerGenes_raw,
+          imputeWeights = NULL,
+          embedding = embedding,
+          $options.args2
         )
-        plotPDF(plotList = p, name = "Plot-Tracks-Marker-Genes.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-      },
-        error=function(e) {
-          message(paste0("Skipping track plotting for ", cluster, "!"))
-        }
-      )
+        plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-WO-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      }
+
+      # Plot marker genes on embeddings with imputation:
+      for (embedding in names(proj@embeddings)) {
+        p <- plotEmbedding(
+          ArchRProj = proj2,
+          name = markerGenes_raw,
+          imputeWeights = getImputeWeights(proj2),
+          embedding = embedding,
+          $options.args2
+        )
+        plotPDF(plotList = p, name = paste0("Plot-", embedding, "-Marker-Genes-W-Imputation.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      }
+
+      # Plot: track plotting with ArchRBrowser
+      # clusters <- c("Clusters_Seurat_IterativeLSI", "Clusters_Scran_IterativeLSI", "Clusters_Seurat_Harmony", "Clusters_Scran_Harmony", "Clusters2_Seurat_IterativeLSI", "Clusters2_Scran_IterativeLSI", "Clusters2_Seurat_Harmony", "Clusters2_Scran_Harmony")
+      clusters <- c("Clusters2")
+
+      for (cluster in clusters) {
+        tryCatch({
+          p <- plotBrowserTrack(
+            ArchRProj = proj2,
+            geneSymbol = markerGenes_raw,
+            groupBy = cluster,
+            $options.args3
+          )
+          plotPDF(plotList = p, name = "Plot-Tracks-Marker-Genes.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+        },
+          error=function(e) {
+            message(paste0("Skipping track plotting for ", cluster, "!"))
+          }
+        )
+      }
     }
+
 
     ' > run.R
 
@@ -144,7 +149,7 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
     # Convert to jpeg:
     mkdir -p Plots/jpeg
     x=( \$(find ./Plots -name "*.pdf") )
-    for item in \${x[@]+"\${x[@]}"}
+    for item in \${x[@]+"\${x[@]}"} # https://stackoverflow.com/questions/7577052/bash-empty-array-expansion-with-set-u
     do
       {
         filename=\$(basename -- "\$item")
