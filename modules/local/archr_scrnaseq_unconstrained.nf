@@ -112,7 +112,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     labelOld <- rownames(cM)
     labelNew <- colnames(cM)[apply(cM, 1, which.max)]
     proj2\$Clusters2 <- mapLabels(proj2\$Clusters, newLabels = labelNew, oldLabels = labelOld)
-    p1 <- plotEmbedding(proj2, colorBy = "cellColData", name = "Clusters2")
+    p1 <- plotEmbedding(proj2, embedding = embedding, colorBy = "cellColData", name = "Clusters2")
     plotPDF(p1, name = paste0("Plot-", embedding, "-Remap-Clusters.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
     saveRDS(proj2, file = "proj_scrnaseq_unconstrained.rds")
