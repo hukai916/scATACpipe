@@ -18,8 +18,6 @@ process ARCHR_CLUSTERING {
     path archr_project
     val filter_seurat_iLSI
     val filter_seurat_harmony
-    val filter_scran_iLSI
-    val filter_scran_harmony
     val archr_thread
 
     output:

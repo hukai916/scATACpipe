@@ -373,22 +373,12 @@ workflow DOWNSTREAM_ARCHR {
     } else {
       seurat_harmony = "NA"
     }
-    if (params.filter_scran_ilsi) {
-      scran_ilsi = params.filter_scran_ilsi
-    } else {
-      scran_ilsi = "NA"
-    }
-    if (params.filter_scran_harmony) {
-      scran_harmory = params.filter_scran_harmony
-    } else {
-      scran_harmony = "NA"
-    }
     if (params.archr_batch_correction_harmony) {
       ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread)
       // Module: clustering with seurat and scran, auto check if Harmony performed
-      ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony, params.archr_thread)
+      ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, seurat_ilsi, seurat_harmony, params.archr_thread)
     } else {
-      ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, seurat_ilsi, seurat_harmony, scran_ilsi, scran_harmony, params.archr_thread)
+      ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, seurat_ilsi, seurat_harmony, params.archr_thread)
     }
 
     // Only use Seurat for clustering. And depending on sample number, use Harmony or LSI

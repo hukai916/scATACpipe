@@ -5,6 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_SCRNASEQ_UNCONSTRAINED {
+  // To deal with the multi-gene-symbol issue, Haibo appended gene_id to each symbol, this
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -28,7 +29,6 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     """
     echo '
     library(ArchR)
-    devtools::load_all("ArchR") # to use .getFeatureDF() function
 
     addArchRThreads(threads = $archr_thread)
 
@@ -81,9 +81,13 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
       markerGenes <- markerGenes[1:sel]
     }
     # markerGenes must also be a subset of .getFeatureDF(getArrowFiles(proj2), "GeneIntegrationMatrix")\$name
+    devtools::load_all("ArchR") # to use .getFeatureDF() function
     geneDF <- .getFeatureDF(getArrowFiles(proj2), "GeneScoreMatrix")
     geneDF <- geneDF[geneDF\$name %in% rownames(seRNA), , drop = FALSE]
     markerGenes <- markerGenes[markerGenes %in% geneDF\$name]
+    devtools::unload("ArchR")
+    library(ArchR)
+    # note that after load_all, the proj won't be correctly recognized as S4 object, have to unload and re-library ArchR.
 
     # Plotting for embedding: can only choose one embedding, default to use UMAP.
     embedding <- paste0("UMAP_", reducedDims)
