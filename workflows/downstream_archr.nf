@@ -421,10 +421,10 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: find marker gene: use "Clusters" or "Clusters2" for getMarkerFeatures()
     if (groupby_cluster == "Clusters") {
-      ARCHR_MARKER_GENE_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
+      ARCHR_MARKER_GENE_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-      ARCHR_MARKER_GENE_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
-      ARCHR_MARKER_GENE_CLUSTERS2(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
+      ARCHR_MARKER_GENE_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, params.archr_thread)
+      ARCHR_MARKER_GENE_CLUSTERS2(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project, params.archr_thread)
     }
 
     // Module: call peaks
