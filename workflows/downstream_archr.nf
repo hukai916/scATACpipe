@@ -408,19 +408,21 @@ workflow DOWNSTREAM_ARCHR {
       if ((!params.archr_scrnaseq_grouplist)) {
         log.info "NOTICE: --archr_scrnaseq_grouplist: not supplied, skip constrained integration!"
         // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, groupby_cluster)
-        ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_thread)
+        // ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
+
+        ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, user_rlib, params.archr_thread)
       } else {
         log.info "NOTICE: --archr_scrnaseq_grouplist: supplied, will perform constrained integration!"
         ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, params.archr_scrnaseq_grouplist, params.archr_thread)
         // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, groupby_cluster)
-        ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, params.archr_thread)
+        ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, user_rlib, params.archr_thread)
       }
     }
 
     // Module: find marker gene: use "Clusters" or "Clusters2" for getMarkerFeatures()
     if (groupby_cluster == "Clusters") {
       ARCHR_MARKER_GENE_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2-todo") {
+    } else if (groupby_cluster == "Clusters2") {
       ARCHR_MARKER_GENE_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
       ARCHR_MARKER_GENE_CLUSTERS2(ARCHR_EMBEDDING.out.archr_project, params.archr_thread)
     }
