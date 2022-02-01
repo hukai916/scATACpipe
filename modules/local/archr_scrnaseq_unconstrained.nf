@@ -87,7 +87,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     markerGenes <- markerGenes[markerGenes %in% geneDF\$name]
     devtools::unload("ArchR")
     library(ArchR)
-    # note that after load_all, the proj won't be correctly recognized as S4 object, have to unload and re-library ArchR.
+    # note that after load_all, the proj will not be correctly recognized as S4 object, have to unload and re-library ArchR.
 
     # Plotting for embedding: can only choose one embedding, default to use UMAP.
     embedding <- paste0("UMAP_", reducedDims)
