@@ -18,6 +18,7 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS2 {
 
     output:
     path "archr_motif_deviation_project.rds", emit: archr_project
+    path "motif_names.txt", emit: motif_names
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_motif_deviations_clusters2", emit: report
 
@@ -41,6 +42,13 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS2 {
     )
 
     plotVarDev <- getVarDeviations(proj2, name = "MotifMatrix", plot = TRUE)
+    VarDev     <- getVarDeviations(proj2, name = "MotifMatrix", plot = FALSE)
+    sink(file = "motif_names.txt")
+    for (motif in VarDev\$name) {
+      cat(motif, "\n")
+    }
+    sink()
+
     plotPDF(plotVarDev, name = "Variable-Motif-Deviation-Scores", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     motifs <- c($options.motifs)

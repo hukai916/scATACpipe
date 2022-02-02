@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_pairwise_test_clusters2', publish_id:'') }
@@ -13,12 +13,11 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
 
     input:
     path archr_project
-    val useGroups
-    val bgdGroups
     val archr_thread
 
     output:
     path "markerTest.rds", emit: archr_marker_test
+    path "test_group.txt", emit: test_group
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_pairwise_test_clusters2", emit: report
 
@@ -32,20 +31,36 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
 
     proj <- readRDS("$archr_project")
 
+    # Determine the useGroups and bgdGroups, default to the first and second:
+    if ("$options.use_groups" == "default") {
+      useGroups <- unique(proj\$Clusters2)[1]
+    } else {
+      useGroups <- "$options.use_groups"
+    }
+    if ("$options.bgd_groups" == "default") {
+      bgdGroups <- unique(proj\$Clusters2)[2]
+    } else {
+      bgdGroups <- "$options.bgd_groups"
+    }
+    sink(file = "test_group.txt") # first line
+    cat(useGroups, "\n")
+    cat(bgdGroups, "\n")
+    sink()
+
     markerTest <- getMarkerFeatures(
       ArchRProj = proj,
       useMatrix = "PeakMatrix",
       groupBy = "Clusters2",
-      useGroups = "$useGroups",
-      bgdGroups = "$bgdGroups",
+      useGroups = useGroups,
+      bgdGroups = bgdGroups,
       $options.args
     )
     saveRDS(markerTest, file = "markerTest.rds")
 
-    pma <- markerPlot(seMarker = markerTest, name = "$useGroups", cutOff = "$options.cutoff", plotAs = "MA")
-    pv <- markerPlot(seMarker = markerTest, name = "$useGroups", cutOff = "$options.cutoff", plotAs = "Volcano")
+    pma <- markerPlot(seMarker = markerTest, name = useGroups, plotAs = "MA", $options.cutoff)
+    pv <- markerPlot(seMarker = markerTest, name = useGroups, plotAs = "Volcano", $options.cutoff)
 
-    plotPDF(pma, pv, name = paste0("$useGroups", "-vs-", "$bgdGroups", "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+    plotPDF(pma, pv, name = paste0(useGroups, "-vs-", bgdGroups, "-Markers-MA-Volcano"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     ' > run.R
 
