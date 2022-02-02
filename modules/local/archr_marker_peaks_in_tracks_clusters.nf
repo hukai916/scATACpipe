@@ -6,7 +6,7 @@ options        = initOptions(params.options)
 
 process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
   // Defaul to plot the first 10 marker genes and the first Cluster
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_marker_peaks_in_tracks_clusters', publish_id:'') }

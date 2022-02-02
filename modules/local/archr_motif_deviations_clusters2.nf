@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_MOTIF_DEVIATIONS_CLUSTERS2 {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_motif_deviations_clusters2', publish_id:'') }
