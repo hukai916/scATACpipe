@@ -479,14 +479,16 @@ workflow DOWNSTREAM_ARCHR {
     if (groupby_cluster == "Clusters") {
       ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, user_rlib, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-
+      ARCHR_FOOTPRINTING_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, user_rlib, params.archr_thread)
+      ARCHR_FOOTPRINTING_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, user_rlib, params.archr_thread)
     }
 
     // Module: archr_coaccessibility
     if (groupby_cluster == "Clusters") {
       ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-
+      ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
+      ARCHR_COACCESSIBILITY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, ARCHR_MARKER_GENE_CLUSTERS2.out.markerList, params.archr_thread)
     }
 
     // Module: peak2genelinkage: for clusters2 only

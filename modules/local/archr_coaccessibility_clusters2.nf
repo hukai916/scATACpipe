@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_COACCESSIBILITY_CLUSTERS2 {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_coaccessibility_clusters2', publish_id:'') }
@@ -13,11 +13,11 @@ process ARCHR_COACCESSIBILITY_CLUSTERS2 {
 
     input:
     path archr_project
+    path markerList
     val archr_thread
 
     output:
     path "archr_coaccessibility_project.rds", emit: archr_project
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_coaccessibility_clusters2", emit: report
 
     script:
@@ -42,7 +42,17 @@ process ARCHR_COACCESSIBILITY_CLUSTERS2 {
       $options.args
       )
 
-    markerGenes <- c($options.marker_genes)
+    if (!("$options.marker_genes" == "default")) {
+      markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
+    } else {
+      markerList   <- readRDS("$markerList")
+      markerGenes <- c()
+      for (cluster in markerList@listData) {
+        markerGenes <- c(markerGenes, cluster\$name)
+      }
+      sel <- min(length(markerGenes), 10)
+      markerGenes <- markerGenes[1:sel]
+    }
 
     p <- plotBrowserTrack(
       ArchRProj = proj2,
@@ -57,7 +67,7 @@ process ARCHR_COACCESSIBILITY_CLUSTERS2 {
         name = "Plot-Tracks-Marker-Genes-with-CoAccessibility.pdf",
         ArchRProj = NULL,
         addDOC = FALSE, width = 5, height = 5
-        )
+      )
 
     ' > run.R
 

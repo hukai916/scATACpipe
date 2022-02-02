@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_FOOTPRINTING_CLUSTERS2 {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_footprinting_clusters2', publish_id:'') }
@@ -13,6 +13,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
 
     input:
     path archr_project
+    path user_rlib
     val archr_thread
 
     output:
@@ -24,6 +25,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    .libPaths("user_rlib") # for user installed packages
 
     addArchRThreads(threads = $archr_thread)
 
@@ -31,24 +33,31 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
 
     # Footprinting of motif:
     motifPositions <- getPositions(proj)
-    motifs <- c($options.motifs)
+
+    if ("$options.motifs" == "default") {
+      plotVarDev <- getVarDeviations(proj, name = "MotifMatrix", plot = TRUE)
+      VarDev     <- getVarDeviations(proj, name = "MotifMatrix", plot = FALSE)
+      motifs     <- VarDev\$name[1:min(10, length(VarDev\$name))]
+    } else {
+      motifs <- str_trim(str_split("$options.motifs", ",")[[1]], side = "both")
+    }
     markerMotifs <- unlist(lapply(motifs, function(x) grep(x, names(motifPositions), value = TRUE)))
 
     seFoot <- getFootprints(
-      ArchRProj = proj,
-      positions = motifPositions[markerMotifs],
-      groupBy = "Clusters2"
-      )
+                ArchRProj = proj,
+                positions = motifPositions[markerMotifs],
+                groupBy   = "Clusters2"
+              )
     plotName <- paste0("Footprints", "-", "$options.norm_method", "-Bias")
     out <- tryCatch(
       expr = {
         plotFootprints(
-          seFoot = seFoot,
-          ArchRProj = proj,
-          normMethod = "$options.norm_method",
-          plotName = plotName,
+          seFoot      = seFoot,
+          ArchRProj   = proj,
+          normMethod  = "$options.norm_method",
+          plotName    = plotName,
           $options.args
-          )
+        )
       },
       error = function(e) {
         return("Footprint plotting failed.")
@@ -57,27 +66,26 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
 
     # Footprinting of TSS (custom) Features
     seTSS <- getFootprints(
-      ArchRProj = proj,
-      positions = GRangesList(TSS = getTSS(proj)),
-      groupBy = "Clusters2",
-      flank = $options.tss_flank
-      )
+              ArchRProj = proj,
+              positions = GRangesList(TSS = getTSS(proj)),
+              groupBy   = "Clusters2",
+              flank     = $options.tss_flank
+             )
     out <- tryCatch(
       expr = {
         plotFootprints(
-          seFoot = seTSS,
-          ArchRProj = proj,
-          normMethod = "$options.tss_norm_method",
-          plotName = paste0("TSS-", "$options.tss_norm_method", "-Normalization"),
-          addDOC = FALSE,
-          flank = $options.tss_flank,
-          flankNorm = $options.flank_norm
+          seFoot      = seTSS,
+          ArchRProj   = proj,
+          normMethod  = "$options.tss_norm_method",
+          plotName    = paste0("TSS-", "$options.tss_norm_method", "-Normalization"),
+          addDOC      = FALSE,
+          flank       = $options.tss_flank,
+          flankNorm   = $options.flank_norm
           )
       },
       error = function(e) {
         return("Footprint plotting failed.")
       }
-
     )
 
     ' > run.R
