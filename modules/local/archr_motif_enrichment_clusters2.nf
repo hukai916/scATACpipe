@@ -5,19 +5,20 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_motif_enrichment_clusters2', publish_id:'') }
-    container "hukai916/r_sc:0.5"
+    container "hukai916/r_archr:0.1" // must use Haibo ArchR, otherwise addMotifAnnotations problematic
 
     input:
     path archr_project
     path marker_test
     path markers_peaks
-    val useGroups
-    val bgdGroups
+    path test_group
+    path user_rlib
     val custom_peaks
+    val species_latin_name
     val archr_thread
 
     output:
@@ -30,6 +31,7 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    .libPaths("user_rlib") # for user installed packages
 
     options(timeout=10000)
     addArchRThreads(threads = $archr_thread)
@@ -38,20 +40,27 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
     markerTest <- readRDS("$marker_test")
     markersPeaks <- readRDS("$markers_peaks")
 
-    proj2 <- addMotifAnnotations(ArchRProj = proj, name = "Motif", $options.args)
+    # Read in test group info: second line is background
+    conn <- file("$test_group", open = "r")
+    lines <- readLines(conn)
+    useGroups <- trimws(lines[1], "both")
+    bgdGroups <- trimws(lines[2], "both")
+    close(conn)
+
+    proj <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = "$species_latin_name", $options.args)
 
     # Motif enrichment in Differential peaks:
     motifsUp <- peakAnnoEnrichment(
       seMarker = markerTest,
-      ArchRProj = proj2,
+      ArchRProj = proj,
       peakAnnotation = "Motif",
-      cutOff = "$options.cutoff"
+      $options.cutoff
     )
     motifsDo <- peakAnnoEnrichment(
       seMarker = markerTest,
-      ArchRProj = proj2,
+      ArchRProj = proj,
       peakAnnotation = "Motif",
-      cutOff = "$options.cutoff"
+      $options.cutoff
     )
     df <- data.frame(TF = rownames(motifsUp), mlog10Padj = assay(motifsUp)[,1])
     df <- df[order(df\$mlog10Padj, decreasing = TRUE),]
@@ -83,38 +92,51 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
       xlab("Rank Sorted TFs Enriched") +
       scale_color_gradientn(colors = paletteContinuous(set = "comet"))
 
-    plotPDF(ggUp, ggDo, name = paste0("$useGroups", "-vs-", "$bgdGroups", "-Markers-Motifs-Enriched"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+    plotPDF(ggUp, ggDo, name = paste0(useGroups, "-vs-", bgdGroups, "-Markers-Motifs-Enriched"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     # Motif enrichment in Marker peaks:
     enrichMotifs <- peakAnnoEnrichment(
       seMarker = markersPeaks,
-      ArchRProj = proj2,
+      ArchRProj = proj,
       peakAnnotation = "Motif",
-      cutOff = "$options.cutoff"
+      $options.cutoff
     )
-    heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 7, transpose = TRUE)
-    plotPDF(heatmapEM, name = "Motifs-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
 
-    # ArchR enrichments # skipped for now
+    tryCatch({ # use tryCatch in case no result passes cutoff
+      heatmapEM <- plotEnrichHeatmap(enrichMotifs, n = 7, transpose = TRUE)
+      plotPDF(heatmapEM, name = "Motifs-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+    },
+      error=function(e) {
+        message(paste0("Skipping plotting motifs-enriched-marker heatmaps!"))
+      }
+    )
+
+    # ArchR enrichments # is problematic when downloading using inside docker, skip it for now
 
     # Custom enrichment if supplied
     customPeaks <- c($custom_peaks)
     # if (!("$custom_peaks" == '') { # wont work if contain quotes
-    # if (customPeaks[1] != "") {
+    # if (customPeaks[1] != "") { # if custome_peaks == '', NULL will be passed
     if (!(is.null(customPeaks[1]))) {
-      customPeaks <- c($custom_peaks)
-      proj2 <- addPeakAnnotations(ArchRProj = proj2, regions = customPeaks, name = "Custom")
+      customPeaks <- customPeaks
+      proj <- addPeakAnnotations(ArchRProj = proj, regions = customPeaks, name = "Custom")
       enrichRegions <- peakAnnoEnrichment(
         seMarker = markersPeaks,
-        ArchRProj = proj2,
+        ArchRProj = proj,
         peakAnnotation = "Custom",
-        cutOff = "$options.cutoff"
+        $options.cutoff
       )
-      heatmapRegions <- plotEnrichHeatmap(enrichRegions, n = 7, transpose = TRUE)
-      plotPDF(heatmapRegions, name = "Regions-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+      tryCatch({ # use tryCatch in case no result passes cutoff
+        heatmapRegions <- plotEnrichHeatmap(enrichRegions, n = 7, transpose = TRUE)
+        plotPDF(heatmapRegions, name = "Regions-Enriched-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+      },
+        error=function(e) {
+          message(paste0("Skipping plotting motifs-enriched-marker heatmaps!"))
+        }
+      )
     }
 
-    saveRDS(proj2, file = "archr_motif_enrichment_project.rds")
+    saveRDS(proj, file = "archr_motif_enrichment_project.rds")
 
     ' > run.R
 

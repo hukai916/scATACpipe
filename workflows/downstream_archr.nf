@@ -455,76 +455,25 @@ workflow DOWNSTREAM_ARCHR {
     // Module: plot peaks in browser tracks
     if (groupby_cluster == "Clusters") {
       ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2-todo") {
-      if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters)) {
-        log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters."
-      } else {
-        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
-      }
-
-      if (!(params.marker_peak_geneSymbol && params.marker_peak_clusters2)) {
-        log.info "INFO: To plot marker peaks, supply --marker_peak_geneSymbol and --marker_peak_clusters2."
-      } else {
-        ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, params.marker_peak_geneSymbol, params.marker_peak_clusters2, params.archr_thread)
-      }
+    } else if (groupby_cluster == "Clusters2") {
+      ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS(ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_MARKER_GENE_CLUSTERS.out.markerList, params.archr_thread)
+      ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2(ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.archr_project, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, ARCHR_MARKER_GENE_CLUSTERS2.out.markerList, params.archr_thread)
     }
 
     // Module: perform pairwise test
     if (groupby_cluster == "Clusters") {
       ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
+    } else if (groupby_cluster == "Clusters2") {
+      ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
+      ARCHR_PAIRWISE_TEST_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.archr_thread)
+    }
 
-      // if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
-      //   log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip pairwise plotting!"
-      // } else {
-      //   // Perform plotting
-      //   log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
-      //   ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
-      // }
-    } else if (groupby_cluster == "Clusters2-todo") {
-        if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
-          log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip pairwise plotting!"
-        } else {
-            // Perform plotting
-            log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform pairwise plotting!"
-            ARCHR_PAIRWISE_TEST_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.archr_thread)
-        }
-
-        if (!(params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
-          log.info "NOTICE: --pairwise_test_clusters2_1/2: not supplied, skip pairwise plotting!"
-        } else {
-          // Perform plotting
-          log.info "NOTICE: --pairwise_test_clusters2_1/2: supplied, perform pairwise plotting!"
-          ARCHR_PAIRWISE_TEST_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.archr_thread)
-        }
-      }
-
-    // Module: motif enrichment: note that ARCHR_MOTIF_ENRICHMENT_CLUSTERS and ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 are exactly the same except for the outdir name.
+    // Module: motif enrichment
     if (groupby_cluster == "Clusters") {
       ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, params.custom_peaks, params.species_latin_name, params.archr_thread)
-
-      // if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
-      //   log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip motif enrichment!"
-      // } else {
-      //     // Perform plotting
-      //     log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
-      //     ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
-      // }
-    } else if (groupby_cluster == "Clusters2-todo") {
-        if (!(params.pairwise_test_clusters_1 && params.pairwise_test_clusters_2)) {
-          log.info "NOTICE: --pairwise_test_clusters_1/2: not supplied, skip motif enrichment!"
-        } else {
-          // Perform plotting
-          log.info "NOTICE: --pairwise_test_clusters_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, params.pairwise_test_clusters_1, params.pairwise_test_clusters_2, params.custom_peaks, params.archr_thread)
-        }
-
-      if (!(params.pairwise_test_clusters2_1 && params.pairwise_test_clusters2_2)) {
-        log.info "NOTICE: --pairwise_test_clusters2_1/2: not supplied, skip motif enrichment!"
-      } else {
-          // Perform plotting
-          log.info "NOTICE: --pairwise_test_clusters2_1/2: supplied, perform motif enrichment!"
-          ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, params.pairwise_test_clusters2_1, params.pairwise_test_clusters2_2, params.custom_peaks, params.archr_thread)
-      }
+    } else if (groupby_cluster == "Clusters2") {
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, params.custom_peaks, params.species_latin_name, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.test_group, user_rlib, params.custom_peaks, params.species_latin_name, params.archr_thread)
     }
 
     // Module: motif deviation
