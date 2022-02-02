@@ -27,6 +27,7 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     """
     echo '
     library(ArchR)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 

@@ -25,6 +25,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     """
     echo '
     library(ArchR)
+    library(stringr)
     .libPaths("user_rlib") # for user installed packages
 
     addArchRThreads(threads = $archr_thread)

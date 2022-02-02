@@ -29,6 +29,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     """
     echo '
     library(ArchR)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 

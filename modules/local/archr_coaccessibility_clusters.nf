@@ -25,6 +25,7 @@ process ARCHR_COACCESSIBILITY_CLUSTERS {
     """
     echo '
     library(ArchR)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 

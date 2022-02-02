@@ -25,6 +25,7 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 
