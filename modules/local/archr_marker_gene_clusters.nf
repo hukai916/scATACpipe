@@ -52,19 +52,21 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     # Draw heatmap: default to use first 10 marker_genes
     if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
+      markerGenes <- unique(markerGenes)
     } else {
       markerGenes <- c()
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
+      markerGenes <- unique(markerGenes)
       sel <- min(length(markerGenes), 10)
       markerGenes <- markerGenes[1:sel]
     }
 
-    markerGenes <- unique(markerGenes)
     markerGenes_clean <- markerGenes
 
     ## below is to make sure genes to label are valid gene symbols in the dataset:
+    ## in case gene symbols are appended with gene_id, like: geneSymbl_geneID
     all_id <- getGenes(proj)\$gene_id
     all_symbol <- getGenes(proj)\$symbol
     all_symbol_cleaned <- character(length(all_id))
@@ -76,6 +78,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     markerGenes2labeled <- sort(markerGenes_clean[markerGenes_clean %in% all_symbol_cleaned])
     markerGenes_raw <- sort(all_symbol[all_symbol_cleaned %in% markerGenes_clean])
 
+    # markerGenes_raw matches with markerGenes2labelded except that the symbols match that from the dataset
     all_symbol_cleaned_unique <- unique(all_symbol_cleaned)
     all_symbol_unique <- all_symbol[match(all_symbol_cleaned_unique, all_symbol_cleaned)]
     markerGenes_raw <- sort(all_symbol_unique[all_symbol_cleaned_unique %in% markerGenes_clean])

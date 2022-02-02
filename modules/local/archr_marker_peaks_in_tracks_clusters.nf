@@ -39,16 +39,17 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     # Draw heatmap: default to use first 10 marker_genes
     if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
+      markerGenes <- unique(markerGenes)
     } else {
       markerGenes <- c()
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
+      markerGenes <- unique(markerGenes)
       sel <- min(length(markerGenes), 10)
       markerGenes <- markerGenes[1:sel]
     }
 
-    markerGenes <- unique(markerGenes)
     markerGenes_clean <- markerGenes
 
     all_id <- getGenes(proj)\$gene_id
