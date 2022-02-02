@@ -438,18 +438,9 @@ workflow DOWNSTREAM_ARCHR {
     // Module: identify marker peaks and perform MA/Volcano plots
     if (groupby_cluster == "Clusters") {
       ARCHR_GET_MARKER_PEAKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
-      ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.group_names
-        .splitText()
-        .subscribe onNext: { String str -> println "Group name from scATAC-seq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --pairwise_test_clusters_1/2 and --marker_peak_clusters***\n"}
-    } else if (groupby_cluster == "Clusters2-todo") {
+    } else if (groupby_cluster == "Clusters2") {
       ARCHR_GET_MARKER_PEAKS_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, params.archr_thread)
       ARCHR_GET_MARKER_PEAKS_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, params.archr_thread)
-      ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.group_names
-        .splitText()
-        .subscribe onNext: { String str -> println "Group name from scATAC-seq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --pairwise_test_clusters_1/2 ***\n"}
-      ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.group_names
-        .splitText()
-        .subscribe onNext: { String str -> println "Group name from scRNA-seq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --pairwise_test_clusters2_1/2 and --marker_peak_clusters2***\n"}
     }
 
     // Module: plot peaks in browser tracks
