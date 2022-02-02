@@ -430,9 +430,9 @@ workflow DOWNSTREAM_ARCHR {
     // Module: call peaks
     if (groupby_cluster == "Clusters") {
       ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.user_rlib, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2-todo") {
+    } else if (groupby_cluster == "Clusters2") {
       ARCHR_CALL_PEAKS_CLUSTERS(ARCHR_PSEUDO_BULK_CLUSTERS.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS.out.user_rlib, params.archr_thread)
-      ARCHR_CALL_PEAKS_CLUSTERS2(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project, params.archr_thread)
+      ARCHR_CALL_PEAKS_CLUSTERS2(ARCHR_PSEUDO_BULK_CLUSTERS2.out.archr_project, ARCHR_PSEUDO_BULK_CLUSTERS2.out.user_rlib, params.archr_thread)
     }
 
     // Module: identify marker peaks and perform MA/Volcano plots
