@@ -22,7 +22,7 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     val sample_name, emit: sample_name
     path "QualityControl_*", emit: quality_control
     path "*.arrow", emit: arrowfile
-    path "report_*", emit: report
+    path "report_*/archr_create_arrowfiles_annotation", emit: report
 
     script:
 
