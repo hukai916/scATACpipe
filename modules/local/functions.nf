@@ -33,8 +33,9 @@ def initOptions(Map args) {
     options.tss_norm_method = args.tss_norm_method ?: ''
     options.tss_flank     = args.tss_flank ?: ''
     options.flank_norm    = args.flank_norm ?: ''
+    options.trajectory_name = args.trajectory_name ?: ''
+    options.trajectory_groups = args.trajectory_groups ?: ''
     options.bam_coverage  = args.bam_coverage ?: ''
-    options.gene_to_color = args.gene_to_color ?: ''
     options.publish_by_id = args.publish_by_id ?: false
     options.publish_dir   = args.publish_dir ?: ''
     options.publish_files = args.publish_files

@@ -13,7 +13,6 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     input:
     path archr_project
-    val trajectory_groups
     val archr_thread
 
     output:
@@ -32,74 +31,89 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    if (!("$trajectory" == "default")) {
-      trajectory = c("$trajectory_groups")
+    if ("$options.trajectory_groups" == "default") {
+      # Use the first 3 groups, no biological meaning
+      clusters2 <- unique(proj\$Clusters2)
+      trajectory <- clusters2[1:min(length(clusters2), 3)]
+    } else {
+      trajectory <- str_trim(str_split("$options.trajectory_groups", ",")[[1]], side = "both")
     }
 
-    proj2 <- addTrajectory(
-      ArchRProj = proj,
-      name = "Trajectory",
-      groupBy = "Clusters2",
-      trajectory = trajectory,
-      embedding = "UMAP",
-      force = TRUE
-      )
+    if (!(all(trajectory %in% cluster2))) {
+      stop("Not all trajectory_groups are valid cluster2 group names!")
+    }
+
+    add_trajectory <- function(embedding) {
+      trajectory_name <- paste0(trajectory_name, "-", embedding)
+      proj2 <- addTrajectory(
+                  ArchRProj = proj,
+                  name = trajectory_name,
+                  groupBy = "Clusters2",
+                  trajectory = trajectory,
+                  embedding = embedding,
+                  force = TRUE
+               )
+
+      p <- plotTrajectory(proj2, trajectory = trajectory_name, colorBy = "cellColData", name = trajectory_name)
+      plotPDF(p, name = paste0("Plot-Traj-", embedding, ".pdd"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+
+      # overlay the specified gene onto the embedding
+      p1 <- plotTrajectory(proj2, trajectory = trajectory_name, colorBy = "GeneScoreMatrix", name = trajectory_name, continuousSet = "horizonExtra")
+      p2 <- plotTrajectory(proj2, trajectory = trajectory_name, colorBy = "GeneIntegrationMatrix", name = trajectory_name, continuousSet = "blueYellow")
+
+      plotPDF(p1, name = paste0("Plot-Traj-", embedding, "-w-GeneScore.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+      plotPDF(p2, name = paste0("Plot-Traj-", embedding, "-w-GeneExpression.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+
+      # Plot pseudo-time heatmaps for motifs, gene scores, gene expression and peak accessibility
+      trajMM  <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "MotifMatrix", log2Norm = FALSE)
+      p1 <- plotTrajectoryHeatmap(trajMM, pal = paletteContinuous(set = "solarExtra"))
+
+      trajGSM <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "GeneScoreMatrix", log2Norm = TRUE)
+      p2 <- trajectoryHeatmap(trajGSM, pal = paletteContinuous(set = "horizonExtra"))
+
+      trajGIM <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "GeneIntegrationMatrix", log2Norm = FALSE)
+      p3 <- plotTrajectoryHeatmap(trajGIM,  pal = paletteContinuous(set = "blueYellow"))
+
+      trajPM  <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "PeakMatrix", log2Norm = TRUE)
+      p4 <- plotTrajectoryHeatmap(trajPM, pal = paletteContinuous(set = "solarExtra"))
+
+      plotPDF(p1, p2, p3, p4, name = paste0("Plot-Traj-", embedding, "-Heatmaps.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
+
+      # Integrative pseudo-time analyses
+      corGSM_MM <- correlateTrajectories(trajGSM, trajMM)
+      trajGSM2 <- trajGSM[corGSM_MM[[1]]\$name1, ]
+      trajMM2 <- trajMM[corGSM_MM[[1]]\$name2, ]
+      trajCombined <- trajGSM2
+      assay(trajCombined, withDimnames=FALSE) <- t(apply(assay(trajGSM2), 1, scale)) + t(apply(assay(trajMM2), 1, scale))
+
+      combinedMat <- plotTrajectoryHeatmap(trajCombined, returnMat = TRUE, varCutOff = 0)
+      rowOrder <- match(rownames(combinedMat), rownames(trajGSM2))
+      ht1 <- plotTrajectoryHeatmap(trajGSM2,  pal = paletteContinuous(set = "horizonExtra"),  varCutOff = 0, rowOrder = rowOrder)
+      ht2 <- plotTrajectoryHeatmap(trajMM2, pal = paletteContinuous(set = "solarExtra"), varCutOff = 0, rowOrder = rowOrder)
+      plotPDF(ht1 + ht2, name = paste0("Plot-Traj-", embedding, "-Paired-Heatmaps-w-GeneScore.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
+
+      corGIM_MM <- correlateTrajectories(trajGIM, trajMM)
+      trajGIM2 <- trajGIM[corGIM_MM[[1]]\$name1, ]
+      trajMM2 <- trajMM[corGIM_MM[[1]]\$name2, ]
+      trajCombined <- trajGIM2
+      assay(trajCombined, withDimnames=FALSE) <- t(apply(assay(trajGIM2), 1, scale)) + t(apply(assay(trajMM2), 1, scale))
+
+      rowOrder <- match(rownames(combinedMat), rownames(trajGIM2))
+      combinedMat <- plotTrajectoryHeatmap(trajCombined, returnMat = TRUE, varCutOff = 0)
+      rowOrder <- match(rownames(combinedMat), rownames(trajGIM2))
+      ht1 <- plotTrajectoryHeatmap(trajGIM2,  pal = paletteContinuous(set = "blueYellow"),  varCutOff = 0, rowOrder = rowOrder)
+      ht2 <- plotTrajectoryHeatmap(trajMM2, pal = paletteContinuous(set = "solarExtra"), varCutOff = 0, rowOrder = rowOrder)
+      plotPDF(ht1 + ht2, name = paste0("Plot-Traj-", embedding, "Paired-Heatmaps-w-GeneExpression.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
+
+      return(proj2)
+    }
+
+    # Plot overlay to every embedding:
+    for (embedding in names(proj@embeddings)) {
+      proj2 <- add_trajectory(embedding)
+    }
 
     saveRDS(proj2, file = "archr_trajectory_project.rds")
-
-    # Plot UMAP
-    p <- plotTrajectory(proj2, trajectory = "Trajectory", colorBy = "cellColData", name = "Trajectory")
-    plotPDF(p, name = "Plot-Traj-UMAP.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-
-    if (!($options.gene_to_color == "")) {
-      # overlay the specified gene onto the UMAP
-      p1 <- plotTrajectory(proj2, trajectory = "Trajectory", colorBy = "GeneScoreMatrix", name = $options.gene_to_color, continuousSet = "horizonExtra")
-      p2 <- plotTrajectory(proj2, trajectory = "Trajectory", colorBy = "GeneIntegrationMatrix", name = $options.gene_to_color, continuousSet = "blueYellow")
-
-      plotPDF(p1, name = "Plot-Traj-UMAP-w-GeneScore.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-      plotPDF(p2, name = "Plot-Traj-UMAP-w-GeneExpression.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
-      }
-
-    # Plot pseudo-time heatmaps for motifs, gene scores, gene expression and peak accessibility
-    trajMM  <- getTrajectory(ArchRProj = proj2, name = "Trajectory", useMatrix = "MotifMatrix", log2Norm = FALSE)
-    p1 <- plotTrajectoryHeatmap(trajMM, pal = paletteContinuous(set = "solarExtra"))
-
-    trajGSM <- getTrajectory(ArchRProj = proj2, name = "Trajectory", useMatrix = "GeneScoreMatrix", log2Norm = TRUE)
-    p2 <- trajectoryHeatmap(trajGSM, pal = paletteContinuous(set = "horizonExtra"))
-
-    trajGIM <- getTrajectory(ArchRProj = proj2, name = "Trajectory", useMatrix = "GeneIntegrationMatrix", log2Norm = FALSE)
-    p3 <- plotTrajectoryHeatmap(trajGIM,  pal = paletteContinuous(set = "blueYellow"))
-
-    trajPM  <- getTrajectory(ArchRProj = proj2, name = "Trajectory", useMatrix = "PeakMatrix", log2Norm = TRUE)
-    p4 <- plotTrajectoryHeatmap(trajPM, pal = paletteContinuous(set = "solarExtra"))
-
-    plotPDF(p1, p2, p3, p4, name = "Plot-Traj-Heatmaps.pdf", ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
-
-    # Integrative pseudo-time analyses
-    corGSM_MM <- correlateTrajectories(trajGSM, trajMM)
-    trajGSM2 <- trajGSM[corGSM_MM[[1]]\$name1, ]
-    trajMM2 <- trajMM[corGSM_MM[[1]]\$name2, ]
-    trajCombined <- trajGSM2
-    assay(trajCombined, withDimnames=FALSE) <- t(apply(assay(trajGSM2), 1, scale)) + t(apply(assay(trajMM2), 1, scale))
-
-    combinedMat <- plotTrajectoryHeatmap(trajCombined, returnMat = TRUE, varCutOff = 0)
-    rowOrder <- match(rownames(combinedMat), rownames(trajGSM2))
-    ht1 <- plotTrajectoryHeatmap(trajGSM2,  pal = paletteContinuous(set = "horizonExtra"),  varCutOff = 0, rowOrder = rowOrder)
-    ht2 <- plotTrajectoryHeatmap(trajMM2, pal = paletteContinuous(set = "solarExtra"), varCutOff = 0, rowOrder = rowOrder)
-    plotPDF(ht1 + ht2, name = "Plot-Traj-Paired-Heatmaps-w-GeneScore.pdf", ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
-
-    corGIM_MM <- correlateTrajectories(trajGIM, trajMM)
-    trajGIM2 <- trajGIM[corGIM_MM[[1]]\$name1, ]
-    trajMM2 <- trajMM[corGIM_MM[[1]]\$name2, ]
-    trajCombined <- trajGIM2
-    assay(trajCombined, withDimnames=FALSE) <- t(apply(assay(trajGIM2), 1, scale)) + t(apply(assay(trajMM2), 1, scale))
-
-    rowOrder <- match(rownames(combinedMat), rownames(trajGIM2))
-    combinedMat <- plotTrajectoryHeatmap(trajCombined, returnMat = TRUE, varCutOff = 0)
-    rowOrder <- match(rownames(combinedMat), rownames(trajGIM2))
-    ht1 <- plotTrajectoryHeatmap(trajGIM2,  pal = paletteContinuous(set = "blueYellow"),  varCutOff = 0, rowOrder = rowOrder)
-    ht2 <- plotTrajectoryHeatmap(trajMM2, pal = paletteContinuous(set = "solarExtra"), varCutOff = 0, rowOrder = rowOrder)
-    plotPDF(ht1 + ht2, name = "Plot-Traj-Paired-Heatmaps-w-GeneExpression.pdf", ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
 
     ' > run.R
 
