@@ -39,8 +39,8 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
       trajectory <- str_trim(str_split("$options.trajectory_groups", ",")[[1]], side = "both")
     }
 
-    if (!(all(trajectory %in% cluster2))) {
-      stop("Not all trajectory_groups are valid cluster2 group names!")
+    if (!(all(trajectory %in% clusters2))) {
+      stop("Not all trajectory_groups are valid clusters2 group names!")
     }
 
     add_trajectory <- function(embedding) {
