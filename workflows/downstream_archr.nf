@@ -456,19 +456,24 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: motif enrichment
+    if (params.custom_peaks) {
+      custom_peaks = params.custom_peaks
+    } else {
+      custom_peaks = '""' // placeholder for empty peaks
+    }
     if (groupby_cluster == "Clusters") {
-      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, params.custom_peaks, params.species_latin_name, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, custom_peaks, params.species_latin_name, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, params.custom_peaks, params.species_latin_name, params.archr_thread)
-      ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.test_group, user_rlib, params.custom_peaks, params.species_latin_name, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, custom_peaks, params.species_latin_name, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.test_group, user_rlib, custom_peaks, params.species_latin_name, params.archr_thread)
     }
 
     // Module: motif deviation
     if (groupby_cluster == "Clusters") {
-      ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, params.custom_peaks, params.archr_thread)
+      ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, custom_peaks, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-      ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, params.custom_peaks, params.archr_thread)
-      ARCHR_MOTIF_DEVIATIONS_CLUSTERS2(ARCHR_MOTIF_ENRICHMENT_CLUSTERS2.out.archr_project, params.custom_peaks, params.archr_thread)
+      ARCHR_MOTIF_DEVIATIONS_CLUSTERS(ARCHR_MOTIF_ENRICHMENT_CLUSTERS.out.archr_project, custom_peaks, params.archr_thread)
+      ARCHR_MOTIF_DEVIATIONS_CLUSTERS2(ARCHR_MOTIF_ENRICHMENT_CLUSTERS2.out.archr_project, custom_peaks, params.archr_thread)
     }
 
     // Module: footprinting
