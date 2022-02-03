@@ -13,6 +13,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     input:
     path archr_project
+    path archr
     val archr_thread
 
     output:
@@ -59,7 +60,16 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
       # overlay the specified gene onto the embedding if supplied:
       if ("$options.colorby_gene" == "default") {
-        colorby_gene <- getFeatures(proj)[1]
+        # colorby_gene must be from .getFeatureDF(getArrowFiles(proj), matrixName)\$name
+        devtools::load_all("ArchR") # to use .getFeatureDF() function
+        geneDF1 <- .getFeatureDF(getArrowFiles(proj), "GeneScoreMatrix")
+        geneDF2 <- .getFeatureDF(getArrowFiles(proj), "GeneIntegrationMatrix")
+        geneDF  <- intersect(geneDF1, geneDF2)
+        devtools::unload("ArchR")
+        library(ArchR)
+        # note that after load_all, the proj will not be correctly recognized as S4 object, have to unload and re-library ArchR.
+
+        colorby_gene <- geneDF[1]
       } else {
         colorby_gene <- "$options.colorby_gene"
       }
