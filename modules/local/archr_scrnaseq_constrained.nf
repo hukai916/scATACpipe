@@ -114,12 +114,12 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
       markersGS <- getMarkerFeatures(
-        ArchRProj = proj,
-        groupBy = "Clusters",
-        useMatrix = "GeneScoreMatrix",
-        bias = c("TSSEnrichment", "log10(nFrags)"),
-        testMethod = "wilcoxon"
-      )
+                     ArchRProj = proj,
+                     groupBy = "Clusters",
+                     useMatrix = "GeneScoreMatrix",
+                     bias = c("TSSEnrichment", "log10(nFrags)"),
+                     testMethod = "wilcoxon"
+                   )
       markerList <- getMarkers(markersGS)
 
       markerGenes <- c()
@@ -147,25 +147,30 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     embedding <- paste0("UMAP_", reducedDims)
 
     p1 <- plotEmbedding(
-      ArchRProj = proj2,
-      colorBy = "GeneIntegrationMatrix",
-      name = markerGenes,
-      continuousSet = "horizonExtra",
-      embedding = embedding,
-      imputeWeights = getImputeWeights(proj2)
-    )
+            ArchRProj = proj2,
+            embedding = embedding,
+            colorBy = "GeneIntegrationMatrix",
+            name = markerGenes,
+            continuousSet = "horizonExtra",
+            imputeWeights = getImputeWeights(proj2)
+          )
     plotPDF(plotList = p1,
-      name = paste0("Plot-", embedding, "-Marker-Genes-RNA-W-Imputation.pdf"),
-      ArchRProj = NULL,
-      addDOC = FALSE, width = 5, height = 5
-    )
+              name = paste0("Plot-", embedding, "-Marker-Genes-RNA-W-Imputation.pdf"),
+              ArchRProj = NULL,
+              addDOC = FALSE, width = 5, height = 5
+            )
 
     # Label scATAC-seq clusters with scRNA-seq information
     cM <- confusionMatrix(proj2\$Clusters, proj2\$predictedGroup)
     labelOld <- rownames(cM)
     labelNew <- colnames(cM)[apply(cM, 1, which.max)]
     proj2\$Clusters2 <- mapLabels(proj2\$Clusters, newLabels = labelNew, oldLabels = labelOld)
-    p1 <- plotEmbedding(proj2, colorBy = "cellColData", name = "Clusters2")
+    p1 <- plotEmbedding(
+            ArchRProj = proj2,
+            embedding = embedding,
+            colorBy = "cellColData",
+            name = "Clusters2"
+          )
     plotPDF(p1, name = paste0("Plot-", embedding, "-Remap-Clusters.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
     saveRDS(proj2, file = "proj_scrnaseq_constrained.rds")
