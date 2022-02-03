@@ -44,7 +44,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
     }
 
     add_trajectory <- function(embedding) {
-      trajectory_name <- paste0(trajectory_name, "-", embedding)
+      trajectory_name <- paste0("$options.trajectory_name", "-", embedding)
       proj2 <- addTrajectory(
                   ArchRProj = proj,
                   name = trajectory_name,
