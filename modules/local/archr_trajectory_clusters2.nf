@@ -19,7 +19,6 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
     output:
     path "archr_trajectory_project.rds", emit: archr_project
     path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
-    path "archr_trajectory_clusters2", emit: res_dir
     path "report_jpeg/archr_trajectory_clusters2", emit: report
 
     script:
