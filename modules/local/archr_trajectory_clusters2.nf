@@ -44,7 +44,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
     }
 
     add_trajectory <- function(embedding) {
-      trajectory_name <- paste0("$options.trajectory_name", "_", embedding) # somehow, "-" will be converted to "." in :ccd <- data.frame(ArchRProj@cellColData, stringsAsFactors=FALSE)""
+      trajectory_name <- paste0("$options.trajectory_name", "_", embedding) # somehow, "-" will be converted to "." in "ccd <- data.frame(ArchRProj@cellColData, stringsAsFactors=FALSE)"
       proj <- addTrajectory(
                   ArchRProj = proj,
                   name = trajectory_name,
@@ -57,9 +57,14 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
       p <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "cellColData", name = trajectory_name)
       plotPDF(p, name = paste0("Plot-Traj-", embedding, ".pdd"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
-      # overlay the specified gene onto the embedding
-      p1 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneScoreMatrix", name = trajectory_name, continuousSet = "horizonExtra")
-      p2 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneIntegrationMatrix", name = trajectory_name, continuousSet = "blueYellow")
+      # overlay the specified gene onto the embedding if supplied:
+      if ("$options.colorby_gene" == "default") {
+        colorby_gene <- getFeatures(proj)[1]
+      } else {
+        colorby_gene <- "$options.colorby_gene"
+      }
+      p1 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneScoreMatrix", name = colorby_gene, continuousSet = "horizonExtra")
+      p2 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneIntegrationMatrix", name = colorby_gene, continuousSet = "blueYellow")
 
       plotPDF(p1, name = paste0("Plot-Traj-", embedding, "-w-GeneScore.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
       plotPDF(p2, name = paste0("Plot-Traj-", embedding, "-w-GeneExpression.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
