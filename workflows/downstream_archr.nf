@@ -612,6 +612,10 @@ workflow DOWNSTREAM_ARCHR {
     try {
       res_files = res_files.mix(ARCHR_TRAJECTORY_CLUSTERS2.out.report.collect().ifEmpty([]))
     } catch (Exception ex) {}
+    // ARCHR_PEAK2GENELINKAGE_CLUSTERS2:
+    try {
+      res_files = res_files.mix(ARCHR_PEAK2GENELINKAGE_CLUSTERS2.out.report.collect().ifEmpty([]))
+    } catch (Exception ex) {}
     // ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS:
     try {
       res_files = res_files.mix(ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS.out.report.collect().ifEmpty([]))

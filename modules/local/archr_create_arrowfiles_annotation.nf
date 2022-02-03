@@ -22,7 +22,7 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     val sample_name, emit: sample_name
     path "QualityControl_*", emit: quality_control
     path "*.arrow", emit: arrowfile
-    path "report_*/archr_create_arrowfiles_annotation", emit: report
+    path "report_jpeg/archr_create_arrowfiles_annotation_*", emit: report
 
     script:
 
@@ -73,8 +73,8 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
     done
 
     # For reporting:
-    mkdir -p report_archr_create_arrowfiles_annotation_$sample_name/archr_create_arrowfiles_annotation
-    cp -r QualityControl_$sample_name/jpeg report_archr_create_arrowfiles_annotation_$sample_name/archr_create_arrowfiles_annotation
+    mkdir -p report_jpeg/archr_create_arrowfiles_annotation_$sample_name
+    cp -r QualityControl_$sample_name/jpeg report_jpeg/archr_create_arrowfiles_annotation_$sample_name
 
     """
 }

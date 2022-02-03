@@ -20,7 +20,7 @@ process ARCHR_CREATE_ARROWFILES {
     val sample_name, emit: sample_name
     path "QualityControl_*", emit: quality_control
     path "*.arrow", emit: arrowfile
-    path "report_*", emit: report
+    path "report_jpeg/archr_create_arrowfiles_*", emit: report
 
     script:
 
@@ -63,8 +63,8 @@ process ARCHR_CREATE_ARROWFILES {
     done
 
     # For reporting:
-    mkdir -p report_archr_create_arrowfiles_$sample_name/archr_create_arrowfiles
-    cp -r QualityControl_$sample_name/jpeg report_archr_create_arrowfiles_$sample_name/archr_create_arrowfiles
+    mkdir -p report_jpeg/archr_create_arrowfiles_$sample_name
+    cp -r QualityControl_$sample_name/jpeg report_jpeg/archr_create_arrowfiles_$sample_name
 
     """
 }
