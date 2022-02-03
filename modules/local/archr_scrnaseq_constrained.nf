@@ -14,6 +14,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     input:
     path archr_project
     path obj_scrnaseq
+    path archr
     val group_list
     val archr_thread
 
@@ -108,19 +109,53 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     # Add impute weights
     proj2 <- addImputeWeights(proj2)
 
-    # UMAP plots overlayed with gene expression values from GeneIntegrationMatrix
-    markerGenes <- c($options.marker_genes)
+    # markerGenes: default to use first 10 marker_genes inferred from "Clusters"
+    if (!("$options.marker_genes" == "default")) {
+      markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
+    } else {
+      markersGS <- getMarkerFeatures(
+        ArchRProj = proj,
+        groupBy = "Clusters",
+        useMatrix = "GeneScoreMatrix",
+        bias = c("TSSEnrichment", "log10(nFrags)"),
+        testMethod = "wilcoxon"
+      )
+      markerList <- getMarkers(markersGS)
+
+      markerGenes <- c()
+      for (cluster in markerList@listData) {
+        markerGenes <- c(markerGenes, cluster\$name)
+      }
+      sel <- min(length(markerGenes), 10)
+      markerGenes <- markerGenes[1:sel]
+    }
+    # markerGenes must also be a subset of .getFeatureDF(getArrowFiles(proj2), "GeneIntegrationMatrix")\$name
+    devtools::load_all("ArchR") # to use .getFeatureDF() function
+    geneDF <- .getFeatureDF(getArrowFiles(proj2), "GeneScoreMatrix")
+    geneDF <- geneDF[geneDF\$name %in% rownames(seRNA), , drop = FALSE]
+    markerGenes <- markerGenes[markerGenes %in% geneDF\$name]
+    devtools::unload("ArchR")
+    library(ArchR)
+    # note that after load_all, the proj will not be correctly recognized as S4 object, have to unload and re-library ArchR.
+
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      reducedDims <- "Harmony"
+    } else if ("IterativeLSI" %in% names(proj@reducedDims)) {
+      reducedDims <- "IterativeLSI"
+    }
+
+    embedding <- paste0("UMAP_", reducedDims)
+
     p1 <- plotEmbedding(
       ArchRProj = proj2,
       colorBy = "GeneIntegrationMatrix",
       name = markerGenes,
       continuousSet = "horizonExtra",
-      embedding = "UMAP",
+      embedding = embedding,
       imputeWeights = getImputeWeights(proj2)
     )
-
     plotPDF(plotList = p1,
-      name = "Plot-UMAP-Marker-Genes-RNA-W-Imputation.pdf",
+      name = paste0("Plot-", embedding, "-Marker-Genes-RNA-W-Imputation.pdf"),
       ArchRProj = NULL,
       addDOC = FALSE, width = 5, height = 5
     )
@@ -131,7 +166,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     labelNew <- colnames(cM)[apply(cM, 1, which.max)]
     proj2\$Clusters2 <- mapLabels(proj2\$Clusters, newLabels = labelNew, oldLabels = labelOld)
     p1 <- plotEmbedding(proj2, colorBy = "cellColData", name = "Clusters2")
-    plotPDF(p1, name = "Plot-UMAP-Remap-Clusters.pdf", ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
+    plotPDF(p1, name = paste0("Plot-", embedding, "-Remap-Clusters.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
     saveRDS(proj2, file = "proj_scrnaseq_constrained.rds")
 

@@ -397,7 +397,7 @@ workflow DOWNSTREAM_ARCHR {
       // For each Arrorproject, you can have only one set of peak set unless you copy arrow files and create another arrowproject. That is why we implemented ARCHR_PSEUDO_BULK_CLUSTERS and ARCHR_PSEUDO_BULK_CLUSTERS2
     } else {
       // TODO: scrnaseq data validity test
-      
+
       groupby_cluster = "Clusters2" // downstream uses clusters inferred from both data
       log.info "INFO: --archr_scrnaseq supplied, will perform integrative analysis with scRNA-seq!"
       ARCHR_PSEUDO_BULK_CLUSTERS(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
@@ -409,7 +409,7 @@ workflow DOWNSTREAM_ARCHR {
         ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, user_rlib, params.archr_thread)
       } else {
         log.info "INFO: --archr_scrnaseq_grouplist supplied, will perform constrained integration!"
-        ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, params.archr_scrnaseq_grouplist, params.archr_thread)
+        ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, Channel.fromPath('assets/ArchR'), params.archr_scrnaseq_grouplist, params.archr_thread)
 
         ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, user_rlib, params.archr_thread)
       }

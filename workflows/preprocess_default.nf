@@ -129,7 +129,7 @@ workflow PREPROCESS_DEFAULT {
       // Module : bwa_map
       BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
     } else if (params.ref_fasta_ensembl) {
-      log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build index, and map ..."
+      log.info "INFO: --ref_fasta_ensembl provided, will download genome, and then build index, and map!"
       // Module : download_from_ensembl
       DOWNLOAD_FROM_ENSEMBL (params.ref_fasta_ensembl, Channel.fromPath('assets/genome_ensembl.json'))
       // Module: prep_genome
@@ -139,7 +139,7 @@ workflow PREPROCESS_DEFAULT {
       // Module : bwa_map
       BWA_MAP (CUTADAPT.out.reads_0, BWA_INDEX.out.bwa_index_folder.collect())
     } else if (params.ref_fasta_ucsc) {
-      log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build bwa index, and map with bwa ..."
+      log.info "INFO: --ref_fasta_ucsc provided, will download genome, and then build bwa index, and map with bwa!"
       // Module : download_from_ucsc
       DOWNLOAD_FROM_UCSC (params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
       // Module : prep_genome
