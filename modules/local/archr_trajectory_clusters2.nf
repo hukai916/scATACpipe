@@ -44,7 +44,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
     }
 
     add_trajectory <- function(embedding) {
-      trajectory_name <- paste0("$options.trajectory_name", "-", embedding)
+      trajectory_name <- paste0("$options.trajectory_name", "_", embedding) # somehow, "-" will be converted to "." in :ccd <- data.frame(ArchRProj@cellColData, stringsAsFactors=FALSE)""
       proj <- addTrajectory(
                   ArchRProj = proj,
                   name = trajectory_name,
