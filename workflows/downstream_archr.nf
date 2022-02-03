@@ -406,13 +406,13 @@ workflow DOWNSTREAM_ARCHR {
         .subscribe onNext: { String str -> println "Cluster name from scRNAseq: ${str}".trim() }, onComplete: { print "\n*** use above names to define --archr_scrnaseq_grouplist ***\n"}
 
       if ((!params.archr_scrnaseq_grouplist)) {
-        log.info "NOTICE: --archr_scrnaseq_grouplist not supplied, will skip constrained integration!"
+        log.info "INFO: --archr_scrnaseq_grouplist not supplied, will skip constrained integration!"
         // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, groupby_cluster)
         // ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_EMBEDDING.out.archr_project, user_rlib, params.archr_thread)
 
         ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, user_rlib, params.archr_thread)
       } else {
-        log.info "NOTICE: --archr_scrnaseq_grouplist supplied, will perform constrained integration!"
+        log.info "INFO: --archr_scrnaseq_grouplist supplied, will perform constrained integration!"
         ARCHR_SCRNASEQ_CONSTRAINED(ARCHR_SCRNASEQ_UNCONSTRAINED.out.archr_project, params.archr_scrnaseq, params.archr_scrnaseq_grouplist, params.archr_thread)
         // ARCHR_PSEUDO_BULK(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, groupby_cluster)
         ARCHR_PSEUDO_BULK_CLUSTERS2(ARCHR_SCRNASEQ_CONSTRAINED.out.archr_project, user_rlib, params.archr_thread)

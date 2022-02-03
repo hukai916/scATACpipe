@@ -45,7 +45,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     add_trajectory <- function(embedding) {
       trajectory_name <- paste0("$options.trajectory_name", "-", embedding)
-      proj2 <- addTrajectory(
+      proj <- addTrajectory(
                   ArchRProj = proj,
                   name = trajectory_name,
                   groupBy = "Clusters2",
@@ -54,27 +54,27 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
                   force = TRUE
                )
 
-      p <- plotTrajectory(proj2, trajectory = trajectory_name, colorBy = "cellColData", name = trajectory_name)
+      p <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "cellColData", name = trajectory_name)
       plotPDF(p, name = paste0("Plot-Traj-", embedding, ".pdd"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
       # overlay the specified gene onto the embedding
-      p1 <- plotTrajectory(proj2, trajectory = trajectory_name, colorBy = "GeneScoreMatrix", name = trajectory_name, continuousSet = "horizonExtra")
-      p2 <- plotTrajectory(proj2, trajectory = trajectory_name, colorBy = "GeneIntegrationMatrix", name = trajectory_name, continuousSet = "blueYellow")
+      p1 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneScoreMatrix", name = trajectory_name, continuousSet = "horizonExtra")
+      p2 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneIntegrationMatrix", name = trajectory_name, continuousSet = "blueYellow")
 
       plotPDF(p1, name = paste0("Plot-Traj-", embedding, "-w-GeneScore.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
       plotPDF(p2, name = paste0("Plot-Traj-", embedding, "-w-GeneExpression.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 5, height = 5)
 
       # Plot pseudo-time heatmaps for motifs, gene scores, gene expression and peak accessibility
-      trajMM  <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "MotifMatrix", log2Norm = FALSE)
+      trajMM  <- getTrajectory(ArchRProj = proj, name = trajectory_name, useMatrix = "MotifMatrix", log2Norm = FALSE)
       p1 <- plotTrajectoryHeatmap(trajMM, pal = paletteContinuous(set = "solarExtra"))
 
-      trajGSM <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "GeneScoreMatrix", log2Norm = TRUE)
+      trajGSM <- getTrajectory(ArchRProj = proj, name = trajectory_name, useMatrix = "GeneScoreMatrix", log2Norm = TRUE)
       p2 <- trajectoryHeatmap(trajGSM, pal = paletteContinuous(set = "horizonExtra"))
 
-      trajGIM <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "GeneIntegrationMatrix", log2Norm = FALSE)
+      trajGIM <- getTrajectory(ArchRProj = proj, name = trajectory_name, useMatrix = "GeneIntegrationMatrix", log2Norm = FALSE)
       p3 <- plotTrajectoryHeatmap(trajGIM,  pal = paletteContinuous(set = "blueYellow"))
 
-      trajPM  <- getTrajectory(ArchRProj = proj2, name = trajectory_name, useMatrix = "PeakMatrix", log2Norm = TRUE)
+      trajPM  <- getTrajectory(ArchRProj = proj, name = trajectory_name, useMatrix = "PeakMatrix", log2Norm = TRUE)
       p4 <- plotTrajectoryHeatmap(trajPM, pal = paletteContinuous(set = "solarExtra"))
 
       plotPDF(p1, p2, p3, p4, name = paste0("Plot-Traj-", embedding, "-Heatmaps.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
@@ -105,15 +105,15 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
       ht2 <- plotTrajectoryHeatmap(trajMM2, pal = paletteContinuous(set = "solarExtra"), varCutOff = 0, rowOrder = rowOrder)
       plotPDF(ht1 + ht2, name = paste0("Plot-Traj-", embedding, "Paired-Heatmaps-w-GeneExpression.pdf"), ArchRProj = NULL, addDOC = FALSE, width = 6, height = 8)
 
-      return(proj2)
+      return(proj)
     }
 
     # Plot overlay to every embedding:
     for (embedding in names(proj@embeddings)) {
-      proj2 <- add_trajectory(embedding)
+      proj <- add_trajectory(embedding)
     }
 
-    saveRDS(proj2, file = "archr_trajectory_project.rds")
+    saveRDS(proj, file = "archr_trajectory_project.rds")
 
     ' > run.R
 
