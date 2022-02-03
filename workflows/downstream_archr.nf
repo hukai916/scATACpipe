@@ -492,14 +492,14 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: peak2genelinkage: for clusters2 only
-    if (groupby_cluster == "Clusters2-todo") {
-      ARCHR_PEAK2GENELINKAGE_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
+    if (groupby_cluster == "Clusters2") {
+      ARCHR_PEAK2GENELINKAGE_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, ARCHR_MARKER_GENE_CLUSTERS2.out.markerList, params.archr_thread)
     }
 
     // Module: identify "positive" TF-regulators
     if (groupby_cluster == "Clusters") {
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
-    } else if (groupby_cluster == "Clusters2-todo") {
+    } else if (groupby_cluster == "Clusters2") {
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
     }
@@ -539,8 +539,8 @@ workflow DOWNSTREAM_ARCHR {
       if (groupby_cluster == "Clusters") {
         ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
       } else if (groupby_cluster == "Clusters2-todo") {
-          ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
-          ARCHR_COACCESSIBILITY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
+        ARCHR_COACCESSIBILITY_CLUSTERS(ARCHR_MOTIF_DEVIATIONS_CLUSTERS.out.archr_project, params.archr_thread)
+        ARCHR_COACCESSIBILITY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
       }
 
       // Module: peak2genelinkage: for clusters2 only

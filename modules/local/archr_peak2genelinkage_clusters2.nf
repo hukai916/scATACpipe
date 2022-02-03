@@ -13,6 +13,7 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
 
     input:
     path archr_project
+    path markerList
     val archr_thread
 
     output:
@@ -30,6 +31,7 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
+    markerList <- readRDS("$markerList")
 
     proj2 <- addPeak2GeneLinks(
       ArchRProj = proj,
@@ -73,14 +75,10 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
     all_symbol_unique <- all_symbol[match(all_symbol_cleaned_unique, all_symbol_cleaned)]
     markerGenes_raw <- sort(all_symbol_unique[all_symbol_cleaned_unique %in% markerGenes_clean])
 
-
-
-
-    markerGenes <- c($options.marker_genes)
     p <- plotBrowserTrack(
       ArchRProj = proj2,
       groupBy = "Clusters2",
-      geneSymbol = markerGenes,
+      geneSymbol = markerGenes_raw,
       upstream = 50000,
       downstream = 50000,
       loops = getPeak2GeneLinks(proj2)
