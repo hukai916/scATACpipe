@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_TRAJECTORY_CLUSTERS2 {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_trajectory_clusters2', publish_id:'') }
@@ -32,7 +32,9 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    trajectory = c($trajectory_groups)
+    if (!("$trajectory" == "default")) {
+      trajectory = c("$trajectory_groups")
+    }
 
     proj2 <- addTrajectory(
       ArchRProj = proj,

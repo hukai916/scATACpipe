@@ -504,7 +504,10 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.archr_thread)
     }
 
+    // Module: trajectory: for cluster2 only
     if (groupby_cluster == "Clusters2-todo") {
+      ARCHR_TRAJECTORY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, params.trajectory_groups, params.archr_thread)
+
       if (!params.trajectory_groups) {
         log.info "Parameter --trajectory_groups not supplied, checking trajectory analysis!"
       } else {
