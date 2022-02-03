@@ -126,7 +126,13 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     # Plot overlay to every embedding:
     for (embedding in names(proj@embeddings)) {
-      proj <- add_trajectory(embedding)
+      tryCatch({
+        proj <- add_trajectory(embedding)
+      },
+        error=function(e) {
+          message(paste0("Skipping plotting for ", embedding, "!"))
+        }
+      )
     }
 
     saveRDS(proj, file = "archr_trajectory_project.rds")
