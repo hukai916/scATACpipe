@@ -64,7 +64,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
         devtools::load_all("ArchR") # to use .getFeatureDF() function
         geneDF1 <- .getFeatureDF(getArrowFiles(proj), "GeneScoreMatrix")
         geneDF2 <- .getFeatureDF(getArrowFiles(proj), "GeneIntegrationMatrix")
-        geneNames <- intersect(geneDF1$name, geneDF2$name)
+        geneNames <- intersect(geneDF1\$name, geneDF2\$name)
         devtools::unload("ArchR")
         library(ArchR)
         # note that after load_all, the proj will not be correctly recognized as S4 object, have to unload and re-library ArchR.
@@ -73,7 +73,7 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
       } else {
         colorby_gene <- "$options.colorby_gene"
       }
-      
+
       p1 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneScoreMatrix", name = colorby_gene, continuousSet = "horizonExtra")
       p2 <- plotTrajectory(proj, embedding = embedding, trajectory = trajectory_name, colorBy = "GeneIntegrationMatrix", name = colorby_gene, continuousSet = "blueYellow")
 
