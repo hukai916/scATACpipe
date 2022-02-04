@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_CREATE_ARROWFILES_ANNOTATION {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_create_arrowfiles_annotation', publish_id:'') }

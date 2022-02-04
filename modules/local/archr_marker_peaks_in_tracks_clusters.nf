@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
-  // Defaul to plot the first 10 marker genes and the first Cluster
+  // Defaul to plot the first 3 marker genes and the first Cluster
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -36,7 +36,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
     proj <- readRDS("$archr_project")
 
     # Below is to make sure geneSymbol is subset of getGenes(proj)\$symbol
-    # Draw heatmap: default to use first 10 marker_genes
+    # Draw heatmap: default to use first 3 marker_genes
     if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
       markerGenes <- unique(markerGenes)
@@ -46,7 +46,7 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
         markerGenes <- c(markerGenes, cluster\$name)
       }
       markerGenes <- unique(markerGenes)
-      sel <- min(length(markerGenes), 10)
+      sel <- min(length(markerGenes), 3)
       markerGenes <- markerGenes[1:sel]
     }
 

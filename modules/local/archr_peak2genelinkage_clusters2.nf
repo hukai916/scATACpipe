@@ -44,7 +44,7 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
         $options.args
     )
 
-    # Draw heatmap: default to use first 10 marker_genes
+    # Draw heatmap: default to use first 3 marker_genes
     if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
       markerGenes <- unique(markerGenes)
@@ -54,7 +54,7 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
         markerGenes <- c(markerGenes, cluster\$name)
       }
       markerGenes <- unique(markerGenes)
-      sel <- min(length(markerGenes), 10)
+      sel <- min(length(markerGenes), 3)
       markerGenes <- markerGenes[1:sel]
     }
 

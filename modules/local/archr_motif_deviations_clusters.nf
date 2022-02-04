@@ -53,7 +53,7 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     plotPDF(plotVarDev, name = "Variable-Motif-Deviation-Scores", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     if ("$options.motifs" == "default") {
-      motifs <- gsub("_.+", "", VarDev\$name[1:min(10, length(VarDev\$name))])
+      motifs <- gsub("_.+", "", VarDev\$name[1:min(3, length(VarDev\$name))])
     } else {
       motifs <- gsub("_.+", "", str_trim(str_split("$options.motifs", ",")[[1]], side = "both"))
     }

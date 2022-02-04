@@ -38,7 +38,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
     if ("$options.motifs" == "default") {
       plotVarDev <- getVarDeviations(proj, name = "MotifMatrix", plot = TRUE)
       VarDev     <- getVarDeviations(proj, name = "MotifMatrix", plot = FALSE)
-      motifs     <- VarDev\$name[1:min(10, length(VarDev\$name))]
+      motifs     <- VarDev\$name[1:min(3, length(VarDev\$name))]
     } else {
       motifs <- str_trim(str_split("$options.motifs", ",")[[1]], side = "both")
     }

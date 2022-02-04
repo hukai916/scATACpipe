@@ -51,7 +51,7 @@ process ARCHR_COACCESSIBILITY_CLUSTERS2 {
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
-      sel <- min(length(markerGenes), 10)
+      sel <- min(length(markerGenes), 3)
       markerGenes <- markerGenes[1:sel]
     }
 

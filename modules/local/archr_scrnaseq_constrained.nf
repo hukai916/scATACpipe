@@ -109,7 +109,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     # Add impute weights
     proj2 <- addImputeWeights(proj2)
 
-    # markerGenes: default to use first 10 marker_genes inferred from "Clusters"
+    # markerGenes: default to use first 3 marker_genes inferred from "Clusters"
     if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
@@ -126,7 +126,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
-      sel <- min(length(markerGenes), 10)
+      sel <- min(length(markerGenes), 3)
       markerGenes <- markerGenes[1:sel]
     }
     # markerGenes must also be a subset of .getFeatureDF(getArrowFiles(proj2), "GeneIntegrationMatrix")\$name

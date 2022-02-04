@@ -61,7 +61,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     proj2 <- addImputeWeights(proj2)
 
     # Embedding plots overlayed with gene expression values from GeneIntegrationMatrix
-    # markerGenes: default to use first 10 marker_genes inferred from "Clusters"
+    # markerGenes: default to use first 3 marker_genes inferred from "Clusters"
     if (!("$options.marker_genes" == "default")) {
       markerGenes <- str_trim(str_split("$options.marker_genes", ",")[[1]], side = "both")
     } else {
@@ -78,7 +78,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
       for (cluster in markerList@listData) {
         markerGenes <- c(markerGenes, cluster\$name)
       }
-      sel <- min(length(markerGenes), 10)
+      sel <- min(length(markerGenes), 3)
       markerGenes <- markerGenes[1:sel]
     }
     # markerGenes must also be a subset of .getFeatureDF(getArrowFiles(proj2), "GeneIntegrationMatrix")\$name

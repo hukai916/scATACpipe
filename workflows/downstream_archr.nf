@@ -524,6 +524,10 @@ workflow DOWNSTREAM_ARCHR {
     try {
       res_files = res_files.mix(ARCHR_CREATE_ARROWFILES.out.report.collect().ifEmpty([]))
     } catch (Exception ex) {}
+    // ARCHR_CREATE_ARROWFILES_ANNOTATION module:
+    try {
+      res_files = res_files.mix(ARCHR_CREATE_ARROWFILES_ANNOTATION.out.report.collect().ifEmpty([]))
+    } catch (Exception ex) {}
     // ARCHR_ADD_DOUBLETSCORES
     try {
       res_files = res_files.mix(ARCHR_ADD_DOUBLETSCORES.out.report.collect().ifEmpty([]))
@@ -536,6 +540,10 @@ workflow DOWNSTREAM_ARCHR {
     // ARCHR_FILTER_DOUBLETS:
     try {
       res_files = res_files.mix(ARCHR_FILTER_DOUBLETS.out.summary.collect().ifEmpty([]))
+    } catch (Exception ex) {}
+    // AMULET_FILTER_DOUBLETS:
+    try {
+      res_files = res_files.mix(AMULET_FILTER_DOUBLETS.out.summary.collect().ifEmpty([]))
     } catch (Exception ex) {}
     // ARCHR_CLUSTERING:
     try {
