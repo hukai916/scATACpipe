@@ -15,12 +15,12 @@ process AMULET_MERGE_DOUBLETS {
     path doublets
 
     output:
-    path "cells_filter.txt", emit: cells_filter
+    path "amulet_doublets.txt", emit: amulet_doublets
 
     script:
 
     """
-    cat cells_filter_*.txt > cells_filter.txt
+    cat cells_filter_*.txt > amulet_doublets.txt
 
     """
 }

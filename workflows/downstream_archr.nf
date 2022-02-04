@@ -356,7 +356,7 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project, params.archr_thread)
     } else if (params.doublet_removal_algorithm == "amulet") {
       // Module: filtering doublets
-      AMULET_FILTER_DOUBLETS(ARCHR_FILTER_CELLS.out.archr_project, AMULET_MERGE_DOUBLETS.out.cells_filter)
+      AMULET_FILTER_DOUBLETS(ARCHR_FILTER_CELLS.out.archr_project, AMULET_MERGE_DOUBLETS.out.amulet_doublets)
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(AMULET_FILTER_DOUBLETS.out.archr_project, params.archr_thread)
     }
@@ -543,7 +543,7 @@ workflow DOWNSTREAM_ARCHR {
     } catch (Exception ex) {}
     // AMULET_FILTER_DOUBLETS:
     try {
-      res_files = res_files.mix(AMULET_FILTER_DOUBLETS.out.summary.collect().ifEmpty([]))
+      res_files = res_files.mix(AMULET_MERGE_DOUBLETS.out.amulet_doublets.collect().ifEmpty([]))
     } catch (Exception ex) {}
     // ARCHR_CLUSTERING:
     try {
