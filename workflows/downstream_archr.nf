@@ -333,10 +333,10 @@ workflow DOWNSTREAM_ARCHR {
     if (params.doublet_removal_algorithm == "amulet") {
       if (archr_input_type == "genome_gtf") {
         // Use prep_fragment.out.fragments
-        AMULET_DETECT_DOUBLETS(PREP_FRAGMENT.out.fragments, Channel.fromPath(params.amulet_rmsk_bed).first(), Channel.fromPath(params.amulet_autosomes).first())
+        AMULET_DETECT_DOUBLETS(PREP_FRAGMENT.out.fragments)
       } else {
         // Use fragments
-        AMULET_DETECT_DOUBLETS(fragments, Channel.fromPath(params.amulet_rmsk_bed).first(), Channel.fromPath(params.amulet_autosomes).first())
+        AMULET_DETECT_DOUBLETS(fragments)
       }
       // Module: generate Doublet cell list input to ArchR
       AMULET_MERGE_DOUBLETS(AMULET_DETECT_DOUBLETS.out.cells_filter.collect())
@@ -346,12 +346,12 @@ workflow DOWNSTREAM_ARCHR {
     ARCHR_FILTER_CELLS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_thread)
 
     // Module: filter doublets depending on user option.
-    if (!params.archr_filter_doublets_ratio) {
+    if (!params.doublet_removal_algorithm ) {
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_CELLS.out.archr_project, params.archr_thread)
     } else if (params.doublet_removal_algorithm == "archr") { // for test only
       // Module: filtering doublets
-      ARCHR_FILTER_DOUBLETS(ARCHR_FILTER_CELLS.out.archr_project, params.archr_filter_doublets_ratio, params.archr_thread)
+      ARCHR_FILTER_DOUBLETS(ARCHR_FILTER_CELLS.out.archr_project, params.archr_thread)
       // Module: dimension reduction
       ARCHR_DIMENSION_REDUCTION(ARCHR_FILTER_DOUBLETS.out.archr_project, params.archr_thread)
     } else if (params.doublet_removal_algorithm == "amulet") {

@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process ARCHR_FILTER_DOUBLETS {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_filter_doublets', publish_id:'') }
@@ -13,7 +13,6 @@ process ARCHR_FILTER_DOUBLETS {
 
     input:
     path archr_project
-    val archr_filter_ratio
     val archr_thread
 
     output:
@@ -25,12 +24,12 @@ process ARCHR_FILTER_DOUBLETS {
     """
     echo '
     library(ArchR)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    proj2 <- filterDoublets(proj, filterRatio = $archr_filter_ratio)
+    proj2 <- filterDoublets(proj, filterRatio = $options.archr_filter_doublets_ratio)
     saveRDS(proj2, file = "proj_doublet_filtered.rds")
 
     ' > run.R

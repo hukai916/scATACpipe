@@ -1,90 +1,167 @@
-# ![nf-core/scatacpipe](docs/images/nf-core-scatacpipe_logo.png)
+# ![scATACpipe](docs/images/scATACpipe.png)
 
-[![GitHub Actions CI Status](https://github.com/nf-core/scatacpipe/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/scatacpipe/actions?query=workflow%3A%22nf-core+CI%22)
-[![GitHub Actions Linting Status](https://github.com/nf-core/scatacpipe/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/scatacpipe/actions?query=workflow%3A%22nf-core+linting%22)
-[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/scatacpipe/results)
-[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+## Table of Contents
+[Introduction](https://github.com/hukai916/scATACpipe/#introduction)
 
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.04.0-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
-[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
-[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
-[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
+[Pipeline summary](https://github.com/hukai916/scATACpipe/#pipeline-summary)
+- [PREPROCESS_DEFAULT](https://github.com/hukai916/scATACpipe/#preprocess_default)
+- [PREPROCESS_10XGENOMICS](https://github.com/hukai916/scATACpipe/#preprocess_10xgenomics)
+- [PREPROCESS_CHROMAP](https://github.com/hukai916/scATACpipe/#preprocess_chromap)
+- [DOWNSTREAM_ARCHR](https://github.com/hukai916/scATACseqflow/#downstream_archr)
 
-[![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23scatacpipe-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/scatacpipe)
-[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)
-[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
+[Quick Start](https://github.com/hukai916/scATACpipe/#quick-start)
+
+[Documentation](https://github.com/hukai916/scATACpipe/#documentation)
+
+[Credits](https://github.com/hukai916/scATACpipe/#credits)
+
+[Bug report/Support](https://github.com/hukai916/scATACpipe/#support)
+
+[Citations](https://github.com/hukai916/scATACpipe/#citations)
 
 ## Introduction
 
-<!-- TODO nf-core: Write a 1-2 sentence summary of what data the pipeline is for and what it does -->
-**nf-core/scatacpipe** is a bioinformatics best-practice analysis pipeline for An integrative pipeline for single-cell ATAC-seq (scATAC-seq) data analysis: from preprocessing to downstream analysis..
+**scATACpipe** is a bioinformatic pipeline for single-cell ATAC-seq (scATAC-seq) data analysis.
 
-The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
+The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker / Singularity containers making installation trivial and results highly reproducible.
 
-<!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable -->
-On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources. The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/scatacpipe/results).
+The development of the pipeline is guided by  [nf-core TEMPLATE](https://github.com/nf-core/tools/tree/master/nf_core/pipeline-template).
 
-## Pipeline summary
+## Pipeline Summary
 
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+The pipeline consists of 2 relevant parts: preprocessing (from fastq to fragment file) and downstream analysis. If fragment files are directly available, you can choose to skip preprocessing and run downstream analysis only.
 
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+For preprocessing, 3 alternative strategies are available that are implemented in 3 sub-workflows respectively, namely, **PREPROCESS_DEFAULT**, **PREPROCESS_10XGENOMICS**, and **PREPROCESS_CHROMAP**. Each of them supports various input types that are demonstrated in further detail below (also see [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md)).
+
+For downstream analysis, we implemented **DOWNSTREAM_ARCHR** sub-workflow that integrates ArchR and other tools (e.g. AMULET for doublet detection).
+
+Below is a simplified diagram to illustrate the design logic and functionalities of scATACpipe.
+
+![scATACpipe](docs/images/scATACpipe_workflow.svg)
+
+The main functionalities of each sub-workflow are summarized below:
+
+**PREPROCESS_DEFAULT:**
+1. Add barcodes to reads
+2. Correct barcodes (optional)
+  - meanwhile, also filter out non-cells
+3. Trim off adapters
+4. Mapping
+  - download genome/annotation or use custom genome
+  - build genome index if not supplied
+5. Filter BAM
+6. Remove PCR duplicates
+7. Quality control
+8. Generate fragment file, *etc.*
+
+**PREPROCESS_10XGENOMICS:**
+1. Build 10XGENOMICS index if not supplied
+  - download genome/annotation or use custom genome
+2. Execute `cellranger_atac count` command
+
+**PREPROCESS_CHROMAP:**
+1. Build Chromap index if not supplied
+  - download genome/annotation or use custom genome
+2. Execute `chromap --preset atac` command
+3. Filter out non-cells
+
+Note that no BAM file will be generated for PREPROCESS_CHROMAP option.
+
+**DOWNSTREAM_ARCHR:**
+1. Build ArchR-compatible genome/annotation files if not natively supported (ArchR supports hg19, hg38, mm9, and mm10 as of 02/2022)
+  - download genome/annotation if not supplied
+  - build ArchR genome/gene annotation files if needed
+2. Perform downstream analysis with ArchR and generate various analytical plots
+  - filter doublets (with ArchR built-in method or AMULET)
+  - dimension reduction
+  - batch effect correction
+  - clustering
+  - embedding
+  - pseudo-bulk clustering
+  - scRNAseq integration if supplied
+  - marker gene detection
+  - call peaks
+  - marker peak detection
+  - pairwise testing
+  - motif enrichment
+  - footprinting
+  - coaccessibility, *etc.*
+
+
+The pipeline also splits BED and/or BAM files according to ArchR clusterings and summarizes all results into a single MultiQC report for easy access.
 
 ## Quick Start
 
-1. Install [`Nextflow`](https://www.nextflow.io/docs/latest/getstarted.html#installation) (`>=21.04.0`)
+1. Install [`nextflow`](https://nf-co.re/usage/installation)(>=21.10.0).
 
-2. Install any of [`Docker`](https://docs.docker.com/engine/installation/), [`Singularity`](https://www.sylabs.io/guides/3.0/user-guide/), [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) for full pipeline reproducibility _(please only use [`Conda`](https://conda.io/miniconda.html) as a last resort; see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles))_
+2. For full reproducibility, install either [`Docker`](https://docs.docker.com/engine/installation/) or [`Singularity (Apptainer)`](https://www.sylabs.io/guides/3.0/user-guide/) and specify `-profile singularity` or `-profile docker` when running the pipeline so that all dependencies are satisfied. Otherwise, all of the dependencies must be available locally on your PATH, **which is likely not true!**
 
-3. Download the pipeline and test it on a minimal dataset with a single command:
+3. Download the pipeline:
+```bash
+git clone https://github.com/hukai916/scATACpipe.git
+```
 
-    ```console
-    nextflow run nf-core/scatacpipe -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
-    ```
+4. Download a minimal test dataset:
+```bash
+cd scATACpipe
+wget https://www.dropbox.com/s/uyiq18zk7dts9fx/test_data1.zip
+unzip test_data1.zip
+```
 
-    > * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see if a custom config file to run nf-core pipelines already exists for your Institute. If so, you can simply use `-profile <institute>` in your command. This will enable either `docker` or `singularity` and set the appropriate execution settings for your local compute environment.
-    > * If you are using `singularity` then the pipeline will auto-detect this and attempt to download the Singularity images directly as opposed to performing a conversion from Docker images. If you are persistently observing issues downloading Singularity images directly due to timeout or network issues then please use the `--singularity_pull_docker_container` parameter to pull and convert the Docker image instead. Alternatively, it is highly recommended to use the [`nf-core download`](https://nf-co.re/tools/#downloading-pipelines-for-offline-use) command to pre-download all of the required containers before running the pipeline and to set the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) Nextflow options to be able to store and re-use the images from a central location for future pipeline runs.
-    > * If you are using `conda`, it is highly recommended to use the [`NXF_CONDA_CACHEDIR` or `conda.cacheDir`](https://www.nextflow.io/docs/latest/conda.html) settings to store the environments in a central location for future pipeline runs.
+ - The **test_data1** is prepared by downsampling (5% and 10%) a dataset named "*500 Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM v1.1)*" provided by [10xgenomics](https://www.10xgenomics.com/resources/datasets?query=&page=1&configure%5Bfacets%5D%5B0%5D=chemistryVersionAndThroughput&configure%5Bfacets%5D%5B1%5D=pipeline.version&configure%5BhitsPerPage%5D=500&menu%5Bproducts.name%5D=Single%20Cell%20ATAC). Note that, in test_data1, I1 refers to index1, which is for sample demultiplexing and not relevant to our case; R1 refers to Read1; **R2 refers to index2**, which represents the cell barcode fastq; R3 refers to Read2.
 
-4. Start running your own analysis!
+5. Edit the `replace_with_full_path` in the assets/sample_sheet_test_data1.csv to use the actual **full path**.
 
-    <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
+6. Test the pipeline with this minimal test_data1:
+ - At least 8GB memory is recommended for test_data1.
+ - By default, the local executor will be used (`-profile local`) meaning that all jobs will be executed on your local computer.  Nextflow supports many other [executors](https://www.nextflow.io/docs/latest/executor.html) including SLURM, LSF, *etc.*. You can create a [profile](https://www.nextflow.io/docs/latest/config.html?highlight=profile#config-profiles) file to config which executor to use. Multiple profiles can be supplied with comma, e.g. `-profile docker,lsf`.
+ - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see what other custom config files can be supplied.
 
-    ```console
-    nextflow run nf-core/scatacpipe -profile <docker/singularity/podman/shifter/charliecloud/conda/institute> --input samplesheet.csv --genome GRCh37
-    ```
+ - **Example run with Docker:**
+```bash
+nextflow run main.nf -profile docker --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
+```
+    * The `local executor` will be used.
+    * `PREPROCESS_DEFAULT` will be used.
+    * Output will be saved into `res_test_data1`.
+    * Ensembl genome `homo_sapiens` will be downloaded and used as reference.
+ - **Example run with Singularity:**
+```bash
+nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
+```
+    * By specifying `-profile lsf`, the `lsf` executor will be used for job submission.
+    * By specifying`-profile singularity`, Singularity images will be downloaded and saved to `work/singularity` directory. It is recommended to config the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) settings to store the images in a central location.
+
+7. Run your own analysis:
+ - A typical command:
+ ```bash
+ nextflow run main.nf -profile <singularity/docker/lsf> --input_preprocess <path_to_samplesheet> --preprocess <default/10xgenomics> --outdir <path_to_result_dir> --ref_fasta_ucsc <UCSC_genome_name> --mapper <bwa/minimap2> --barcode_whitelist <path_to_barcode>
+ ```
+ - For help:
+ ```bash
+ nextflow run main.nf --help
+ ```
+
+See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The nf-core/scatacpipe pipeline comes with documentation about the pipeline [usage](https://nf-co.re/scatacpipe/usage), [parameters](https://nf-co.re/scatacpipe/parameters) and [output](https://nf-co.re/scatacpipe/output).
+The scATACpipe workflow comes with documentation about the pipeline: [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) and [output](https://github.com/hukai916/scATACpipe/blob/main/docs/output.md).
 
 ## Credits
 
-nf-core/scatacpipe was originally written by Kai Hu, Haibo Liu, Julie Lihua Zhu.
+scATACpipe was originally designed and written by Kai Hu, Haibo Liu, and Julie Lihua Zhu.
 
-We thank the following people for their extensive assistance in the development of this pipeline:
+We thank the following people for their extensive assistance in the development
+of this pipeline: Nathan Lawson.
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+## Bug report/Support
 
-## Contributions and Support
-
-If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
-
-For further information or help, don't hesitate to get in touch on the [Slack `#scatacpipe` channel](https://nfcore.slack.com/channels/scatacpipe) (you can join with [this invite](https://nf-co.re/join/slack)).
+For help, bug report, or feature requests, the developers would prefer and appreciate that you create a GitHub issue by clicking [here](https://github.com/hukai916/scATACpipe/issues/new/choose).
+If you would like to extend scATACpipe for your own good, feel free to fork the repo.
 
 ## Citations
+<!-- TODO If you use scATACpipe for your analysis, please cite it using the following doi: [](https://) -->
+Please kindly cite scATACpipe [to be added] if you use it for your analysis.
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use  nf-core/scatacpipe for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
-An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
-
-You can cite the `nf-core` publication as follows:
-
-> **The nf-core framework for community-curated bioinformatics pipelines.**
->
-> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
->
-> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
+A complete list of references for the tools used by the pipeline can be found [here](https://github.com/hukai916/scATACpipe/docs/module_software.xlsx). Please consider citing them too if you use scATACpipe, it won't cost a penny.

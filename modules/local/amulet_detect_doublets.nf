@@ -5,7 +5,7 @@ params.options = [:]
 options        = initOptions(params.options)
 
 process AMULET_DETECT_DOUBLETS {
-    label 'process_low'
+    label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'amulet_detect_doublets', publish_id:'') }
@@ -13,8 +13,6 @@ process AMULET_DETECT_DOUBLETS {
 
     input:
     tuple val(sample_name), path(fragment)
-    path amulet_rmsk_bed
-    path amulet_autosomes
 
     output:
     path "cells_filter_${sample_name}.txt", emit: cells_filter
@@ -30,9 +28,9 @@ process AMULET_DETECT_DOUBLETS {
     mkdir doublets_${sample_name}
 
     # find overlappings:
-    FragmentFileOverlapCounter.py $options.args $fragment singlecell_${sample_name}.csv $amulet_autosomes doublets_${sample_name}
+    FragmentFileOverlapCounter.py $options.args $fragment singlecell_${sample_name}.csv $options.amulet_autosomes doublets_${sample_name}
     # detect multiplets :
-    AMULET.py --rfilter $amulet_rmsk_bed doublets_${sample_name}/Overlaps.txt doublets_${sample_name}/OverlapSummary.txt doublets_${sample_name}
+    AMULET.py --rfilter $options.amulet_rmsk_bed doublets_${sample_name}/Overlaps.txt doublets_${sample_name}/OverlapSummary.txt doublets_${sample_name}
     # prepare a ArchR compatible cellsFilter object
     cat doublets_${sample_name}/MultipletBarcodes_01.txt | awk -v sample_name="${sample_name}" '{ print sample_name"#"\$0}' > cells_filter_${sample_name}.txt
 
