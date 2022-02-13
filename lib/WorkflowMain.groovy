@@ -253,16 +253,6 @@ class WorkflowMain {
           if (!(params.doublet_removal_algorithm == 'archr') && !(params.doublet_removal_algorithm == 'amulet')) {
             log.error "--doublet_removal_algorithm must be from 'archr', 'amulet', or false."
             System.exit(0)
-          } else if (params.doublet_removal_algorithm == 'archr') {
-            if (!params.archr_filter_doublets_ratio) {
-              log.error "--archr_filter_doublets_ratio must be supplied!"
-              System.exit(0)
-            }
-          } else if (params.doublet_removal_algorithm == 'amulet') {
-            if (!(params.amulet_rmsk_bed) || !(params.amulet_autosomes)) {
-              log.error "both --amulet_rmsk_bed and --amulet_autosomes must be supplied!"
-              System.exit(0)
-            }
           }
         }
         log.info "Validating other parameters, passed."
