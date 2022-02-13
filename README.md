@@ -88,13 +88,13 @@ Note that no BAM file will be generated for PREPROCESS_CHROMAP option.
   - coaccessibility, *etc.*
 
 
-The pipeline also splits BED and/or BAM files according to ArchR clusterings and summarizes all results into a single MultiQC report for easy access.
+The pipeline also splits BED and/or BAM files according to ArchR clusterings and summarizes all results into a single MultiQC report for easy view.
 
 ## Quick Start
 
 1. Install [`nextflow`](https://nf-co.re/usage/installation)(>=21.10.0).
 
-2. For full reproducibility, install either [`Docker`](https://docs.docker.com/engine/installation/) or [`Singularity (Apptainer)`](https://www.sylabs.io/guides/3.0/user-guide/) and specify `-profile singularity` or `-profile docker` when running the pipeline so that all dependencies are satisfied. Otherwise, all of the dependencies must be available locally on your PATH, **which is likely not true!**
+2. For full reproducibility, install either [`Docker`](https://docs.docker.com/engine/installation/) or [`Singularity (Apptainer)`](https://www.sylabs.io/guides/3.0/user-guide/) and specify `-profile singularity` or `-profile docker` accordingly when running the pipeline so that all dependencies are satisfied. Otherwise, all of the dependencies must be available locally on your PATH, **which is likely not true!**
 
 3. Download the pipeline:
 ```bash
@@ -108,7 +108,7 @@ wget https://www.dropbox.com/s/uyiq18zk7dts9fx/test_data1.zip
 unzip test_data1.zip
 ```
 
- - The **test_data1** is prepared by downsampling (5% and 10%) a dataset named "*500 Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM v1.1)*" provided by [10xgenomics](https://www.10xgenomics.com/resources/datasets?query=&page=1&configure%5Bfacets%5D%5B0%5D=chemistryVersionAndThroughput&configure%5Bfacets%5D%5B1%5D=pipeline.version&configure%5BhitsPerPage%5D=500&menu%5Bproducts.name%5D=Single%20Cell%20ATAC). Note that, in test_data1, I1 refers to index1, which is for sample demultiplexing and not relevant to our case; R1 refers to Read1; **R2 refers to index2**, which represents the cell barcode fastq; R3 refers to Read2.
+ - The **test_data1** is prepared by downsampling (5% and 10%) a dataset named "*500 Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM v1.1)*" provided by [10xgenomics](https://www.10xgenomics.com/resources/datasets?query=&page=1&configure%5Bfacets%5D%5B0%5D=chemistryVersionAndThroughput&configure%5Bfacets%5D%5B1%5D=pipeline.version&configure%5BhitsPerPage%5D=500&menu%5Bproducts.name%5D=Single%20Cell%20ATAC). Note that, in test_data1, I1 refers to index1, which is for sample demultiplexing and not relevant in our case; R1 refers to Read1; **R2 refers to index2**, which represents the cell barcode fastq; R3 refers to Read2.
 
 5. Edit the `replace_with_full_path` in the assets/sample_sheet_test_data1.csv to use the actual **full path**.
 
@@ -130,7 +130,7 @@ nextflow run main.nf -profile docker --preprocess default --outdir res_test_data
 nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
 ```
     * By specifying `-profile lsf`, the `lsf` executor will be used for job submission.
-    * By specifying`-profile singularity`, Singularity images will be downloaded and saved to `work/singularity` directory. It is recommended to config the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) settings to store the images in a central location.
+    * By specifying `-profile singularity`, Singularity images will be downloaded and saved to `work/singularity` directory. It is recommended to config the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) settings to store the images in a central location.
 
 7. Run your own analysis:
  - A typical command:
@@ -142,7 +142,7 @@ nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_
  nextflow run main.nf --help
  ```
 
-See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options when running the pipeline.
+See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
 
 ## Documentation
 
@@ -162,6 +162,6 @@ If you would like to extend scATACpipe for your own good, feel free to fork the 
 
 ## Citations
 <!-- TODO If you use scATACpipe for your analysis, please cite it using the following doi: [](https://) -->
-Please kindly cite scATACpipe [to be added] if you use it for your analysis.
+Please kindly cite scATACpipe [to be added] if you use it for your research.
 
-A complete list of references for the tools used by the pipeline can be found [here](https://github.com/hukai916/scATACpipe/docs/module_software.xlsx). Please consider citing them too if you use scATACpipe, it won't cost a penny.
+A complete list of references for the tools used by scATACpipe can be found [here](https://github.com/hukai916/scATACpipe/docs/module_software.xlsx). Please consider citing them too, it won't cost a penny.
