@@ -21,8 +21,6 @@ def initOptions(Map args) {
     options.args3         = args.args3 ?: ''
     options.read_count_cutoff = args.read_count_cutoff ?: ''
     options.archr_filter_doublets_ratio = args.archr_filter_doublets_ratio ?: ''
-    options.amulet_rmsk_bed   = args.amulet_rmsk_bed ?: ''
-    options.amulet_autosomes  = args.amulet_autosomes ?: ''
     options.marker_genes  = args.marker_genes ?: ''
     options.marker_list   = args.marker_list ?: ''
     options.cluster_name  = args.cluster_name ?: ''

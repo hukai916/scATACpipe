@@ -333,10 +333,10 @@ workflow DOWNSTREAM_ARCHR {
     if (params.doublet_removal_algorithm == "amulet") {
       if (archr_input_type == "genome_gtf") {
         // Use prep_fragment.out.fragments
-        AMULET_DETECT_DOUBLETS(PREP_FRAGMENT.out.fragments)
+        AMULET_DETECT_DOUBLETS(PREP_FRAGMENT.out.fragments, Channel.fromPath(params.amulet_rmsk_bed).first(), Channel.fromPath(params.amulet_autosomes).first())
       } else {
         // Use fragments
-        AMULET_DETECT_DOUBLETS(fragments)
+        AMULET_DETECT_DOUBLETS(fragments, Channel.fromPath(params.amulet_rmsk_bed).first(), Channel.fromPath(params.amulet_autosomes).first())
       }
       // Module: generate Doublet cell list input to ArchR
       AMULET_MERGE_DOUBLETS(AMULET_DETECT_DOUBLETS.out.cells_filter.collect())

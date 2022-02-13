@@ -18,7 +18,7 @@ nextflow.enable.dsl = 2
 WorkflowMain.initialise(workflow, params, log)
 
 // Check input path parameters to see if they exist:
-def checkPathParamList = [ params.input_fragment, params.input_fastq, params.ref_bwa_index, params.ref_cellranger_index, params.ref_gtf, params.ref_fasta, params.whitelist_barcode, params.archr_genome_fasta, params.archr_blacklist, params.archr_scrnaseq ]
+def checkPathParamList = [ params.input_fragment, params.input_fastq, params.ref_bwa_index, params.ref_cellranger_index, params.ref_gtf, params.ref_fasta, params.whitelist_barcode, params.archr_genome_fasta, params.archr_blacklist, params.archr_scrnaseq, params.amulet_rmsk_bed, params.amulet_autosomes ]
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
 
 ////////////////////////////////////////////////////
