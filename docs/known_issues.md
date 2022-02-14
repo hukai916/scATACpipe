@@ -1,6 +1,6 @@
 # Known issues
 
-## 1. jpg image not available in MultiQC html report
+## 1. jpg image may not available in MultiQC html report
 This might be due to too many genes/features are being plotted in a single jpg, which exceeds the jpg pixel limit.
 If this happens, pls use the original pdf file.
 

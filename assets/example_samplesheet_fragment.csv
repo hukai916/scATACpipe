@@ -1,0 +1,4 @@
+sample_name,file_path
+scATAC_BMMC_R1,/home/kh45w/workflow/test_data/archr/scATAC_BMMC_R1.fragments.tsv.gz
+scATAC_CD34_BMMC_R1,/home/kh45w/workflow/test_data/archr/scATAC_CD34_BMMC_R1.fragments.tsv.gz
+scATAC_PBMC_R1,/home/kh45w/workflow/test_data/archr/scATAC_PBMC_R1.fragments.tsv.gz

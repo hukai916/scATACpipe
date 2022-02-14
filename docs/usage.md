@@ -1,12 +1,64 @@
-# nf-core/scatacpipe: Usage
-
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/scatacpipe/usage](https://nf-co.re/scatacpipe/usage)
-
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
+# scATACpipe: Usage
 
 ## Introduction
+Either raw sequencing data (**.fastq**) or preprocessed fragment (**.gz**) file can serve as input to scATACpipe.
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+When inputting FASTQ files (`--input_fastq`), scATACpipe provides 3 alternative strategies for preprocessing (shown below), followed by DOWNSTREAM_ARCHR.
+  - PREPROCESS_DEFAULT
+  - PREPROCESS_CHROMAP
+  - PREPROCESS_10XGENOMICS
+
+When inputting Fragment files (`--input_fragment`), DOWNSTREAM_ARCHR will be directly executed.
+
+The 2 input options will be demonstrated in details below. You can also view all available parameters by following [Quick Start](https://github.com/hukai916/scATACpipe/#quick-start) and run:
+```bash
+cd scATACpipe
+nextflow run main.nf --help
+```
+
+## Fragment files as input
+Fragment file paths (full path) must be saved into a **.csv** file (see below) and supplied with `--input_fragment`.
+
+|sample_name,|file_path            |
+|------------|---------------------|
+|SAMPLE_1,   |/Full_path/xxx.tsv.gz|
+|SAMPLE_2,   |/Full_path/xxx.tsv.gz|
+
+An example .csv can be found [here]().
+
+
+### Option 1: using UCSC/ENSEMBL genome
+```
+--input_fragment        [string]  Path to input sample sheet for fragment files.
+--archr_genome          [string]  A genome name, either ENSEMBL style (e.g. homo_sapiens) or UCSC style (e.g. mm10).
+--species_latin_name    [string]  Must be quoted. Required if '--archr_genome' not in (mm9, mm10, hg19, hg38)
+--archr_blacklist       [string]  Optional. Path to blacklist file.
+```
+### Option2: using custom genome
+```
+--input_fragment        [string]  Path to input sample sheet for fragment files.
+--archr_genome_fasta    [string]  Path to genome fasta.
+--ref_gtf               [string]  Path to gtf file.
+--species_latin_name    [string]  Must be quoted.
+--archr_blacklist       [string]  Optional. Path to blacklist file.
+```
+### Option3: using Bioconductor annotations
+```
+--input_fragment    [string]  Path to input sample sheet for fragment files.
+--archr_bsgenome    [string]  A Bioconductor BSgenome package name.
+--archr_txdb        [string]  A Bioconductor TxDb package name.
+--archr_org         [string]  A Bioconductor OrgDb package name.
+--archr_blacklis    [string]  Optional. Path to blacklist file.
+```
+
+
+## Fragment as input
+### Required parameters
+
+## Optional parameters
+
+## Other parameters
+
 
 ## Samplesheet input
 
