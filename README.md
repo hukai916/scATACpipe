@@ -135,7 +135,7 @@ nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_
 7. Run your own analysis:
  - A typical command:
  ```bash
- nextflow run main.nf -profile <singularity/docker/lsf> --input_preprocess <path_to_samplesheet> --preprocess <default/10xgenomics> --outdir <path_to_result_dir> --ref_fasta_ucsc <UCSC_genome_name> --mapper <bwa/minimap2> --barcode_whitelist <path_to_barcode>
+ nextflow run main.nf -profile <singularity/docker/lsf> --preprocess <default/10xgenomics/chromap> --outdir <path_to_result_dir> --input_fastq <path_to_samplesheet> --ref_fasta_ensembl <ENSEMBL_genome_name> --species_latin_name <e.g. 'homo sapiens'>
  ```
  - For help:
  ```bash
