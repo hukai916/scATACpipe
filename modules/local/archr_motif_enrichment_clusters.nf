@@ -48,7 +48,11 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     bgdGroups <- trimws(lines[2], "both")
     close(conn)
 
-    proj <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = "$species_latin_name", $options.args)
+    if ("$species_latin_name" == "NA") {
+      proj <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = NULL, $options.args)
+    } else {
+      proj <- addMotifAnnotations(ArchRProj = proj, name = "Motif", species = "$species_latin_name", $options.args)
+    }
 
     # Motif enrichment in Differential peaks:
     motifsUp <- peakAnnoEnrichment(

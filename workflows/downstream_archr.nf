@@ -461,11 +461,16 @@ workflow DOWNSTREAM_ARCHR {
     } else {
       custom_peaks = '' // placeholder for empty peaks
     }
+    if (archr_input_type == "native") {
+      latin_name = params.species_latin_name
+    } else {
+      latin_name = "NA"
+    }
     if (groupby_cluster == "Clusters") {
-      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, custom_peaks, params.species_latin_name, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, custom_peaks, latin_name, params.archr_thread)
     } else if (groupby_cluster == "Clusters2") {
-      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, custom_peaks, params.species_latin_name, params.archr_thread)
-      ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.test_group, user_rlib, custom_peaks, params.species_latin_name, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, custom_peaks, latin_name, params.archr_thread)
+      ARCHR_MOTIF_ENRICHMENT_CLUSTERS2(ARCHR_CALL_PEAKS_CLUSTERS2.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS2.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS2.out.test_group, user_rlib, custom_peaks, latin_name, params.archr_thread)
     }
 
     // Module: motif deviation
