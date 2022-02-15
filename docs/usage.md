@@ -21,8 +21,8 @@ Fragment file paths (full path) must be saved into a **.csv** file (see below) a
 
 |sample_name,|file_path            |
 |------------|---------------------|
-|SAMPLE_1,   |/Full_path/xxx.tsv.gz|
-|SAMPLE_2,   |/Full_path/xxx.tsv.gz|
+|SAMPLE_1,   |/full_path/xxx.tsv.gz|
+|SAMPLE_2,   |/full_path/xxx.tsv.gz|
 
 An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/scATACpipe/main/assets/example_samplesheet_fragment.csv).
 
@@ -58,6 +58,8 @@ The parameters can be divided into two categories, namely, **main pipeline param
 
 Main pipeline parameters must be supplied with command flags or configured inside `nextflow.confg`. They are typically required to instruct scATACpipe to perform certain analysis. These parameters are listed below:
 ```
+--archr_thread                      [Integer]  Number of threads to use, default to 4.
+
 --archr_batch_correction_harmony    [true|false]  Whether or not to perform batch correction with Harmony.
 
 --doublet_removal_algorithm         [false|archr|amulet]  Doublet removal algorithm, use false to skip.
@@ -79,7 +81,7 @@ custom_peaks          = false // for motif enrichment/deviation module
   # Example: --custom_peaks 'Encode_K562_GATA1 = "https://www.encodeproject.org/files/ENCFF632NQI/@@download/ENCFF632NQI.bed.gz", Encode_GM12878_CEBPB = "https://www.encodeproject.org/files/ENCFF761MGJ/@@download/ENCFF761MGJ.bed.gz", Encode_K562_Ebf1 = "https://www.encodeproject.org/files/ENCFF868VSY/@@download/ENCFF868VSY.bed.gz", Encode_K562_Pax5 = "https://www.encodeproject.org/files/ENCFF339KUO/@@download/ENCFF339KUO.bed.gz"'
 ```
 
-Module specific parameters must be adjusted by editing `conf/module.config`. Below is one example, refer to `conf/module.config` for more examples.
+Module specific parameters can be adjusted by editing `conf/module.config`. Below is one example, refer to `conf/module.config` for more examples.
 ```
 'archr_marker_gene_clusters' {
   // args is for ArchR::getMarkerFeatures()
@@ -99,6 +101,37 @@ Module specific parameters must be adjusted by editing `conf/module.config`. Bel
   args3 = 'upstream = 50000, downstream = 50000'
 }
 ```
+As shown above, for visualization purpose, scATACseq attempts to plot the first 3 marker genes (`marker_genes = 'default'`) from the resulting marker gene list. Such default parameters may not make direct sense to your research and are subject to user modifications. Below summarizes such parameters.
+```
+marker_genes from archr_marker_gene_clusters/clusters2 module: default to plot the first 3.
+marker_genes from archr_scrnaseq_constrained module: default to plot the first 3.
+marker_genes from archr_scrnaseq_unconstrained module: default to plot the first 3.
+marker_genes from archr_marker_peaks_in_tracks_clusters/clusters2: default to plot the first 3.
+marker_genes from archr_coaccessibility_clusters/clusters2: default to plot the first 3.
+marker_genes from archr_peak2genelinkage_clusters2: default to plot the first 3.
+
+use_groups/bgd_groups from archr_pairwise_test_clusters/clusters2: default to test the first group against the second.
+
+motifs from archr_motif_deviations_clusters/clusters2: default to plot the first 3.
+motifs from archr_footprinting_clusters/clusters2: default to plot the first 3.
+
+trajectory_groups from archr_trajectory_clusters2: default to use the first 3 groups (since the order matters, this trajectory plotting is just for demo).
+```
+
+Note that modules related to clustering with only scATACseq data will be named as `xxx_clusters` whereas clustering based on integrated scRNAseq data will be named as `xxx_clusters2`.
+
+## FASTQ files as input
+FASTQ file paths (full path) must be saved into a **.csv** file (see below) and supplied with `--input_fastq`.
+```
+sample_name,path_fastq_1,path_fastq_2,path_barcode
+SAMPLE_1,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz
+SAMPLE_2,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz
+```
+
+An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/scATACpipe/main/assets/example_samplesheet_fragment.csv).
+
+In addition to the fragment files, genome/annotation files must also be supplied and there are 3 options.
+
 
 ## Fragment as input
 ### Required parameters

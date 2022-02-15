@@ -191,9 +191,18 @@ class WorkflowMain {
                 System.exit(0)
               }
             } else if (params.ref_fasta_ensembl || params.ref_fasta_ucsc) {
-              if (!params.species_latin_name) {
-                log.error "Pls also supply --species_latin_name [Must be quoted]"
-                System.exit(0)
+              if (params.ref_fasta_ensembl) {
+                if (!params.species_latin_name) {
+                  log.error "Pls also supply --species_latin_name [Must be quoted]"
+                  System.exit(0)
+                }
+              } else if (params.ref_fasta_ucsc) {
+                if (!(params.ref_fasta_ucsc == "mm10") && !(params.ref_fasta_ucsc == "mm9") && !(params.ref_fasta_ucsc == "hg19") && !(params.ref_fasta_ucsc == "hg38")) {
+                  if (!params.species_latin_name) {
+                    log.error "Pls also supply --species_latin_name [Must be quoted]"
+                    System.exit(0)
+                  }
+                }
               }
             }
           } else if (params.preprocess == "10xgenomics") {
