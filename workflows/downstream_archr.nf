@@ -98,7 +98,7 @@ workflow DOWNSTREAM_ARCHR {
 
   main:
     // Determine ArchR input_type and input_list:
-    def archr_input_type = "" // "naive", "genome_gtf", "bsgenome_txdb_org"
+    def archr_input_type = "" // "native", "genome_gtf", "bsgenome_txdb_org"
     def archr_input_list = [] // stores input files
       // for "genome_gtf": [genome_name, genome_fasta, gtf]
       // for "bsgenome_txdb_org"" [bsgenome, txdb, org]
@@ -121,7 +121,7 @@ workflow DOWNSTREAM_ARCHR {
           if (["hg38", "hg19", "mm10", "mm9"].contains(params.archr_genome)) {
             log.info "INFO: natively supported ArchR genome supplied."
 
-            archr_input_type = "naive"
+            archr_input_type = "native"
             archr_input_list = [params.archr_genome, "NA", "NA"]
           } else if (genome_ensembl_list.contains(params.archr_genome)) {
               DOWNLOAD_FROM_ENSEMBL (params.archr_genome, Channel.fromPath('assets/genome_ensembl.json'))
@@ -156,7 +156,7 @@ workflow DOWNSTREAM_ARCHR {
             archr_input_list = [PREP_GENOME.out.genome_name.first(), PREP_GENOME.out.genome_fasta.first(), PREP_GTF.out.gtf.first()]
           } else if (params.ref_fasta_ucsc) {
             if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
-              archr_input_type = "naive"
+              archr_input_type = "native"
               archr_input_list = [params.ref_fasta_ucsc, "NA", "NA"]
             } else {
               DOWNLOAD_FROM_UCSC(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
@@ -230,7 +230,7 @@ workflow DOWNSTREAM_ARCHR {
             // Check if natively supported for ucsc genomes:
             if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
               log.info "INFO: natively supported ArchR genome supplied."
-              archr_input_type = "naive"
+              archr_input_type = "native"
               archr_input_list = [params.ref_fasta_ucsc, "NA", "NA"]
             } else {
               DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
@@ -249,7 +249,7 @@ workflow DOWNSTREAM_ARCHR {
             // Check if natively supported for ucsc genomes:
             if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
               log.info "INFO: natively supported ArchR genome supplied."
-              archr_input_type = "naive"
+              archr_input_type = "native"
               archr_input_list = [params.ref_fasta_ucsc, "NA", "NA"]
             } else {
               archr_input_type = "genome_gtf"
@@ -265,9 +265,9 @@ workflow DOWNSTREAM_ARCHR {
     // log.info "archr_input_type: " + archr_input_type
     // Depending on ArchR input type, prepare ArchR annotation files accordingly:
     user_rlib = Channel.fromPath('assets/whitelist_barcodes').first() // simply a placeholder
-    if (archr_input_type == "naive") {
+    if (archr_input_type == "native") {
       // Run ArchR normally:
-      log.info "Naively supported ArchR genome: " + archr_input_list[0] + " will be used."
+      log.info "Natively supported ArchR genome: " + archr_input_list[0] + " will be used."
 
       ARCHR_CREATE_ARROWFILES(fragments, archr_input_list[0], params.archr_thread)
       // Module: add DoubletScores
