@@ -60,13 +60,15 @@ process ARCHR_CLUSTERING {
     # get rid of undesired clusters if supplied:
     if ("Harmony" %in% names(proj@reducedDims)) {
       if (!("$filter_seurat_harmony" == "NA")) {
-        idxPass <- which(!proj\$Clusters %in% c($filter_seurat_harmony))
+        filter_clusters <- unique(str_trim(str_split("$filter_seurat_harmony", ",")[[1]], side = "both"))
+        idxPass <- which(!proj\$Clusters %in% filter_clusters)
         cellsPass <- proj\$cellNames[idxPass]
         proj <- proj[cellsPass,]
       }
     } else {
       if (!("$filter_seurat_iLSI" == "NA")) {
-        idxPass <- which(!proj\$Clusters %in% c($filter_seurat_iLSI))
+        filter_clusters <- unique(str_trim(str_split("$filter_seurat_iLSI", ",")[[1]], side = "both"))
+        idxPass <- which(!proj\$Clusters %in% filter_clusters)
         cellsPass <- proj\$cellNames[idxPass]
         proj <- proj[cellsPass,]
       }

@@ -10,7 +10,7 @@ When inputting FASTQ files (`--input_fastq`), scATACpipe provides 3 alternative 
 
 When inputting Fragment files (`--input_fragment`), DOWNSTREAM_ARCHR will be directly executed.
 
-The 2 input options will be demonstrated in details below. You can also view all available parameters by following [Quick Start](https://github.com/hukai916/scATACpipe/#quick-start) and run:
+The 2 input options are demonstrated in details below. You can also view all available parameters by following [Quick Start](https://github.com/hukai916/scATACpipe/#quick-start) and run:
 ```bash
 cd scATACpipe
 nextflow run main.nf --help
@@ -24,8 +24,9 @@ Fragment file paths (full path) must be saved into a **.csv** file (see below) a
 |SAMPLE_1,   |/Full_path/xxx.tsv.gz|
 |SAMPLE_2,   |/Full_path/xxx.tsv.gz|
 
-An example .csv can be found [here]().
+An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/scATACpipe/main/assets/example_samplesheet_fragment.csv).
 
+In addition to the fragment files, genome/annotation files must also be supplied and there are 3 options.
 
 ### Option 1: using UCSC/ENSEMBL genome
 ```
@@ -50,7 +51,54 @@ An example .csv can be found [here]().
 --archr_org         [string]  A Bioconductor OrgDb package name.
 --archr_blacklis    [string]  Optional. Path to blacklist file.
 ```
+### Other parameters
+Given that downstream analysis itself is highly interactive in nature, scATACpipe was implemented in a way that is as flexible as possible, meaning that users can configure many downstream parameters.
 
+The parameters can be divided into two categories, namely, **main pipeline parameters**, and **module specific parameters**.
+
+Main pipeline parameters must be supplied with command flags or configured inside `nextflow.confg`. They are typically required to instruct scATACpipe to perform certain analysis. These parameters are listed below:
+```
+--archr_batch_correction_harmony    [true|false]  Whether or not to perform batch correction with Harmony.
+
+--doublet_removal_algorithm         [false|archr|amulet]  Doublet removal algorithm, use false to skip.
+  # If "amulet", also need to config: conf/modules.config -> amulet_detect_doublets.args and the followings:
+--amulet_rmsk_bed                   [string]  Path to known repeat regions in genome.
+--amulet_autosomes                  [string]  Path to txt file containing autosomes.
+  # Example: assets/homo_sapiens_autosomes.txt
+
+--archr_scrnaseq                    [false|path_to_matching_RNAseq_Seurat_object] Whether or not to integrate scRNAseq data.
+--archr_scrnaseq_grouplist          [''|'example see conf/test.config']  scRNAseq cluster grouping info for constrained integration.
+--custom_peaks                      [false|'example see conf/test.config']  For motif enrichment/deviation.
+
+# Use below to exclude clusters for downstream analysis, refer to archr_clustering/Cluster_xxx_matrix.csv for valid cluster names
+--filter_seurat_ilsi                [false|String]  Clusters to exclude for downstream analysis.
+--filter_seurat_harmony             [false|String]  Clusters to exclude for downstream analysis.
+  # Example: --filter_seurat_harmony 'C1, C2'
+
+custom_peaks          = false // for motif enrichment/deviation module
+  # Example: --custom_peaks 'Encode_K562_GATA1 = "https://www.encodeproject.org/files/ENCFF632NQI/@@download/ENCFF632NQI.bed.gz", Encode_GM12878_CEBPB = "https://www.encodeproject.org/files/ENCFF761MGJ/@@download/ENCFF761MGJ.bed.gz", Encode_K562_Ebf1 = "https://www.encodeproject.org/files/ENCFF868VSY/@@download/ENCFF868VSY.bed.gz", Encode_K562_Pax5 = "https://www.encodeproject.org/files/ENCFF339KUO/@@download/ENCFF339KUO.bed.gz"'
+```
+
+Module specific parameters must be adjusted by editing `conf/module.config`. Below is one example, refer to `conf/module.config` for more examples.
+```
+'archr_marker_gene_clusters' {
+  // args is for ArchR::getMarkerFeatures()
+  args = 'useMatrix = "GeneScoreMatrix", bias = c("TSSEnrichment", "log10(nFrags)"), testMethod = "wilcoxon"'
+
+  // getMarkers_cutoff is for ArchR::getMarkers()
+  getMarkers_cutoff = 'cutOff = "FDR <= 0.05 & Log2FC >= 1"'
+
+  // marker_genes is for plotting marker genes
+  marker_genes = 'default' // by default, the first 3 will be plotted, customized example see below:
+  //marker_genes = 'CD34, GATA1, PAX5, MS4A1, EBF1, MME, CD14, CEBPB, MPO, IRF8, CD3D, CD8A, TBX21, IL7R'
+
+  // args2 is for visualizing embedding
+  args2 = 'colorBy = "GeneScoreMatrix", quantCut = c(0.01, 0.95)'
+
+  // args3 is for track plotting with ArchR::ArchRBrowser()
+  args3 = 'upstream = 50000, downstream = 50000'
+}
+```
 
 ## Fragment as input
 ### Required parameters
