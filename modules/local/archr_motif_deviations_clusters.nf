@@ -81,6 +81,8 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
 
       # With gene scores overlay
       markerRNA <- getFeatures(proj2, select = paste(motifs, collapse="|"), useMatrix = "GeneScoreMatrix")
+      markerRNA <- gsub(".+:", "", markerRNA) # get rid of potential leading "chrN:", otherwise plotEmbedding error
+
       p <- plotEmbedding(
             ArchRProj = proj2,
             colorBy = "GeneScoreMatrix",

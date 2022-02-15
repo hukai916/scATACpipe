@@ -81,6 +81,8 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS2 {
 
       # With gene scores overlay
       markerRNA <- getFeatures(proj2, select = paste(motifs, collapse="|"), useMatrix = "GeneScoreMatrix")
+      markerRNA <- gsub(".+:", "", markerRNA) # get rid of potential leading "chrN:", otherwise plotEmbedding error
+
       p <- plotEmbedding(
             ArchRProj = proj2,
             colorBy = "GeneScoreMatrix",
@@ -90,8 +92,10 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS2 {
            )
       plotPDF(p, name = paste0("Plot-Groups-Deviations-w-Imputation-", embedding, "-Embedding-w-Gene-Scores"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
-      # With gene expression overlay on the UMAP: for clusters2 only.
+      # With gene expression overlay: for clusters2 only.
       markerRNA <- getFeatures(proj2, select = paste(motifs, collapse="|"), useMatrix = "GeneIntegrationMatrix")
+      markerRNA <- gsub(".+:", "", markerRNA) # get rid of potential leading "chrN:", otherwise plotEmbedding error
+
       p <- plotEmbedding(
         ArchRProj = proj2,
         colorBy = "GeneIntegrationMatrix",
