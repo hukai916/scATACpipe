@@ -155,12 +155,17 @@ workflow DOWNSTREAM_ARCHR {
             archr_input_type = "genome_gtf"
             archr_input_list = [PREP_GENOME.out.genome_name.first(), PREP_GENOME.out.genome_fasta.first(), PREP_GTF.out.gtf.first()]
           } else if (params.ref_fasta_ucsc) {
-            DOWNLOAD_FROM_UCSC(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-            DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
-            PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
-            PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
-            archr_input_type = "genome_gtf"
-            archr_input_list = [PREP_GENOME.out.genome_name.first(), PREP_GENOME.out.genome_fasta.first(), PREP_GTF.out.gtf.first()]
+            if (["hg38", "hg19", "mm10", "mm9"].contains(params.ref_fasta_ucsc)) {
+              archr_input_type = "naive"
+              archr_input_list = [params.ref_fasta_ucsc, "NA", "NA"]
+            } else {
+              DOWNLOAD_FROM_UCSC(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
+              DOWNLOAD_FROM_UCSC_GTF(params.ref_fasta_ucsc, Channel.fromPath('assets/genome_ucsc.json'))
+              PREP_GENOME (DOWNLOAD_FROM_UCSC.out.genome_fasta, DOWNLOAD_FROM_UCSC.out.genome_name)
+              PREP_GTF (PREP_GENOME.out.genome_fasta, PREP_GENOME.out.genome_name, DOWNLOAD_FROM_UCSC_GTF.out.gtf)
+              archr_input_type = "genome_gtf"
+              archr_input_list = [PREP_GENOME.out.genome_name.first(), PREP_GENOME.out.genome_fasta.first(), PREP_GTF.out.gtf.first()]
+            }
           } else {
             exit 1, exit_msg
           }
@@ -456,6 +461,7 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: motif enrichment
+    log.info "ArchR Input: " + archr_input_type
     if (params.custom_peaks) {
       custom_peaks = params.custom_peaks
     } else {
