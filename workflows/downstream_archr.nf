@@ -462,9 +462,9 @@ workflow DOWNSTREAM_ARCHR {
       custom_peaks = '' // placeholder for empty peaks
     }
     if (archr_input_type == "native") {
-      latin_name = params.species_latin_name
-    } else {
       latin_name = "NA"
+    } else {
+      latin_name = params.species_latin_name
     }
     if (groupby_cluster == "Clusters") {
       ARCHR_MOTIF_ENRICHMENT_CLUSTERS(ARCHR_CALL_PEAKS_CLUSTERS.out.archr_project, ARCHR_PAIRWISE_TEST_CLUSTERS.out.archr_marker_test, ARCHR_GET_MARKER_PEAKS_CLUSTERS.out.marker_peaks, ARCHR_PAIRWISE_TEST_CLUSTERS.out.test_group, user_rlib, custom_peaks, latin_name, params.archr_thread)
