@@ -46,7 +46,5 @@ process ARCHR_PSEUDO_BULK_CLUSTERS2 {
 
     Rscript run.R
 
-    touch test.txt
-
     """
 }
