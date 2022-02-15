@@ -9,7 +9,7 @@ process ARCHR_GET_ANNOTATION_BIOC {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_get_annotation_custom', publish_id:'') }
-    container "hukai916/r_sc:0.5"
+    container "hukai916/scatacpipe_downstream:0.2"
 
     input:
     path txdb
@@ -30,7 +30,7 @@ process ARCHR_GET_ANNOTATION_BIOC {
     library(ArchR)
     library(tools)
     library(AnnotationDbi)
-    
+
     addArchRThreads(threads = $archr_thread)
 
     # Prepare genome/gene annotation

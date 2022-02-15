@@ -9,9 +9,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS2 {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_pseudo_bulk_clusters2', publish_id:'') }
-    // container "hukai916/r_sc:0.5"
-    // container "hukai916/r_archr:0.1" // Haibo fixed a bug in addGroupCoverages() to deal with chr contig with no reads
-    container "hukai916/scatacpipe_downstream:0.1"
+    container "hukai916/scatacpipe_downstream:0.2"
 
     input:
     path archr_project
@@ -28,7 +26,6 @@ process ARCHR_PSEUDO_BULK_CLUSTERS2 {
     """
     echo '
     library(ArchR)
-    library(parallel) # quick fix for mclapply not found
     .libPaths("user_rlib") # for user installed packages
 
     addArchRThreads(threads = $archr_thread)

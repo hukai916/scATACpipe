@@ -9,7 +9,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_archrproject_annotation', publish_id:'') }
-    container "hukai916/r_sc:0.5"
+    container "hukai916/scatacpipe_downstream:0.2"
 
     input:
     path arrowfiles
@@ -50,7 +50,7 @@ process ARCHR_ARCHRPROJECT_ANNOTATION {
               $options.args
             )
 
-    # Fix the gene_symbol containing ENSEMBLE id issue: update codes in create_geneAnnotation_genomeAnnotation.R 
+    # Fix the gene_symbol containing ENSEMBLE id issue: update codes in create_geneAnnotation_genomeAnnotation.R
 
     saveRDS(proj, file = \\"proj.rds\\")
     " > run.R

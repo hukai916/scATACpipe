@@ -9,7 +9,8 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS2 {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_motif_enrichment_clusters2', publish_id:'') }
-    container "hukai916/r_archr:0.1" // must use Haibo ArchR, otherwise addMotifAnnotations problematic
+    // container "hukai916/r_archr:0.1" // must use Haibo ArchR, otherwise addMotifAnnotations problematic
+    container "hukai916/scatacpipe_downstream:0.2"
 
     input:
     path archr_project
