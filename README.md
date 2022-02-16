@@ -128,11 +128,11 @@ git clone https://github.com/hukai916/scATACpipe.git
       - Ensembl genome `homo_sapiens` will be downloaded and used as reference.
 
  * **Example run with Singularity:**
-```bash
-nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
-```
-    * By specifying `-profile lsf`, the `lsf` executor will be used for job submission.
-    * By specifying `-profile singularity`, Singularity images will be downloaded and saved to `work/singularity` directory. It is recommended to config the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) settings to store the images in a central location.
+  ```bash
+  nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
+  ```
+      - By specifying `-profile lsf`, the `lsf` executor will be used for job submission.
+      - By specifying `-profile singularity`, Singularity images will be downloaded and saved to `work/singularity` directory. It is recommended to config the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) settings to store the images in a central location.
 
 7. Run your own analysis:
  - A typical command:
