@@ -135,14 +135,14 @@ git clone https://github.com/hukai916/scATACpipe.git
       - By specifying `-profile singularity`, Singularity images will be downloaded and saved to `work/singularity` directory. It is recommended to config the [`NXF_SINGULARITY_CACHEDIR` or `singularity.cacheDir`](https://www.nextflow.io/docs/latest/singularity.html?#singularity-docker-hub) settings to store the images in a central location.
 
 7. Run your own analysis:
-    * A typical command:
- ```bash
- nextflow run main.nf -profile <singularity/docker/lsf> --preprocess <default/10xgenomics/chromap> --outdir <path_to_result_dir> --input_fastq <path_to_samplesheet> --ref_fasta_ensembl <ENSEMBL_genome_name> --species_latin_name <e.g. 'homo sapiens'>
- ```
-    * For help:
- ```bash
- nextflow run main.nf --help
- ```
+A typical command:
+```bash
+nextflow run main.nf -profile <singularity/docker/lsf> --preprocess <default/10xgenomics/chromap> --outdir <path_to_result_dir> --input_fastq <path_to_samplesheet> --ref_fasta_ensembl <ENSEMBL_genome_name> --species_latin_name <e.g. 'homo sapiens'>
+```
+For help:
+```bash
+nextflow run main.nf --help
+```
 
 See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
 
