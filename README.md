@@ -56,12 +56,12 @@ The main functionalities of each sub-workflow are summarized below:
 
 **PREPROCESS_10XGENOMICS:**
 1. Build 10XGENOMICS index if not supplied
-  - download genome/annotation or use custom genome
+    * download genome/annotation or use custom genome
 2. Execute `cellranger_atac count` command
 
 **PREPROCESS_CHROMAP:**
 1. Build Chromap index if not supplied
-  - download genome/annotation or use custom genome
+    * download genome/annotation or use custom genome
 2. Execute `chromap --preset atac` command
 3. Filter out non-cells
 
@@ -69,10 +69,10 @@ Note that no BAM file will be generated for PREPROCESS_CHROMAP option.
 
 **DOWNSTREAM_ARCHR:**
 1. Build ArchR-compatible genome/annotation files if not natively supported (ArchR supports hg19, hg38, mm9, and mm10 as of 02/2022)
-  - download genome/annotation if not supplied
-  - build ArchR genome/gene annotation files if needed
+    * download genome/annotation if not supplied
+    * build ArchR genome/gene annotation files if needed
 2. Perform downstream analysis with ArchR and generate various analytical plots
-  - filter doublets (with ArchR built-in method or AMULET)
+    * filter doublets (with ArchR built-in method or AMULET)
   - dimension reduction
   - batch effect correction
   - clustering
