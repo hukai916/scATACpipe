@@ -44,11 +44,11 @@ The main functionalities of each sub-workflow are summarized below:
 **PREPROCESS_DEFAULT:**
 1. Add barcodes to reads
 2. Correct barcodes (optional)
-    *  meanwhile, also filter out non-cells
+    * meanwhile, also filter out non-cells
 3. Trim off adapters
 4. Mapping
-  * download genome/annotation or use custom genome
-  * build genome index if not supplied
+    * download genome/annotation or use custom genome
+    * build genome index if not supplied
 5. Filter BAM
 6. Remove PCR duplicates
 7. Quality control
