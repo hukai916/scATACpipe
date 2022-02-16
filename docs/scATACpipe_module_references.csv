@@ -1,0 +1,66 @@
+﻿Sub-workflow,Module,Software,Functionality,Docker image,References
+PREPROCESS_DEFAULT,GET_10XGENOMICS_FASTQ,pure bash,concatenate fastq files that belong to the same sample,ubuntu:xenial,
+,FASTQC,FastQC [1],perform fastq sequence quality assessment with FastQC,hukai916/fastqc_0.11.9:0.1,"[1] Andrews, S. (2010). FastQC:  A Quality Control Tool for High Throughput Sequence Data [Online]. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/"
+,ADD_BARCODE_TO_READS,sinto [2],add barcode to the front of fastq name line,hukai916/sinto_xenial:0.1,[2] https://timoast.github.io/sinto/
+,CORRECT_BARCODE,custom R script,correct barcodes that are with 1 mismatch,hukai916/r_sc_atac:0.1,
+,CORRECT_BARCODE_PHENIQS,"pheniqs [3], custom Python scripts",correct barcodes and add barcode to fastq,hukai916/pheniqs_xenial:0.1,[3] https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-021-04267-5
+,MATCH_READS,seqkit [4],re-pair fastq files,hukai916/seqkit_0.16.1:0.1,"[4] Shen, W., Le, S., Li, Y., & Hu, F. (2016). SeqKit: A Cross-Platform and Ultrafast Toolkit for FASTA/Q File Manipulation. PLOS ONE, 11(10), e0163962. https://doi.org/10.1371/journal.pone.0163962"
+,CUTADAPT,cutadapt [5],trim off adapter sequences,hukai916/cutadapt_xenial:0.1,"[5] Martin, M. (2011). Cutadapt removes adapter sequences from high-throughput sequencing reads. EMBnet.Journal, 17(1), 10. https://doi.org/10.14806/ej.17.1.200"
+,MATCH_READS_TRIMMED,seqkit,re-pair fastq files (the same to MATCH_READS),hukai916/seqkit_0.16.1:0.1,
+,BWA_INDEX,bwa [6],index genome file,hukai916/bwa_xenial:0.1,"[6] Li, H., & Durbin, R. (2009). Fast and accurate short read alignment with Burrows-Wheeler transform. Bioinformatics, 25(14), 1754–1760. https://doi.org/10.1093/bioinformatics/btp324"
+,DOWNLOAD_FROM_UCSC*,wget,download genome fasta from UCSC website,hukai916/miniconda3_xenial:0.1,
+,GET_PRIMARY_GENOME,samtools [7] and bash,retrieve the primary genome from downloaded UCSC genome,hukai916/bwa_xenial:0.1,"[7] Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., & Durbin, R. (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics, 25(16), 2078–2079. https://doi.org/10.1093/bioinformatics/btp352"
+,BWA_MAP,bwa,map reads to genome with BWA,hukai916/bwa_xenial:0.1,
+,BAM_FILTER,samtools and bash (awk),filter out unqualified reads from bam file ,hukai916/bwa_xenial:0.1,
+,REMOVE_DUPLICATE,"custom Python code, samtools",remove PCR duplicated fragments,hukai916/pysam_xenial:0.1,
+,QUALIMAP,qualimap [8],perform bam QC analysis,hukai916/qualimap_xenial:0.1,"[8] García-Alcalde, F., Okonechnikov, K., Carbonell, J., Cruz, L. M., Götz, S., Tarazona, S., Dopazo, J., Meyer, T. F., & Conesa, A. (2012). Qualimap: evaluating next-generation sequencing alignment data. Bioinformatics, 28(20), 2678–2679. https://doi.org/10.1093/bioinformatics/bts503"
+,GET_FRAGMENTS,sinto,get fragment file from bam,hukai916/sinto_xenial:0.2,
+PREPROCESS_10XGENOMICS,DOWNLOAD_FROM_UCSC*,wget,download genome fasta from UCSC website,hukai916/miniconda3_xenial:0.1,
+,GET_PRIMARY_GENOME*,wget,retrieve the primary genome from downloaded UCSC genome,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC_GTF,wget,download GTF file from UCSC website,hukai916/miniconda3_xenial:0.1,
+,FIX_UCSC_GTF,custom Python code,repair GTF to be compatible with cellranger-atac,hukai916/miniconda3_bio:0.1,
+,CELLRANGER_INDEX,cellranger-atac [9],create cellranger_atac genome index file,hukai916/cellranger_atat_2.0.0:0.1,[9] https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/using/count
+,GET_10XGENOMICS_FASTQ*,pure bash,concatenate fastq files that belong to the same sample,ubuntu:xenial,
+,CELLRANGER_ATAC_COUNT,cellranger-atac,invoke cellranger_atac count command,hukai916/cellranger_atat_2.0.0:0.1,
+DOWNSTRAM,ARCHR_GET_ANNOTATION,"wrapper of createGene/GenomeAnnotation [ArchR, 10]",build gene/genomeAnnotation files with Bioconductor files,hukai916/r_sc:0.5,"[10] Granja, J. M., Corces, M. R., Pierce, S. E., Bagdatli, S. T., Choudhry, H., Chang, H. Y., & Greenleaf, W. J. (2021). ArchR is a scalable software package for integrative single-cell chromatin accessibility analysis. Nature Genetics, 53(3), 403–411. https://doi.org/10.1038/s41588-021-00790-6"
+,ARCHR_GET_ANNOTATION_CUSTOM,wrapper of createGene/GenomeAnnotation,build gene/genomeAnnotation files with custom user files,,
+,ARCHR_CREATE_ARROWFILES,wrapper of createArrowFiles,create arrowfiles,,
+,ARCHR_CREATE_ARROWFILES_ANNOTATION,wrapper of createArrowFiles,create arrowfiles with annotation files,,
+,ARCHR_ADD_DOUBLETSCORES,wrapper of addDoubletScores,add doubletscore,,
+,ARCHR_ARCHRPROJECT,wrapper of ArchRProject,create ArchRProject object,,
+,ARCHR_ARCHRPROJECT_ANNOTATION,wrapper of ArchRProject,create ArchRProject object with annotation files,,
+,ARCHR_FILTER_DOUBLETS,wrapper of filterDoublets,filter out cells that contain doublets,,
+,ARCHR_ARCHRPROJECT_QC,wrapper of plotGroups,create various QC plots,,
+,ARCHR_DIMENSION_REDUCTION,wrapper of addIterativeLSI,perform dimension reduction,,
+,ARCHR_BATCH_CORRECTION,wrapper of addHarmony,correct batch effect,,
+,ARCHR_CLUSTERING,wrapper of addClusters,perform clustering analysis,,
+,ARCHR_EMBEDDING,wrapper of addTSNE/addUMAP/plotEmbedding,perform single-cell embedding,,
+,ARCHR_MARKER_GENE,wrapper of getMarkerFeatures,find marker genes for each cluster,,
+,ARCHR_SCRNASEQ_UNCONSTRAINED,wrapper of addGeneIntegrationMatrix,perform unconstrained scRNAseq integration,,
+,ARCHR_SCRNASEQ_CONSTRAINED,wrapper of addGeneIntegrationMatrix,perform constrained scRNAseq integration,,
+,ARCHR_PSEUDO_BULK_CLUSTERS,wrapper of addGroupCoverages,add pseudo bulks using scATAC-seq clusterings,,
+,ARCHR_PSEUDO_BULK_CLUSTERS2,wrapper of addGroupCoverages,add pseudo bulks using integrated scRNA-seq clusterings,,
+,ARCHR_CALL_PEAKS_CLUSTERS,wrapper of addReproduciblePeakSet,call peaks for each scATAC-seq clusters,,
+,ARCHR_CALL_PEAKS_CLUSTERS2,wrapper of addReproduciblePeakSet,call peaks for each integrated scRNA-seq clusters,,
+,ARCHR_GET_MARKER_PEAKS_CLUSTERS,wrapper of getMarkerFeatures,find marker peaks for each scATAC-seq clusters,,
+,ARCHR_GET_MARKER_PEAKS_CLUSTERS2,wrapper of getMarkerFeatures,find marker peaks for each integrated scRNA-seq clusters,,
+,ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS,wrapper of plotBrowserTrack,plot marker peaks for each scATAC-seq clusters,,
+,ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2,wrapper of plotBrowserTrack,plot marker peaks for each integrated scRNA-seq clusters,,
+,ARCHR_PAIRWISE_TEST_CLUSTERS,wrapper of getMarkerFeatures,perform pairwise testing for selected scATAC-seq clusters,,
+,ARCHR_PAIRWISE_TEST_CLUSTERS2,wrapper of getMarkerFeatures,perform pairwise testing for selected integrated scRNA-seq clusters,,
+,ARCHR_MOTIF_ENRICHMENT_CLUSTERS,"wrapper of addMotifAnnotations, peakAnnoEnrichment",perform motif enrichment analysis using scATAC-seq clusters,,
+,ARCHR_MOTIF_ENRICHMENT_CLUSTERS2,"wrapper of addMotifAnnotations, peakAnnoEnrichment",perform motif enrichment analysis using integrated scRNA-seq clusters,,
+,ARCHR_MOTIF_DEVIATIONS_CLUSTERS,"wrapper of addDeviationsMatrix, getVarDeviations",perform motif deviation analysis using scATAC-seq clusters,,
+,ARCHR_MOTIF_DEVIATIONS_CLUSTERS2,"wrapper of addDeviationsMatrix, getVarDeviations",perform motif deviation analysis using integrated scRNA-seq clusters,,
+,ARCHR_FOOTPRINTING_CLUSTERS,"wrapper of getFootprints, plotFootprints",plot footprints using scATAC-seq clusters,,
+,ARCHR_FOOTPRINTING_CLUSTERS2,"wrapper of getFootprints, plotFootprints",plot footprints using integrated scRNA-seq clusters,,
+,ARCHR_COACCESSIBILITY_CLUSTERS,"wrapper of addCoAccessibility, getCoAccessibility",perform peak coaccessibility analysis with scATAC-seq clusters,,
+,ARCHR_COACCESSIBILITY_CLUSTERS2,"wrapper of addCoAccessibility, getCoAccessibility",perform peak coaccessibility analysis with integrated scRNA-seq clusters,,
+,ARCHR_PEAK2GENELINKAGE_CLUSTERS2,"wrapper of addPeak2GeneLinks, getPeak2GeneLinks",perform peak2genelinkage analysis with integrated scRNA-seq clusters,,
+,ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS,"wrapper of getGroupSE, correlateMatrices",get positive TF regulators with scATAC-seq clusters,,
+,ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2,"wrapper of getGroupSE, correlateMatrices",get positive TF regulators with integrated scRNA-seq clusters,,
+,ARCHR_TRAJECTORY_CLUSTERS2,wrapper of trajectory analysis related ArchR functions,perform cell trajectory analysis with integrated scRNA-seq clusters,,
+,ARCHR_GET_CLUSTERING_TSV,custom R script,output a tsv file containing the clustering results,,
+OTHER MODULES,SPLIT_BED,custom Python script,split bed files according to clusterings,hukai916/fastqc_0.11.9:0.1,
+,SPLIT_BAM,"samtools, sinto",split bam files according to clusterings,hukai916/sinto_xenial:0.1,
+,MULTIQC,"MultiQC [11], custom Multiqc plugins",generate MultiQC report,hukai916/multiqc:0.1,"[11] Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 32(19), 3047–3048. https://doi.org/10.1093/bioinformatics/btw354"

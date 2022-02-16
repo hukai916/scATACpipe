@@ -16,7 +16,7 @@ cd scATACpipe
 nextflow run main.nf --help
 ```
 
-For a complete list of implemented Nextflow modules, see [module references](https://github.com/hukai916/scATACpipe/blob/dev/docs/module_references.xlsx).
+For a complete list of implemented scATACpipe modules, see [module references](https://github.com/hukai916/scATACpipe/blob/dev/docs/scATACpipe_module_references.xlsx).
 
 ### Basics:
 ```
