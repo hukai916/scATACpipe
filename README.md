@@ -117,14 +117,14 @@ unzip test_data1.zip
     * By default, the local executor will be used (`-profile local`) meaning that all jobs will be executed on your local computer.  Nextflow supports many other [executors](https://www.nextflow.io/docs/latest/executor.html) including SLURM, LSF, *etc.*. You can create a [profile](https://www.nextflow.io/docs/latest/config.html?highlight=profile#config-profiles) file to config which executor to use. Multiple profiles can be supplied with comma, e.g. `-profile docker,lsf`.
     * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see what other custom config files can be supplied.
 
-    * **Example run with Docker:**
-```bash
-nextflow run main.nf -profile docker --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
-```
-    * The `local executor` will be used.
-    * `PREPROCESS_DEFAULT` will be used.
-    * Output will be saved into `res_test_data1`.
-    * Ensembl genome `homo_sapiens` will be downloaded and used as reference.
+  * **Example run with Docker:**
+  ```bash
+  nextflow run main.nf -profile docker --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
+  ```
+      * The `local executor` will be used.
+      * `PREPROCESS_DEFAULT` will be used.
+      * Output will be saved into `res_test_data1`.
+      * Ensembl genome `homo_sapiens` will be downloaded and used as reference.
  - **Example run with Singularity:**
 ```bash
 nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
