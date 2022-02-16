@@ -108,7 +108,7 @@ wget https://www.dropbox.com/s/uyiq18zk7dts9fx/test_data1.zip
 unzip test_data1.zip
 ```
 
-    * The **test_data1** is prepared by downsampling (5% and 10%) a dataset named "*500 Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM v1.1)*" provided by [10xgenomics](https://www.10xgenomics.com/resources/datasets?query=&page=1&configure%5Bfacets%5D%5B0%5D=chemistryVersionAndThroughput&configure%5Bfacets%5D%5B1%5D=pipeline.version&configure%5BhitsPerPage%5D=500&menu%5Bproducts.name%5D=Single%20Cell%20ATAC). Note that, in test_data1, I1 refers to index1, which is for sample demultiplexing and not relevant in our case; R1 refers to Read1; **R2 refers to index2**, which represents the cell barcode fastq; R3 refers to Read2.
+    - The **test_data1** is prepared by downsampling (5% and 10%) a dataset named "*500 Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM v1.1)*" provided by [10xgenomics](https://www.10xgenomics.com/resources/datasets?query=&page=1&configure%5Bfacets%5D%5B0%5D=chemistryVersionAndThroughput&configure%5Bfacets%5D%5B1%5D=pipeline.version&configure%5BhitsPerPage%5D=500&menu%5Bproducts.name%5D=Single%20Cell%20ATAC). Note that, in test_data1, I1 refers to index1, which is for sample demultiplexing and not relevant in our case; R1 refers to Read1; **R2 refers to index2**, which represents the cell barcode fastq; R3 refers to Read2.
 
 5. Edit the `replace_with_full_path` in the assets/sample_sheet_test_data1.csv to use the actual **full path**.
 
@@ -121,10 +121,11 @@ unzip test_data1.zip
   ```bash
   nextflow run main.nf -profile docker --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
   ```
-      * The `local executor` will be used.
-      * `PREPROCESS_DEFAULT` will be used.
-      * Output will be saved into `res_test_data1`.
-      * Ensembl genome `homo_sapiens` will be downloaded and used as reference.
+    * The `local executor` will be used.
+    * `PREPROCESS_DEFAULT` will be used.
+    * Output will be saved into `res_test_data1`.
+    * Ensembl genome `homo_sapiens` will be downloaded and used as reference.
+
  - **Example run with Singularity:**
 ```bash
 nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
