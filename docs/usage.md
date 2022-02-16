@@ -230,6 +230,16 @@ Also similarly, **module specific parameters** can be adjusted by editing corres
  ```
 
 ## Running the pipeline
+For example commands, see [Quick Start](https://github.com/hukai916/scATACpipe/#quick-start).
+
+## Version control
+To use a specific version of the pipeline:
+```bash
+cd scATACpipe
+git pull # get all updates
+git branch # show all available braches
+git checkout dev # switch to dev branch
+```
 
 The typical command for running the pipeline is as follows:
 

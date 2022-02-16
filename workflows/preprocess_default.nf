@@ -153,7 +153,12 @@ workflow PREPROCESS_DEFAULT {
     }
 
     // Module: filter out poorly mapped reads
-    FILTER_BAM (BWA_MAP.out.sample_name, BWA_MAP.out.bam, params.filter)
+    if (params.filter) {
+      bam_filter = params.filter
+    } else {
+      bam_filter = "NA"
+    }
+    FILTER_BAM (BWA_MAP.out.sample_name, BWA_MAP.out.bam, bam_filter)
     // Module: combine bam, must combine_bam first no matter split_fastq or not for each sample may have more than one lane (row) in the sample sheet.
     COMBINE_BAM (FILTER_BAM.out.sample_name.unique(), FILTER_BAM.out.bam.collect())
     // Module: dedup bam by barcode seq added in the front
