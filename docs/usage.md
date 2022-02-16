@@ -16,13 +16,13 @@ cd scATACpipe
 nextflow run main.nf --help
 ```
 
-For a complete list of implemented scATACpipe modules, see [module references](https://github.com/hukai916/scATACpipe/blob/dev/docs/scATACpipe_module_references.xlsx).
+For a complete list of implemented scATACpipe modules, see **module references**: [csv](https://github.com/hukai916/scATACpipe/blob/dev/docs/scATACpipe_module_references.csv) or [xlsx](https://github.com/hukai916/scATACpipe/blob/dev/docs/scATACpipe_module_references.xlsx).
 
 ### Basics:
 ```
 --input_fragment        [string]  Path to input sample sheet for fragment files.
 --input_fastq           [string]  Path to input sample sheet for FASTQ files.
---outdir                [string]  Path to result folder, default to ./results.
+--outdir                [string]  Path to result folder. Default to ./results.
 --support_genome        Show currently supported genomes.
 ```
 To view currently support genomes, simply:
@@ -34,11 +34,15 @@ Refer to [output]() for example commands and results.
 
 ## Fragment files as input
 Fragment file paths (full path) must be saved into a **.csv** file (see below) and supplied with `--input_fragment`.
-
-|sample_name,|file_path            |
-|------------|---------------------|
-|SAMPLE_1,   |/full_path/xxx.tsv.gz|
-|SAMPLE_2,   |/full_path/xxx.tsv.gz|
+```
+sample_name,file_path            
+SAMPLE_1,/full_path/xxx.tsv.gz
+SAMPLE_2,/full_path/xxx.tsv.gz
+```
+| Column       | Description                                                |
+|--------------|------------------------------------------------------------|
+| sample_name  | Sample name must not contain space in it.                  |
+| file_path    | Must use full path. File must have the extension '.tsv.gz'.|
 
 An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/scATACpipe/main/assets/example_samplesheet_fragment.csv).
 
@@ -72,9 +76,9 @@ Given that downstream analysis itself is highly interactive in nature, scATACpip
 
 The parameters can be divided into two categories, namely, **main pipeline parameters**, and **module specific parameters**.
 
-Main pipeline parameters must be supplied with command flags or configured inside `nextflow.confg`. They are typically required to instruct scATACpipe to perform certain analysis. These parameters are listed below:
+Main pipeline parameters must be supplied with command flags or configured inside `nextflow.confg`. They are typically required to instruct scATACpipe to perform certain analysis. These parameters are listed below.
 ```
---archr_thread                      [Integer]  Number of threads to use, default to 4.
+--archr_thread                      [Integer]  Number of threads to use. Default to 4.
 
 --archr_batch_correction_harmony    [true|false]  Whether or not to perform batch correction with Harmony.
 
@@ -97,26 +101,35 @@ custom_peaks          = false // for motif enrichment/deviation module
   # Example: --custom_peaks 'Encode_K562_GATA1 = "https://www.encodeproject.org/files/ENCFF632NQI/@@download/ENCFF632NQI.bed.gz", Encode_GM12878_CEBPB = "https://www.encodeproject.org/files/ENCFF761MGJ/@@download/ENCFF761MGJ.bed.gz", Encode_K562_Ebf1 = "https://www.encodeproject.org/files/ENCFF868VSY/@@download/ENCFF868VSY.bed.gz", Encode_K562_Pax5 = "https://www.encodeproject.org/files/ENCFF339KUO/@@download/ENCFF339KUO.bed.gz"'
 ```
 
-Module specific parameters can be adjusted by editing `conf/module.config`. Below is one example, refer to `conf/module.config` for more examples.
-```
-'archr_marker_gene_clusters' {
-  // args is for ArchR::getMarkerFeatures()
-  args = 'useMatrix = "GeneScoreMatrix", bias = c("TSSEnrichment", "log10(nFrags)"), testMethod = "wilcoxon"'
+Module specific parameters can be adjusted by editing `conf/module.config`. Below are some examples, refer to `conf/module.config` for more examples.
 
-  // getMarkers_cutoff is for ArchR::getMarkers()
-  getMarkers_cutoff = 'cutOff = "FDR <= 0.05 & Log2FC >= 1"'
+ - For doublet detection with AMULET:
+  ```
+  'amulet_detect_doublets' {
+    args = '--expectedoverlap 2 --maxinsertsize 2000'
+  }
+  ```
+ - For plotting marker genes:
+  ```
+  'archr_marker_gene_clusters' {
+    // args is for ArchR::getMarkerFeatures()
+    args = 'useMatrix = "GeneScoreMatrix", bias = c("TSSEnrichment", "log10(nFrags)"), testMethod = "wilcoxon"'
 
-  // marker_genes is for plotting marker genes
-  marker_genes = 'default' // by default, the first 3 will be plotted, customized example see below:
-  //marker_genes = 'CD34, GATA1, PAX5, MS4A1, EBF1, MME, CD14, CEBPB, MPO, IRF8, CD3D, CD8A, TBX21, IL7R'
+    // getMarkers_cutoff is for ArchR::getMarkers()
+    getMarkers_cutoff = 'cutOff = "FDR <= 0.05 & Log2FC >= 1"'
 
-  // args2 is for visualizing embedding
-  args2 = 'colorBy = "GeneScoreMatrix", quantCut = c(0.01, 0.95)'
+    // marker_genes is for plotting marker genes
+    marker_genes = 'default' // by default, the first 3 will be plotted, customized example see below:
+    //marker_genes = 'CD34, GATA1, PAX5, MS4A1, EBF1, MME, CD14, CEBPB, MPO, IRF8, CD3D, CD8A, TBX21, IL7R'
 
-  // args3 is for track plotting with ArchR::ArchRBrowser()
-  args3 = 'upstream = 50000, downstream = 50000'
-}
-```
+    // args2 is for visualizing embedding
+    args2 = 'colorBy = "GeneScoreMatrix", quantCut = c(0.01, 0.95)'
+
+    // args3 is for track plotting with ArchR::ArchRBrowser()
+    args3 = 'upstream = 50000, downstream = 50000'
+  }
+  ```
+
 As shown above, for visualization purpose, scATACseq attempts to plot the first 3 marker genes (`marker_genes = 'default'`) from the resulting marker gene list. Such default parameters may not make direct sense to your research and are subject to user modifications. Below summarizes such parameters.
 ```
 marker_genes from archr_marker_gene_clusters/clusters2 module: default to plot the first 3.
@@ -137,18 +150,24 @@ trajectory_groups from archr_trajectory_clusters2: default to use the first 3 gr
 Note that modules related to clustering with only scATACseq data will be named as `xxx_clusters` whereas clustering based on integrated scRNAseq data will be named as `xxx_clusters2`.
 
 ## FASTQ files as input
-FASTQ file paths (full path) must be saved into a **.csv** file (see below) and supplied with `--input_fastq`.
+FASTQ file paths (full path) must be saved into a **.csv** file (see below) and supplied with `--input_fastq`. Multiple runs of the same sample can be placed into separate rows with the same `sample_name`.
+
 ```
 sample_name,path_fastq_1,path_fastq_2,path_barcode
 SAMPLE_1,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz
 SAMPLE_2,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz
 ```
+| Column       | Description                                                                            |
+|--------------|----------------------------------------------------------------------------------------|
+| sample_name  | Must be identical for multiple runs of the same sample.                                |
+| path_fastq_1 | Must use full path. File has to be gzipped and the extension of '.fq.gz' or 'fastq.gz'.|
+| path_fastq_2 | Must use full path. File has to be gzipped and the extension of '.fq.gz' or 'fastq.gz'.|
 
 An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/scATACpipe/main/assets/example_samplesheet_fastq.csv).
 
 In addition to the FASTQ files, you must also specify a preprocessing strategy with:
 ```
---preprocess            [default|10xgenomics|chromap] Preprocess strategy, default to default.
+--preprocess    [default|10xgenomics|chromap] Preprocess strategy. Default to default.
 ```
 
 The genome/annotation files are also required, and 3 options are available.
@@ -179,61 +198,36 @@ If genome index files are readily available, you can skip the index-building ste
 
 Parameters related to downstream analysis can be tuned the same way as **Fragement files as input - Other parameters** above.
 
-Similarly, module specific parameters can be adjusted by editing corresponding sections in `conf/modules.config`. Below are some examples.
+Similarly, **main pipeline parameters** must be supplied with command flags or configured inside `nextflow.confg`. These parameters are listed below (mainly relevant to PREPROCESS_DEFAULT).
 ```
-#
-```
-
-
-
-Given that downstream analysis itself is highly interactive in nature, scATACpipe was implemented in a way that is as flexible as possible, meaning that users can configure many downstream parameters.
-
-The parameters can be divided into two categories, namely, **main pipeline parameters**, and **module specific parameters**.
-
-Main pipeline parameters must be supplied with command flags or configured inside `nextflow.confg`. They are typically required to instruct scATACpipe to perform certain analysis. These parameters are listed below:
-
-
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
-
-```console
---input '[path to samplesheet file]'
+--split_fastq           [true|false]  Whether or not to split fastq into chunks for more parallel jobs. Default to false.
+--barcode_correction    [pheniqs|naive|false]  Barcode correction method, set to false to skip. Default to pheniqs.
+--whitelist_barcode     [string]  Path to whitelist folder. Default to 'assets/whitelist_barcodes'.
+--read1_adapter         [string]  For adapter trimming. Default to 'AGATCGGAAGAGC', which is Illumina standard adapters.
+--read2_adapter         [string]  For adapter trimming. Default to 'AGATCGGAAGAGC', which is Illumina standard adapters.
+--mapper                [bwa]  For mapping. Currently only support 'bwa'.
+--filter                [both|improper|false]  For BAM file filtering: 'improper' means to filter out reads with low mapping quality or with extreme fragment size (outside of range 38 - 2000nt) etc. 'both' means to filter out both 'improper' and mitochondrial reads. Use false to skip filtering. Default to 'both'.
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
-### Full samplesheet
-
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
-
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
-
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
-```
-
-| Column         | Description                                                                                                                                                                            |
-|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `sample`       | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1`      | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2`      | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+Also similarly, **module specific parameters** can be adjusted by editing corresponding sections in `conf/modules.config`. Below are some examples.
+ - For barcode correction with pheniqs (PREPROCESS_DEFAULT):
+  ```
+  'correct_barcode_pheniqs' {
+    read_count_cutoff = '10' // number of minimum reads to count as valid barcode
+  }
+  ```
+ - For BAM file preparation (PREPROCESS_DEFAULT):
+  ```
+  prep_bam {
+    args = '--shift_forward 4 --shift_reverse -5 --barcode_regex "[^:]*"'
+  }
+  ```
+ - For tuning cellranger_atac_count (PREPROCESS_10XGENOMICS):
+ ```
+ 'cellranger_atac_count' {
+   args = '' // can be any natively support cellranger_atac_count flag
+ }
+ ```
 
 ## Running the pipeline
 
