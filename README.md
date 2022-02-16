@@ -73,19 +73,19 @@ Note that no BAM file will be generated for PREPROCESS_CHROMAP option.
     * build ArchR genome/gene annotation files if needed
 2. Perform downstream analysis with ArchR and generate various analytical plots
     * filter doublets (with ArchR built-in method or AMULET)
-  - dimension reduction
-  - batch effect correction
-  - clustering
-  - embedding
-  - pseudo-bulk clustering
-  - scRNAseq integration if supplied
-  - marker gene detection
-  - call peaks
-  - marker peak detection
-  - pairwise testing
-  - motif enrichment
-  - footprinting
-  - coaccessibility, *etc.*
+    * dimension reduction
+    * batch effect correction
+    * clustering
+    * embedding
+    * pseudo-bulk clustering
+    * scRNAseq integration if supplied
+    * marker gene detection
+    * call peaks
+    * marker peak detection
+    * pairwise testing
+    * motif enrichment
+    * footprinting
+    * coaccessibility, *etc.*
 
 
 The pipeline also splits BED and/or BAM files according to ArchR clusterings and summarizes all results into a single MultiQC report for easy view.
@@ -108,16 +108,16 @@ wget https://www.dropbox.com/s/uyiq18zk7dts9fx/test_data1.zip
 unzip test_data1.zip
 ```
 
- - The **test_data1** is prepared by downsampling (5% and 10%) a dataset named "*500 Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM v1.1)*" provided by [10xgenomics](https://www.10xgenomics.com/resources/datasets?query=&page=1&configure%5Bfacets%5D%5B0%5D=chemistryVersionAndThroughput&configure%5Bfacets%5D%5B1%5D=pipeline.version&configure%5BhitsPerPage%5D=500&menu%5Bproducts.name%5D=Single%20Cell%20ATAC). Note that, in test_data1, I1 refers to index1, which is for sample demultiplexing and not relevant in our case; R1 refers to Read1; **R2 refers to index2**, which represents the cell barcode fastq; R3 refers to Read2.
+    * The **test_data1** is prepared by downsampling (5% and 10%) a dataset named "*500 Peripheral blood mononuclear cells (PBMCs) from a healthy donor (Next GEM v1.1)*" provided by [10xgenomics](https://www.10xgenomics.com/resources/datasets?query=&page=1&configure%5Bfacets%5D%5B0%5D=chemistryVersionAndThroughput&configure%5Bfacets%5D%5B1%5D=pipeline.version&configure%5BhitsPerPage%5D=500&menu%5Bproducts.name%5D=Single%20Cell%20ATAC). Note that, in test_data1, I1 refers to index1, which is for sample demultiplexing and not relevant in our case; R1 refers to Read1; **R2 refers to index2**, which represents the cell barcode fastq; R3 refers to Read2.
 
 5. Edit the `replace_with_full_path` in the assets/sample_sheet_test_data1.csv to use the actual **full path**.
 
 6. Test the pipeline with this minimal test_data1:
- - At least 8GB memory is recommended for test_data1.
- - By default, the local executor will be used (`-profile local`) meaning that all jobs will be executed on your local computer.  Nextflow supports many other [executors](https://www.nextflow.io/docs/latest/executor.html) including SLURM, LSF, *etc.*. You can create a [profile](https://www.nextflow.io/docs/latest/config.html?highlight=profile#config-profiles) file to config which executor to use. Multiple profiles can be supplied with comma, e.g. `-profile docker,lsf`.
- - Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see what other custom config files can be supplied.
+    * At least 8GB memory is recommended for test_data1.
+    * By default, the local executor will be used (`-profile local`) meaning that all jobs will be executed on your local computer.  Nextflow supports many other [executors](https://www.nextflow.io/docs/latest/executor.html) including SLURM, LSF, *etc.*. You can create a [profile](https://www.nextflow.io/docs/latest/config.html?highlight=profile#config-profiles) file to config which executor to use. Multiple profiles can be supplied with comma, e.g. `-profile docker,lsf`.
+    * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see what other custom config files can be supplied.
 
- - **Example run with Docker:**
+    * **Example run with Docker:**
 ```bash
 nextflow run main.nf -profile docker --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
 ```
