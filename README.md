@@ -121,7 +121,7 @@ git clone https://github.com/hukai916/scATACpipe.git
 ```bash
 nextflow run main.nf -profile docker --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
 ```
-* By executing the above command:
+By executing the above command:
   * The `local executor` will be used.
   * `PREPROCESS_DEFAULT` will be used.
   * Output will be saved into `res_test_data1`.
