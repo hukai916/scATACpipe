@@ -1,4 +1,5 @@
 # ![scATACpipe](docs/images/scATACpipe.png)
+
 ## Table of Contents
 [Introduction](#introduction)  
 [Pipeline summary](#pipeline-summary)
