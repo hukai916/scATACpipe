@@ -6,31 +6,31 @@
 
 [Basics](#basics)
 
-[Fragment files as input](#fragment_files_as_input)
-  * [Option 1: using UCSC/ENSEMBL genome](#preprocess_default)
-  * [Option 2: using custom genome](#preprocess_default)
-  * [Option 3: using Bioconductor annotations](#preprocess_default)
-  * [Other parameters](adsf)
+[Fragment files as input](#fragment-files-as-input)
+  * [Option 1: using UCSC/ENSEMBL genome](#option-1-using-ucscensembl-genome)
+  * [Option 2: using custom genome](#option-2-using-custom-genome)
+  * [Option 3: using Bioconductor annotations](#option-3-using-bioconductor-annotations)
+  * [Other parameters](#other-parameters)
 
-[FASTQ files as input](#fastq_files_as_input)
-  * [Option 1: using UCSC/ENSEMBL genome](#preprocess_default)
-  * [Option 2: using custom genome](#preprocess_default)
-  * [Option 3: using existing genome index](#preprocess_default)
-  * [Other parameters](adsf)
+[FASTQ files as input](#fastq-files-as-input)
+  * [Option 1: using UCSC/ENSEMBL genome](#option-1-using-ucscensembl-genome-1)
+  * [Option 2: using custom genome](#option-2-using-custom-genome-1)
+  * [Option 3: using existing genome index](#using-existing-genome-index)
+  * [Other parameters](#other-parameters-1)
 
 [Running the pipeline](#running-the-pipeline)
 
-[Core Nextflow arguments](#fastq_files_as_input)
-  * [-profile](asdf)
-  * [-resume](asdfad)
+[Core Nextflow arguments](#core-nextflow-arguments)
+  * [-profile](#-profile)
+  * [-resume](#-resume)
   * [-c](#-c)
 
-[Custom configuration](#fastq_files_as_input)
-  * [Resource requests](asdf)
-  * [Module-specific options](asdfad)
-  * [Create your own configs](asdfa)
+[Custom configuration](#custom-configuration)
+  * [Resource requests](#resource-requests)
+  * [Module-specific options](#module-specific-options)
+  * [Create your own configs](#create-your-own-configs)
 
-[Version control](#fastq_files_as_input)
+[Version control](#version-control)
 
 ## Introduction
 Either raw sequencing data (**.fastq**) or preprocessed fragment (**.gz**) file can serve as input to scATACpipe.
