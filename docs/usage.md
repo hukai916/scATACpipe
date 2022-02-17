@@ -1,6 +1,37 @@
 # scATACpipe: Usage
 (Some parts adapted from nf-core [TEMPLATE](https://github.com/nf-core/tools/blob/master/nf_core/pipeline-template/docs/usage.md).)
 
+## Table of Contents
+[Introduction](#introduction)
+
+[Basics](#basics)
+
+[Fragment files as input](#fragment_files_as_input)
+  * [Option 1: using UCSC/ENSEMBL genome](#preprocess_default)
+  * [Option 2: using custom genome](#preprocess_default)
+  * [Option 3: using Bioconductor annotations](#preprocess_default)
+  * [Other parameters](adsf)
+
+[FASTQ files as input](#fastq_files_as_input)
+  * [Option 1: using UCSC/ENSEMBL genome](#preprocess_default)
+  * [Option 2: using custom genome](#preprocess_default)
+  * [Option 3: using existing genome index](#preprocess_default)
+  * [Other parameters](adsf)
+
+[Running the pipeline](#running_the_pipeline)
+
+[Core Nextflow arguments](#fastq_files_as_input)
+  * [-profile](asdf)
+  * [-resume](asdfad)
+  * [-c](#-c)
+
+[Custom configuration](#fastq_files_as_input)
+  * [Resource requests](asdf)
+  * [Module-specific options](asdfad)
+  * [Create your own configs](asdfa)
+
+[Version control](#fastq_files_as_input)
+
 ## Introduction
 Either raw sequencing data (**.fastq**) or preprocessed fragment (**.gz**) file can serve as input to scATACpipe.
 
@@ -248,9 +279,7 @@ git checkout origin/dev # switch to dev branch
 
 > **NB:** These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen).
 
-```
--profile
-```
+#### -profile
 Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.
 
 Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Conda) - see below.
@@ -275,14 +304,12 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
     * A profile with a complete configuration for automated testing
     * Includes links to test data so needs no other parameters
 
-```
--resume
-```
+#### -resume
 Specify this when restarting a pipeline. Nextflow will used cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously.
 
 You can also supply a run name to resume a specific run: `-resume [run-name]`. Use the `nextflow log` command to show previous run names.
 
-##### -c
+#### -c
 Specify the path to a specific config file. See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
 
 ## Custom configuration
