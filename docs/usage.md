@@ -18,7 +18,7 @@
   * [Option 3: using existing genome index](#preprocess_default)
   * [Other parameters](adsf)
 
-[Running the pipeline](#running_the_pipeline)
+[Running the pipeline](#running-the-pipeline)
 
 [Core Nextflow arguments](#fastq_files_as_input)
   * [-profile](asdf)
