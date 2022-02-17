@@ -22,7 +22,12 @@ process FASTQC {
     script:
 
     """
-    fastqc $options.args --threads $task.cpus $read1_fastq $read2_fastq $barcode_fastq
+    fastqc \\
+      $options.args \\
+      --threads $task.cpus \\
+      $read1_fastq \\
+      $read2_fastq \\
+      $barcode_fastq
 
     """
 }
