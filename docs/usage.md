@@ -2,16 +2,13 @@
 (Some parts adapted from nf-core [TEMPLATE](https://github.com/nf-core/tools/blob/master/nf_core/pipeline-template/docs/usage.md).)
 
 ## Table of Contents
-[Introduction](#introduction)
-
-[Basics](#basics)
-
+[Introduction](#introduction)  
+[Basics](#basics)  
 [Fragment files as input](#fragment-files-as-input)
   * [Option1: using UCSC/ENSEMBL genome](#option1-using-ucscensembl-genome)
   * [Option2: using custom genome](#option2-using-custom-genome)
   * [Option3: using Bioconductor annotations](#option3-using-bioconductor-annotations)
-  * [Other parameters](#other-parameters)
-
+  * [Other parameters](#other-parameters)  
 [FASTQ files as input](#fastq-files-as-input)
   * [Option1: using UCSC/ENSEMBL genome](#option1-using-ucscensembl-genome-1)
   * [Option2: using custom genome](#option2-using-custom-genome-1)
