@@ -28,7 +28,7 @@
 [Custom configuration](#custom-configuration)
   * [Resource requests](#resource-requests)
   * [Module-specific options](#module-specific-options)
-  * [Create your own configs](#create-your-own-configs)
+  * [Create your own config files](#create-your-own-config-files)
 
 [Running in the background](#running-in-the-background)
 
@@ -308,7 +308,6 @@ Specify the path to a specific config file. See the [nf-core website documentati
 ## Custom configuration
 
 ### Resource requests
-
 Whilst the default requirements set within the pipeline will hopefully work for most people and with most input data, you may find that you want to customise the compute resources that the pipeline requests. Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the steps in the pipeline, if the job exits with any of the error codes specified [here](https://github.com/hukai916/scATACpipe/blob/dev/conf/base.config/#L21) it will automatically be resubmitted with higher requests (2 x original, then 3 x original). If it still fails after the third attempt then the pipeline execution is stopped.
 
 For example, if the scATACpipe is failing after multiple re-submissions of the `FASTQC` process due to an exit code of `137` this would indicate that there is an out of memory issue.
@@ -326,7 +325,6 @@ process {
 > **NB:** We specify just the process name i.e. `FASTQC` in the config file and not the full task name string that is printed to screen in the error message or on the terminal whilst the pipeline is running.
 
 ### Module-specific options
-
 For the ultimate flexibility, we have implemented and are using Nextflow DSL2 modules in a way where it is possible for both developers and users to change module-specific (each module usually wraps around one or more tools) command-line arguments (e.g. providing an additional command-line argument to the `FASTQC` process) as well as publishing options (e.g. saving files produced by certain process that aren't saved by default by the pipeline).
 
 The command-line arguments passed to FASTQC in the `FASTQC` module are a combination of:
@@ -356,6 +354,7 @@ params {
 }
 ```
 
+### Create your own config files
 See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information about creating your own configuration files.
 
 ## Running in the background
