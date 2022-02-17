@@ -9,7 +9,7 @@ process BUILD_BSGENOME {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'build_bsgenome', publish_id:'') }
-    container "hukai916/r_util:0.1"
+    container "hukai916/r_utils:0.1"
 
     input:
     path genome_fasta

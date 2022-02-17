@@ -9,7 +9,7 @@ process BUILD_GENOME_ANNOTATION {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'build_genome_annotation', publish_id:'') }
-    container "hukai916/r_util:0.1"
+    container "hukai916/r_utils:0.1"
 
     input:
     path bsgenome
