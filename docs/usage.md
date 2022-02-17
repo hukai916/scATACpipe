@@ -30,6 +30,10 @@
   * [Module-specific options](#module-specific-options)
   * [Create your own configs](#create-your-own-configs)
 
+[Running in the background](#running-in-the-background)
+
+[Nextflow memory requirements](#nextflow-memory-requirements)
+
 [Version control](#version-control)
 
 ## Introduction
@@ -264,17 +268,6 @@ Also similarly, **module specific parameters** can be adjusted by editing corres
 ## Running the pipeline
 For example commands, see [Quick Start](https://github.com/hukai916/scATACpipe/#quick-start).
 
-## Version control
-By default, pipeline from the `main` branch will be used, which is identical to the latest released version.
-
-To use a specific version of the pipeline:
-```bash
-cd scATACpipe
-git pull # get all updates
-git branch -r # show all available braches
-git checkout origin/dev # switch to dev branch
-```
-
 ## Core Nextflow arguments
 
 > **NB:** These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen).
@@ -390,4 +383,15 @@ We recommend adding the following line to your environment to limit this (typica
 
 ```console
 NXF_OPTS='-Xms1g -Xmx4g'
+```
+
+## Version control
+By default, pipeline from the `main` branch will be used, which is identical to the latest released version.
+
+To use a specific version of the pipeline:
+```bash
+cd scATACpipe
+git pull # get all updates
+git branch -r # show all available braches
+git checkout origin/dev # switch to dev branch
 ```
