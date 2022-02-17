@@ -15,7 +15,7 @@
 
 [Credits](#credits)
 
-[Bug report/Support](#bug_report)
+[Bug report/Support](#bug-reportsupport)
 
 [Citations](#citations)
 
