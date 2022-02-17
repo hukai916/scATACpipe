@@ -15,7 +15,7 @@
 [FASTQ files as input](#fastq-files-as-input)
   * [Option1: using UCSC/ENSEMBL genome](#option1-using-ucscensembl-genome-1)
   * [Option2: using custom genome](#option2-using-custom-genome-1)
-  * [Option3: using existing genome index](#using-existing-genome-index)
+  * [Option3: using existing genome index](#option3-using-existing-genome-index)
   * [Other parameters](#other-parameters-1)
 
 [Running the pipeline](#running-the-pipeline)
