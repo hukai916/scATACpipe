@@ -1,24 +1,23 @@
 # ![scATACpipe](docs/images/scATACpipe.png)
 
 ## Table of Contents
-[Introduction](https://github.com/hukai916/scATACpipe/#introduction)
+[Introduction](#introduction)
 
-[Pipeline summary](https://github.com/hukai916/scATACpipe/#pipeline-summary)
-- [PREPROCESS_DEFAULT](https://github.com/hukai916/scATACpipe/#preprocess_default)
-- [PREPROCESS_10XGENOMICS](https://github.com/hukai916/scATACpipe/#preprocess_10xgenomics)
-- [PREPROCESS_CHROMAP](https://github.com/hukai916/scATACpipe/#preprocess_chromap)
-- [DOWNSTREAM_ARCHR](https://github.com/hukai916/scATACseqflow/#downstream_archr)
+[Pipeline summary](#pipeline-summary)
+- [PREPROCESS_DEFAULT](#preprocess_default)
+- [PREPROCESS_10XGENOMICS](#preprocess_10xgenomics)
+- [PREPROCESS_CHROMAP](#preprocess_chromap)
+- [DOWNSTREAM_ARCHR](#downstream_archr)
 
-[Quick Start](https://github.com/hukai916/scATACpipe/#quick-start)
 [Quick Start](#quick-start)
 
-[Documentation](https://github.com/hukai916/scATACpipe/#documentation)
+[Documentation](#documentation)
 
-[Credits](https://github.com/hukai916/scATACpipe/#credits)
+[Credits](#credits)
 
-[Bug report/Support](https://github.com/hukai916/scATACpipe/#support)
+[Bug report/Support](#support)
 
-[Citations](https://github.com/hukai916/scATACpipe/#citations)
+[Citations](#citations)
 
 ## Introduction
 
