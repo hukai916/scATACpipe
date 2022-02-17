@@ -7,15 +7,15 @@
 [Basics](#basics)
 
 [Fragment files as input](#fragment-files-as-input)
-  * [Option 1: using UCSC/ENSEMBL genome](#option-1-using-ucscensembl-genome)
-  * [Option 2: using custom genome](#option-2-using-custom-genome)
-  * [Option 3: using Bioconductor annotations](#option-3-using-bioconductor-annotations)
+  * [Option1: using UCSC/ENSEMBL genome](#option1-using-ucscensembl-genome)
+  * [Option2: using custom genome](#option2-using-custom-genome)
+  * [Option3: using Bioconductor annotations](#option3-using-bioconductor-annotations)
   * [Other parameters](#other-parameters)
 
 [FASTQ files as input](#fastq-files-as-input)
-  * [Option 1: using UCSC/ENSEMBL genome](#option-1-using-ucscensembl-genome-1)
-  * [Option 2: using custom genome](#option-2-using-custom-genome-1)
-  * [Option 3: using existing genome index](#using-existing-genome-index)
+  * [Option1: using UCSC/ENSEMBL genome](#option1-using-ucscensembl-genome-1)
+  * [Option2: using custom genome](#option2-using-custom-genome-1)
+  * [Option3: using existing genome index](#using-existing-genome-index)
   * [Other parameters](#other-parameters-1)
 
 [Running the pipeline](#running-the-pipeline)
@@ -80,7 +80,7 @@ An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/s
 
 In addition to the fragment files, genome/annotation files must also be supplied and there are 3 options, see below.
 
-### Option 1: using UCSC/ENSEMBL genome
+### Option1: using UCSC/ENSEMBL genome
 ```
 --archr_genome          [string]  A genome name, either ENSEMBL style (e.g. homo_sapiens) or UCSC style (e.g. mm10).
 --species_latin_name    [string]  Must be quoted. Required if '--archr_genome' not in (mm9, mm10, hg19, hg38)
@@ -204,7 +204,7 @@ In addition to the FASTQ files, you must also specify a preprocessing strategy w
 
 The genome/annotation files are also required, and 3 options are available.
 
-### Option 1: using UCSC/ENSEMBL genome
+### Option1: using UCSC/ENSEMBL genome
 ```
 --ref_fasta_ensembl|--ref_fasta_ucsc    [string]  A genome name, either from ENSEMBL (e.g. homo_sapiens) or UCSC (e.g. mm10).
 --species_latin_name                    [string]  Must be quoted, required if genome name not in ("hg38", "hg19", "mm10", "mm9").
