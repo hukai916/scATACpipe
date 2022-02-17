@@ -10,6 +10,7 @@
 - [DOWNSTREAM_ARCHR](https://github.com/hukai916/scATACseqflow/#downstream_archr)
 
 [Quick Start](https://github.com/hukai916/scATACpipe/#quick-start)
+[Quick Start](#-quick-start)
 
 [Documentation](https://github.com/hukai916/scATACpipe/#documentation)
 

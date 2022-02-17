@@ -192,7 +192,7 @@ If genome index files are readily available, you can skip the index-building ste
 --ref_bwa_index           [string]  Path to the bwa index folder. For '--preprocess default' only.
 --ref_cellranger_index    [string]  Path to cellranger index folder. For '--preprocess 10xgenomics' only.
 --ref_chromap_index       [string]  Path to chromap index folder. For '--preprocess chromap' only.
---species_latin_name    [string]  Must be quoted.
+--species_latin_name      [string]  Must be quoted.
 ```
 
 ### Other parameters
@@ -249,13 +249,11 @@ git checkout origin/dev # switch to dev branch
 > **NB:** These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen).
 
 ```
---profile
+-profile
 ```
 Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.
 
 Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Conda) - see below.
-
-
 
 Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important! They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
@@ -277,54 +275,27 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
     * A profile with a complete configuration for automated testing
     * Includes links to test data so needs no other parameters
 
-### `-resume`
-
+```
+-resume
+```
 Specify this when restarting a pipeline. Nextflow will used cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously.
 
 You can also supply a run name to resume a specific run: `-resume [run-name]`. Use the `nextflow log` command to show previous run names.
 
-### `-c`
-
-Specify the path to a specific config file (this is a core Nextflow command). See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
+```
+-c
+```
+Specify the path to a specific config file. See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
 
 ## Custom configuration
 
 ### Resource requests
 
-Whilst the default requirements set within the pipeline will hopefully work for most people and with most input data, you may find that you want to customise the compute resources that the pipeline requests. Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the steps in the pipeline, if the job exits with any of the error codes specified [here](https://github.com/nf-core/rnaseq/blob/4c27ef5610c87db00c3c5a3eed10b1d161abf575/conf/base.config#L18) it will automatically be resubmitted with higher requests (2 x original, then 3 x original). If it still fails after the third attempt then the pipeline execution is stopped.
+Whilst the default requirements set within the pipeline will hopefully work for most people and with most input data, you may find that you want to customise the compute resources that the pipeline requests. Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the steps in the pipeline, if the job exits with any of the error codes specified [here](https://github.com/hukai916/scATACpipe/blob/dev/conf/base.config/#L21) it will automatically be resubmitted with higher requests (2 x original, then 3 x original). If it still fails after the third attempt then the pipeline execution is stopped.
 
-For example, if the nf-core/rnaseq pipeline is failing after multiple re-submissions of the `STAR_ALIGN` process due to an exit code of `137` this would indicate that there is an out of memory issue:
+For example, if the scATACpipe is failing after multiple re-submissions of the `FASTQC` process due to an exit code of `137` this would indicate that there is an out of memory issue.
 
-```console
-[62/149eb0] NOTE: Process `RNASEQ:ALIGN_STAR:STAR_ALIGN (WT_REP1)` terminated with an error exit status (137) -- Execution is retried (1)
-Error executing process > 'RNASEQ:ALIGN_STAR:STAR_ALIGN (WT_REP1)'
-
-Caused by:
-    Process `RNASEQ:ALIGN_STAR:STAR_ALIGN (WT_REP1)` terminated with an error exit status (137)
-
-Command executed:
-    STAR \
-        --genomeDir star \
-        --readFilesIn WT_REP1_trimmed.fq.gz  \
-        --runThreadN 2 \
-        --outFileNamePrefix WT_REP1. \
-        <TRUNCATED>
-
-Command exit status:
-    137
-
-Command output:
-    (empty)
-
-Command error:
-    .command.sh: line 9:  30 Killed    STAR --genomeDir star --readFilesIn WT_REP1_trimmed.fq.gz --runThreadN 2 --outFileNamePrefix WT_REP1. <TRUNCATED>
-Work dir:
-    /home/pipelinetest/work/9d/172ca5881234073e8d76f2a19c88fb
-
-Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
-```
-
-To bypass this error you would need to find exactly which resources are set by the `STAR_ALIGN` process. The quickest way is to search for `process STAR_ALIGN` in the [nf-core/rnaseq Github repo](https://github.com/nf-core/rnaseq/search?q=process+STAR_ALIGN). We have standardised the structure of Nextflow DSL2 pipelines such that all module files will be present in the `modules/` directory and so based on the search results the file we want is `modules/nf-core/software/star/align/main.nf`. If you click on the link to that file you will notice that there is a `label` directive at the top of the module that is set to [`label process_high`](https://github.com/nf-core/rnaseq/blob/4c27ef5610c87db00c3c5a3eed10b1d161abf575/modules/nf-core/software/star/align/main.nf#L9). The [Nextflow `label`](https://www.nextflow.io/docs/latest/process.html#label) directive allows us to organise workflow processes in separate groups which can be referenced in a configuration file to select and configure subset of processes having similar computing requirements. The default values for the `process_high` label are set in the pipeline's [`base.config`](https://github.com/nf-core/rnaseq/blob/4c27ef5610c87db00c3c5a3eed10b1d161abf575/conf/base.config#L33-L37) which in this case is defined as 72GB. Providing you haven't set any other standard nf-core parameters to __cap__ the [maximum resources](https://nf-co.re/usage/configuration#max-resources) used by the pipeline then we can try and bypass the `STAR_ALIGN` process failure by creating a custom config file that sets at least 72GB of memory, in this case increased to 100GB. The custom config below can then be provided to the pipeline via the [`-c`](#-c) parameter as highlighted in previous sections.
+To bypass this error you would need to find exactly which resources are set by the `FASTQC` process. The quickest way is to search for `process FASTQC` in the [hukai916/scATACpipe GitHub repo](https://github.com/hukai916/scATACpipe/search?q=process+FASTQC). We have standardized the structure of Nextflow DSL2 pipelines such that all module files will be present in the `modules/` directory and so based on the search results the file we want is `modules/local/fastqc.nf`. If you click on the link to that file you will notice that there is a `label` directive at the top of the module that is set to [`label process_low`](https://github.com/hukai916/scATACpipe/blob/93762729a65f96d831bed9ccf97406ed2e3b4166/modules/local/fastqc.nf#L8). The [Nextflow `label`](https://www.nextflow.io/docs/latest/process.html#label) directive allows us to organize workflow processes in separate groups which can be referenced in a configuration file to select and configure subset of processes having similar computing requirements. The default values for the `process_low` label are set in the pipeline's [`base.config`](https://github.com/hukai916/scATACpipe/blob/93762729a65f96d831bed9ccf97406ed2e3b4166/conf/base.config#L38-L42) which in this case is defined as 12GB. Providing you haven't set any other standard nf-core parameters to __cap__ the [maximum resources](https://nf-co.re/usage/configuration#max-resources) used by the pipeline then we can try and bypass the `STAR_ALIGN` process failure by creating a custom config file that sets at least 72GB of memory, in this case increased to 100GB. The custom config below can then be provided to the pipeline via the [`-c`](#-c) parameter as highlighted in previous sections.
 
 ```nextflow
 process {
