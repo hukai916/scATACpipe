@@ -140,13 +140,13 @@ custom_peaks          = false // for motif enrichment/deviation module
 Module specific parameters can be adjusted by editing `conf/module.config`. Below are some examples, refer to `conf/module.config` for more examples.
 
  - For doublet detection with AMULET:
-  ```
+  ```nextflow
   'amulet_detect_doublets' {
     args = '--expectedoverlap 2 --maxinsertsize 2000'
   }
   ```
  - For plotting marker genes:
-  ```
+  ```nextflow
   'archr_marker_gene_clusters' {
     // args is for ArchR::getMarkerFeatures()
     args = 'useMatrix = "GeneScoreMatrix", bias = c("TSSEnrichment", "log10(nFrags)"), testMethod = "wilcoxon"'
@@ -223,7 +223,7 @@ The genome/annotation files are also required, and 3 options are available.
 
 ### Option3: using existing genome index
 If genome index files are readily available, you can skip the index-building step by directly supply the index folder.
-```
+```bash
 --ref_bwa_index           [string]  Path to the bwa index folder. For '--preprocess default' only.
 --ref_cellranger_index    [string]  Path to cellranger index folder. For '--preprocess 10xgenomics' only.
 --ref_chromap_index       [string]  Path to chromap index folder. For '--preprocess chromap' only.
@@ -247,23 +247,23 @@ Similarly, **main pipeline parameters** must be supplied with command flags or c
 
 Also similarly, **module specific parameters** can be adjusted by editing corresponding sections in `conf/modules.config`. Below are some examples.
  - For barcode correction with pheniqs (PREPROCESS_DEFAULT):
-  ```
+  ```nextflow
   'correct_barcode_pheniqs' {
     read_count_cutoff = '10' // number of minimum reads to count as valid barcode
   }
   ```
  - For BAM file preparation (PREPROCESS_DEFAULT):
-  ```
+  ```nextflow
   prep_bam {
     args = '--shift_forward 4 --shift_reverse -5 --barcode_regex "[^:]*"'
   }
   ```
  - For tuning cellranger_atac_count (PREPROCESS_10XGENOMICS):
- ```
- 'cellranger_atac_count' {
+  ```nextflow
+  'cellranger_atac_count' {
    args = '' // can be any natively support cellranger_atac_count flag
- }
- ```
+  }
+  ```
 
 ## Running the pipeline
 For example commands, see [Quick Start](https://github.com/hukai916/scATACpipe/#quick-start).
@@ -313,12 +313,12 @@ Whilst the default requirements set within the pipeline will hopefully work for 
 
 For example, if the scATACpipe is failing after multiple re-submissions of the `FASTQC` process due to an exit code of `137` this would indicate that there is an out of memory issue.
 
-To bypass this error you would need to find exactly which resources are set by the `FASTQC` process. The quickest way is to search for `process FASTQC` in the [hukai916/scATACpipe GitHub repo](https://github.com/hukai916/scATACpipe/search?q=process+FASTQC). We have standardized the structure of Nextflow DSL2 pipelines such that all module files will be present in the `modules/` directory and so based on the search results the file we want is `modules/local/fastqc.nf`. If you click on the link to that file you will notice that there is a `label` directive at the top of the module that is set to [`label process_low`](https://github.com/hukai916/scATACpipe/blob/93762729a65f96d831bed9ccf97406ed2e3b4166/modules/local/fastqc.nf#L8). The [Nextflow `label`](https://www.nextflow.io/docs/latest/process.html#label) directive allows us to organize workflow processes in separate groups which can be referenced in a configuration file to select and configure subset of processes having similar computing requirements. The default values for the `process_low` label are set in the pipeline's [`base.config`](https://github.com/hukai916/scATACpipe/blob/93762729a65f96d831bed9ccf97406ed2e3b4166/conf/base.config#L38-L42) which in this case is defined as 12GB. Providing you haven't set any other standard nf-core parameters to __cap__ the [maximum resources](https://nf-co.re/usage/configuration#max-resources) used by the pipeline then we can try and bypass the `STAR_ALIGN` process failure by creating a custom config file that sets at least 72GB of memory, in this case increased to 100GB. The custom config below can then be provided to the pipeline via the [`-c`](#-c) parameter as highlighted in previous sections.
+To bypass this error you would need to find exactly which resources are set by the `FASTQC` process. The quickest way is to search for `process FASTQC` in the [hukai916/scATACpipe GitHub repo](https://github.com/hukai916/scATACpipe/search?q=process+FASTQC). We have standardized the structure of Nextflow DSL2 pipelines such that all module files will be present in the `modules/` directory and so based on the search results the file we want is `modules/local/fastqc.nf`. If you click on the link to that file you will notice that there is a `label` directive at the top of the module that is set to [`label process_low`](https://github.com/hukai916/scATACpipe/blob/93762729a65f96d831bed9ccf97406ed2e3b4166/modules/local/fastqc.nf#L8). The [Nextflow `label`](https://www.nextflow.io/docs/latest/process.html#label) directive allows us to organize workflow processes in separate groups which can be referenced in a configuration file to select and configure subset of processes having similar computing requirements. The default values for the `process_low` label are set in the pipeline's [`base.config`](https://github.com/hukai916/scATACpipe/blob/93762729a65f96d831bed9ccf97406ed2e3b4166/conf/base.config#L38-L42) which in this case is defined as 12GB. Providing you haven't set any other standard Nextflow parameters to __cap__ the [maximum resources](https://nf-co.re/usage/configuration#max-resources) used by the pipeline then we can try and bypass the `FASTQC` process failure by creating a custom config file that sets at least 12GB of memory, in this case increased to 20GB. The custom config below can then be provided to the pipeline via the [`-c`](#-c) parameter as highlighted in previous sections.
 
 ```nextflow
 process {
-    withName: STAR_ALIGN {
-        memory = 100.GB
+    withName: FASTQC {
+        memory = 20.GB
     }
 }
 ```
