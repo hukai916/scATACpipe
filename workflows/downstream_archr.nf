@@ -347,7 +347,7 @@ workflow DOWNSTREAM_ARCHR {
       AMULET_MERGE_DOUBLETS(AMULET_DETECT_DOUBLETS.out.cells_filter.collect())
     }
 
-    // Module: filter low quality cells.
+    // Module: filter out low quality cells.
     ARCHR_FILTER_CELLS(ARCHR_ARCHRPROJECT_QC.out.archr_project, params.archr_thread)
 
     // Module: filter doublets depending on user option.

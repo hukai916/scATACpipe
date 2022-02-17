@@ -161,4 +161,4 @@ If you would like to extend scATACpipe for your own good, feel free to fork the 
 <!-- TODO If you use scATACpipe for your analysis, please cite it using the following doi: [](https://) -->
 Please kindly cite scATACpipe [to be added] if you use it for your research.
 
-A complete list of references for the tools used by scATACpipe can be found [here](https://github.com/hukai916/scATACpipe/docs/module_software.xlsx). Please consider citing them too, it won't cost a penny.
+A complete list of references for the tools used by scATACpipe can be found [here](https://github.com/hukai916/scATACpipe/docs/scATACpipe_module_references.xlsx). Please consider citing them too, it won't cost a penny.

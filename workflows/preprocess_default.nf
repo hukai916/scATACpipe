@@ -37,12 +37,9 @@ include { GET_WHITELIST_BARCODE } from '../modules/local/get_whitelist_barcode'
 include { GET_VALID_BARCODE } from '../modules/local/get_valid_barcode'
 include { CORRECT_BARCODE       } from '../modules/local/correct_barcode'         addParams( options: modules['correct_barcode'] )
 include { CORRECT_BARCODE_PHENIQS } from '../modules/local/correct_barcode_pheniqs' addParams( options: modules['correct_barcode_pheniqs'] )
-include { MATCH_READS           } from '../modules/local/match_reads'             addParams( options: modules['match_reads'] )
-include { MATCH_READS_TRIMMED   } from '../modules/local/match_reads_trimmed'     addParams( options: modules['match_reads_trimmed'] )
 include { FASTQC                } from '../modules/local/fastqc'                  addParams( options: modules['fastqc'] )
 include { ADD_BARCODE_TO_READS       } from '../modules/local/add_barcode_to_reads'
 include { ADD_BARCODE_TO_READ_CHUNKS } from '../modules/local/add_barcode_to_read_chunks'
-include { ADD_BARCODE_TO_READS_2     } from '../modules/local/add_barcode_to_reads_2'
 include { CUTADAPT         } from '../modules/local/cutadapt'    addParams( options: modules['cutadapt'] )
 include { DOWNLOAD_FROM_UCSC } from '../modules/local/download_from_ucsc'    addParams( options: modules['download_from_ucsc'] )
 include { DOWNLOAD_FROM_ENSEMBL } from '../modules/local/download_from_ensembl'    addParams( options: modules['download_from_ensembl'] )
@@ -58,8 +55,6 @@ include { DEDUP_BAM; DEDUP_BAM as DEDUP_BAM2 } from '../modules/local/dedup_bam'
 // include { ADD_BARCODE_TO_TAG } from '../modules/local/add_barcode_to_tag'
 include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
 include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
-include { DOWNLOAD_FROM_UCSC_GTF } from '../modules/local/download_from_ucsc_gtf'    addParams( options: modules['download_from_ucsc_gtf'] )
-include { DOWNLOAD_FROM_ENSEMBL_GTF } from '../modules/local/download_from_ensembl_gtf'    addParams( options: modules['download_from_ensembl_gtf'] )
 include { COMBINE_FRAGMENTS } from '../modules/local/combine_fragments'
 include { COMBINE_BAM; COMBINE_BAM as COMBINE_BAM2 } from '../modules/local/combine_bam'
 include { FILTER_CELL } from '../modules/local/filter_cell'

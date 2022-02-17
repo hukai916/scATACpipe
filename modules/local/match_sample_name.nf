@@ -9,7 +9,7 @@ process MATCH_SAMPLE_NAME {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'match_sample_name', publish_id:'') }
-    container "hukai916/sinto_xenial:0.2"
+    container "hukai916/miniconda3_xenial:0.1"
 
     input:
     tuple val(sample_name), val(path_fastq_1), val(path_fastq_2), val(path_barcode)

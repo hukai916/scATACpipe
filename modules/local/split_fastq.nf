@@ -9,7 +9,7 @@ process SPLIT_FASTQ {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'split_fastq', publish_id:'') }
-    container "hukai916/sinto_xenial:0.1"
+    container "hukai916/sinto_xenial:0.2"
 
     input:
     tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)

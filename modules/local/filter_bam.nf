@@ -33,7 +33,7 @@ process FILTER_BAM {
     """
     # Keep only the following reads:
     # 1. Paried reads mapped in the correct orientation.
-    # 2. Fragment size ranges from 38 to 2000 bp. (Note, the samtools solution may end up with unpaired reads since we applied other filtering criteria. Therefore, need extract_pair.py.)
+    # 2. Fragment size ranges from 38 to 2000 bp. (Note, the samtools solution may end up with unpaired reads since we applied other filtering criteria. Therefore, need the awk extract_pair code.)
     # 3. The mapq of both reads > 20.
     # 4. Non-mitochondrial reads.
 
