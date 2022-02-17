@@ -55,7 +55,7 @@ nextflow run main.nf --help
 For a complete list of implemented scATACpipe modules, see **module references**: [csv](https://github.com/hukai916/scATACpipe/blob/dev/docs/scATACpipe_module_references.csv) or [xlsx](https://github.com/hukai916/scATACpipe/blob/dev/docs/scATACpipe_module_references.xlsx).
 
 ### Basics:
-```
+```bash
 --input_fragment        [string]  Path to input sample sheet for fragment files.
 --input_fastq           [string]  Path to input sample sheet for FASTQ files.
 --outdir                [string]  Path to result folder. Default to ./results.
@@ -85,14 +85,14 @@ An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/s
 In addition to the fragment files, genome/annotation files must also be supplied and there are 3 options, see below.
 
 ### Option1: using UCSC/ENSEMBL genome
-```
+```bash
 --archr_genome          [string]  A genome name, either ENSEMBL style (e.g. homo_sapiens) or UCSC style (e.g. mm10).
 --species_latin_name    [string]  Must be quoted. Required if '--archr_genome' not in (mm9, mm10, hg19, hg38)
 --archr_blacklist       [string]  Optional. Path to blacklist file.
 ```
 
 ### Option2: using custom genome
-```
+```bash
 --archr_genome_fasta    [string]  Path to genome fasta.
 --ref_gtf               [string]  Path to gtf file.
 --species_latin_name    [string]  Must be quoted.
@@ -100,7 +100,7 @@ In addition to the fragment files, genome/annotation files must also be supplied
 ```
 
 ### Option3: using Bioconductor annotations
-```
+```bash
 --archr_bsgenome    [string]  A Bioconductor BSgenome package name.
 --archr_txdb        [string]  A Bioconductor TxDb package name.
 --archr_org         [string]  A Bioconductor OrgDb package name.
@@ -113,7 +113,7 @@ Given that downstream analysis itself is highly interactive in nature, scATACpip
 The parameters can be divided into two categories, namely, **main pipeline parameters**, and **module specific parameters**.
 
 Main pipeline parameters must be supplied with command flags or configured inside `nextflow.confg`. They are typically required to instruct scATACpipe to perform certain analysis. These parameters are listed below.
-```
+```bash
 --archr_thread                      [Integer]  Number of threads to use. Default to 4.
 
 --archr_batch_correction_harmony    [true|false]  Whether or not to perform batch correction with Harmony.
@@ -209,13 +209,13 @@ In addition to the FASTQ files, you must also specify a preprocessing strategy w
 The genome/annotation files are also required, and 3 options are available.
 
 ### Option1: using UCSC/ENSEMBL genome
-```
+```bash
 --ref_fasta_ensembl|--ref_fasta_ucsc    [string]  A genome name, either from ENSEMBL (e.g. homo_sapiens) or UCSC (e.g. mm10).
 --species_latin_name                    [string]  Must be quoted, required if genome name not in ("hg38", "hg19", "mm10", "mm9").
 ```
 
 ### Option2: using custom genome
-```
+```bash
 --ref_fasta             [string]  Path to refernce genome file.
 --ref_gtf               [string]  Path to refernce gtf file.
 --species_latin_name    [string]  Must be quoted.
@@ -223,7 +223,7 @@ The genome/annotation files are also required, and 3 options are available.
 
 ### Option3: using existing genome index
 If genome index files are readily available, you can skip the index-building step by directly supply the index folder.
-```console
+```bash
 --ref_bwa_index           [string]  Path to the bwa index folder. For '--preprocess default' only.
 --ref_cellranger_index    [string]  Path to cellranger index folder. For '--preprocess 10xgenomics' only.
 --ref_chromap_index       [string]  Path to chromap index folder. For '--preprocess chromap' only.
