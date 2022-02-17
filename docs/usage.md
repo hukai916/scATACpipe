@@ -223,7 +223,7 @@ The genome/annotation files are also required, and 3 options are available.
 
 ### Option3: using existing genome index
 If genome index files are readily available, you can skip the index-building step by directly supply the index folder.
-```bash
+```console
 --ref_bwa_index           [string]  Path to the bwa index folder. For '--preprocess default' only.
 --ref_cellranger_index    [string]  Path to cellranger index folder. For '--preprocess 10xgenomics' only.
 --ref_chromap_index       [string]  Path to chromap index folder. For '--preprocess chromap' only.
