@@ -9,14 +9,14 @@
   * [Option2: using custom genome](#option2-using-custom-genome)
   * [Option3: using Bioconductor annotations](#option3-using-bioconductor-annotations)
   * [Other parameters](#other-parameters)  
+
 [FASTQ files as input](#fastq-files-as-input)
   * [Option1: using UCSC/ENSEMBL genome](#option1-using-ucscensembl-genome-1)
   * [Option2: using custom genome](#option2-using-custom-genome-1)
   * [Option3: using existing genome index](#option3-using-existing-genome-index)
   * [Other parameters](#other-parameters-1)
 
-[Running the pipeline](#running-the-pipeline)
-
+[Running the pipeline](#running-the-pipeline)  
 [Core Nextflow arguments](#core-nextflow-arguments)
   * [-profile](#-profile)
   * [-resume](#-resume)
@@ -25,12 +25,10 @@
 [Custom configuration](#custom-configuration)
   * [Resource requests](#resource-requests)
   * [Module-specific options](#module-specific-options)
-  * [Create your own config files](#create-your-own-config-files)
+  * [Create your own config files](#create-your-own-config-files)  
 
-[Running in the background](#running-in-the-background)
-
-[Nextflow memory requirements](#nextflow-memory-requirements)
-
+[Running in the background](#running-in-the-background)  
+[Nextflow memory requirements](#nextflow-memory-requirements)  
 [Version control](#version-control)
 
 ## Introduction

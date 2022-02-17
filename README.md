@@ -1,22 +1,17 @@
 # ![scATACpipe](docs/images/scATACpipe.png)
 
 ## Table of Contents
-[Introduction](#introduction)
-
+[Introduction](#introduction)  
 [Pipeline summary](#pipeline-summary)
 - [PREPROCESS_DEFAULT](#preprocess_default)
 - [PREPROCESS_10XGENOMICS](#preprocess_10xgenomics)
 - [PREPROCESS_CHROMAP](#preprocess_chromap)
 - [DOWNSTREAM_ARCHR](#downstream_archr)
 
-[Quick Start](#quick-start)
-
-[Documentation](#documentation)
-
-[Credits](#credits)
-
-[Bug report/Support](#bug-reportsupport)
-
+[Quick Start](#quick-start)  
+[Documentation](#documentation)  
+[Credits](#credits)  
+[Bug report/Support](#bug-reportsupport)  
 [Citations](#citations)
 
 ## Introduction
