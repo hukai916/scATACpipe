@@ -41,7 +41,7 @@ Below is a simplified diagram to illustrate the design logic and functionalities
 
 The main functionalities of each sub-workflow are summarized below:
 
-### PREPROCESS_DEFAULT:
+#### PREPROCESS_DEFAULT:
 1. Add barcodes to reads
 2. Correct barcodes (optional)
     * meanwhile, also filter out non-cells
@@ -54,12 +54,12 @@ The main functionalities of each sub-workflow are summarized below:
 7. Quality control
 8. Generate fragment file, *etc.*
 
-### PREPROCESS_10XGENOMICS:
+#### PREPROCESS_10XGENOMICS:
 1. Build 10XGENOMICS index if not supplied
     * download genome/annotation or use custom genome
 2. Execute `cellranger_atac count` command
 
-### PREPROCESS_CHROMAP:
+#### PREPROCESS_CHROMAP:
 1. Build Chromap index if not supplied
     * download genome/annotation or use custom genome
 2. Execute `chromap --preset atac` command
@@ -67,7 +67,7 @@ The main functionalities of each sub-workflow are summarized below:
 
 Note that no BAM file will be generated for PREPROCESS_CHROMAP option.
 
-### DOWNSTREAM_ARCHR:
+#### DOWNSTREAM_ARCHR:
 1. Build ArchR-compatible genome/annotation files if not natively supported (ArchR supports hg19, hg38, mm9, and mm10 as of 02/2022)
     * download genome/annotation if not supplied
     * build ArchR genome/gene annotation files if needed
