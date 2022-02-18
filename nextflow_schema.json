@@ -504,11 +504,6 @@
             "description": "Doublet removel method. Choose from 'amulet', 'archr', or false to skip.",
             "default": "archr"
         },
-        "archr_filter_doublets_ratio": {
-            "type": "number",
-            "description": "For '--doublet_removal_algorithm archr' only.",
-            "default": 1.5
-        },
         "amulet_rmsk_bed": {
             "type": "string",
             "description": "For '--doublet_removal_algorithm amulet' only. Path to bed file containing repeat regions."
