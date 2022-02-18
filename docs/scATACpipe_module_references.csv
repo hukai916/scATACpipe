@@ -5,8 +5,8 @@ PREPROCESS_DEFAULT,FASTQC,FastQC [1],Perform fastq sequence quality assessment w
 ,ADD_BARCODE_TO_READ_CHUNKS,sinto [2],Add barcode to the front of each name line in the FASTQ chunk file. ,hukai916/sinto_xenial:0.2,
 ,ADD_BARCODE_TO_READS,sinto [2],Add barcode to the front of each name line in the FASTQ file. ,hukai916/sinto_xenial:0.2,[2] https://timoast.github.io/sinto/
 ,CUTADAPT,cutadapt [5],Trim off adapter sequences with Cutadapt.,hukai916/cutadapt_xenial:0.1,"[5] Martin, M. (2011). Cutadapt removes adapter sequences from high-throughput sequencing reads. EMBnet.Journal, 17(1), 10. https://doi.org/10.14806/ej.17.1.200"
-,DOWNLOAD_FROM_UCSC,wget,Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_ENSEMBL,wget,Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC,"wget, custom Python script",Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_ENSEMBL,"wget, custom Python script",Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
 ,PREP_GENOME,SAMtools [7] and bash,"Cleanup genome file by extracting the primary genome and prepending ""chr"" to each contig.",hukai916/bwa_xenial:0.1,"[7] Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., & Durbin, R. (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics, 25(16), 2078–2079. https://doi.org/10.1093/bioinformatics/btp352"
 ,BWA_INDEX,bwa [6],Index genome file with BWA.,hukai916/bwa_xenial:0.1,"[6] Li, H., & Durbin, R. (2009). Fast and accurate short read alignment with Burrows-Wheeler transform. Bioinformatics, 25(14), 1754–1760. https://doi.org/10.1093/bioinformatics/btp324"
 ,BWA_MAP,bwa [6],Map reads to genome with BWA.,hukai916/bwa_xenial:0.1,"[6] Li, H., & Durbin, R. (2009). Fast and accurate short read alignment with Burrows-Wheeler transform. Bioinformatics, 25(14), 1754–1760. https://doi.org/10.1093/bioinformatics/btp324"
@@ -21,10 +21,10 @@ PREPROCESS_DEFAULT,FASTQC,FastQC [1],Perform fastq sequence quality assessment w
 ,QUALIMAP,qualimap [8],Perform bam QC analysis,hukai916/qualimap_xenial:0.1,"[8] García-Alcalde, F., Okonechnikov, K., Carbonell, J., Cruz, L. M., Götz, S., Tarazona, S., Dopazo, J., Meyer, T. F., & Conesa, A. (2012). Qualimap: evaluating next-generation sequencing alignment data. Bioinformatics, 28(20), 2678–2679. https://doi.org/10.1093/bioinformatics/bts503"
 ,GET_FRAGMENTS,sinto [2],Get fragment file from BAM.,hukai916/sinto_xenial:0.2,[2] https://timoast.github.io/sinto/
 PREPROCESS_10XGENOMICS,MATCH_SAMPLE_NAME,bash,Match and rename sample names to prevent unexpected inconsistency.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_UCSC,wget,Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_ENSEMBL,wget,Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_UCSC_GTF,wget,Download GTF file from UCSC website,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_ENSEMBL_GTF,wget,Download GTF file from ENSEMBL website,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC,"wget, custom Python script",Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_ENSEMBL,"wget, custom Python script",Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC_GTF,"wget, custom Python script",Download GTF file from UCSC website,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_ENSEMBL_GTF,"wget, custom Python script",Download GTF file from ENSEMBL website,hukai916/miniconda3_xenial:0.1,
 ,PREP_GENOME,SAMtools [7] and bash,"Cleanup genome file by extracting the primary genome and prepending ""chr"" to each contig.",hukai916/bwa_xenial:0.1,"[7] Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., & Durbin, R. (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics, 25(16), 2078–2079. https://doi.org/10.1093/bioinformatics/btp352"
 ,PREP_GTF,"gffread [12], custom Python scripts","Cleanup GTF file by: prepending ""chr""; sort by gene_id; add ""gene"" column if not available; make sure GTF contigs is a subset of genome.",hukai916/miniconda3_bio:0.1,"[12] Pertea, G., & Pertea, M. (2020). GFF Utilities: GffRead and GffCompare. F1000Research, 9, ISCB Comm J-304. https://doi.org/10.12688/f1000research.23297.2"
 ,CELLRANGER_INDEX,cellranger-atac [9],Create cellranger_atac genome index file.,hukai916/cellranger_atat_2.0.0:0.1,[9] https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/using/count
@@ -33,10 +33,10 @@ PREPROCESS_10XGENOMICS,MATCH_SAMPLE_NAME,bash,Match and rename sample names to p
 PREPROCESS_CHROMAP,MATCH_SAMPLE_NAME,bash,Match and rename sample names to prevent unexpected inconsistency.,hukai916/miniconda3_xenial:0.1,
 ,MERGE_SAMPLE,bash,Merge samples from different lanes.,hukai916/miniconda3_xenial:0.1,
 ,GET_WHITELIST_CHROMAP,seqkit [4] and custom Python script,Determine the correct whitelist barcode to use.,hukai916/seqkit_0.16.1:0.1,"[4] Shen, W., Le, S., Li, Y., & Hu, F. (2016). SeqKit: A Cross-Platform and Ultrafast Toolkit for FASTA/Q File Manipulation. PLOS ONE, 11(10), e0163962. https://doi.org/10.1371/journal.pone.0163962"
-,DOWNLOAD_FROM_UCSC,wget,Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_ENSEMBL,wget,Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_UCSC_GTF,wget,Download GTF file from UCSC website,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_ENSEMBL_GTF,wget,Download GTF file from ENSEMBL website,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC,"wget, custom Python script",Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_ENSEMBL,"wget, custom Python script",Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC_GTF,"wget, custom Python script",Download GTF file from UCSC website,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_ENSEMBL_GTF,"wget, custom Python script",Download GTF file from ENSEMBL website,hukai916/miniconda3_xenial:0.1,
 ,PREP_GENOME,SAMtools [7] and bash,"Cleanup genome file by extracting the primary genome and prepending ""chr"" to each contig.",hukai916/bwa_xenial:0.1,"[7] Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., & Durbin, R. (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics, 25(16), 2078–2079. https://doi.org/10.1093/bioinformatics/btp352"
 ,PREP_GTF,"gffread [12], custom Python scripts","Cleanup GTF file by: prepending ""chr""; sort by gene_id; add ""gene"" column if not available; make sure GTF contigs is a subset of genome.",hukai916/miniconda3_bio:0.1,"[12] Pertea, G., & Pertea, M. (2020). GFF Utilities: GffRead and GffCompare. F1000Research, 9, ISCB Comm J-304. https://doi.org/10.12688/f1000research.23297.2"
 ,CHROMAP_INDEX,Chromap [13],Create Chromap genome index file.,hukai916/chromap_xenial:0.2,"[13] Zhang, H., Song, L., Wang, X. et al. Fast alignment and preprocessing of chromatin profiles with Chromap. Nat Commun 12, 6566 (2021). https://doi.org/10.1038/s41467-021-26865-w"
@@ -44,10 +44,10 @@ PREPROCESS_CHROMAP,MATCH_SAMPLE_NAME,bash,Match and rename sample names to preve
 ,FRAG_TO_FREQ,"bash, custom Python script",Calculate fragment frequencies.,hukai916/pysam_xenial:0.1,
 ,GET_VALID_BARCODE_CHROMAP,custom R script,"Determine valid barcodes using ""inflection point"" method.",hukai916/r_utils:0.1,
 ,FILTER_CELL_CHROMAP,custom Python script,Filter valid fragments according to valid barcodes.,hukai916/sinto_xenial:0.2,
-,DOWNLOAD_FROM_UCSC,wget,Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_ENSEMBL,wget,Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_UCSC_GTF,wget,Download GTF file from UCSC website,hukai916/miniconda3_xenial:0.1,
-,DOWNLOAD_FROM_ENSEMBL_GTF,wget,Download GTF file from ENSEMBL website,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC,"wget, custom Python script",Download genome fasta file from UCSC website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_ENSEMBL,"wget, custom Python script",Download genome fasta file from ENSEMBL website.,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_UCSC_GTF,"wget, custom Python script",Download GTF file from UCSC website,hukai916/miniconda3_xenial:0.1,
+,DOWNLOAD_FROM_ENSEMBL_GTF,"wget, custom Python script",Download GTF file from ENSEMBL website,hukai916/miniconda3_xenial:0.1,
 ,PREP_GENOME,SAMtools [7] and bash,"Cleanup genome file by extracting the primary genome and prepending ""chr"" to each contig.",hukai916/bwa_xenial:0.1,"[7] Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., & Durbin, R. (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics, 25(16), 2078–2079. https://doi.org/10.1093/bioinformatics/btp352"
 ,PREP_GTF,"gffread [12], custom Python scripts","Cleanup GTF file by: prepending ""chr""; sort by gene_id; add ""gene"" column if not available; make sure GTF contigs is a subset of genome.",hukai916/miniconda3_bio:0.1,"[12] Pertea, G., & Pertea, M. (2020). GFF Utilities: GffRead and GffCompare. F1000Research, 9, ISCB Comm J-304. https://doi.org/10.12688/f1000research.23297.2"
 ,ARCHR_CREATE_ARROWFILES,wrapper around ArchR::createArrowFiles() [10],Create Arrowfiles with fragment files.,hukai916/scatacpipe_downstream:0.2,"[10] Granja, J. M., Corces, M. R., Pierce, S. E., Bagdatli, S. T., Choudhry, H., Chang, H. Y., & Greenleaf, W. J. (2021). ArchR is a scalable software package for integrative single-cell chromatin accessibility analysis. Nature Genetics, 53(3), 403–411. https://doi.org/10.1038/s41588-021-00790-6"
