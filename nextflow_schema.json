@@ -517,12 +517,6 @@
             "type": "string",
             "description": "For '--doublet_removal_algorithm amulet' only. Path to text file containing autosomal chromosome names."
         },
-        "barcode_regex": {
-            "type": "string",
-            "description": "Regular expression used to detect barcodes, used for SPLIT_BAM.",
-            "default": "[^:]*",
-            "hidden": true
-        },
         "archr_thread": {
             "type": "integer",
             "description": "Number of threads used for ArchR.",
@@ -536,39 +530,7 @@
             "type": "string",
             "hidden": true
         },
-        "marker_peak_geneSymbol": {
-            "type": "string",
-            "hidden": true
-        },
-        "marker_peak_clusters": {
-            "type": "string",
-            "hidden": true
-        },
-        "marker_peak_clusters2": {
-            "type": "string",
-            "hidden": true
-        },
-        "pairwise_test_clusters_1": {
-            "type": "string",
-            "hidden": true
-        },
-        "pairwise_test_clusters_2": {
-            "type": "string",
-            "hidden": true
-        },
-        "pairwise_test_clusters2_1": {
-            "type": "string",
-            "hidden": true
-        },
-        "pairwise_test_clusters2_2": {
-            "type": "string",
-            "hidden": true
-        },
         "custom_peaks": {
-            "type": "string",
-            "hidden": true
-        },
-        "trajectory_groups": {
             "type": "string",
             "hidden": true
         }

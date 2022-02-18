@@ -461,7 +461,7 @@ workflow DOWNSTREAM_ARCHR {
     }
 
     // Module: motif enrichment
-    log.info "ArchR Input: " + archr_input_type
+    log.info "INFO: ArchR input type: " + archr_input_type
     if (params.custom_peaks) {
       custom_peaks = params.custom_peaks
     } else {
