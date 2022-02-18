@@ -199,6 +199,7 @@ class NfcoreSchema {
             Integer num_params = 0
             String group_output = colors.underlined + colors.bold + group + colors.reset + '\n'
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
+            println "DEBUG: " + group + " : " + group_params
             for (param in group_params.keySet()) {
                 if (group_params.get(param).hidden && !params.show_hidden_params) {
                     num_hidden += 1
@@ -236,7 +237,6 @@ class NfcoreSchema {
             output += colors.dim + "!! Hiding $num_hidden params, use --show_hidden_params to show them !!\n" + colors.reset
         }
         output += NfcoreTemplate.dashedLine(params.monochrome_logs)
-        println "DEBUG: " + output
         return output
     }
 
