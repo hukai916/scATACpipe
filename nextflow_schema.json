@@ -262,7 +262,7 @@
         },
 
         "other_parameters": {
-            "title": "DEBUG: Other parameters",
+            "title": "Other pipeline parameters",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
