@@ -261,7 +261,7 @@
             }
         },
 
-        "adfother_parameters": {
+        "other_parameters": {
             "title": "DEBUG: Other parameters",
             "type": "object",
             "fa_icon": "fas fa-terminal",
