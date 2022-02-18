@@ -261,8 +261,8 @@
             }
         },
 
-        "test_parameters": {
-            "title": "Input FASTQs [option 3: using existing genome index]",
+        "other_parameters": {
+            "title": "TEST: other parameters",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
