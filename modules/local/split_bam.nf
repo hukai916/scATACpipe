@@ -10,7 +10,7 @@ process SPLIT_BAM {
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'split_bam', publish_id:'') }
 
-    container "hukai916/sinto_xenial:0.2"
+    container "hukai916/sinto_xenial:0.1"
 
     input:
     val sample_name
@@ -35,10 +35,10 @@ process SPLIT_BAM {
       cd split_\$f
       samtools index ../\$bam
 
-      if [ "$options.barcode_regex" == "" ]; then
+      if [[ "$options.barcode_regex" == "" || "$options.barcode_regex" == "null" || "$options.barcode_regex" == "false" ]]; then
         sinto filterbarcodes -b ../\$bam -c ../\${tsv[\$i]} -p $task.cpus
       else
-        sinto filterbarcodes --barcode_regex $options.barcode_regex -b ../\$bam -c ../\${tsv[\$i]} -p $task.cpus
+        sinto filterbarcodes --barcode_regex "$options.barcode_regex" -b ../\$bam -c ../\${tsv[\$i]} -p $task.cpus
       fi
 
       # make bw file:
