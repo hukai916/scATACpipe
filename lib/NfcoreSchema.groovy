@@ -236,8 +236,8 @@ class NfcoreSchema {
             output += colors.dim + "!! Hiding $num_hidden params, use --show_hidden_params to show them !!\n" + colors.reset
         }
         output += NfcoreTemplate.dashedLine(params.monochrome_logs)
-        return output
         println "DEBUG: " + output
+        return output
     }
 
     //
