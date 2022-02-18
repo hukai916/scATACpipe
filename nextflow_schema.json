@@ -262,7 +262,7 @@
         },
 
         "adfother_parameters": {
-            "title": "Other parameters",
+            "title": "DEBUG: Other parameters",
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Defines required parameters if input fragment files.",
