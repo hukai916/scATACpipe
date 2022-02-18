@@ -265,7 +265,7 @@
             "title": "Other pipeline parameters",
             "type": "object",
             "fa_icon": "fas fa-terminal",
-            "description": "Defines required parameters if input fragment files.",
+            "description": "Defines other pipeline related parameters.",
             "properties": {
               "read1_adapter": {
                   "type": "string",
