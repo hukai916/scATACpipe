@@ -37,6 +37,7 @@ def initOptions(Map args) {
     options.trajectory_name = args.trajectory_name ?: ''
     options.trajectory_groups = args.trajectory_groups ?: ''
     options.colorby_gene  = args.colorby_gene ?: ''
+    options.barcode_regex = args.barcode_regex ?: ''
     options.bam_coverage  = args.bam_coverage ?: ''
     options.publish_by_id = args.publish_by_id ?: false
     options.publish_dir   = args.publish_dir ?: ''
