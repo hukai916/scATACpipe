@@ -196,6 +196,7 @@ class NfcoreSchema {
         Integer desc_indent = max_chars + 14
         Integer dec_linewidth = 160 - desc_indent
         for (group in params_map.keySet()) {
+            println "DEBUG: " + group
             Integer num_params = 0
             String group_output = colors.underlined + colors.bold + group + colors.reset + '\n'
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
