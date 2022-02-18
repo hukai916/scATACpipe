@@ -227,7 +227,7 @@
                     "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
-                "--ref_bwa_index": {
+                "ref_bwa_index": {
                     "type": "string",
                     "description": "Path to refernce index folder."
                 },
