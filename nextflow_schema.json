@@ -261,7 +261,7 @@
             }
         },
 
-        "other_parameters": {
+        "adfother_parameters": {
             "title": "Other parameters",
             "type": "object",
             "fa_icon": "fas fa-terminal",
