@@ -260,51 +260,58 @@
                 }
             }
         },
+
         "other_parameters": {
-            "read1_adapter": {
-                "type": "string",
-                "description": "For trimming read1.",
-                "default": "AGATCGGAAGAGC"
-            },
-            "read2_adapter": {
-                "type": "string",
-                "description": "For trimming read2.",
-                "default": "AGATCGGAAGAGC"
-            },
-            "filter": {
-                "type": "string",
-                "description": "Algorithm for filtering bam file. Choose from 'both', 'improper', or false to skip.",
-                "default": "both"
-            },
-            "doublet_removal_algorithm": {
-                "type": "string",
-                "description": "Doublet removel method. Choose from 'amulet', 'archr', or false to skip.",
-                "default": "archr"
-            },
-            "amulet_rmsk_bed": {
-                "type": "string",
-                "description": "For '--doublet_removal_algorithm amulet' only. Path to bed file containing repeat regions."
-            },
-            "amulet_autosomes": {
-                "type": "string",
-                "description": "For '--doublet_removal_algorithm amulet' only. Path to text file containing autosomal chromosome names."
-            },
-            "archr_thread": {
-                "type": "integer",
-                "description": "Number of threads used for ArchR.",
-                "default": 4
-            },
-            "archr_scrnaseq": {
-                "type": "string",
-                "hidden": true
-            },
-            "archr_scrnaseq_grouplist": {
-                "type": "string",
-                "hidden": true
-            },
-            "custom_peaks": {
-                "type": "string",
-                "hidden": true
+            "title": "Other parameters",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Other parameters to configure PREPROCESS_DEFAULT and DOWNSTREAM_ARCHR.",
+            "properties": {
+              "read1_adapter": {
+                  "type": "string",
+                  "description": "For trimming read1.",
+                  "default": "AGATCGGAAGAGC"
+              },
+              "read2_adapter": {
+                  "type": "string",
+                  "description": "For trimming read2.",
+                  "default": "AGATCGGAAGAGC"
+              },
+              "filter": {
+                  "type": "string",
+                  "description": "Method for filtering bam file. Choose from 'both', 'improper', or false to skip.",
+                  "default": "both"
+              },
+              "doublet_removal_algorithm": {
+                  "type": "string",
+                  "description": "Method for doublet removel. Choose from 'amulet', 'archr', or false to skip.",
+                  "default": "archr"
+              },
+              "amulet_rmsk_bed": {
+                  "type": "string",
+                  "description": "For '--doublet_removal_algorithm amulet' only. Path to bed file containing repeat regions."
+              },
+              "amulet_autosomes": {
+                  "type": "string",
+                  "description": "For '--doublet_removal_algorithm amulet' only. Path to text file containing autosomal chromosome names."
+              },
+              "archr_thread": {
+                  "type": "integer",
+                  "description": "Number of threads used for ArchR.",
+                  "default": 4
+              },
+              "archr_scrnaseq": {
+                  "type": "string",
+                  "hidden": true
+              },
+              "archr_scrnaseq_grouplist": {
+                  "type": "string",
+                  "hidden": true
+              },
+              "custom_peaks": {
+                  "type": "string",
+                  "hidden": true
+              }
             }
         },
 
