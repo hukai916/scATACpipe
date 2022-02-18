@@ -261,7 +261,7 @@
             }
         },
 
-        "other_parameters": {
+        "test_parameters": {
             "title": "Other parameters",
             "type": "object",
             "fa_icon": "fas fa-terminal",
@@ -528,7 +528,7 @@
             "$ref": "#/definitions/input_fastq_option3"
         },
         {
-            "$ref": "#/definitions/other_parameters"
+            "$ref": "#/definitions/test_parameters"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
