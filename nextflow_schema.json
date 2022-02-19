@@ -527,7 +527,10 @@
             "$ref": "#/definitions/input_fastq_option3"
         },
         {
-            "$ref": "#/definitions/test_parameters"
+            "$ref": "#/definitions/other_parameters"
+        },
+        {
+            "$ref": "#/definitions/institutional_config_options"
         },
         {
             "$ref": "#/definitions/max_job_request_options"

@@ -34,7 +34,7 @@ Below is a simplified diagram to illustrate the design logic and functionalities
 
 ![scATACpipe](docs/images/scATACpipe_workflow.svg)
 
-The main functionalities of each sub-workflow are summarized below:
+The main functionalities of each sub-workflow are summarized below. You can also refer to the [output - Result folders](https://github.com/hukai916/scATACpipe/blob/main/docs/output.md#result_folders) for more details.
 
 #### PREPROCESS_DEFAULT:
 1. Add barcodes to reads
