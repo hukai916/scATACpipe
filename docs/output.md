@@ -729,9 +729,9 @@ Above means that AMULET will be used for doublet removal.
 ```
 Above means Singularity will be used and jobs will be submitted via LSF.
 
-Pipeline info is saved at [./test_data1_default_homo_sapiens/pipeline_info](#https://github.com/hukai916/scATACpipe_example/tree/main/test_data1_default_homo_sapiens/pipeline_info).
+Pipeline info is saved at [./test_data1_default_homo_sapiens/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/test_data1_default_homo_sapiens/pipeline_info).
 
-A final report is saved at [./test_data1_default_homo_sapiens/multiqc/multiqc_report.html](#https://rawcdn.githack.com/hukai916/scATACpipe_example/2f396d2abcfcedd902bee4e6b9cb8674e2181d57/test_data1_default_homo_sapiens/multiqc/multiqc_report.html)
+A final report is saved at [./test_data1_default_homo_sapiens/multiqc/multiqc_report.html](https://rawcdn.githack.com/hukai916/scATACpipe_example/2f396d2abcfcedd902bee4e6b9cb8674e2181d57/test_data1_default_homo_sapiens/multiqc/multiqc_report.html)
 
 #### Example2: default preprocessing with hg38 (UCSC)
 Command used:
@@ -760,9 +760,9 @@ Above means that the default preprocessing strategy will be used. Since `--doubl
 ```
 Above means Singularity will be used and jobs will be submitted via LSF.
 
-Pipeline info is saved at [./test_data1_default_hg38/pipeline_info](#https://github.com/hukai916/scATACpipe_example/tree/main/test_data1_default_hg38/pipeline_info).
+Pipeline info is saved at [./test_data1_default_hg38/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/test_data1_default_hg38/pipeline_info).
 
-A final report is saved at [./test_data1_default_hg38/multiqc/multiqc_report.html](#https://rawcdn.githack.com/hukai916/scATACpipe_example/2f396d2abcfcedd902bee4e6b9cb8674e2181d57/test_data1_default_hg38/multiqc/multiqc_report.html)
+A final report is saved at [./test_data1_default_hg38/multiqc/multiqc_report.html](https://rawcdn.githack.com/hukai916/scATACpipe_example/2f396d2abcfcedd902bee4e6b9cb8674e2181d57/test_data1_default_hg38/multiqc/multiqc_report.html)
 
 #### Example3: preprocessing with Chromap using hg38 (UCSC)
 Command used:
@@ -796,9 +796,9 @@ Above means that the naive barcode correction strategy will be used.
 ```
 Above means Singularity will be used and jobs will be submitted via LSF.
 
-Pipeline info is saved at [./test_data1_chromap_hg38/pipeline_info](#https://github.com/hukai916/scATACpipe_example/tree/main/test_data1_chromap_hg38/pipeline_info).
+Pipeline info is saved at [./test_data1_chromap_hg38/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/test_data1_chromap_hg38/pipeline_info).
 
-A final report is saved at [./test_data1_chromap_hg38/multiqc/multiqc_report.html](#https://rawcdn.githack.com/hukai916/scATACpipe_example/2f396d2abcfcedd902bee4e6b9cb8674e2181d57/test_data1_chromap_hg38/multiqc/multiqc_report.html)
+A final report is saved at [./test_data1_chromap_hg38/multiqc/multiqc_report.html](https://rawcdn.githack.com/hukai916/scATACpipe_example/2f396d2abcfcedd902bee4e6b9cb8674e2181d57/test_data1_chromap_hg38/multiqc/multiqc_report.html)
 
 ## Pipeline information
 <details markdown="1">
