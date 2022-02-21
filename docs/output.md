@@ -13,7 +13,7 @@
 [Examples](#example_reports)
   * [Example1: default preprocessing with homo_sapiens (Ensembl)](#example1-default-preprocessing-with-homo_sapiens-ensembl))
   * [Example2: default preprocessing with hg38 (UCSC)](#example2-default-preprocessing-with-hg38-ucsc)
-  * [Example3: chromap preprocessing with homo_sapiens (Ensembl)](#example3-preprocessing-with-chromap-using-hg38-ucsc)
+  * [Example3: chromap preprocessing with hg38 (UCSC)](#example3-preprocessing-with-chromap-using-hg38-ucsc)
 
 [Pipeline information](#pipeline-information)
 
