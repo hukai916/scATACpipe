@@ -127,9 +127,6 @@ Main pipeline parameters must be supplied with command flags or configured insid
 --filter_seurat_ilsi                [false|String]  Clusters to exclude for downstream analysis.
 --filter_seurat_harmony             [false|String]  Clusters to exclude for downstream analysis.
   # Example: --filter_seurat_harmony 'C1, C2'
-
-custom_peaks          = false // for motif enrichment/deviation module
-  # Example: --custom_peaks 'Encode_K562_GATA1 = "https://www.encodeproject.org/files/ENCFF632NQI/@@download/ENCFF632NQI.bed.gz", Encode_GM12878_CEBPB = "https://www.encodeproject.org/files/ENCFF761MGJ/@@download/ENCFF761MGJ.bed.gz", Encode_K562_Ebf1 = "https://www.encodeproject.org/files/ENCFF868VSY/@@download/ENCFF868VSY.bed.gz", Encode_K562_Pax5 = "https://www.encodeproject.org/files/ENCFF339KUO/@@download/ENCFF339KUO.bed.gz"'
 ```
 
 Module specific parameters can be adjusted by editing `conf/module.config`. Below are some examples, refer to `conf/module.config` for more examples.
@@ -198,7 +195,7 @@ An example .csv can be found [here](https://raw.githubusercontent.com/hukai916/s
 
 In addition to the FASTQ files, you must also specify a preprocessing strategy with:
 ```
---preprocess    [default|10xgenomics|chromap] Preprocess strategy. Default to default.
+--preprocess    [default|10xgenomics|chromap] Preprocessing strategy. Default to default.
 ```
 
 The genome/annotation files are also required, and 3 options are available.
@@ -219,9 +216,9 @@ The genome/annotation files are also required, and 3 options are available.
 ### Option3: using existing genome index
 If genome index files are readily available, you can skip the index-building step by directly supply the index folder.
 ```
---ref_bwa_index           [string]  Path to the bwa index folder. For '--preprocess default' only.
---ref_cellranger_index    [string]  Path to cellranger index folder. For '--preprocess 10xgenomics' only.
---ref_chromap_index       [string]  Path to chromap index folder. For '--preprocess chromap' only.
+--ref_bwa_index           [string]  For '--preprocess default' only. Path to the bwa index folder.
+--ref_cellranger_index    [string]  For '--preprocess 10xgenomics' only. Path to cellranger index folder.
+--ref_chromap_index       [string]  For '--preprocess chromap' only. Path to chromap index folder.
 --species_latin_name      [string]  Must be quoted.
 ```
 

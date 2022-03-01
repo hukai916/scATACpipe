@@ -130,10 +130,10 @@
                 },
                 "preprocess": {
                     "type": "string",
-                    "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
+                    "description": "Preprocessing method. Choose from 'default', '10xgenomics', 'chromap'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
-                "ref_fasta_ensembl|--ref_fasta_ucsc": {
+                "ref_fasta_ensembl | --ref_fasta_ucsc": {
                     "type": "string",
                     "description": "A genome name, either from ENSEMBL (e.g. homo_sapiens) or UCSC (e.g. mm10)."
                 },
@@ -149,7 +149,7 @@
                 },
                 "barcode_correction": {
                     "type": "string",
-                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs'.",
+                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs', and false.",
                     "default": "pheniqs"
                 },
                 "species_latin_name": {
@@ -175,16 +175,16 @@
                 },
                 "preprocess": {
                     "type": "string",
-                    "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
+                    "description": "Preprocessing method. Choose from 'default', '10xgenomics', 'chromap'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
                 "ref_fasta": {
                     "type": "string",
-                    "description": "Path to refernce genome file."
+                    "description": "Path to reference genome file."
                 },
                 "ref_gtf": {
                     "type": "string",
-                    "description": "Path to refernce gtf file."
+                    "description": "Path to reference gtf file."
                 },
                 "mapper": {
                     "type": "string",
@@ -198,7 +198,7 @@
                 },
                 "barcode_correction": {
                     "type": "string",
-                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs'.",
+                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs', and false.",
                     "default": "pheniqs"
                 },
                 "species_latin_name": {
@@ -224,16 +224,24 @@
                 },
                 "preprocess": {
                     "type": "string",
-                    "description": "Preprocess method. Choose from 'default', '10xgenomics'.",
+                    "description": "Preprocessing method. Choose from 'default', '10xgenomics'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
                 "ref_bwa_index": {
                     "type": "string",
-                    "description": "Path to refernce index folder."
+                    "description": "For '--preprocess default' only. Path to BWA index folder."
+                },
+                "ref_cellranger_index": {
+                    "type": "string",
+                    "description": "For '--preprocess 10xgenomics' only. Path to Cellranger index folder."
+                },
+                "ref_chromap_index": {
+                    "type": "string",
+                    "description": "For '--preprocess chromap' only. Path to Chromap index folder."
                 },
                 "ref_gtf": {
                     "type": "string",
-                    "description": "Path to refernce gtf file."
+                    "description": "Path to reference gtf file."
                 },
                 "mapper": {
                     "type": "string",
@@ -247,7 +255,7 @@
                 },
                 "barcode_correction": {
                     "type": "string",
-                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs'.",
+                    "description": "For '--preprocess default' only. Choose from 'naive', 'pheniqs', and false.",
                     "default": "pheniqs"
                 },
                 "species_latin_name": {

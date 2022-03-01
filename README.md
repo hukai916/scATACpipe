@@ -39,7 +39,8 @@ The main functionalities of each sub-workflow are summarized below. You can also
 #### PREPROCESS_DEFAULT:
 1. Add barcodes to reads
 2. Correct barcodes (optional)
-    * meanwhile, also filter out non-cells
+    * if `false`: skip barcode correction
+    * if `pheniqs` or `naive`: also filter out non-cells using "inflection point" method
 3. Trim off adapters
 4. Mapping
     * download genome/annotation or use custom genome
@@ -53,6 +54,7 @@ The main functionalities of each sub-workflow are summarized below. You can also
 1. Build 10XGENOMICS index if not supplied
     * download genome/annotation or use custom genome
 2. Execute `cellranger_atac count` command
+3. Extract fragments from valid cells according to `filtered_peak_bc_matrix/barcodes.tsv`
 
 #### PREPROCESS_CHROMAP:
 1. Build Chromap index if not supplied
@@ -112,7 +114,7 @@ git clone https://github.com/hukai916/scATACpipe.git
     * By default, the local executor will be used (`-profile local`) meaning that all jobs will be executed on your local computer.  Nextflow supports many other [executors](https://www.nextflow.io/docs/latest/executor.html) including SLURM, LSF, *etc.*. You can create a [profile](https://www.nextflow.io/docs/latest/config.html?highlight=profile#config-profiles) file to config which executor to use. Multiple profiles can be supplied with comma, e.g. `-profile docker,lsf`.
     * Please check [nf-core/configs](https://github.com/nf-core/configs#documentation) to see what other custom config files can be supplied.
 
-  * **Example run with Docker:**
+  * **Example run with Docker using local executor:**
   ```bash
   nextflow run main.nf -profile docker --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
   ```
@@ -122,7 +124,7 @@ git clone https://github.com/hukai916/scATACpipe.git
       - Output will be saved into `res_test_data1`.
       - Ensembl genome `homo_sapiens` will be downloaded and used as reference.
 
- * **Example run with Singularity:**
+ * **Example run with Singularity using LSF executor:**
   ```bash
   nextflow run main.nf -profile singularity,lsf --preprocess default --outdir res_test_data1 --input_fastq assets/sample_sheet_test_data1.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens'
   ```
