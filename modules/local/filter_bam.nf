@@ -49,7 +49,7 @@ process FILTER_BAM {
 
     # Extract paired reads:
     samtools sort -n -@ $task.cpus ${bam.baseName}.filtered.tmp.sam -o ${bam.baseName}.namesrt.tmp.sam
-    #rm ${bam.baseName}.filtered.tmp.sam
+    rm ${bam.baseName}.filtered.tmp.sam
     awk '
         BEGIN { FS=OFS="\\t" }
         FNR == 1 { getline nextline < FILENAME; }
@@ -62,11 +62,11 @@ process FILTER_BAM {
             print \$0"\\n"nextline;
           }
         }' ${bam.baseName}.namesrt.tmp.sam > ${bam.baseName}.paired.tmp.sam
-    #rm ${bam.baseName}.namesrt.tmp.sam
+    rm ${bam.baseName}.namesrt.tmp.sam
 
     # Output position sorted bam:
     samtools sort -@ $task.cpus ${bam.baseName}.paired.tmp.sam -o ${bam.baseName}.filtered.bam
-    #rm ${bam.baseName}.paired.tmp.sam
+    rm ${bam.baseName}.paired.tmp.sam
 
     num_kept=\$(samtools view -c ${bam.baseName}.filtered.bam)
     num_all=\$(samtools view -c $bam)
