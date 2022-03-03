@@ -21,9 +21,6 @@ process FILTER_BAM {
     val sample_name, emit: sample_name
     path "*.filtered.bam", emit: bam
 
-    path "*.tmp.*", emit: tmp_bam
-    path bam, emit: raw_bam
-
     script:
     // In case split_fastq is called, chunk_name remains the same as sample_name if not.
     chunk_name = bam.name.split("\\.")[0..-3].join(".") // to document "chunk" info if any
