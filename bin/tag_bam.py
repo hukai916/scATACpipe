@@ -46,11 +46,12 @@ def split_bam(infile, prefix, nproc):
         outbam = outbams[line_number % int(nproc)]
         outbam.write(read)
         line_number += 1
-
+    print("Splitting step done ...")
     # close up
     inbam.close()
+    print("inbam closed")
     [outbam.close() for outbam in outbams]
-
+    print("outbam closed")
     return(outbam_files)
 
 def set_tag_chunk(chunk, dict_tag, tag):
@@ -88,6 +89,7 @@ def set_tag_chunk(chunk, dict_tag, tag):
 
 print("Splitting BAM into " + str(nproc) + " chunks ...")
 chunks  = split_bam(bam, "tmp_chunk", nproc)
+print("Splitted!")
 
 with Pool(nproc) as p:
     chunk_bam_lists = p.map_async(
