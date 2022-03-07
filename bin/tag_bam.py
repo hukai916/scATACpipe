@@ -16,7 +16,7 @@ import re
 import subprocess
 import math
 import os
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager
 import functools
 from sinto import utils
 from os.path import exists
@@ -26,7 +26,7 @@ tagfile         = sys.argv[2]
 outname         = sys.argv[3]
 nproc           = int(sys.argv[4])
 
-dict_tag = {}
+dict_tag = Manager().dict() # to share the dictionary across processes to save memory usage
 with open(tagfile, "r") as f:
     for line in f:
         query_name, raw_barcode, corrected_barcode = line.strip().split("\t")
