@@ -81,7 +81,7 @@ def set_tag_chunk(chunk, dict_tag, tag):
     try:
         os.remove(outname_sorted)
         os.remove(outname_sorted + ".bai")
-        os.remove(chunk_name)
+        os.remove(chunk)
     except:
         pass
 
