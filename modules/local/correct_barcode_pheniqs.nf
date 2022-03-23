@@ -40,9 +40,9 @@ process CORRECT_BARCODE_PHENIQS {
     # cat ${chunk_name}.tag.tsv | awk 'BEGIN { OFS = "\\t"} { print \$1,"CB",\$2 }' > ${chunk_name}.tagfile_sinto.tsv
 
     # Step5, print stats:
-    valid_read_num=\$(cat ${chunk_name}.tag.tsv | awk '{ if (\$1 == \$2) print \$0 }' | wc -l)
-    discard_read_num=\$(cat ${chunk_name}.tag.tsv | awk '{ if (\$2 == "undetermined") print \$0 }' | wc -l)
-    rescued_read_num=\$(cat ${chunk_name}.tag.tsv | grep -v "undetermined" | awk '{ if (\$1 != \$2) print \$0 }' | wc -l)
+    valid_read_num=\$(cat ${chunk_name}.tag.tsv | awk '{ if (\$2 == \$3) print \$0 }' | wc -l)
+    discard_read_num=\$(cat ${chunk_name}.tag.tsv | awk '{ if (\$3 == "undetermined") print \$0 }' | wc -l)
+    rescued_read_num=\$(cat ${chunk_name}.tag.tsv | grep -v "undetermined" | awk '{ if (\$2 != \$3) print \$0 }' | wc -l)
 
     echo "Summary (correct_barcode): total valid: "\${valid_read_num}"; total corrected: "\${rescued_read_num}"; total discarded: "\${discard_read_num}"." > summary_${chunk_name}.txt
 
