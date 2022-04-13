@@ -31,7 +31,7 @@ import math
 
 def rm_dup(intervals, inbam, header_len_dict,
            soft_clip_5, soft_clip_3,
-           shift_forward = 4, shift_reverse = -5,
+           shift_forward = 0, shift_reverse = 0,
            barcode_regex = "[^:]*",
            outdir = ".",
            barcode_tag = "N/A",

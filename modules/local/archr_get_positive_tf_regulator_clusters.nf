@@ -24,6 +24,7 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
     """
     echo '
     library(ArchR)
+    library(ggrepel)
 
     addArchRThreads(threads = $archr_thread)
 
@@ -50,7 +51,7 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
     corGSM_MM\$TFRegulator[which(corGSM_MM\$cor > 0.5 & corGSM_MM\$padj < 0.01 & corGSM_MM\$maxDelta > quantile(corGSM_MM\$maxDelta, 0.75))] <- "YES"
     sort(corGSM_MM[corGSM_MM\$TFRegulator=="YES",1])
 
-    p <- ggplot(data.frame(corGSM_MM), aes(cor, maxDelta, color = TFRegulator)) +
+    p <- ggplot(data.frame(corGSM_MM), aes(cor, maxDelta, label =  MotifMatrix_matchName, color = TFRegulator)) +
       geom_point() +
       theme_ArchR() +
       geom_vline(xintercept = 0, lty = "dashed") +
@@ -60,7 +61,17 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
       scale_y_continuous(
         expand = c(0,0),
         limits = c(0, max(corGSM_MM\$maxDelta)*1.05)
-      )
+      ) +
+      geom_text_repel(data = subset(data.frame(corGSM_MM), TFRegulator == "YES"),
+                      size = 2,
+                      show.legend = FALSE, # otherwise there will be a hidden letter a
+                      point.padding = 0.5,
+                      force = 200,
+                      max.time = 30,
+                      segment.size = 0.3,
+                      direction = "both",
+                      segment.color = "grey50",
+                      segment.curvature = -0.1)
     plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
 
     ' > run.R

@@ -1,4 +1,6 @@
-﻿Sub-workflow,Module,Software,Functionality,Docker image,References
+﻿Sub-workflow,Module,Software,Functionality,Docker image,Reference
+INPUT_CHECK_FASTQ,SAMPLESHEET_CHECK_FASTQ,custom Python script,Performs validation of input fastq csv files.,hukai916/miniconda3_bio:0.1,
+INPUT_CHECK_FRAGMENT,SAMPLESHEET_CHECK_FRAGMENT,custom Python script,Performs validation of input fragment csv files.,hukai916/miniconda3_bio:0.1,
 PREPROCESS_DEFAULT,FASTQC,FastQC (v0.11.9) [1],Perform fastq sequence quality assessment with FastQC.,hukai916/fastqc_0.11.9:0.1,"[1] Andrews, S. (2010). FastQC:  A Quality Control Tool for High Throughput Sequence Data [Online]. Available online at: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/"
 ,SPLIT_FASTQ,bash,"Split FASTQ files into smaller chunks for each sample so that more parallel jobs can be spawned, and therefore faster.",hukai916/sinto_xenial:0.2,
 ,MATCH_CHUNK,bash,Ensure sample chunks match with sample names for downstream steps.,hukai916/sinto_xenial:0.2,

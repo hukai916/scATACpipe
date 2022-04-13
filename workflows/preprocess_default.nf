@@ -57,7 +57,7 @@ include { QUALIMAP         } from '../modules/local/qualimap'    addParams( opti
 include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
 include { COMBINE_FRAGMENTS } from '../modules/local/combine_fragments'
 include { COMBINE_BAM; COMBINE_BAM as COMBINE_BAM2 } from '../modules/local/combine_bam'
-include { FILTER_CELL } from '../modules/local/filter_cell'
+// include { FILTER_CELL } from '../modules/local/filter_cell'
 
 
 ////////////////////////////////////////////////////
