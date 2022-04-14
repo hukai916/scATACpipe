@@ -24,6 +24,7 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS2 {
     """
     echo '
     library(ArchR)
+    library(ggrepel)
 
     addArchRThreads(threads = $archr_thread)
 
