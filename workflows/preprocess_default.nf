@@ -253,6 +253,10 @@ workflow PREPROCESS_DEFAULT {
     try {
       res_files = res_files.mix(FASTQC.out.zip.collect().ifEmpty([]))
     } catch (Exception ex) {}
+    // GET_VALID_BARCODE module:
+    try {
+      res_files = res_files.mix(GET_VALID_BARCODE.out.plot.collect().ifEmpty([]))
+    } catch (Exception ex) {}
     // CORRECT_BARCODE module:
     try {
       res_files = res_files.mix(CORRECT_BARCODE.out.corrected_barcode_summary.collect().ifEmpty([]))

@@ -18,6 +18,7 @@ process GET_VALID_BARCODE {
     output:
     tuple val(sample_name), path("*_valid_barcodes_dedup_bam.txt"), path("*_valid_barcode_counts_fastq.txt"), emit: valid_barcodes_and_counts
     tuple val(sample_name), path("*_valid_barcodes_dedup_bam.txt"), emit: sample_name_valid_barcodes
+    tuple path("get_valid_barcode"), emit: report
     // sample_name, valid_barcodes, valid_barcode_counts_fastq
 
     script:
@@ -31,7 +32,7 @@ process GET_VALID_BARCODE {
     samtools view ${sample_name}.dedup.bam | awk 'BEGIN { OFS = "\\t" } match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH) }' | sort | uniq -c | awk 'BEGIN { OFS = "\\t" } { print \$2, \$1 }' > ${sample_name}_barcode_counts_dedup_bam.txt
 
     # For outfile2:
-    get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt
+    get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt --outplot get_valid_barcode/${sample_name}_valid_cells
 
     if [[ $use_whitelist == false ]]; then
       cat ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt

@@ -16,12 +16,13 @@ process GET_VALID_BARCODE_CHROMAP {
 
     output:
     tuple val(sample_name), path(frag), path("*_valid_barcodes.txt"), emit: sample_name_frag_valid_barcodes
+    tuple path("get_valid_barcode"), emit: report
 
     script:
 
     """
     # output valida barcodes:
-    get_valid_barcode_inflection.R --freq $freq --outfile ${sample_name}_valid_barcodes.txt
+    get_valid_barcode_inflection.R --freq $freq --outfile ${sample_name}_valid_barcodes.txt --outplot get_valid_barcode/${sample_name}_valid_cells
 
     """
 }

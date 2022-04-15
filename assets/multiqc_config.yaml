@@ -18,6 +18,7 @@ fn_ignore_files:
 
 module_order:
   - fastqc
+  - get_valid_barcode
   - barcode_correction
   - cutadapt
   - bam_filter

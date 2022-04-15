@@ -149,6 +149,10 @@ workflow PREPROCESS_CHROMAP {
     prep_gtf_genome     = Channel.empty()
     prep_gtf_file       = Channel.empty()
 
+    // GET_VALID_BARCODE_CHROMAP module:
+    try {
+      res_files = res_files.mix(GET_VALID_BARCODE_CHROMAP.out.plot.collect().ifEmpty([]))
+    } catch (Exception ex) {}
     try {
       prep_genome_name  = PREP_GENOME.out.genome_name
       // prep_genome       = Channel.value("run")
