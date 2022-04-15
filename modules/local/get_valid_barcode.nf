@@ -18,7 +18,7 @@ process GET_VALID_BARCODE {
     output:
     tuple val(sample_name), path("*_valid_barcodes_dedup_bam.txt"), path("*_valid_barcode_counts_fastq.txt"), emit: valid_barcodes_and_counts
     tuple val(sample_name), path("*_valid_barcodes_dedup_bam.txt"), emit: sample_name_valid_barcodes
-    tuple path("get_valid_barcode"), emit: report
+    path "get_valid_barcode", emit: report
     // sample_name, valid_barcodes, valid_barcode_counts_fastq
 
     script:

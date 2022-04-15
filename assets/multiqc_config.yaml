@@ -10,7 +10,7 @@ report_section_order:
 
 export_plots: true
 
-# Below is for scatacseqflow config:
+# Below is for scATACpipe config:
 ignore_images: false
 
 fn_ignore_files:
