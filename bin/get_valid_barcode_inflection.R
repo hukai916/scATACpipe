@@ -70,5 +70,5 @@ annotation_valid_cell_count <- paste0("Valid cell count: ", as.integer(10^valid_
 grob1 <- grobTree(textGrob(annotation_min_frag_count, hjust = 0, x=0.05, y=(min_frag_count/y[1]), gp=gpar(col="red", fontsize=13, fontface="italic")))
 grob2 <- grobTree(textGrob(annotation_valid_cell_count, x=(valid_cell_count/(max(x))), y=0.1, hjust="centre", gp=gpar(col="blue", fontsize=13, fontface="italic")))
 sp <- sp + annotation_custom(grob1) + annotation_custom(grob2)
-ggsave(paste0(opt$outplot, ".jpg"),  width = 6, height = 6)
+ggsave(paste0(opt$outplot, ".jpeg"),  width = 6, height = 6)
 ggsave(paste0(opt$outplot, ".pdf"),  width = 6, height = 6)
