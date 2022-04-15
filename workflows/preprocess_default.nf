@@ -255,7 +255,7 @@ workflow PREPROCESS_DEFAULT {
     } catch (Exception ex) {}
     // GET_VALID_BARCODE module:
     try {
-      res_files = res_files.mix(GET_VALID_BARCODE.out.plot.collect().ifEmpty([]))
+      res_files = res_files.mix(GET_VALID_BARCODE.out.report.collect().ifEmpty([]))
     } catch (Exception ex) {}
     // CORRECT_BARCODE module:
     try {

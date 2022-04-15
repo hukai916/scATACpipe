@@ -151,7 +151,7 @@ workflow PREPROCESS_CHROMAP {
 
     // GET_VALID_BARCODE_CHROMAP module:
     try {
-      res_files = res_files.mix(GET_VALID_BARCODE_CHROMAP.out.plot.collect().ifEmpty([]))
+      res_files = res_files.mix(GET_VALID_BARCODE_CHROMAP.out.report.collect().ifEmpty([]))
     } catch (Exception ex) {}
     try {
       prep_genome_name  = PREP_GENOME.out.genome_name
