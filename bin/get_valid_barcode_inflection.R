@@ -5,6 +5,7 @@
 library(optparse)
 library(grid)
 library(dplyr)
+library(ggplot2)
 
 option_list = list(
 	make_option(c("--freq"), type="character", default=NULL,
