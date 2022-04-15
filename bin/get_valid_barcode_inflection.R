@@ -59,7 +59,7 @@ names(data) <- c("log10(cell count)", "log10(fragment count)")
 min_frag_count <- log10(cutoff_count) # horizontal line
 valid_cell_count <- log10(num_valid_barcodes) # vertical line
 
-sp <- ggplot(data=data, aes(x=`log10(cell count)`, y=`log10(barcode frequency per cell)`)) +
+sp <- ggplot(data=data, aes(x=`log10(cell count)`, y=`log10(fragment count)`)) +
 				theme(text = element_text(size = 16)) +
 				geom_point() +
 				geom_vline(xintercept = valid_cell_count, linetype = "dotted", color = "blue", size = 1) +
