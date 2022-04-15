@@ -22,7 +22,7 @@ process GET_VALID_BARCODE_CHROMAP {
 
     """
     # output valida barcodes:
-    mkdir get_valid_barcode
+    mkdir ${sample_name}_get_valid_barcode
     get_valid_barcode_inflection.R --freq $freq --outfile ${sample_name}_valid_barcodes.txt --outplot ${sample_name}_get_valid_barcode/${sample_name}_valid_cells
 
     """
