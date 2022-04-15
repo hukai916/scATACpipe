@@ -32,6 +32,7 @@ process GET_VALID_BARCODE {
     samtools view ${sample_name}.dedup.bam | awk 'BEGIN { OFS = "\\t" } match(\$1, /[^:]*/) { print substr(\$1, RSTART, RLENGTH) }' | sort | uniq -c | awk 'BEGIN { OFS = "\\t" } { print \$2, \$1 }' > ${sample_name}_barcode_counts_dedup_bam.txt
 
     # For outfile2:
+    mkdir get_valid_barcode
     get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt --outplot get_valid_barcode/${sample_name}_valid_cells
 
     if [[ $use_whitelist == false ]]; then
