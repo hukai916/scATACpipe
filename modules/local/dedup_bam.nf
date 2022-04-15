@@ -19,6 +19,7 @@ process DEDUP_BAM {
     output:
     tuple val(sample_name), path("*.dedup.bam"), emit: sample_name_bam
     path "*.dedup.bam", emit: bam
+    path "summary_rm_*", emit: dedup_summary
 
     script:
 

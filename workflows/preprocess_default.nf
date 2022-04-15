@@ -265,9 +265,9 @@ workflow PREPROCESS_DEFAULT {
     try {
       res_files = res_files.mix(CORRECT_BARCODE_PHENIQS.out.corrected_barcode_summary.collect().ifEmpty([]))
     } catch (Exception ex) {}
-    // REMOVE_DUPLICATE module:
+    // DEDUP_BAM2 module:
     try {
-      res_files = res_files.mix(REMOVE_DUPLICATE.out.remove_duplicate_summary.collect().ifEmpty([]))
+      res_files = res_files.mix(DEDUP_BAM2.out.dedup_summary.collect().ifEmpty([]))
     } catch (Exception ex) {}
     // CUTADAPT module:
     try {
