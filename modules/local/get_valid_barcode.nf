@@ -18,7 +18,7 @@ process GET_VALID_BARCODE {
     output:
     tuple val(sample_name), path("*_valid_barcodes_dedup_bam.txt"), path("*_valid_barcode_counts_fastq.txt"), emit: valid_barcodes_and_counts
     tuple val(sample_name), path("*_valid_barcodes_dedup_bam.txt"), emit: sample_name_valid_barcodes
-    path "get_valid_barcode", emit: report
+    path "*get_valid_barcode", emit: report
     // sample_name, valid_barcodes, valid_barcode_counts_fastq
 
     script:
@@ -33,7 +33,7 @@ process GET_VALID_BARCODE {
 
     # For outfile2:
     mkdir get_valid_barcode
-    get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt --outplot get_valid_barcode/${sample_name}_valid_cells
+    get_valid_barcode_inflection.R --freq ${sample_name}_barcode_counts_dedup_bam.txt --outfile ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt --outplot ${sample_name}_get_valid_barcode/${sample_name}_valid_cells
 
     if [[ $use_whitelist == false ]]; then
       cat ${sample_name}_valid_barcode_counts_dedup_bam_temp.txt | cut -f 1 > ${sample_name}_valid_barcodes_dedup_bam.txt
