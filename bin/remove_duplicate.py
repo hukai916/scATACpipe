@@ -36,7 +36,6 @@ def rm_dup(intervals, inbam, header_len_dict,
            outdir = ".",
            barcode_tag = "N/A",
            max_frag_len = 5000):
-
     temp_name_start = "_".join([str(intervals[0][i]) for i in [0, 1]])
     temp_name_end   = "_".join([str(intervals[-1][i]) for i in [0, 2]])
     temp_name       = temp_name_start + "_to_" + temp_name_end
@@ -94,13 +93,13 @@ def rm_dup(intervals, inbam, header_len_dict,
                         left_read_check = 1
                         match_5   = re.search(soft_clip_5, cigar)
                         match_3   = re.search(soft_clip_3, cigar)
-                        if match_5:
+                        if len(match_5.groups()) > 0:
                             left_read.reference_start = left_read.reference_start - int(match_5.group(1)) + shift_forward
                         else:
                             left_read.reference_start = left_read.reference_start + shift_forward
-                        if match_3:
+                        if len(match_3.groups()) > 0::
                             left_read_reference_end = left_read.reference_end + int(match_3.group(1))
-                        if match_3 or match_5:
+                        if len(match_5.groups()) or len(match_3.groups()):
                             soft_clip_num += 1
 
                         # ensure reads are within boundaries:
@@ -116,15 +115,15 @@ def rm_dup(intervals, inbam, header_len_dict,
                         right_read_check = 1
                         match_3    = re.search(soft_clip_3, cigar)
                         match_5    = re.search(soft_clip_5, cigar)
-                        if match_3:
+                        if len(match_3.groups()) > 0::
                             # frag_end_pos = right_read.reference_end + int(match_3.group(1)) + shift_reverse
                             right_read_reference_end = right_read.reference_end + int(match_3.group(1)) + shift_reverse
                         else:
                             # frag_end_pos = right_read.reference_end + shift_reverse
                             right_read_reference_end = right_read.reference_end + shift_reverse
-                        if match_5:
+                        if len(match_5.groups()) > 0::
                             right_read.reference_start = right_read.reference_start - int(match_5.group(1))
-                        if match_3 or match_5:
+                        if len(match_5.groups())  or len(match_3.groups()) :
                             soft_clip_num += 1
 
                         # ensure reads are within boundaries:
@@ -212,9 +211,11 @@ if __name__ == "__main__":
                         help = 'directory for output intermediate bam file.')
     parser.add_argument('--nproc', type = int, default = 1,
                         help = "Number of cores for parallel computing. (default: %(default)i)")
-    parser.add_argument('--shift_forward', type = int, default = 4,
+    parser.add_argument('--extend_softclip', type = int, default = 1,
+                        help = "Whether or not to extend soft clips: 1 for yes, 0 for no. (default: %(default)i)")
+    parser.add_argument('--shift_forward', type = int, default = 0,
                         help = "Number of bases to shift for the reads mapped to forward strand (+4 for Tn5). (default: %(default)i)")
-    parser.add_argument('--shift_reverse', type = int, default = -5,
+    parser.add_argument('--shift_reverse', type = int, default = 0,
                         help = "Number of bases to shift for the reads mapped to reverse strand (-5 for Tn5). (default: %(default)i)")
     parser.add_argument('--barcode_regex', type = str, default = '[^:]*',
                         help = 'Regular expression (must be double quoted) that matches the barcode in name. (default: "%(default)s")')
@@ -243,8 +244,13 @@ if __name__ == "__main__":
     header_length =  list(inbam.lengths)
     header_len_dict = dict(zip(header_chr , header_length))
 
-    soft_clip_5 = re.compile(r'^(\d+)S')
-    soft_clip_3 = re.compile(r'(\d+)S$')
+    extend_softclip = args.extend_softclip
+    if extend_softclip:
+        soft_clip_5 = re.compile(r'^(\d+)S')
+        soft_clip_3 = re.compile(r'(\d+)S$')
+    else:
+        soft_clip_5 = re.compile(r'')
+        soft_clip_3 = re.compile(r'')
     inbam.close()
 
     if (not os.path.exists(args.outdir)):

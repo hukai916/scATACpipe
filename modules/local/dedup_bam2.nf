@@ -4,7 +4,7 @@ include { initOptions; saveFiles; getSoftwareName } from './functions'
 params.options = [:]
 options        = initOptions(params.options)
 
-process DEDUP_BAM {
+process DEDUP_BAM2 {
     label 'process_medium'
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
@@ -25,7 +25,7 @@ process DEDUP_BAM {
 
     """
     # Deduplicate bam file with remove_duplicate.py:
-    remove_duplicate.py --inbam $bam --barcode_tag $barcode_tag $options.args --outdir ./ --outbam ${sample_name}.dedup.bam --nproc $task.cpus
+    remove_duplicate.py --inbam $bam --barcode_tag $barcode_tag --extend_softclip 0 --outdir ./ --outbam ${sample_name}.dedup.bam --nproc $task.cpus
 
     """
 

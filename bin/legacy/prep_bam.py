@@ -129,7 +129,7 @@ def prep_bam(contig, inbam, header_len_dict,
     outbam.close()
     return  [outname, dict(soft_clip_num = soft_clip_num,
                           no_corrected_barcode_num = no_corrected_barcode_num,
-                          not_properly_mapped_num = not_properly_mapped_num
+                          not_properly_mapped_num = not_properly_mapped_num)
             ]
 
 if __name__ == "__main__":
