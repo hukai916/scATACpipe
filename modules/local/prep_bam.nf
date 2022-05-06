@@ -25,7 +25,7 @@ process PREP_BAM {
     """
     # Prepare bam files for combine_bam.nf module:
     # 1. Copy cell barcode from name to tag (default to CR (cell barcode reported by sequencer));
-    # 2. Shift reads to compensate for Tn5;
+    # 2. Shift reads to compensate for Tn5: default to 0 (get_fragment.nf default to +4/-5);
     # 3. Extend soft clips;
     # 4. Add RG tag using barcode.
 
