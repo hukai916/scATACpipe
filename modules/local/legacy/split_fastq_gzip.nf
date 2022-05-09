@@ -9,7 +9,7 @@ process SPLIT_FASTQ {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'split_fastq', publish_id:'') }
-    container "hukai916/pigz_xenial:0.1"
+    container "hukai916/sinto_xenial:0.2"
 
     input:
     tuple val(sample_name), path(read1_fastq), path(read2_fastq), path(barcode_fastq)
@@ -25,9 +25,9 @@ process SPLIT_FASTQ {
 
     """
     # default to 20M reads (80000000) per chunk
-    pigz -dc -p $task.cpus $read1_fastq | split --lines=80000000 --filter='pigz -p $task.cpus \${FILE}.fastq.gz' - R1_${sample_name}_${sample_count}_ &
-    pigz -dc -p $task.cpus $read2_fastq | split --lines=80000000 --filter='pigz -p $task.cpus \${FILE}.fastq.gz' - R2_${sample_name}_${sample_count}_ &
-    pigz -dc -p 3 $barcode_fastq | split --lines=80000000 --filter='pigz -p $task.cpus \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_ &
+    zcat $read1_fastq | split --lines=80000000 --filter='gzip > \${FILE}.fastq.gz' - R1_${sample_name}_${sample_count}_ &
+    zcat $read2_fastq | split --lines=80000000 --filter='gzip > \${FILE}.fastq.gz' - R2_${sample_name}_${sample_count}_ &
+    zcat $barcode_fastq | split --lines=80000000 --filter='gzip > \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_ &
 
     """
 }
