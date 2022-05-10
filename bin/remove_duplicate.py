@@ -97,7 +97,7 @@ def rm_dup(intervals, inbam, header_len_dict,
                             left_read.reference_start = left_read.reference_start - int(match_5.group(1)) + shift_forward
                         else:
                             left_read.reference_start = left_read.reference_start + shift_forward
-                        if len(match_3.groups()) > 0::
+                        if len(match_3.groups()) > 0:
                             left_read_reference_end = left_read.reference_end + int(match_3.group(1))
                         if len(match_5.groups()) or len(match_3.groups()):
                             soft_clip_num += 1
@@ -115,15 +115,15 @@ def rm_dup(intervals, inbam, header_len_dict,
                         right_read_check = 1
                         match_3    = re.search(soft_clip_3, cigar)
                         match_5    = re.search(soft_clip_5, cigar)
-                        if len(match_3.groups()) > 0::
+                        if len(match_3.groups()) > 0:
                             # frag_end_pos = right_read.reference_end + int(match_3.group(1)) + shift_reverse
                             right_read_reference_end = right_read.reference_end + int(match_3.group(1)) + shift_reverse
                         else:
                             # frag_end_pos = right_read.reference_end + shift_reverse
                             right_read_reference_end = right_read.reference_end + shift_reverse
-                        if len(match_5.groups()) > 0::
+                        if len(match_5.groups()) > 0:
                             right_read.reference_start = right_read.reference_start - int(match_5.group(1))
-                        if len(match_5.groups())  or len(match_3.groups()) :
+                        if len(match_5.groups()) or len(match_3.groups()):
                             soft_clip_num += 1
 
                         # ensure reads are within boundaries:
