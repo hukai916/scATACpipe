@@ -182,8 +182,10 @@ FASTQ file paths (full path) must be saved into a **.csv** file (see below) and 
 
 ```
 sample_name,path_fastq_1,path_fastq_2,path_barcode
-SAMPLE_1,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz
-SAMPLE_2,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz,/full_path/xxx.fastq.gz
+SAMPLE_1,/full_path/xxx.L001.fastq.gz,/full_path/xxx.L001.fastq.gz,/full_path/xxx.L001.fastq.gz
+SAMPLE_1,/full_path/xxx.L002.fastq.gz,/full_path/xxx.L002.fastq.gz,/full_path/xxx.L002.fastq.gz
+SAMPLE_2,/full_path/xxx.L001.fastq.gz,/full_path/xxx.L001.fastq.gz,/full_path/xxx.L001.fastq.gz
+SAMPLE_2,/full_path/xxx.L002.fastq.gz,/full_path/xxx.L002.fastq.gz,/full_path/xxx.L002.fastq.gz
 ```
 | Column       | Description                                                                            |
 |--------------|----------------------------------------------------------------------------------------|

@@ -224,7 +224,7 @@
                 },
                 "preprocess": {
                     "type": "string",
-                    "description": "Preprocessing method. Choose from 'default', '10xgenomics'.",
+                    "description": "Preprocessing method. Choose from 'default', '10xgenomics', 'chromap'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
                 "ref_bwa_index": {
@@ -275,6 +275,11 @@
             "fa_icon": "fas fa-terminal",
             "description": "Defines other pipeline related parameters.",
             "properties": {
+              "split_fastq": {
+                  "type": "string",
+                  "description": "Whether or not to split fastq into smaller chunks.",
+                  "default": "false"
+              },
               "read1_adapter": {
                   "type": "string",
                   "description": "For trimming read1.",
