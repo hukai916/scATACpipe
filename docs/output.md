@@ -185,17 +185,6 @@ Also see **module references**: [csv](https://github.com/hukai916/scATACpipe/blo
 * `xxx` represents each sample name.
 </details>
 
-<details markdown="1">
-<summary>Module: QUALIMAP</summary>
-
-* `./results/dedup/`: Various QC plots generated with Qualimap.
-    * ./xxx/images_qualimapReport
-    * ./xxx/qualimapReport.html
-    * ./xxx/genome_results.txt
-    * ./xxx/raw_data_qualimapReport
-* `xxx` represents each sample name.
-</details>
-
 #### PREPROCESS_10XGENOMICS
 <details markdown="1">
 <summary>Module: CELLRANGER_INDEX</summary>
