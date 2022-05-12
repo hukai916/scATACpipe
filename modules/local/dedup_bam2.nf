@@ -25,7 +25,7 @@ process DEDUP_BAM2 {
 
     """
     # Deduplicate bam file with remove_duplicate.py:
-    remove_duplicate.py --inbam $bam --barcode_tag $barcode_tag --extend_softclip 0 --outdir ./ --outbam ${sample_name}.dedup.bam --nproc $task.cpus
+    remove_duplicate2.py --inbam $bam --barcode_tag $barcode_tag --extend_softclip 0 --outdir ./ --outbam ${sample_name}.dedup.bam --nproc $task.cpus
 
     """
 
