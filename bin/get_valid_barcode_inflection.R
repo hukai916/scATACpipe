@@ -14,6 +14,8 @@ option_list = list(
 							help="Output filename", metavar="character"),
 	make_option(c("--outplot"), type="character", default="valid_barcode_plot",
 							help="Output plotname", metavar="character"))
+	make_option(c("--cutoff_sd"), type="double", default=2,
+							help="Standard deviation cutoff used to restrict search space for valid barcodes.", metavar="double"))
 
 opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
@@ -40,7 +42,7 @@ subset0 <- which(diff(y) < 0)
 d <- density(x[subset0])
 
 # Get the truncated range:
-subset1 <- which(d$y > max(d$y) - 3 * sd(d$y))
+subset1 <- which(d$y > max(d$y) - opt$cutoff_sd * sd(d$y))
 start <- d$x[min(subset1)]
 end   <- d$x[max(subset1)]
 
