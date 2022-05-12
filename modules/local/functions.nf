@@ -17,6 +17,7 @@ def getSoftwareName(task_process) {
 def initOptions(Map args) {
     def Map options = [:]
     options.args          = args.args ?: ''
+    options.argsx         = args.args ?: ''
     options.args2         = args.args2 ?: ''
     options.args3         = args.args3 ?: ''
     options.read_count_cutoff = args.read_count_cutoff ?: ''
