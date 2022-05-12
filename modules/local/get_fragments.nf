@@ -23,7 +23,7 @@ process GET_FRAGMENTS {
 
     """
     # first index the bam file
-    samtools index $options.args $bam
+    samtools index $bam
 
     # then, generate the fragments file
     sinto fragments $options.args --nproc $task.cpus --bam $bam -f fragments.tsv --barcodetag CB
