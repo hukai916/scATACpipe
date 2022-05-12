@@ -21,11 +21,11 @@ process GET_VALID_BARCODE_CHROMAP {
     script:
 
     """
-    echo $options.args > test1.txt
+    echo $options.argsx > test1.txt
     # output valida barcodes:
     mkdir ${sample_name}_get_valid_barcode
     echo $options.args > test.txt
-    get_valid_barcode_inflection.R $options.args --freq $freq --outfile ${sample_name}_valid_barcodes.txt --outplot ${sample_name}_get_valid_barcode/${sample_name}_valid_cells
+    get_valid_barcode_inflection.R $options.argsx $options.args --freq $freq --outfile ${sample_name}_valid_barcodes.txt --outplot ${sample_name}_get_valid_barcode/${sample_name}_valid_cells
 
     """
 }
