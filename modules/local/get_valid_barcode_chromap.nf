@@ -21,6 +21,7 @@ process GET_VALID_BARCODE_CHROMAP {
     script:
 
     """
+    echo $options.args > test1.txt
     # output valida barcodes:
     mkdir ${sample_name}_get_valid_barcode
     echo $options.args > test.txt
