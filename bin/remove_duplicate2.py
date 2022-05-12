@@ -94,13 +94,13 @@ def rm_dup(intervals, inbam, header_len_dict,
                         match_5   = re.search(soft_clip_5, cigar)
                         match_3   = re.search(soft_clip_3, cigar)
                         _extend   = 0
-                        if match_5 == re.compile(r'') or isinstance(match_5, type(None)):
+                        if soft_clip_5 == re.compile(r'') or isinstance(match_5, type(None)):
                             left_read.reference_start = left_read.reference_start + shift_forward
                         else:
                             left_read.reference_start = left_read.reference_start - int(match_5.group(1)) + shift_forward
                             _extend += 1
 
-                        if not (isinstance(match_3, type(None)) or match_3 == re.compile(r'')):
+                        if not (isinstance(match_3, type(None)) or soft_clip_3 == re.compile(r'')):
                             left_read_reference_end = left_read.reference_end + int(match_3.group(1))
 
                         if _extend:
@@ -120,7 +120,7 @@ def rm_dup(intervals, inbam, header_len_dict,
                         match_3    = re.search(soft_clip_3, cigar)
                         match_5    = re.search(soft_clip_5, cigar)
                         _extend    = 0
-                        if match_3 == re.compile(r'') or isinstance(match_3, type(None)):
+                        if soft_clip_3 == re.compile(r'') or isinstance(match_3, type(None)):
                             # frag_end_pos = right_read.reference_end + shift_reverse
                             right_read_reference_end = right_read.reference_end + shift_reverse
                         else:
@@ -128,7 +128,7 @@ def rm_dup(intervals, inbam, header_len_dict,
                             right_read_reference_end = right_read.reference_end + int(match_3.group(1)) + shift_reverse
                             _extend += 1
 
-                        if not (isinstance(match_5, type(None)) or match_5 == re.compile(r'')):
+                        if not (isinstance(match_5, type(None)) or soft_clip_5 == re.compile(r'')):
                             right_read.reference_start = right_read.reference_start - int(match_5.group(1))
                             _extend += 1
 
