@@ -20,6 +20,7 @@ process FRAG_TO_FREQ {
     script:
 
     """
+    echo $options.args > test.txt
     frag_to_freq.py $fragments freq_${sample_name}.sorted.tsv
     bgzip freq_${sample_name}.sorted.tsv
 
