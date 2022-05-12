@@ -21,9 +21,7 @@ process CHROMAP_INDEX {
     script:
 
     """
-    echo $options.args > run.txt
-    #chromap $options.args -i -r $genome_fasta -o chromap_index_$genome_name
-    chromap -i -r $genome_fasta -o chromap_index_$genome_name
+    chromap $options.args -i -r $genome_fasta -o chromap_index_$genome_name
 
     """
 }
