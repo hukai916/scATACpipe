@@ -13,7 +13,7 @@ option_list = list(
 	make_option(c("--outfile"), type="character", default="valid_barcode_frequency.txt",
 							help="Output filename", metavar="character"),
 	make_option(c("--outplot"), type="character", default="valid_barcode_plot",
-							help="Output plotname", metavar="character"))
+							help="Output plotname", metavar="character"),
 	make_option(c("--cutoff_sd"), type="double", default=2,
 							help="Standard deviation cutoff used to restrict search space for valid barcodes.", metavar="double"))
 
