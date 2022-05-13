@@ -142,13 +142,14 @@ workflow PREPROCESS_CHROMAP {
     // FILTER_CELL (sample_name_bam_fragment_valid_barcodes)
     // tuple val(sample_name), path(bam), path(fragment), path(filtered_barcode)
 
+    res_files           = Channel.empty()
 
     // Emit PREP_GENOME output if PREP_GENOME is invoked.
     prep_genome_name    = Channel.empty()
     prep_genome_fasta   = Channel.empty()
     prep_gtf_genome     = Channel.empty()
     prep_gtf_file       = Channel.empty()
-
+    
     // GET_VALID_BARCODE_CHROMAP module:
     try {
       res_files = res_files.mix(GET_VALID_BARCODE_CHROMAP.out.report.collect().ifEmpty([]))
