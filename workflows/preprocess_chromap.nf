@@ -36,8 +36,8 @@ include { PREP_GTF } from '../modules/local/prep_gtf'
 include { CHROMAP_INDEX } from '../modules/local/chromap_index' addParams( options: modules['chromap_index'] )
 include { CHROMAP_ATAC } from '../modules/local/chromap_atac' addParams( options: modules['chromap_atac'] )
 include { GET_WHITELIST_CHROMAP } from '../modules/local/get_whitelist_chromap'
-include { FRAG_TO_FREQ } from '../modules/local/frag_to_freq'
-include { GET_VALID_BARCODE_CHROMAP } from '../modules/local/get_valid_barcode_chromap'
+include { FRAG_TO_FREQ } from '../modules/local/frag_to_freq' addParams( options: modules['frag_to_freq'] )
+include { GET_VALID_BARCODE_CHROMAP } from '../modules/local/get_valid_barcode_chromap' addParams( options: modules['get_valid_barcode_chromap'] )
 include { FILTER_CELL_CHROMAP } from '../modules/local/filter_cell_chromap'
 
 

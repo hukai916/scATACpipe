@@ -50,9 +50,9 @@ include { BUILD_GENE_ANNOTATION } from '../modules/local/build_gene_annotation' 
 include { BUILD_GENOME_ANNOTATION } from '../modules/local/build_genome_annotation' addParams( options: modules['build_genome_annotation'] )
 include { FILTER_BAM       } from '../modules/local/filter_bam'    addParams( options: modules['filter_bam'] )
 // include { PREP_BAM         } from '../modules/local/prep_bam'    addParams( options: modules['prep_bam'] )
-include { TAG_BAM          } from '../modules/local/tag_bam'
-include { DEDUP_BAM        } from '../modules/local/dedup_bam'
-include { DEDUP_BAM2       } from '../modules/local/dedup_bam2'
+include { TAG_BAM          } from '../modules/local/tag_bam'  addParams( options: modules['tag_bam'] )
+include { DEDUP_BAM        } from '../modules/local/dedup_bam' addParams( options: modules['dedup_bam'] )
+include { DEDUP_BAM2       } from '../modules/local/dedup_bam2' addParams( options: modules['dedup_bam2'] )
 // include { ADD_BARCODE_TO_TAG } from '../modules/local/add_barcode_to_tag'
 include { QUALIMAP         } from '../modules/local/qualimap'    addParams( options: modules['qualimap'] )
 include { GET_FRAGMENTS    } from '../modules/local/get_fragments'    addParams( options: modules['get_fragments'] )
