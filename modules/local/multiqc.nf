@@ -21,7 +21,7 @@ process MULTIQC {
     script:
 
     """
-    echo $res_file > test.txt
+    ls * > test.txt
     multiqc . --config *.yaml
 
     """
