@@ -149,7 +149,7 @@ workflow PREPROCESS_CHROMAP {
     prep_genome_fasta   = Channel.empty()
     prep_gtf_genome     = Channel.empty()
     prep_gtf_file       = Channel.empty()
-    
+
     // GET_VALID_BARCODE_CHROMAP module:
     try {
       res_files = res_files.mix(GET_VALID_BARCODE_CHROMAP.out.report.collect().ifEmpty([]))
@@ -167,8 +167,6 @@ workflow PREPROCESS_CHROMAP {
     try {
       prep_gtf_file = PREP_GTF.out.gtf
     } catch (Exception ex) { }
-
-    res_files = Channel.empty()
 
   emit:
     res_files // out[0]: res folders for MultiQC report
