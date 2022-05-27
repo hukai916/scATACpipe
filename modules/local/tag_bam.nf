@@ -27,6 +27,7 @@ process TAG_BAM {
     """
     samtools index $bam
     tag_bam.py $bam $tagfile ${chunk_name}.tag.bam $task.cpus
+    rm tmp_chunk_*.bam
 
     """
 }

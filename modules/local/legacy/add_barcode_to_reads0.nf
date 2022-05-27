@@ -29,8 +29,7 @@ process ADD_BARCODE_TO_READS {
     """
     # use the first read length from fastq file to determine the length since -b is required by sinto.
     barcode_length=\$((zcat $barcode_fastq || true) | awk 'NR==2 {print length(\$0); exit}')
-    # sinto barcode $options.args --barcode_fastq $barcode_fastq --read1 $read1_fastq --read2 $read2_fastq -b \$barcode_length
-    addbarcodes_parallel.py $barcode_fastq \$barcode_length $read1_fastq $read2_fastq $task.cpus
+    sinto barcode $options.args --barcode_fastq $barcode_fastq --read1 $read1_fastq --read2 $read2_fastq -b \$barcode_length
 
     # rename the files:
     mv $read1_barcoded_fastq R1_${sample_name}_${sample_count}.barcoded.fastq.gz

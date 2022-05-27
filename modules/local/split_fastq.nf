@@ -27,7 +27,7 @@ process SPLIT_FASTQ {
     # default to 20M reads (80000000) per chunk
     pigz -dc -p $task.cpus $read1_fastq | split --lines=80000000 --filter='pigz -p $task.cpus > \${FILE}.fastq.gz' - R1_${sample_name}_${sample_count}_ &
     pigz -dc -p $task.cpus $read2_fastq | split --lines=80000000 --filter='pigz -p $task.cpus > \${FILE}.fastq.gz' - R2_${sample_name}_${sample_count}_ &
-    pigz -dc -p 3 $barcode_fastq | split --lines=80000000 --filter='pigz -p $task.cpus > \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_ &
+    pigz -dc -p $task.cpus $barcode_fastq | split --lines=80000000 --filter='pigz -p $task.cpus > \${FILE}.fastq.gz' - barcode_${sample_name}_${sample_count}_ &
 
     """
 }
