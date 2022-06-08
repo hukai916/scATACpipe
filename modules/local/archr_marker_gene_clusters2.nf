@@ -93,6 +93,8 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
       heatmapGS <- markerHeatmap(
         seMarker = markersGS,
         labelMarkers = markerGenes2labeled,
+        binaryClusterRows = TRUE,
+        clusterCols = TRUE,
         transpose = TRUE,
         $options.getMarkers_cutoff
       )

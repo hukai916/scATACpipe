@@ -116,6 +116,9 @@ process ARCHR_CLUSTERING {
     p1 <- pheatmap::pheatmap(
       mat = as.matrix(cM),
       color = paletteContinuous("whiteBlue"),
+      number_format = "%.2f",
+      number_color = "red",
+      fontsize_number = 8,
       border_color = "black",
       cellheight = cellheight
     )
