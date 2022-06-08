@@ -39,6 +39,15 @@ process ARCHR_CLUSTERING {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
+    # get rid of undesired samples if supplied:
+    if (!("$filter_sample" == "NA")) {
+      filter_sample <- unique(str_trim(str_split("$filter_sample", ",")[[1]], side = "both"))
+      idxPass <- which(!proj\$Sample %in% filter_sample)
+      cellsPass <- proj\$cellNames[idxPass]
+      proj <- proj[cellsPass,]
+    }
+
+    # first round of clustering: before removing undesired clusters
     if ("Harmony" %in% names(proj@reducedDims)) {
       # Clustering with Seurat using Harmony
       proj <- addClusters(
@@ -48,7 +57,7 @@ process ARCHR_CLUSTERING {
         name = "Clusters",
         $options.args
       )
-    } else {
+    } else if ("IterativeLSI" %in% names(proj@reducedDims)) {
       # Clustering with Seurat using IterativeLSI
       proj <- addClusters(
         input = proj,
@@ -59,29 +68,39 @@ process ARCHR_CLUSTERING {
       )
     }
 
-    # get rid of undesired clusters if supplied:
+    # get rid of undesired clusters if supplied and reclustering:
     if ("Harmony" %in% names(proj@reducedDims)) {
       if (!("$filter_seurat_harmony" == "NA")) {
         filter_clusters <- unique(str_trim(str_split("$filter_seurat_harmony", ",")[[1]], side = "both"))
         idxPass <- which(!proj\$Clusters %in% filter_clusters)
         cellsPass <- proj\$cellNames[idxPass]
         proj <- proj[cellsPass,]
+
+        # second round of clustering:
+        proj <- addClusters(
+          input = proj,
+          reducedDims = "Harmony",
+          method = "Seurat",
+          name = "Clusters",
+          $options.args
+        )
       }
-    } else {
+    } else if ("IterativeLSI" %in% names(proj@reducedDims)) {
       if (!("$filter_seurat_iLSI" == "NA")) {
         filter_clusters <- unique(str_trim(str_split("$filter_seurat_iLSI", ",")[[1]], side = "both"))
         idxPass <- which(!proj\$Clusters %in% filter_clusters)
         cellsPass <- proj\$cellNames[idxPass]
         proj <- proj[cellsPass,]
-      }
-    }
 
-    # get rid of undesired samples if supplied:
-    if (!("$filter_sample" == "NA")) {
-      filter_sample <- unique(str_trim(str_split("$filter_sample", ",")[[1]], side = "both"))
-      idxPass <- which(!proj\$Sample %in% filter_sample)
-      cellsPass <- proj\$cellNames[idxPass]
-      proj <- proj[cellsPass,]
+        # second round of clustering:
+        proj <- addClusters(
+          input = proj,
+          reducedDims = "IterativeLSI",
+          method = "Seurat",
+          name = "Clusters",
+          $options.args
+        )
+      }
     }
 
     saveRDS(proj, file = "proj_clustering.rds")
