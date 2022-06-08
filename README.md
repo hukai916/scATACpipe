@@ -149,7 +149,7 @@ The scATACpipe workflow comes with documentation about the pipeline: [usage](htt
 
 ## Credits
 
-scATACpipe was originally designed and written by Kai Hu, Haibo Liu, and Julie Lihua Zhu.
+scATACpipe was originally designed and written by Kai Hu, Haibo Liu, and Lihua Julie Zhu.
 
 We thank the following people for their extensive assistance in the development
 of this pipeline: Nathan Lawson.
@@ -163,4 +163,6 @@ If you would like to extend scATACpipe for your own good, feel free to fork the 
 <!-- TODO If you use scATACpipe for your analysis, please cite it using the following doi: [](https://) -->
 Please kindly cite scATACpipe [to be added] if you use it for your research.
 
-A complete list of references for the tools used by scATACpipe can be found [here](https://github.com/hukai916/scATACpipe/docs/scATACpipe_module_references.xlsx). Please consider citing them too, it won't cost a penny.
+A ***Template of Method*** can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md).
+
+A complete list of references for the tools used by scATACpipe can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/scATACpipe_module_references.xlsx).

@@ -16,6 +16,7 @@ process ARCHR_CLUSTERING {
 
     input:
     path archr_project
+    val filter_sample
     val filter_seurat_iLSI
     val filter_seurat_harmony
     val archr_thread
@@ -32,6 +33,7 @@ process ARCHR_CLUSTERING {
     echo '
     library(ArchR)
     library(pheatmap)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 
@@ -72,6 +74,14 @@ process ARCHR_CLUSTERING {
         cellsPass <- proj\$cellNames[idxPass]
         proj <- proj[cellsPass,]
       }
+    }
+
+    # get rid of undesired samples if supplied:
+    if (!("$filter_sample" == "NA")) {
+      filter_sample <- unique(str_trim(str_split("$filter_sample", ",")[[1]], side = "both"))
+      idxPass <- which(!proj\$Sample %in% filter_sample)
+      cellsPass <- proj\$cellNames[idxPass]
+      proj <- proj[cellsPass,]
     }
 
     saveRDS(proj, file = "proj_clustering.rds")
