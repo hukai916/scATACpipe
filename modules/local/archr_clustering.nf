@@ -54,6 +54,7 @@ process ARCHR_CLUSTERING {
         reducedDims = "Harmony",
         method = "Seurat",
         name = "Clusters",
+        force = TRUE,
         $options.args
       )
     } else if ("IterativeLSI" %in% names(proj@reducedDims)) {
@@ -63,6 +64,7 @@ process ARCHR_CLUSTERING {
         reducedDims = "IterativeLSI",
         method = "Seurat",
         name = "Clusters",
+        force = TRUE,
         $options.args
       )
     }
@@ -81,6 +83,7 @@ process ARCHR_CLUSTERING {
           reducedDims = "Harmony",
           method = "Seurat",
           name = "Clusters",
+          force = TRUE,
           $options.args
         )
       }
@@ -97,6 +100,7 @@ process ARCHR_CLUSTERING {
           reducedDims = "IterativeLSI",
           method = "Seurat",
           name = "Clusters",
+          force = TRUE,
           $options.args
         )
       }
