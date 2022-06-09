@@ -9,7 +9,7 @@ process ARCHR_PSEUDO_BULK_CLUSTERS2 {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_pseudo_bulk_clusters2', publish_id:'') }
-    container "hukai916/scatacpipe_downstream:0.2"
+    container "hukai916/scatacpipe_downstream:0.2.1"
 
     input:
     path archr_project

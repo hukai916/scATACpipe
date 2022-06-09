@@ -11,7 +11,7 @@ process ARCHR_MARKER_GENE_CLUSTERS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_marker_gene_clusters', publish_id:'') }
-    container "hukai916/scatacpipe_downstream:0.2"
+    container "hukai916/scatacpipe_downstream:0.2.1"
 
     input:
     path archr_project

@@ -9,7 +9,7 @@ process ARCHR_ADD_DOUBLETSCORES {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_add_doubletscores', publish_id:'') }
-    container "hukai916/scatacpipe_downstream:0.2"
+    container "hukai916/scatacpipe_downstream:0.2.1"
 
     input:
     val sample_name

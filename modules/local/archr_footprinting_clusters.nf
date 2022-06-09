@@ -9,7 +9,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_footprinting_clusters', publish_id:'') }
-    container "hukai916/scatacpipe_downstream:0.2"
+    container "hukai916/scatacpipe_downstream:0.2.1"
 
     input:
     path archr_project
@@ -61,7 +61,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
           $options.args
         )
 
-        file.copy(from = paste0(getOutputDirectory(proj), "./Plots/", "Footprints", "-", "$options.norm_method", "-Bias", ".pdf"), to = paste0("./Plots/", "Footprints", "-", "$options.norm_method", "-Bias", ".pdf"))
+        file.copy(from = paste0(getOutputDirectory(proj), "/Plots/", "Footprints", "-", "$options.norm_method", "-Bias", ".pdf"), to = paste0("./Plots/", "Footprints", "-", "$options.norm_method", "-Bias", ".pdf"))
       },
       error = function(e) {
         return("Footprint plotting failed.")
@@ -87,7 +87,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
           flankNorm   = $options.flank_norm
           )
 
-          file.copy(from = paste0(getOutputDirectory(proj), "./Plots/", "TSS-", "$options.tss_norm_method", "-Normalization", ".pdf"), to = paste0("./Plots/", "TSS-", "$options.tss_norm_method", "-Normalization", ".pdf"))
+          file.copy(from = paste0(getOutputDirectory(proj), "/Plots/", "TSS-", "$options.tss_norm_method", "-Normalization", ".pdf"), to = paste0("./Plots/", "TSS-", "$options.tss_norm_method", "-Normalization", ".pdf"))
       },
       error = function(e) {
         return("Footprint plotting failed.")
