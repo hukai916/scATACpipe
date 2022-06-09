@@ -392,6 +392,13 @@ workflow DOWNSTREAM_ARCHR {
       ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, filter_sample, seurat_ilsi, seurat_harmony, params.archr_thread)
     }
 
+    // Module: prepare clustering tsv file for spliting using sinto fragment
+    if (archr_input_type == "genome_gtf") {
+      ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, params.archr_thread)
+    } else {
+      ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, params.archr_thread)
+    }
+
     // Only use Seurat for clustering. And depending on sample number, use Harmony or LSI
     // Clustering only generate one cluster for downstream.
     // For BULK_CLUSTERING: depens on EMBEDDING.
@@ -526,13 +533,6 @@ workflow DOWNSTREAM_ARCHR {
       // Module: trajectory: for cluster2 only
       if (groupby_cluster == "Clusters2") {
         ARCHR_TRAJECTORY_CLUSTERS2(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.archr_project, Channel.fromPath('assets/ArchR'), params.archr_thread)
-      }
-
-      // Module: prepare clustering tsv file for spliting using sinto fragment
-      if (archr_input_type == "genome_gtf") {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), PREP_FRAGMENT.out.fragments, params.archr_thread)
-      } else {
-        ARCHR_GET_CLUSTERING_TSV(ARCHR_CLUSTERING.out.archr_project.collect(), fragments, params.archr_thread)
       }
     } else {
       // skip
