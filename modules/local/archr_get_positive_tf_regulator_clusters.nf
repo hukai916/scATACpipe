@@ -16,7 +16,6 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
     val archr_thread
 
     output:
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_get_positive_tf_regulator_clusters", emit: report
 
     script:
@@ -95,8 +94,10 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_get_positive_tf_regulator_clusters
-    cp -r Plots/jpeg report_jpeg/archr_get_positive_tf_regulator_clusters
+    mkdir -p ./report_jpeg/archr_get_positive_tf_regulator_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_get_positive_tf_regulator_clusters
+    mkdir ./report_jpeg/archr_get_positive_tf_regulator_clusters/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_get_positive_tf_regulator_clusters/pdf/
 
     """
 }

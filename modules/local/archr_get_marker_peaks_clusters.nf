@@ -20,7 +20,6 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     path archr_project, emit: archr_project
     path "*_marker_peaks.rds", emit: marker_peaks
     path "*_group_names.txt", emit: group_names
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_get_marker_peaks_clusters", emit: report
 
     script:
@@ -96,8 +95,10 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_get_marker_peaks_clusters
-    cp -r Plots/jpeg report_jpeg/archr_get_marker_peaks_clusters
+    mkdir -p ./report_jpeg/archr_get_marker_peaks_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_get_marker_peaks_clusters
+    mkdir ./report_jpeg/archr_get_marker_peaks_clusters/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_get_marker_peaks_clusters/pdf/
 
     """
 }

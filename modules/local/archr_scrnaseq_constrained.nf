@@ -20,7 +20,6 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
 
     output:
     path "proj_scrnaseq_constrained.rds", emit: archr_project
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_scrnaseq_constrained", emit: report
 
     script:
@@ -196,8 +195,10 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_scrnaseq_constrained
-    cp -r Plots/jpeg report_jpeg/archr_scrnaseq_constrained
+    mkdir -p ./report_jpeg/archr_scrnaseq_constrained
+    cp -r ./Plots/jpeg report_jpeg/archr_scrnaseq_constrained
+    mkdir ./report_jpeg/archr_scrnaseq_constrained/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_scrnaseq_constrained/pdf/
 
     """
 }

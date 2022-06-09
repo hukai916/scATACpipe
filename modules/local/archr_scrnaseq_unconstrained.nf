@@ -21,7 +21,6 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     output:
     path "proj_scrnaseq_unconstrained.rds", emit: archr_project
     path "cell_type_scRNA.txt", emit: cell_type_scrna
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_scrnaseq_unconstrained", emit: report
 
     script:
@@ -144,6 +143,8 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
     # For reporting:
     mkdir -p report_jpeg/archr_scrnaseq_unconstrained
     cp -r Plots/jpeg report_jpeg/archr_scrnaseq_unconstrained
+    mkdir ./report_jpeg/archr_scrnaseq_unconstrained/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_scrnaseq_unconstrained/pdf/
 
     """
 }

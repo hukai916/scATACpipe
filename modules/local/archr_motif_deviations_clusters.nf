@@ -19,7 +19,6 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     output:
     path "archr_motif_deviation_project.rds", emit: archr_project
     path "motif_names.txt", emit: motif_names
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_motif_deviations_clusters", emit: report
 
     script:
@@ -151,8 +150,11 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_motif_deviations_clusters
-    cp -r Plots/jpeg report_jpeg/archr_motif_deviations_clusters
+    mkdir -p ./report_jpeg/archr_motif_deviations_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_motif_deviations_clusters
+    mkdir ./report_jpeg/archr_motif_deviations_clusters/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_motif_deviations_clusters/pdf/
+
 
     """
 }

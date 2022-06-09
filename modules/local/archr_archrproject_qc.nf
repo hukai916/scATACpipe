@@ -16,7 +16,6 @@ process ARCHR_ARCHRPROJECT_QC {
     val archr_thread
 
     output:
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path archr_project, emit: archr_project
     path "report_jpeg/archr_archrproject_qc", emit: report
 
@@ -102,9 +101,10 @@ process ARCHR_ARCHRPROJECT_QC {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_archrproject_qc
-    cp -r Plots/jpeg report_jpeg/archr_archrproject_qc
-    # cp .command.log summary_archrproject_qc.txt
+    mkdir -p ./report_jpeg/archr_archrproject_qc
+    cp -r ./Plots/jpeg report_jpeg/archr_archrproject_qc
+    mkdir ./report_jpeg/archr_archrproject_qc/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_archrproject_qc/pdf/
 
     """
 }

@@ -24,7 +24,6 @@ process ARCHR_CLUSTERING {
     output:
     path "proj_clustering.rds", emit: archr_project
     path "*.csv", emit: csv_cluster_matrix
-    path "Plots/jpeg", emit: jpeg
     path "report_jpeg/archr_clustering", emit: report
 
     script:
@@ -116,6 +115,7 @@ process ARCHR_CLUSTERING {
     p1 <- pheatmap::pheatmap(
       mat = as.matrix(cM),
       color = paletteContinuous("whiteBlue"),
+      display_numbers = TRUE,
       number_format = "%.2f",
       number_color = "red",
       fontsize_number = 8,
@@ -150,8 +150,10 @@ process ARCHR_CLUSTERING {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_clustering
-    cp -r Plots/jpeg report_jpeg/archr_clustering
+    mkdir -p ./report_jpeg/archr_clustering
+    cp -r ./Plots/jpeg report_jpeg/archr_clustering
+    mkdir ./report_jpeg/archr_clustering/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_clustering/pdf/
 
     """
 }

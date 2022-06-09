@@ -17,7 +17,6 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     val archr_thread
 
     output:
-    path "save_archr_project/Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_footprinting_clusters", emit: report
 
     script:
@@ -31,6 +30,8 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     addArchRThreads(threads = $archr_thread)
 
     proj <- readRDS("$archr_project", refhook = NULL)
+    dir.create("Plots")
+    dir.create("Plots/jpeg")
 
     # Footprinting of motif:
     motifPositions <- getPositions(proj)
@@ -59,6 +60,8 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
           plotName    = plotName,
           $options.args
         )
+
+        file.copy(from = paste0(getOutputDirectory(proj), "./Plots/", "Footprints", "-", "$options.norm_method", "-Bias", ".pdf"), to = paste0("./Plots/", "Footprints", "-", "$options.norm_method", "-Bias", ".pdf"))
       },
       error = function(e) {
         return("Footprint plotting failed.")
@@ -83,6 +86,8 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
           flank       = $options.tss_flank,
           flankNorm   = $options.flank_norm
           )
+
+          file.copy(from = paste0(getOutputDirectory(proj), "./Plots/", "TSS-", "$options.tss_norm_method", "-Normalization", ".pdf"), to = paste0("./Plots/", "TSS-", "$options.tss_norm_method", "-Normalization", ".pdf"))
       },
       error = function(e) {
         return("Footprint plotting failed.")
@@ -94,25 +99,25 @@ process ARCHR_FOOTPRINTING_CLUSTERS {
     Rscript run.R
 
     # Convert to jpeg:
-    rm -rf save_archr_project/Plots/jpeg
-    mkdir -p save_archr_project/Plots/jpeg
-    x=( \$(find ./save_archr_project/Plots -name "*.pdf") )
+    x=( \$(find ./Plots -name "*.pdf") )
     for item in \${x[@]+"\${x[@]}"}
     do
       {
         filename=\$(basename -- "\$item")
         filename="\${filename%.*}"
-        pdftoppm -jpeg -r 300 \$item ./save_archr_project/Plots/jpeg/\$filename
-        convert -append ./save_archr_project/Plots/jpeg/\${filename}* ./save_archr_project/Plots/jpeg/\${filename}.jpg
-        rm ./save_archr_project/Plots/jpeg/\${filename}-*.jpg
+        pdftoppm -jpeg -r 300 \$item ./Plots/jpeg/\$filename
+        convert -append ./Plots/jpeg/\${filename}* ./Plots/jpeg/\${filename}.jpg
+        rm ./Plots/jpeg/\${filename}-*.jpg
       } || {
         echo "Pdf to jpeg failed!" > bash.log
       }
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_footprinting_clusters
-    cp -r save_archr_project/Plots/jpeg report_jpeg/archr_footprinting_clusters
+    mkdir -p ./report_jpeg/archr_footprinting_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_footprinting_clusters
+    mkdir ./report_jpeg/archr_footprinting_clusters/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_footprinting_clusters/pdf
 
     """
 }

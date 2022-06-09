@@ -17,8 +17,6 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
     val archr_thread
 
     output:
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
-    path "archr_peak2genelinkage_clusters2", emit: res_dir
     path "report_jpeg/archr_peak2genelinkage_clusters2", emit: report
 
     script:
@@ -114,13 +112,11 @@ process ARCHR_PEAK2GENELINKAGE_CLUSTERS2 {
       }
     done
 
-    # Copy to res_dir:
-    mkdir archr_peak2genelinkage_clusters2
-    cp -r Plots archr_peak2genelinkage_clusters2/
-
     # For reporting:
-    mkdir -p report_jpeg/archr_peak2genelinkage_clusters2
-    cp -r archr_peak2genelinkage_clusters2 report_jpeg/archr_peak2genelinkage_clusters2
+    mkdir -p ./report_jpeg/archr_peak2genelinkage_clusters2
+    cp -r ./Plots/jpeg report_jpeg/archr_peak2genelinkage_clusters2
+    mkdir ./report_jpeg/archr_peak2genelinkage_clusters2/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_peak2genelinkage_clusters2/pdf/
 
     """
 }

@@ -18,7 +18,6 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
     output:
     path "markerTest.rds", emit: archr_marker_test
     path "test_group.txt", emit: test_group
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_pairwise_test_clusters2", emit: report
 
     script:
@@ -83,8 +82,11 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS2 {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_pairwise_test_clusters2
-    cp -r Plots/jpeg report_jpeg/archr_pairwise_test_clusters2
+    mkdir -p ./report_jpeg/archr_pairwise_test_clusters2
+    cp -r ./Plots/jpeg report_jpeg/archr_pairwise_test_clusters2
+    mkdir ./report_jpeg/archr_pairwise_test_clusters2/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_pairwise_test_clusters2/pdf/
+
 
     """
 }

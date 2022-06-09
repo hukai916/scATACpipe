@@ -18,7 +18,6 @@ process ARCHR_EMBEDDING {
 
     output:
     path "proj_embedding.rds", emit: archr_project
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_embedding", emit: report
 
     script:
@@ -135,8 +134,10 @@ process ARCHR_EMBEDDING {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_embedding
-    cp -r Plots/jpeg report_jpeg/archr_embedding
+    mkdir -p ./report_jpeg/archr_embedding
+    cp -r ./Plots/jpeg report_jpeg/archr_embedding
+    mkdir ./report_jpeg/archr_embedding/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_embedding/pdf/
 
     """
 }

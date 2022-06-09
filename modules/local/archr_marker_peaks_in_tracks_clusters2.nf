@@ -19,7 +19,6 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2 {
     val archr_thread
 
     output:
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_marker_peaks_in_tracks_clusters2", emit: report
 
     script:
@@ -111,8 +110,10 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS2 {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_marker_peaks_in_tracks_clusters2
-    cp -r Plots/jpeg report_jpeg/archr_marker_peaks_in_tracks_clusters2
+    mkdir -p ./report_jpeg/archr_marker_peaks_in_tracks_clusters2
+    cp -r ./Plots/jpeg report_jpeg/archr_marker_peaks_in_tracks_clusters2
+    mkdir ./report_jpeg/archr_marker_peaks_in_tracks_clusters2/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_marker_peaks_in_tracks_clusters2/pdf/
 
     """
 }

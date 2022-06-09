@@ -24,7 +24,6 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
 
     output:
     path "archr_motif_enrichment_project.rds", emit: archr_project
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_motif_enrichment_clusters", emit: report
 
     script:
@@ -164,8 +163,10 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_motif_enrichment_clusters
-    cp -r Plots/jpeg report_jpeg/archr_motif_enrichment_clusters
+    mkdir -p ./report_jpeg/archr_motif_enrichment_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_motif_enrichment_clusters
+    mkdir ./report_jpeg/archr_motif_enrichment_clusters/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_motif_enrichment_clusters/pdf/
 
     """
 }

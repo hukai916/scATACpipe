@@ -21,7 +21,6 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
     path "proj_marker_gene.rds", emit: archr_project
     path "marker_list.txt", emit: marker_list
     path "Clusters2_markerList.rds", emit: markerList
-    path "Plots/jpeg", emit: jpeg // to also publish the jpeg folder
     path "report_jpeg/archr_marker_gene_clusters2", emit: report
 
     script:
@@ -167,8 +166,10 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
     done
 
     # For reporting:
-    mkdir -p report_jpeg/archr_marker_gene_clusters2
-    cp -r Plots/jpeg report_jpeg/archr_marker_gene_clusters2
+    mkdir -p ./report_jpeg/archr_marker_gene_clusters2
+    cp -r ./Plots/jpeg report_jpeg/archr_marker_gene_clusters2
+    mkdir ./report_jpeg/archr_marker_gene_clusters2/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_marker_gene_clusters2/pdf/
 
     """
 }
