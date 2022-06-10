@@ -44,7 +44,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     sink("log.txt")
     for (x in dict1\$keys()) {
       raw   <- dict1\$get(x)
-      kept  <- names[names %in% preClust]
+      kept  <- raw[raw %in% preClust]
       cat(x, "\n", "\tUser supplied: ", raw, "\n", "\tIn preClust: ", kept, "\n", sep = "")
       dict1\$set(x, kept)
     }
