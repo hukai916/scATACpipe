@@ -42,11 +42,20 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
 
     # Make sure clusters in group_list is a subset of preClust:
     sink("log.txt")
+    kept_tem = c()
     for (x in dict1\$keys()) {
       raw   <- dict1\$get(x)
       kept  <- raw[raw %in% preClust]
       cat(x, "\n", "\tUser supplied: ", raw, "\n", "\tIn preClust: ", kept, "\n", sep = "")
       dict1\$set(x, kept)
+      kept_tem = c(kept_tem, kept)
+    }
+
+    # Make sure all clusters in preClust are used, otherwise ArchR complains: assign unspecified cluster to "cUnspecify":
+    if (length(kept_tem) > 0) {
+      c_unspecified <- setdiff(preClust, kept_tem)
+      dict1\$set("cUnspecified", c_unspecified)
+      cat("Unspecified\n", c_unspecified, "\n", sep = "")
     }
     sink()
 
@@ -87,12 +96,18 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       }
     }
 
+    if ("Harmony" %in% names(proj@reducedDims)) {
+      reducedDims <- "Harmony"
+    } else if ("IterativeLSI" %in% names(proj@reducedDims)) {
+      reducedDims <- "IterativeLSI"
+    }
+
     # Perform constrained integration
     proj2 <- addGeneIntegrationMatrix(
       ArchRProj = proj,
       useMatrix = "GeneScoreMatrix",
       matrixName = "GeneIntegrationMatrix",
-      reducedDims = "IterativeLSI",
+      reducedDims = reducedDims,
       seRNA = seRNA,
       addToArrow = FALSE,
       groupList = groupList,
@@ -105,7 +120,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       ArchRProj = proj2,
       useMatrix = "GeneScoreMatrix",
       matrixName = "GeneIntegrationMatrix",
-      reducedDims = "IterativeLSI",
+      reducedDims = reducedDims,
       seRNA = seRNA,
       addToArrow = TRUE,
       force= TRUE,
@@ -147,12 +162,6 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     devtools::unload("ArchR")
     library(ArchR)
     # note that after load_all, the proj will not be correctly recognized as S4 object, have to unload and re-library ArchR.
-
-    if ("Harmony" %in% names(proj@reducedDims)) {
-      reducedDims <- "Harmony"
-    } else if ("IterativeLSI" %in% names(proj@reducedDims)) {
-      reducedDims <- "IterativeLSI"
-    }
 
     embedding <- paste0("UMAP_", reducedDims)
 
