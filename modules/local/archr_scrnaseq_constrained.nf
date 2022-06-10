@@ -21,6 +21,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     output:
     path "proj_scrnaseq_constrained.rds", emit: archr_project
     path "report_jpeg/archr_scrnaseq_constrained", emit: report
+    path "log.txt", emit: log
 
     script:
 
@@ -38,6 +39,16 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     cM <- as.matrix(confusionMatrix(proj\$Clusters, proj\$predictedGroup_Un))
     preClust <- colnames(cM)[apply(cM, 1 , which.max)]
     dict1 = dict(list($group_list))
+
+    # Make sure clusters in group_list is a subset of preClust:
+    sink("log.txt")
+    for (x in dict1\$keys()) {
+      raw   <- dict1\$get(x)
+      kept  <- names[names %in% preClust]
+      cat(x, "\n", "\tUser supplied: ", raw, "\n", "\tIn preClust: ", kept, "\n", sep = "")
+      dict1\$set(x, kept)
+    }
+    sink()
 
     for (x in dict1\$keys()) {
       c_name <- paste0("c_", x)
