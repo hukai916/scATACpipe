@@ -29,6 +29,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     echo '
     library(ArchR)
     library(collections)
+    library(stringr)
 
     addArchRThreads(threads = $archr_thread)
 
@@ -46,7 +47,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     for (x in dict1\$keys()) {
       raw   <- dict1\$get(x)
       kept  <- raw[raw %in% preClust]
-      cat(x, "\n", "\tUser supplied: ", raw, "\n", "\tIn preClust: ", kept, "\n", sep = "")
+      cat(x, "\n", "\tUser supplied:", raw, "\n", "\tIn preClust:", kept, "\n", sep = " ")
       dict1\$set(x, kept)
       kept_tem = c(kept_tem, kept)
     }
@@ -55,7 +56,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
     if (length(kept_tem) > 0) {
       c_unspecified <- setdiff(preClust, kept_tem)
       dict1\$set("cUnspecified", c_unspecified)
-      cat("Unspecified\n", c_unspecified, "\n", sep = "")
+      cat("Unspecified\n", c_unspecified, "\n", sep = " ")
     }
     sink()
 
