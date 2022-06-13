@@ -163,6 +163,6 @@ If you would like to extend scATACpipe for your own good, feel free to fork the 
 <!-- TODO If you use scATACpipe for your analysis, please cite it using the following doi: [](https://) -->
 Please kindly cite scATACpipe [to be added] if you use it for your research.
 
-A ***Template of Method*** can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md).
+A ***Template of Method*** can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/template_of_method.docx).
 
 A complete list of references for the tools used by scATACpipe can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/scATACpipe_module_references.xlsx).
