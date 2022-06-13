@@ -9,7 +9,7 @@
 - [DOWNSTREAM_ARCHR](#downstream_archr)
 
 [Quick Start](#quick-start)  
-[Example: plots in paper](#example-plots-in-paper)
+[Example: plots in paper](#example-plots-in-paper)  
 [Documentation](#documentation)  
 [Credits](#credits)  
 [Bug report/Support](#bug-reportsupport)  
