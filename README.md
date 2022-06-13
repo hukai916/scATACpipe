@@ -9,6 +9,7 @@
 - [DOWNSTREAM_ARCHR](#downstream_archr)
 
 [Quick Start](#quick-start)  
+[Example: plots in paper](#Example:-plots-in-paper)
 [Documentation](#documentation)  
 [Credits](#credits)  
 [Bug report/Support](#bug-reportsupport)  
@@ -142,6 +143,75 @@ nextflow run main.nf --help
 ```
 
 See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
+
+## Example: plots in paper
+
+This section describes how the plots in the manuscript (to be added) were generated using scATACpipe. For comparison, the manuscript conducted 3 separate analyses, each using a different preprocessing strategy (`default`, `10xgenomics`, `chromap`). Since the commands and preprocessed results are quite similar across the three methods, only the `chromap` option will be demonstrated here.
+
+1.  The initial execution:
+
+```
+nextflow run main.nf -profile singularity,lsf -c conf/test_chromap.config --preprocess chromap --outdir ./chromap_results_haibo --input_fastq /home/hl84w/lucio_castilla/scATAC-seq/docs/10X_human_scatac_fastq_new_style.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens' --archr_blacklist /home/hl84w/lucio_castilla/scATAC-seq/docs/hg38-blacklist.v2.bed.gz --doublet_removal_algorithm archr --archr_thread 8 -resume e209b4a2-1ada-4893-af13-132d1e3f5a55
+```
+
+```
+nextflow run main.nf -profile singularity,lsf --preprocess chromap --outdir ./results_chromap --input_fastq ./assets/10X_human_scatac_fastq.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens' --archr_scrnaseq '/path/scRNA-Hematopoiesis-Granja-2019.rds' --archr_blacklist /home/hl84w/lucio_castilla/scATAC-seq/docs/hg38-blacklist.v2.bed.gz
+```
+
+Break down:
+
+  * `-profile singularity,lsf`:
+
+  This option instructs scATACpipe to use Singularity containers and LSF as the executor. Multiple parameters are separated by commas. Since `profile` is pipeline-level flag, it is prefixed with a single dash (`-`). Module-level flags are prefixed with double dash (`--`).
+
+  * `--preprocess chromap`:
+
+  This instructs scATACpipe to use Chromap preprocessing strategy.
+
+  * `--outdir ./results_chromap`:
+
+  Output will be saved into `./results_chromap` folder.
+
+  * `--input_fastq ./assets/10X_human_scatac_fastq.csv`:
+
+  Please replace the `/path/` in the `10X_human_scatac_fastq.csv` with absolute paths. Details regarding the 6 samples can be found in the supplementary section of the paper. If you detect any outlier samples, you can remove them from the downstream analyses using the `--filter_sample = 'PBMC_10K_C, PBMC_10K_X'` flag.
+
+  * `--ref_fasta_ensembl homo_sapiens`:
+
+  This specifies that the genome _Homo Sapiens_ from ENSEMBLE will be used as reference. To view all supported genomes, check out `nextflow run main.nf --support_genome`.
+
+  * `--species_latin_name 'homo sapiens'`:
+
+  Simply the Latin name of the reference genome.
+
+  * `--archr_scrnaseq '/path/scRNA-Hematopoiesis-Granja-2019.rds'`
+
+  Matching scRNA-seq data. Can ignore if not available. The example file can be downloaded [here](https://jeffgranja.s3.amazonaws.com/ArchR/TestData/scRNA-Hematopoiesis-Granja-2019.rds).
+
+  * `--archr_blacklist ./assets/hg38-blacklist.v2.bed.gz`:
+
+  Blacklist to exclude for downstream analysis. Click [here](https://github.com/Boyle-Lab/Blacklist/tree/master/lists) for other species.
+
+Instead of passing each flag option via the command line, you can include them all in a configuration file and supply it with the `-c` option. Below is equivalent to above:
+```
+nextflow run main.nf -profile singularity,lsf -c ./conf/test_chromap_initial.config
+```
+
+2.  The final execution:
+After examining the results from the initial execution, we decided to remove the
+
+
+  --archr_thread 8
+
+
+
+
+
+
+
+
+To replicate the plots showed in the manuscript (to be added),
+
 
 ## Documentation
 
