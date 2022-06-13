@@ -210,6 +210,7 @@ outlier clusters (C2, C10) from downstream analyses. These two clusters are cons
 <p align="center">
   <img src="docs/images/demo/test_chromap_initial/Clusters_heatmap.jpg" width="500" style="display: block; margin: auto">
 </p>
+
   * The marker gene heatmap plot from **./results_chromap/archr_marker_gene_clusters/** folder:
 <p align="center">
   <img src="docs/images/demo/test_chromap_initial/GeneScores-Marker-Heatmap.jpg" width="500" style="display: block; margin: auto">
