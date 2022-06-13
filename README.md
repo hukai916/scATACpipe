@@ -208,11 +208,11 @@ After examining the results from the initial execution, we decided to remove the
 outlier clusters (C2, C10) from downstream analyses. These two clusters are considered as problematic according to the following two plots:
   * The clustering heatmap plot from **./results_chromap/archr_clustering/** folder:
 <p align="center">
-  <img src="docs/images/demo/test_chromap_initial/Clusters_heatmap.jpg" width="500" style="display: block; margin: -5px auto">
+  <img src="docs/images/demo/test_chromap_initial/Clusters_heatmap.jpg" width="500" style="display: block; margin: -25px auto">
 </p>
   * The marker gene heatmap plot from **./results_chromap/archr_marker_gene_clusters/** folder:
 <p align="center">
-  <img src="docs/images/demo/test_chromap_initial/GeneScores-Marker-Heatmap.jpg" width="500" style="display: block; margin: -5px auto">
+  <img src="docs/images/demo/test_chromap_initial/GeneScores-Marker-Heatmap.jpg" width="500" style="display: block; margin: -25px auto">
 </p>
 
 
