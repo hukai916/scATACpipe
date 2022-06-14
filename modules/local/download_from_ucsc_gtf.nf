@@ -19,10 +19,10 @@ process DOWNLOAD_FROM_UCSC_GTF {
     path "*.gtf.gz", emit: gtf
 
     script:
-    
+
     """
     gtf_link=\$(get_download_url.py $dict_json $genome_name gtf)
-    wget \$gtf_link -o logfile.gtf.txt
+    wget \$gtf_link -o logfile.gtf.txt --auth-no-challenge --force-directories
 
     """
 }

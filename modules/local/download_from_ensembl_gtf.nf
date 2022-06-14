@@ -21,13 +21,13 @@ process DOWNLOAD_FROM_ENSEMBL_GTF {
     val genome_name, emit: genome_name
 
     script:
-    
+
     """
     md5_link=\$(get_download_url.py $dict_json $genome_name gtf_md5sum)
     gtf_link=\$(get_download_url.py $dict_json $genome_name gtf)
 
-    wget \$md5_link -o logfile.md5.txt
-    wget \$gtf_link -o logfile.gtf.txt
+    wget \$md5_link -o logfile.md5.txt --auth-no-challenge --force-directories
+    wget \$gtf_link -o logfile.gtf.txt --auth-no-challenge --force-directories
 
     (cat \$(basename \$md5_link) | grep \$( basename \$gtf_link) || true) > md5_to_check.txt
 

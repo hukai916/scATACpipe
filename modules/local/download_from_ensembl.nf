@@ -21,13 +21,13 @@ process DOWNLOAD_FROM_ENSEMBL {
     val genome_name, emit: genome_name
 
     script:
-    
+
     """
     md5_link=\$(get_download_url.py $dict_json $genome_name genome_md5sum)
     genome_link=\$(get_download_url.py $dict_json $genome_name genome)
 
-    wget \$md5_link -o logfile.md5.txt
-    wget \$genome_link -o logfile.genome.txt
+    wget \$md5_link -o logfile.md5.txt --auth-no-challenge --force-directories
+    wget \$genome_link -o logfile.genome.txt --auth-no-challenge --force-directories
 
     (cat \$(basename \$md5_link) | grep \$( basename \$genome_link) || true) > md5_to_check.txt
 

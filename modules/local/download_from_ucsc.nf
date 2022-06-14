@@ -21,15 +21,15 @@ process DOWNLOAD_FROM_UCSC {
     val genome_name, emit: genome_name
 
     script:
-    
+
     """
     md5_link=\$(get_download_url.py $dict_json $genome_name md5sum)
     genome_link=\$(get_download_url.py $dict_json $genome_name genome)
 
     # if [[ md5_link -eq 0 ]]; then { echo "Genome not supported!"; exit; } fi
 
-    wget \$md5_link -o logfile.md5.txt
-    wget \$genome_link -o logfile.genome.txt
+    wget \$md5_link -o logfile.md5.txt --auth-no-challenge --force-directories
+    wget \$genome_link -o logfile.genome.txt --auth-no-challenge --force-directories
 
     (cat \$(basename \$md5_link) | grep \$( basename \$genome_link) || true) > md5_to_check.txt
 
