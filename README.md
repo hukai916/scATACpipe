@@ -149,11 +149,6 @@ See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/
 This section describes how the plots in the manuscript (to be added) were generated using scATACpipe. For comparison, the manuscript conducted 3 separate analyses, each using a different preprocessing strategy (`default`, `10xgenomics`, `chromap`). Since the commands and preprocessed results are quite similar across the three methods, only the `chromap` option will be demonstrated here.
 
 1.  The initial execution:
-
-```
-nextflow run main.nf -profile singularity,lsf -c conf/test_chromap.config --preprocess chromap --outdir ./chromap_results_haibo --input_fastq /home/hl84w/lucio_castilla/scATAC-seq/docs/10X_human_scatac_fastq_new_style.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens' --archr_blacklist /home/hl84w/lucio_castilla/scATAC-seq/docs/hg38-blacklist.v2.bed.gz --doublet_removal_algorithm archr --archr_thread 8 -resume e209b4a2-1ada-4893-af13-132d1e3f5a55
-```
-
 ```
 nextflow run main.nf -profile singularity,lsf --preprocess chromap --outdir ./results_chromap --input_fastq ./assets/10X_human_scatac_fastq.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens' --archr_scrnaseq '/path/scRNA-Hematopoiesis-Granja-2019.rds' --archr_blacklist /home/hl84w/lucio_castilla/scATAC-seq/docs/hg38-blacklist.v2.bed.gz
 ```
@@ -228,7 +223,7 @@ https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe47
 https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L53
 https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L56
 
-To specify a set motifs to for downstream analyses, edit the following lines:
+To specify a set of motifs for downstream analyses, edit the following lines:
 https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L289
 https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L298
 
@@ -241,9 +236,9 @@ https://github.com/hukai916/scATACpipe/blob/077d59a1cb32650ffe7294c2dca533fe8546
 
 The final execution command looks like below:
 ```
-nextflow run main.nf -profile singularity,lsf, -c ./conf/test_chromap_final.config -resume session_id
+nextflow run main.nf -profile singularity,lsf -c ./conf/test_chromap_final.config -resume session_id
 ```
-Note that, the `-resume session_id` must be supplied in order to skip already-performed analyses and the session id can be found by `nextflow log` command.
+Note that, the `-resume session_id` must be supplied in order to skip already-performed analyses and the corresponding session id can be found by `nextflow log` command.
 
 ## Documentation
 
