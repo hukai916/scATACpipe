@@ -205,32 +205,45 @@ Again, you have to replace `/path/` with full absolute paths.
 2.  The final execution:
 
 After examining the results from the initial execution, we decided to remove the
-outlier clusters (C2, C10) from downstream analyses. These two clusters are considered as problematic according to the following two plots:
-  * The clustering heatmap plot from **./results_chromap/archr_clustering/** folder:
+outlier clusters (C2, C10) from downstream analyses. These two clusters are considered problematic according to the following two plots:
+  * The clustering heatmap plot from **./results_chromap/archr_clustering/** folder: the cell proportions from `PBMC_5K_N` and `PBMC_5K_V` samples are unbalanced for C2, C10.
 <p align="center">
   <img src="docs/images/demo/test_chromap_initial/Clusters_heatmap.jpg" width="500" style="display: block; margin: auto">
 </p>
 
-  * The marker gene heatmap plot from **./results_chromap/archr_marker_gene_clusters/** folder:
+  * The marker gene heatmap plot from **./results_chromap/archr_marker_gene_clusters/** folder: no distinct marker gene pattern detected in cluster C2, C10.
 <p align="center">
   <img src="docs/images/demo/test_chromap_initial/GeneScores-Marker-Heatmap.jpg" width="500" style="display: block; margin: auto">
 </p>
 
+We used the following line to remove C2 and C10:
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L18
 
-Also, we would like to perform constrained integration of scRNA-seq data in addition to the unconstrained integration. And we ended up with a final **test_chromap_final.config**:
+Also, we would like to perform constrained integration of scRNA-seq data in addition to the unconstrained integration. The following line was used to supply the grouping information:
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L12
+
+To specify marker genes to plot, edit the following lines:
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L30
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L43
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L53
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L56
+
+To specify a set motifs to for downstream analyses, edit the following lines:
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L289
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L298
+
+To specify a set of motifs for footprinting analyses, edit the following lines:
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L305
+https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L314
+
+We ended up with a final **test_chromap_final.config**:
 https://github.com/hukai916/scATACpipe/blob/077d59a1cb32650ffe7294c2dca533fe8546ed98/conf/test_chromap_final.config#L1-L66
 
-  --archr_thread 8
-
-
-
-
-
-
-
-
-To replicate the plots showed in the manuscript (to be added),
-
+The final execution command looks like below:
+```
+nextflow run main.nf -profile singularity,lsf, -c ./conf/test_chromap_final.config -resume session_id
+```
+Note that, the `-resume session_id` must be supplied in order to skip already-performed analyses and the session id can be found by `nextflow log` command.
 
 ## Documentation
 
