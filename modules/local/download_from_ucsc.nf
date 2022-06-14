@@ -28,8 +28,8 @@ process DOWNLOAD_FROM_UCSC {
 
     # if [[ md5_link -eq 0 ]]; then { echo "Genome not supported!"; exit; } fi
 
-    wget --user-agent=" Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" \$md5_link -o logfile.md5.txt
-    wget --user-agent=" Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" \$genome_link -o logfile.genome.txt
+    wget --no-check-certificate \$md5_link -o logfile.md5.txt
+    wget --no-check-certificate \$genome_link -o logfile.genome.txt
 
     (cat \$(basename \$md5_link) | grep \$( basename \$genome_link) || true) > md5_to_check.txt
 

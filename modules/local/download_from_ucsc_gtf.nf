@@ -22,7 +22,7 @@ process DOWNLOAD_FROM_UCSC_GTF {
 
     """
     gtf_link=\$(get_download_url.py $dict_json $genome_name gtf)
-    wget --user-agent=" Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" \$gtf_link -o logfile.gtf.txt
+    wget --no-check-certificate \$gtf_link -o logfile.gtf.txt
 
     """
 }
