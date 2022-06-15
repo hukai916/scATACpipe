@@ -90,15 +90,18 @@ process ARCHR_MARKER_GENE_CLUSTERS {
       message("Invalid marker gene names!")
       message("Skipping plotting!")
     } else {
+      _tem <- unique(make.names(markersGS@elementMetadata@listData\$name, unique = TRUE)) # otherwise markerHeatmap won't plot label
+      markersGS@elementMetadata@listData\$name <- _tem
+
       heatmapGS <- markerHeatmap(
         seMarker = markersGS,
         labelMarkers = markerGenes2labeled,
         binaryClusterRows = TRUE,
         clusterCols = TRUE,
-        transpose = TRUE,
+        transpose = FALSE,
         $options.getMarkers_cutoff
       )
-      plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 6, ArchRProj = NULL, addDOC = FALSE)
+      plotPDF(heatmapGS, name = "GeneScores-Marker-Heatmap", width = 8, height = 8, ArchRProj = NULL, addDOC = FALSE)
 
       # Plot marker genes on embeddings without imputation:
       for (embedding in names(proj@embeddings)) {
