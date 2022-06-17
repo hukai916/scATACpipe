@@ -408,6 +408,7 @@ workflow DOWNSTREAM_ARCHR {
     // Module: single-cell embeddings
     ARCHR_EMBEDDING(ARCHR_CLUSTERING.out.archr_project, params.archr_thread)
 
+    log.info "INFO: archr_scrnaseq -> " + params.archr_scrnaseq
     if (params.outlier_further) {
       // Module: integrate with matching scRNAseq data
       if (!(params.archr_scrnaseq)) {
