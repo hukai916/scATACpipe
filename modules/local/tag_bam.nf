@@ -25,14 +25,15 @@ process TAG_BAM {
     script:
 
     """
+    # Note: mawk v1.3.4 is 10x faster than mawk v1.3.3
     # v1: use more memory
-    # samtools view -h $bam | awk 'BEGIN{FS=OFS="\t"} NR == FNR { if (\$3 != "undetermined") {tag_dict[\$1] = \$3}; next} { if (/^@/) {print} else if (\$1 in tag_dict) {print \$0, "CB:Z:" tag_dict[\$1]}}' $tagfile - | samtools view -b -h - -o ${chunk_name}.tag.bam
+    # samtools view -h $bam | mawk 'BEGIN{FS=OFS="\t"} NR == FNR { if (\$3 != "undetermined") {tag_dict[\$1] = \$3}; next} { if (/^@/) {print} else if (\$1 in tag_dict) {print \$0, "CB:Z:" tag_dict[\$1]}}' $tagfile - | samtools view -b -h - -o ${chunk_name}.tag.bam
 
     # v2: use less memory but assuming that all qnames in the BAM files are in the tagfile, which is not true since tagfile only contains valid barcodes.
-    # samtools view -h $bam | awk 'BEGIN{FS=OFS="\t"} NR == FNR { if (\$2 != \$3) { if (\$3 == "undetermined") { tag_dict[\$1] = 0 } else { tag_dict[\$1] = \$3 } }; next} { if (/^@/) {print} else { split(\$1, q_name, ":"); print \$0, "CB:Z:" q_name[1]}}'  $tagfile - | samtools view -h -b - -o ${chunk_name}.tag.bam
+    # samtools view -h $bam | mawk 'BEGIN{FS=OFS="\t"} NR == FNR { if (\$2 != \$3) { if (\$3 == "undetermined") { tag_dict[\$1] = 0 } else { tag_dict[\$1] = \$3 } }; next} { if (/^@/) {print} else { split(\$1, q_name, ":"); print \$0, "CB:Z:" q_name[1]}}'  $tagfile - | samtools view -h -b - -o ${chunk_name}.tag.bam
 
     # v3: use less memory and without assumption in v2, as fast as v1
-    samtools view -h $bam | awk 'BEGIN{FS=OFS="\t"} NR == FNR { if (\$3 != "undetermined") { if (\$2 == \$3) { tag_dict[\$1] = 1 } else { tag_dict[\$1] = \$3 } }; next} { if (/^@/) {print} else if (\$1 in tag_dict) { if (tag_dict[\$1] != 1) { print \$0, "CB:Z:" tag_dict[\$1] } else { split(\$1, q_name, ":"); print \$0, "CB:Z:" q_name[1] } } }'  $tagfile - | samtools view -h -b - -o ${chunk_name}.tag.bam
+    samtools view -h $bam | mawk 'BEGIN{FS=OFS="\t"} NR == FNR { if (\$3 != "undetermined") { if (\$2 == \$3) { tag_dict[\$1] = 1 } else { tag_dict[\$1] = \$3 } }; next} { if (/^@/) {print} else if (\$1 in tag_dict) { if (tag_dict[\$1] != 1) { print \$0, "CB:Z:" tag_dict[\$1] } else { split(\$1, q_name, ":"); print \$0, "CB:Z:" q_name[1] } } }'  $tagfile - | samtools view -h -b - -o ${chunk_name}.tag.bam
 
     """
 }
