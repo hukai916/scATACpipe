@@ -90,8 +90,8 @@ process ARCHR_MARKER_GENE_CLUSTERS {
       message("Invalid marker gene names!")
       message("Skipping plotting!")
     } else {
-      _tem <- make.names(markersGS@elementMetadata@listData\$name, unique = TRUE) # otherwise markerHeatmap will not plot label
-      markersGS@elementMetadata@listData\$name <- _tem
+      tem <- make.names(markersGS@elementMetadata@listData\$name, unique = TRUE) # otherwise markerHeatmap will not plot label
+      markersGS@elementMetadata@listData\$name <- tem
 
       heatmapGS <- markerHeatmap(
         seMarker = markersGS,
