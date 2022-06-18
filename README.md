@@ -10,8 +10,8 @@
 
 [Quick Start](#quick-start)  
 [Example used in paper](#example)
-  - [Commands and config](#commands_and_config)
-  - [Pipeline info: time and resource usage](#pipeline_info)
+  - [Commands and config](#commands-and-config)
+  - [Pipeline info: time and resource usage](#pipeline-info)
 
 [Documentation](#documentation)  
 [Credits](#credits)  
@@ -217,16 +217,16 @@ outlier clusters (C1, C6) from downstream analyses. These two clusters are consi
 </p>
 
 We used the following line to remove C1 and C6:
-https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L18
+https://github.com/hukai916/scATACpipe/blob/20e0c820dd685833438a5d24e3eeb0fc5c174a87/conf/test_chromap_final.config#L18
 
 Also, we would like to perform constrained integration of scRNA-seq data in addition to the unconstrained integration. The following line was used to supply the grouping information:
-https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L12
+https://github.com/hukai916/scATACpipe/blob/20e0c820dd685833438a5d24e3eeb0fc5c174a87/conf/test_chromap_final.config#L12
 
 To specify marker genes to plot, edit the following lines:
-https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L30
-https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L43
-https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L53
-https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L56
+https://github.com/hukai916/scATACpipe/blob/20e0c820dd685833438a5d24e3eeb0fc5c174a87/conf/test_chromap_final.config#L30
+https://github.com/hukai916/scATACpipe/blob/20e0c820dd685833438a5d24e3eeb0fc5c174a87/conf/test_chromap_final.config#L43
+https://github.com/hukai916/scATACpipe/blob/20e0c820dd685833438a5d24e3eeb0fc5c174a87/conf/test_chromap_final.config#L53
+https://github.com/hukai916/scATACpipe/blob/20e0c820dd685833438a5d24e3eeb0fc5c174a87/conf/test_chromap_final.config#L56
 
 To specify a set of motifs for downstream analyses, edit the following lines:
 https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L289
@@ -237,7 +237,7 @@ https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe47
 https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/modules.config#L314
 
 We ended up with a final **test_chromap_final.config**:
-https://github.com/hukai916/scATACpipe/blob/077d59a1cb32650ffe7294c2dca533fe8546ed98/conf/test_chromap_final.config#L1-L66
+https://github.com/hukai916/scATACpipe/blob/20e0c820dd685833438a5d24e3eeb0fc5c174a87/conf/test_chromap_final.config#L1-L66
 
 The final execution command looks like below:
 ```
