@@ -3,13 +3,16 @@
 ## Table of Contents
 [Introduction](#introduction)  
 [Pipeline summary](#pipeline-summary)
-- [PREPROCESS_DEFAULT](#preprocess_default)
-- [PREPROCESS_10XGENOMICS](#preprocess_10xgenomics)
-- [PREPROCESS_CHROMAP](#preprocess_chromap)
-- [DOWNSTREAM_ARCHR](#downstream_archr)
+  - [PREPROCESS_DEFAULT](#preprocess_default)
+  - [PREPROCESS_10XGENOMICS](#preprocess_10xgenomics)
+  - [PREPROCESS_CHROMAP](#preprocess_chromap)
+  - [DOWNSTREAM_ARCHR](#downstream_archr)
 
 [Quick Start](#quick-start)  
-[Example: plots in paper](#example-plots-in-paper)  
+[Example used in paper](#example)
+  - [Commands and config](#commands_and_config)
+  - [Pipeline info: time and resource usage](#pipeline_info)
+
 [Documentation](#documentation)  
 [Credits](#credits)  
 [Bug report/Support](#bug-reportsupport)  
@@ -144,13 +147,15 @@ nextflow run main.nf --help
 
 See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
 
-## Example: plots in paper
+## Example
+
+### Commands and config
 
 This section describes how the plots in the manuscript (to be added) were generated using scATACpipe. For comparison, the manuscript conducted 3 separate analyses, each using a different preprocessing strategy (`default`, `10xgenomics`, `chromap`). Since the commands and preprocessed results are quite similar across the three methods, only the `chromap` option will be demonstrated here.
 
 1.  The initial execution:
 ```
-nextflow run main.nf -profile singularity,lsf --preprocess chromap --outdir ./results_chromap --input_fastq ./assets/10X_human_scatac_fastq.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens' --archr_scrnaseq '/path/scRNA-Hematopoiesis-Granja-2019.rds' --archr_blacklist /home/hl84w/lucio_castilla/scATAC-seq/docs/hg38-blacklist.v2.bed.gz
+nextflow run main.nf -profile singularity,lsf --preprocess chromap --outdir ./results_chromap_initial --input_fastq ./assets/10X_human_scatac_fastq.csv --ref_fasta_ensembl homo_sapiens --species_latin_name 'homo sapiens' --archr_scrnaseq '/path/scRNA-Hematopoiesis-Granja-2019.rds' --archr_blacklist /home/hl84w/lucio_castilla/scATAC-seq/docs/hg38-blacklist.v2.bed.gz
 ```
 
 Break down:
@@ -163,9 +168,9 @@ Break down:
 
   This instructs scATACpipe to use Chromap preprocessing strategy.
 
-  * `--outdir ./results_chromap`:
+  * `--outdir ./results_chromap_initial`:
 
-  Output will be saved into `./results_chromap` folder.
+  Output will be saved into `./results_chromap_initial` folder.
 
   * `--input_fastq ./assets/10X_human_scatac_fastq.csv`:
 
@@ -200,18 +205,18 @@ Again, you have to replace `/path/` with full absolute paths.
 2.  The final execution:
 
 After examining the results from the initial execution, we decided to remove the
-outlier clusters (C2, C10) from downstream analyses. These two clusters are considered problematic according to the following two plots:
-  * The clustering heatmap plot from **./results_chromap/archr_clustering/** folder: the cell proportions from `PBMC_5K_N` and `PBMC_5K_V` samples are unbalanced for C2, C10.
+outlier clusters (C1, C6) from downstream analyses. These two clusters are considered problematic according to the following two plots:
+  * The clustering heatmap plot from **./results_chromap_initial/archr_clustering/** folder: the cell proportions from `PBMC_5K_N` and `PBMC_5K_V` samples are unbalanced for C1, C6.
 <p align="center">
-  <img src="docs/images/demo/test_chromap_initial/Clusters_heatmap.jpg" width="500" style="display: block; margin: auto">
+  <img src="docs/images/demo/test_chromap_initial/Clusters_heatmap.png" width="500" style="display: block; margin: auto">
 </p>
 
-  * The marker gene heatmap plot from **./results_chromap/archr_marker_gene_clusters/** folder: no distinct marker gene pattern detected in cluster C2, C10.
+  * The marker gene heatmap plot from **./results_chromap_initial/archr_marker_gene_clusters/** folder: no distinct marker gene pattern detected in cluster C1, C6.
 <p align="center">
-  <img src="docs/images/demo/test_chromap_initial/GeneScores-Marker-Heatmap.jpg" width="500" style="display: block; margin: auto">
+  <img src="docs/images/demo/test_chromap_initial/GeneScores-Marker-Heatmap.png" width="500" style="display: block; margin: auto">
 </p>
 
-We used the following line to remove C2 and C10:
+We used the following line to remove C1 and C6:
 https://github.com/hukai916/scATACpipe/blob/b0bed3f63c7044fd6ab98c39c9d81166fe476edc/conf/test_chromap_final.config#L18
 
 Also, we would like to perform constrained integration of scRNA-seq data in addition to the unconstrained integration. The following line was used to supply the grouping information:
@@ -238,7 +243,25 @@ The final execution command looks like below:
 ```
 nextflow run main.nf -profile singularity,lsf -c ./conf/test_chromap_final.config -resume session_id
 ```
-Note that, the `-resume session_id` must be supplied in order to skip already-performed analyses and the corresponding session id can be found by `nextflow log` command.
+In order to skip already-performed analyses, you must provide the `-resume session_id` option. The corresponding session ID can be found using the `nextflow log` command. Please note that the `--outdir` directory is set to `results_chromap_final`.
+
+When the final execution is complete, we can look at clustering heatmaps and marker gene heatmaps, and they both look good now:
+  * The marker gene heatmap plot from **./results_chromap_final/archr_marker_gene_clusters/** folder:
+  <p align="center">
+  <img src="docs/images/demo/test_chromap_final/Clusters_heatmap.png" width="500" style="display: block; margin: auto">
+  </p>
+
+  * The marker gene heatmap plot from **./results_chromap_final/archr_marker_gene_clusters/** folder:
+  <p align="center">
+  <img src="docs/images/demo/test_chromap_final/GeneScores-Marker-Heatmap.png" width="500" style="display: block; margin: auto">
+  </p>
+
+### Pipeline info
+
+Upon pipeline execution completion, Nextflow will produce time and resource usage reports that are stored under `pipeline_info`:
+- Using `chromap` option: [results_chromap_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_chromap_final/pipeline_info)
+- Using `default` option: [results_default_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_default_final/pipeline_info)
+- Using `10xgenomics` option: [results_10xgenomics_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_10xgenomics_final/pipeline_info)
 
 ## Documentation
 
