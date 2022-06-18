@@ -120,8 +120,13 @@ Main pipeline parameters must be supplied with command flags or configured insid
   # Example: assets/homo_sapiens_autosomes.txt
 
 --archr_scrnaseq                    [false|path_to_matching_RNAseq_Seurat_object] Whether or not to integrate scRNAseq data.
---archr_scrnaseq_grouplist          [''|'example see conf/test.config']  scRNAseq cluster grouping info for constrained integration.
---custom_peaks                      [false|'example see conf/test.config']  For motif enrichment/deviation.
+--archr_scrnaseq_grouplist          [''|'example see conf/test_chromap.config']  scRNAseq cluster grouping info for constrained integration.
+--custom_peaks                      [false|'example see conf/test_chromap.config']  For motif enrichment/deviation.
+
+--outlier_further                   [true|false]  Set to false to stop immediately after embedding step for outlier detection
+
+# Use below to exclude samples from downstream analyses:
+--filter_sample                     [false|string]  Samples to skip downstream analyses. Example see conf/test_chromap.config.
 
 # Use below to exclude clusters for downstream analysis, refer to archr_clustering/Cluster_xxx_matrix.csv for valid cluster names
 --filter_seurat_ilsi                [false|String]  Clusters to exclude for downstream analysis.
