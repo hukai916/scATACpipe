@@ -50,7 +50,9 @@ class WorkflowMain {
     //
     public static String paramsSummaryLog(workflow, params, log) {
         def summary_log = ''
+        println "inside paramsSummaryLog"
         summary_log += NfcoreTemplate.logo(workflow, params.monochrome_logs)
+        println "inside here again"
         summary_log += NfcoreSchema.paramsSummaryLog(workflow, params)
         summary_log += '\n' + citation(workflow) + '\n'
         summary_log += NfcoreTemplate.dashedLine(params.monochrome_logs)
