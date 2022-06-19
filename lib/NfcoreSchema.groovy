@@ -285,6 +285,7 @@ class NfcoreSchema {
     // Groovy Map summarising parameters/workflow options used by the pipeline
     //
     public static LinkedHashMap paramsSummaryMap(workflow, params, schema_filename='nextflow_schema.json') {
+        println "inside paramHelp"
         // Get a selection of core Nextflow workflow options
         def Map workflow_summary = [:]
         if (workflow.revision) {

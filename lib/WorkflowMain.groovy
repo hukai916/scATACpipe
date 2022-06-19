@@ -50,11 +50,8 @@ class WorkflowMain {
     //
     public static String paramsSummaryLog(workflow, params, log) {
         def summary_log = ''
-        println "inside paramsSummaryLog"
         summary_log += NfcoreTemplate.logo(workflow, params.monochrome_logs)
-        println "inside here again"
         summary_log += NfcoreSchema.paramsSummaryLog(workflow, params)
-        println "inside here again agin"
         summary_log += '\n' + citation(workflow) + '\n'
         summary_log += NfcoreTemplate.dashedLine(params.monochrome_logs)
         return summary_log
@@ -98,11 +95,8 @@ class WorkflowMain {
             NfcoreSchema.validateParameters(workflow, params, log)
         }
 
-        println "Inside main"
-
         // Print parameter summary log to screen
         log.info paramsSummaryLog(workflow, params, log)
-        println "here"
 
         // Check that conda channels are set-up correctly
         if (params.enable_conda) {
