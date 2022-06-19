@@ -368,11 +368,8 @@ workflow DOWNSTREAM_ARCHR {
 
     // Module: batch correction with harmony
     // Module: clustering
-    if (params.filter_sample) {
-      filter_sample = params.filter_sample
-    } else {
-      filter_sample = "NA"
-    }
+    filter_sample = params.filter_sample
+
     if (params.filter_seurat_ilsi) {
       seurat_ilsi = params.filter_seurat_ilsi
     } else {
