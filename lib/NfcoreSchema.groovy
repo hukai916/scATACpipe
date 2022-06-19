@@ -133,7 +133,6 @@ class NfcoreSchema {
 
         //=====================================================================//
         // Validate parameters against the schema
-        println 'TEST HERE'
         InputStream input_stream = new File(getSchemaPath(workflow, schema_filename=schema_filename)).newInputStream()
         JSONObject raw_schema = new JSONObject(new JSONTokener(input_stream))
         println 'THERE HRER2'
@@ -149,7 +148,7 @@ class NfcoreSchema {
         // Convert to JSONObject
         def jsonParams = new JsonBuilder(cleanedParams)
         JSONObject params_json = new JSONObject(jsonParams.toString())
-
+        println 'TEST HERE3'
         // Validate
         try {
             schema.validate(params_json)
