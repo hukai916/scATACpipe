@@ -349,6 +349,7 @@ class NfcoreSchema {
                     }
                 }
             }
+            println "passed "
             params_summary.put(group, sub_params)
         }
         println "here -> 3"
