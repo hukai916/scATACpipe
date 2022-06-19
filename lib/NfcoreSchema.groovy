@@ -181,7 +181,6 @@ class NfcoreSchema {
     // Beautify parameters for --help
     //
     public static String paramsHelp(workflow, params, command1, command2, schema_filename='nextflow_schema.json') {
-        println "inside paramsHelp"
         Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
         Integer num_hidden = 0
         String output  = ''
@@ -355,9 +354,11 @@ class NfcoreSchema {
     // Beautify parameters for summary and return as string
     //
     public static String paramsSummaryLog(workflow, params) {
+        println 'here 1'
         Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
         String output  = ''
         def params_map = paramsSummaryMap(workflow, params)
+        println "here2"
         def max_chars  = paramsMaxChars(params_map)
         for (group in params_map.keySet()) {
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
