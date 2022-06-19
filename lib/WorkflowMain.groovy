@@ -54,6 +54,7 @@ class WorkflowMain {
         summary_log += NfcoreTemplate.logo(workflow, params.monochrome_logs)
         println "inside here again"
         summary_log += NfcoreSchema.paramsSummaryLog(workflow, params)
+        println "inside here again agin"
         summary_log += '\n' + citation(workflow) + '\n'
         summary_log += NfcoreTemplate.dashedLine(params.monochrome_logs)
         return summary_log
