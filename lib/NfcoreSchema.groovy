@@ -351,6 +351,7 @@ class NfcoreSchema {
             }
             params_summary.put(group, sub_params)
         }
+        println "here -> 3"
         return [ 'Core Nextflow options' : workflow_summary ] << params_summary
     }
 
