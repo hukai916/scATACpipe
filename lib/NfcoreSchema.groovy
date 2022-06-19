@@ -133,8 +133,10 @@ class NfcoreSchema {
 
         //=====================================================================//
         // Validate parameters against the schema
+        println 'TEST HERE'
         InputStream input_stream = new File(getSchemaPath(workflow, schema_filename=schema_filename)).newInputStream()
         JSONObject raw_schema = new JSONObject(new JSONTokener(input_stream))
+        println 'THERE HRER2'
 
         // Remove anything that's in params.schema_ignore_params
         raw_schema = removeIgnoredParams(raw_schema, params)
