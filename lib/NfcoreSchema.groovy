@@ -323,14 +323,14 @@ class NfcoreSchema {
                     def param_type   = group_params.get(param).type
                     if (schema_value != null) {
                         if (param_type == 'string') {
-                            if (schema_value.contains('$projectDir') || schema_value.contains('${projectDir}')) {
+                            if (schema_value.toString().contains('$projectDir') || schema_value.toString().contains('${projectDir}')) {
                                 def sub_string = schema_value.replace('\$projectDir', '')
                                 sub_string     = sub_string.replace('\${projectDir}', '')
                                 if (params_value.contains(sub_string)) {
                                     schema_value = params_value
                                 }
                             }
-                            if (schema_value.contains('$params.outdir') || schema_value.contains('${params.outdir}')) {
+                            if (schema_value.toString().contains('$params.outdir') || schema_value.toString().contains('${params.outdir}')) {
                                 def sub_string = schema_value.replace('\$params.outdir', '')
                                 sub_string     = sub_string.replace('\${params.outdir}', '')
                                 if ("${params.outdir}${sub_string}" == params_value) {
