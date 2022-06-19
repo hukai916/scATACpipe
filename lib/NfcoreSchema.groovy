@@ -198,7 +198,6 @@ class NfcoreSchema {
             Integer num_params = 0
             String group_output = colors.underlined + colors.bold + group + colors.reset + '\n'
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
-            println "DEBUG: " + group + " : " + group_params
             for (param in group_params.keySet()) {
                 if (group_params.get(param).hidden && !params.show_hidden_params) {
                     num_hidden += 1
@@ -285,7 +284,6 @@ class NfcoreSchema {
     // Groovy Map summarising parameters/workflow options used by the pipeline
     //
     public static LinkedHashMap paramsSummaryMap(workflow, params, schema_filename='nextflow_schema.json') {
-        println "inside paramHelp"
         // Get a selection of core Nextflow workflow options
         def Map workflow_summary = [:]
         if (workflow.revision) {
@@ -308,15 +306,11 @@ class NfcoreSchema {
         // Get pipeline parameters defined in JSON Schema
         def Map params_summary = [:]
         def blacklist  = ['hostnames']
-        println "here -> 1"
         def params_map = paramsLoad(getSchemaPath(workflow, schema_filename=schema_filename))
-        println "here -> 2"
         for (group in params_map.keySet()) {
-            println group
             def sub_params = new LinkedHashMap()
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
             for (param in group_params.keySet()) {
-                println param
                 if (params.containsKey(param) && !blacklist.contains(param)) {
                     def params_value = params.get(param)
                     def schema_value = group_params.get(param).default
@@ -350,10 +344,8 @@ class NfcoreSchema {
                     }
                 }
             }
-            println "passed "
             params_summary.put(group, sub_params)
         }
-        println "here -> 3"
         return [ 'Core Nextflow options' : workflow_summary ] << params_summary
     }
 
@@ -361,11 +353,9 @@ class NfcoreSchema {
     // Beautify parameters for summary and return as string
     //
     public static String paramsSummaryLog(workflow, params) {
-        println 'here 1'
         Map colors = NfcoreTemplate.logColours(params.monochrome_logs)
         String output  = ''
         def params_map = paramsSummaryMap(workflow, params)
-        println "here2"
         def max_chars  = paramsMaxChars(params_map)
         for (group in params_map.keySet()) {
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
