@@ -137,7 +137,7 @@
                     "type": "string",
                     "description": "A genome name from ENSEMBL (e.g. homo_sapiens)."
                 },
-                "--ref_fasta_ucsc": {
+                "ref_fasta_ucsc": {
                     "type": "string",
                     "description": "A genome name from UCSC (e.g. mm10)."
                 },
