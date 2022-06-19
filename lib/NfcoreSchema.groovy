@@ -316,6 +316,7 @@ class NfcoreSchema {
             def sub_params = new LinkedHashMap()
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
             for (param in group_params.keySet()) {
+                println param
                 if (params.containsKey(param) && !blacklist.contains(param)) {
                     def params_value = params.get(param)
                     def schema_value = group_params.get(param).default
