@@ -25,9 +25,9 @@
                     "type": "string",
                     "description": "Use this flag to view currently supported genomes."
                 },
-                "multiqc_title [todo]": {
+                "multiqc_title": {
                     "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+                    "description": "[todo] MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
                     "fa_icon": "fas fa-file-signature"
                 }
             }
@@ -133,9 +133,13 @@
                     "description": "Preprocessing method. Choose from 'default', '10xgenomics', 'chromap'.",
                     "fa_icon": "fas fa-arrow-circle-right"
                 },
-                "ref_fasta_ensembl | --ref_fasta_ucsc": {
+                "ref_fasta_ensembl": {
                     "type": "string",
-                    "description": "A genome name, either from ENSEMBL (e.g. homo_sapiens) or UCSC (e.g. mm10)."
+                    "description": "A genome name from ENSEMBL (e.g. homo_sapiens)."
+                },
+                "--ref_fasta_ucsc": {
+                    "type": "string",
+                    "description": "A genome name from UCSC (e.g. mm10)."
                 },
                 "mapper": {
                     "type": "string",
@@ -191,7 +195,7 @@
                     "description": "For '--preprocess default' only. Choose from 'bwa', 'bowtie2(todo)'.",
                     "default": "bwa"
                 },
-                "barcode_whitelist": {
+                "whitelist_barcode": {
                     "type": "string",
                     "description": "For '--preprocess default' only. Path to whitelist folder.",
                     "default": "./assets/whitelist_barcodes"
@@ -299,6 +303,11 @@
                   "type": "string",
                   "description": "Method for doublet removel. Choose from 'amulet', 'archr', or false to skip.",
                   "default": "archr"
+              },
+              "archr_batch_correction_harmony": {
+                  "type": "boolean",
+                  "description": "Whether or not to perform batch correction with Harmony",
+                  "default": true
               },
               "amulet_rmsk_bed": {
                   "type": "string",
