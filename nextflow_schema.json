@@ -24,11 +24,6 @@
                 "support_genome": {
                     "type": "string",
                     "description": "Use this flag to view currently supported genomes."
-                },
-                "multiqc_title": {
-                    "type": "string",
-                    "description": "[todo] MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
                 }
             }
         },
