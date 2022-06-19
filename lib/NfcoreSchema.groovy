@@ -147,7 +147,6 @@ class NfcoreSchema {
         // Convert to JSONObject
         def jsonParams = new JsonBuilder(cleanedParams)
         JSONObject params_json = new JSONObject(jsonParams.toString())
-        println 'TEST HERE3'
         println params_json
         // Validate
         try {

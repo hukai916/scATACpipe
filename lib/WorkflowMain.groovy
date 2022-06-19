@@ -95,6 +95,8 @@ class WorkflowMain {
             NfcoreSchema.validateParameters(workflow, params, log)
         }
 
+        println "Inside main"
+        
         // Print parameter summary log to screen
         log.info paramsSummaryLog(workflow, params, log)
 
