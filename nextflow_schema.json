@@ -340,7 +340,7 @@
               "filter_sample": {
                   "type": "string",
                   "description": "Samples to skip downstream analyses. Example see conf/test_chromap.config.",
-                  "default": 'NA'
+                  "default": "NA"
               },
               "outlier_further": {
                   "type": "boolean",
