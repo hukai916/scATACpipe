@@ -312,6 +312,7 @@ class NfcoreSchema {
         def params_map = paramsLoad(getSchemaPath(workflow, schema_filename=schema_filename))
         println "here -> 2"
         for (group in params_map.keySet()) {
+            println group
             def sub_params = new LinkedHashMap()
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
             for (param in group_params.keySet()) {
