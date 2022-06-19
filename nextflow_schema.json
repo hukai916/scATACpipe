@@ -347,6 +347,12 @@
                   "description": "Samples to skip downstream analyses. Example see conf/test_chromap.config.",
                   "default": false
               },
+              "outlier_further": {
+                  "type": "boolean",
+                  "description": "Set to false to stop immediately after embedding step for outlier detection",
+                  "default": true,
+                  "hidden": true
+              },
               "custom_peaks": {
                   "type": "string",
                   "description": "For motif enrichment/deviation. Example see conf/test_chromap.config.",
