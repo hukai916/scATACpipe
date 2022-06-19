@@ -96,9 +96,10 @@ class WorkflowMain {
         }
 
         println "Inside main"
-        
+
         // Print parameter summary log to screen
         log.info paramsSummaryLog(workflow, params, log)
+        println "here"
 
         // Check that conda channels are set-up correctly
         if (params.enable_conda) {
