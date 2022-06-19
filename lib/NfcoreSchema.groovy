@@ -308,7 +308,9 @@ class NfcoreSchema {
         // Get pipeline parameters defined in JSON Schema
         def Map params_summary = [:]
         def blacklist  = ['hostnames']
+        println "here -> 1"
         def params_map = paramsLoad(getSchemaPath(workflow, schema_filename=schema_filename))
+        println "here -> 2"
         for (group in params_map.keySet()) {
             def sub_params = new LinkedHashMap()
             def group_params = params_map.get(group)  // This gets the parameters of that particular group
