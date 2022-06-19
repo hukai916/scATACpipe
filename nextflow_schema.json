@@ -339,7 +339,7 @@
                   "default": false
               },
               "outlier_further": {
-                  "type": "string",
+                  "type": "boolean",
                   "description": "Set to false to stop immediately after embedding step for outlier detection",
                   "default": true,
                   "hidden": true
