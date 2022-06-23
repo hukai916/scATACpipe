@@ -384,7 +384,6 @@ workflow DOWNSTREAM_ARCHR {
       seurat_harmony = "NA"
     }
 
-    log.info "INFO: seurat_harmony -> " + seurat_harmony
     if (params.archr_batch_correction_harmony) {
       ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread)
       // Module: clustering with seurat and scran, auto check if Harmony performed
