@@ -9,7 +9,7 @@
   - [DOWNSTREAM_ARCHR](#downstream_archr)
 
 [Quick Start](#quick-start)  
-[Example used in paper](#example)
+[Example used in paper](#example-used-in-paper)
   - [Commands and config](#commands-and-config)
   - [Pipeline info: time and resource usage](#pipeline-info)
 
@@ -147,7 +147,7 @@ nextflow run main.nf --help
 
 See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
 
-## Example
+## Example used in paper
 
 ### Commands and config
 

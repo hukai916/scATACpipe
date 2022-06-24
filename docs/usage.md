@@ -61,7 +61,7 @@ To view currently support genomes, simply:
 cd scATACpipe
 nextflow run main.nf --support_genome
 ```
-Refer to [output]() for example commands and results.
+Refer to [output](https://github.com/hukai916/scATACpipe/blob/main/docs/output.md) for example commands and results.
 
 ## Fragment files as input
 Fragment file paths (full path) must be saved into a **.csv** file (see below) and supplied with `--input_fragment`.
