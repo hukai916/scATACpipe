@@ -630,6 +630,14 @@ workflow DOWNSTREAM_ARCHR {
     try {
       res_files = res_files.mix(ARCHR_MOTIF_DEVIATIONS_CLUSTERS2.out.report.collect().ifEmpty([]))
     } catch (Exception ex) {}
+    // ARCHR_FOOTPRINTING_CLUSTERS:
+    try {
+      res_files = res_files.mix(ARCHR_FOOTPRINTING_CLUSTERS.out.report.collect().ifEmpty([]))
+    } catch (Exception ex) {}
+    // ARCHR_FOOTPRINTING_CLUSTERS2:
+    try {
+      res_files = res_files.mix(ARCHR_FOOTPRINTING_CLUSTERS2.out.report.collect().ifEmpty([]))
+    } catch (Exception ex) {}
     // ARCHR_COACCESSIBILITY_CLUSTERS:
     try {
       res_files = res_files.mix(ARCHR_COACCESSIBILITY_CLUSTERS.out.report.collect().ifEmpty([]))
