@@ -35,6 +35,8 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
 
     # Footprinting of motif:
     motifPositions <- getPositions(proj)
+    # Refer to https://github.com/GreenleafLab/ArchR/issues/493
+    source("$projectDir/bin/plot_footprints.R")
 
     if ("$options.motifs" == "default") {
       plotVarDev <- getVarDeviations(proj, name = "MotifMatrix", plot = TRUE)
@@ -53,7 +55,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
     plotName <- paste0("Footprints", "-", "$options.norm_method", "-Bias")
     out <- tryCatch(
       expr = {
-        plotFootprints(
+        plotFootprintsManuals(
           seFoot      = seFoot,
           ArchRProj   = proj,
           normMethod  = "$options.norm_method",
@@ -77,7 +79,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
              )
     out <- tryCatch(
       expr = {
-        plotFootprints(
+        plotFootprintsManuals(
           seFoot      = seTSS,
           ArchRProj   = proj,
           normMethod  = "$options.tss_norm_method",
