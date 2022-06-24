@@ -55,7 +55,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
     plotName <- paste0("Footprints", "-", "$options.norm_method", "-Bias")
     out <- tryCatch(
       expr = {
-        plotFootprintsManuals(
+        plotFootprintsManual(
           seFoot      = seFoot,
           ArchRProj   = proj,
           normMethod  = "$options.norm_method",
@@ -79,7 +79,7 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
              )
     out <- tryCatch(
       expr = {
-        plotFootprintsManuals(
+        plotFootprintsManual(
           seFoot      = seTSS,
           ArchRProj   = proj,
           normMethod  = "$options.tss_norm_method",
@@ -117,9 +117,9 @@ process ARCHR_FOOTPRINTING_CLUSTERS2 {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_footprinting_clusters2
-    cp -r ./Plots/jpeg report_jpeg/archr_footprinting_clusters2
+    cp -r ./Plots/jpeg report_jpeg/archr_footprinting_clusters2 || :
     mkdir ./report_jpeg/archr_footprinting_clusters2/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_footprinting_clusters2/pdf
+    cp ./Plots/*.pdf report_jpeg/archr_footprinting_clusters2/pdf || :
 
     """
 }

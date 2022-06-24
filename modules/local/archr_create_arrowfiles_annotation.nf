@@ -74,10 +74,10 @@ process ARCHR_CREATE_ARROWFILES_ANNOTATION {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_create_arrowfiles_annotation_$sample_name
-    cp -r ./QualityControl_$sample_name/jpeg report_jpeg/archr_create_arrowfiles_annotation_$sample_name
+    cp -r ./QualityControl_$sample_name/jpeg report_jpeg/archr_create_arrowfiles_annotation_$sample_name || :
 
     mkdir ./report_jpeg/archr_create_arrowfiles_annotation_$sample_name/pdf
-    cp ./QualityControl_$sample_name/*/*.pdf report_jpeg/archr_create_arrowfiles_annotation_$sample_name/pdf
+    cp ./QualityControl_$sample_name/*/*.pdf report_jpeg/archr_create_arrowfiles_annotation_$sample_name/pdf || :
 
     """
 }

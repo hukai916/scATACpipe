@@ -135,9 +135,9 @@ process ARCHR_EMBEDDING {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_embedding
-    cp -r ./Plots/jpeg report_jpeg/archr_embedding
+    cp -r ./Plots/jpeg report_jpeg/archr_embedding || :
     mkdir ./report_jpeg/archr_embedding/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_embedding/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_embedding/pdf/ || :
 
     """
 }

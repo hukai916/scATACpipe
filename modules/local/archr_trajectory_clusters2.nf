@@ -157,9 +157,9 @@ process ARCHR_TRAJECTORY_CLUSTERS2 {
 
     # For reporting:
     mkdir -p report_jpeg/archr_trajectory_clusters2
-    cp -r Plots/jpeg report_jpeg/archr_trajectory_clusters2
+    cp -r Plots/jpeg report_jpeg/archr_trajectory_clusters2 || :
     mkdir ./report_jpeg/archr_trajectory_clusters2/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_trajectory_clusters2/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_trajectory_clusters2/pdf/ || :
 
     """
 }

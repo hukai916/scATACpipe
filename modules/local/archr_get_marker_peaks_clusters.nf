@@ -96,9 +96,9 @@ process ARCHR_GET_MARKER_PEAKS_CLUSTERS {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_get_marker_peaks_clusters
-    cp -r ./Plots/jpeg report_jpeg/archr_get_marker_peaks_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_get_marker_peaks_clusters || :
     mkdir ./report_jpeg/archr_get_marker_peaks_clusters/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_get_marker_peaks_clusters/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_get_marker_peaks_clusters/pdf/ || :
 
     """
 }

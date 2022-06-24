@@ -170,9 +170,9 @@ process ARCHR_MARKER_GENE_CLUSTERS2 {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_marker_gene_clusters2
-    cp -r ./Plots/jpeg report_jpeg/archr_marker_gene_clusters2
+    cp -r ./Plots/jpeg report_jpeg/archr_marker_gene_clusters2 || :
     mkdir ./report_jpeg/archr_marker_gene_clusters2/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_marker_gene_clusters2/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_marker_gene_clusters2/pdf/ || :
 
     """
 }

@@ -111,9 +111,9 @@ process ARCHR_MARKER_PEAKS_IN_TRACKS_CLUSTERS {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_marker_peaks_in_tracks_clusters
-    cp -r ./Plots/jpeg report_jpeg/archr_marker_peaks_in_tracks_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_marker_peaks_in_tracks_clusters || :
     mkdir ./report_jpeg/archr_marker_peaks_in_tracks_clusters/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_marker_peaks_in_tracks_clusters/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_marker_peaks_in_tracks_clusters/pdf/ || :
 
     """
 }

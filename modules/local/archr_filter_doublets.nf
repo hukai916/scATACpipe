@@ -36,7 +36,7 @@ process ARCHR_FILTER_DOUBLETS {
 
     Rscript run.R
 
-    cp .command.log summary_filter_doublets.txt
+    cp .command.log summary_filter_doublets.txt || :
 
     """
 }

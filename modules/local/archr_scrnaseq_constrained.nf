@@ -217,9 +217,9 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_scrnaseq_constrained
-    cp -r ./Plots/jpeg report_jpeg/archr_scrnaseq_constrained
+    cp -r ./Plots/jpeg report_jpeg/archr_scrnaseq_constrained || :
     mkdir ./report_jpeg/archr_scrnaseq_constrained/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_scrnaseq_constrained/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_scrnaseq_constrained/pdf/ || :
 
     """
 }

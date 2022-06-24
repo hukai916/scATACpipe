@@ -92,7 +92,7 @@ process ARCHR_COACCESSIBILITY_CLUSTERS {
 
     # For reporting:
     mkdir -p report_jpeg/archr_coaccessibility_clusters
-    cp -r Plots/jpeg report_jpeg/archr_coaccessibility_clusters
+    cp -r Plots/jpeg report_jpeg/archr_coaccessibility_clusters || :
 
     """
 }

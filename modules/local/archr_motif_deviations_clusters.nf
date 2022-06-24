@@ -151,9 +151,9 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_motif_deviations_clusters
-    cp -r ./Plots/jpeg report_jpeg/archr_motif_deviations_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_motif_deviations_clusters || :
     mkdir ./report_jpeg/archr_motif_deviations_clusters/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_motif_deviations_clusters/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_motif_deviations_clusters/pdf/ || :
 
 
     """

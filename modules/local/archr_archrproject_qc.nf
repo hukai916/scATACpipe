@@ -102,9 +102,9 @@ process ARCHR_ARCHRPROJECT_QC {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_archrproject_qc
-    cp -r ./Plots/jpeg report_jpeg/archr_archrproject_qc
+    cp -r ./Plots/jpeg report_jpeg/archr_archrproject_qc || :
     mkdir ./report_jpeg/archr_archrproject_qc/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_archrproject_qc/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_archrproject_qc/pdf/ || :
 
     """
 }

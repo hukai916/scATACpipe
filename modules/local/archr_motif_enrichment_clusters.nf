@@ -164,9 +164,9 @@ process ARCHR_MOTIF_ENRICHMENT_CLUSTERS {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_motif_enrichment_clusters
-    cp -r ./Plots/jpeg report_jpeg/archr_motif_enrichment_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_motif_enrichment_clusters || :
     mkdir ./report_jpeg/archr_motif_enrichment_clusters/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_motif_enrichment_clusters/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_motif_enrichment_clusters/pdf/ || :
 
     """
 }

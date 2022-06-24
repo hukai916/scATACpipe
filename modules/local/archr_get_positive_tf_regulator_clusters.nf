@@ -95,9 +95,9 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_get_positive_tf_regulator_clusters
-    cp -r ./Plots/jpeg report_jpeg/archr_get_positive_tf_regulator_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_get_positive_tf_regulator_clusters || :
     mkdir ./report_jpeg/archr_get_positive_tf_regulator_clusters/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_get_positive_tf_regulator_clusters/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_get_positive_tf_regulator_clusters/pdf/ || :
 
     """
 }

@@ -155,9 +155,9 @@ process ARCHR_CLUSTERING {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_clustering
-    cp -r ./Plots/jpeg report_jpeg/archr_clustering
+    cp -r ./Plots/jpeg report_jpeg/archr_clustering || :
     mkdir ./report_jpeg/archr_clustering/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_clustering/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_clustering/pdf/ || :
 
     """
 }

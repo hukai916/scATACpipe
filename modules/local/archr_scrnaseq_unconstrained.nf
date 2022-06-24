@@ -142,9 +142,9 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
 
     # For reporting:
     mkdir -p report_jpeg/archr_scrnaseq_unconstrained
-    cp -r Plots/jpeg report_jpeg/archr_scrnaseq_unconstrained
+    cp -r Plots/jpeg report_jpeg/archr_scrnaseq_unconstrained || :
     mkdir ./report_jpeg/archr_scrnaseq_unconstrained/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_scrnaseq_unconstrained/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_scrnaseq_unconstrained/pdf/ || :
 
     """
 }

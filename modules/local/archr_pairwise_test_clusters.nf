@@ -83,9 +83,9 @@ process ARCHR_PAIRWISE_TEST_CLUSTERS {
 
     # For reporting:
     mkdir -p ./report_jpeg/archr_pairwise_test_clusters
-    cp -r ./Plots/jpeg report_jpeg/archr_pairwise_test_clusters
+    cp -r ./Plots/jpeg report_jpeg/archr_pairwise_test_clusters || :
     mkdir ./report_jpeg/archr_pairwise_test_clusters/pdf
-    cp ./Plots/*.pdf report_jpeg/archr_pairwise_test_clusters/pdf/
+    cp ./Plots/*.pdf report_jpeg/archr_pairwise_test_clusters/pdf/ || :
 
     """
 }
