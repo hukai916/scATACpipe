@@ -9,7 +9,7 @@ process MULTIQC {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'multiqc', publish_id:'') }
-    container "hukai916/multiqc:0.1.9"
+    container "hukai916/multiqc:0.1.10"
 
     input:
     path res_files
