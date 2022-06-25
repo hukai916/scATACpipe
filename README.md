@@ -38,6 +38,7 @@ Below is a simplified diagram to illustrate the design logic and functionalities
 <p align="center">
   <img src="docs/images/scATACpipe_workflow.svg" width="500" style="display: block; margin: 20px auto">
 </p>
+
 The main functionalities of each sub-workflow are summarized below. You can also refer to the [output - Result folders](https://github.com/hukai916/scATACpipe/blob/main/docs/output.md#result-folders) for more details.
 
 #### PREPROCESS_DEFAULT:
