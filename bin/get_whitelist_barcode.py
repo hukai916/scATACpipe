@@ -56,8 +56,7 @@ fractions     = [get_fraction(index_fastq, barcode_file) for barcode_file in bar
 max_frac      = fractions.index(max(fractions))
 
 if max(fractions) < 0.5:
-    sys.exit("Valid barcode ratio is less than 0.5 across all supplied whitelist barcode files, must used the wrong whitelist barcode file!")
-else:
-    copy2(barcode_files[max_frac], os.path.join("./" + outfile_prefix + "_" + os.path.basename(barcode_files[max_frac])))
-    print("Selected whitelist barcode file: " + barcode_files[max_frac])
-    print("Valid barcode fraction against this whitelist: " + str(max(fractions)))
+    print("WARN: valid barcode ratio is less than 0.5 across all supplied whitelist barcode files, must used the wrong whitelist barcode file!")
+copy2(barcode_files[max_frac], os.path.join("./" + outfile_prefix + "_" + os.path.basename(barcode_files[max_frac])))
+print("Selected whitelist barcode file: " + barcode_files[max_frac])
+print("Valid barcode fraction against this whitelist: " + str(max(fractions)))
