@@ -30,5 +30,11 @@ process ADD_BARCODE_TO_READ_CHUNKS {
     # sinto barcode $options.args --barcode_fastq $barcode_fastq --read1 $read1_fastq --read2 $read2_fastq -b \$barcode_length
     addbarcodes_parallel.py $barcode_fastq \$barcode_length $read1_fastq $read2_fastq $task.cpus
 
+    # remove sequence description in + line, otherwise, cutadapt may complain if it does not match with line 1:
+    zcat $read1_barcoded_fastq | awk '{if (\$1 ~/+/) {print "+"} else {print \$0}}' | gzip > tem_$read1_barcoded_fastq
+    zcat $read2_barcoded_fastq | awk '{if (\$1 ~/+/) {print "+"} else {print \$0}}' | gzip > tem_$read2_barcoded_fastq
+    mv tem_$read1_barcoded_fastq $read1_barcoded_fastq
+    mv tem_$read2_barcoded_fastq $read2_barcoded_fastq
+
     """
 }
