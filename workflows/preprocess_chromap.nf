@@ -62,11 +62,15 @@ workflow PREPROCESS_CHROMAP {
     // module: merge samples from different lanes
     MERGE_SAMPLE (MATCH_SAMPLE_NAME.out.sample_name.unique(), MATCH_SAMPLE_NAME.out.sample_files.collect()) // merge_sample.out.sample_name_r1_r2_barcode
     // module: get white list barcode for each sample:
+    if (params.barcode_correction) {
+      use_whitelist = "true"
+    } else {
+      use_whitelist = "false"
+    }
+
     if (!params.whitelist_barcode) {
-      use_whitelist   = "false"
       path_whitelist  = Channel.fromPath('assets/whitelist_barcodes').first()
     } else {
-      use_whitelist   = "true"
       path_whitelist  = Channel.fromPath(params.whitelist_barcode).first()
     }
     // module: get_whitelist_chromap for each sample

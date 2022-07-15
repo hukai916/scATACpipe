@@ -160,15 +160,15 @@ workflow PREPROCESS_DEFAULT {
 
     if (!params.barcode_correction) {
       // Module: get fragment file
+      use_whitelist     = "false"
       GET_FRAGMENTS (DEDUP_BAM.out.sample_name_bam)
     } else {
       // Note, we first obtain valid barcode on a per sample basis no matter split_fastq or not:
       // Module: get_whitelist_barcode
+      use_whitelist     = "true"
       if (!params.whitelist_barcode) {
-        use_whitelist   = "false"
         path_whitelist  = Channel.fromPath('assets/whitelist_barcodes').first()
       } else {
-        use_whitelist   = "true"
         path_whitelist  = Channel.fromPath(params.whitelist_barcode).first()
       }
       if (!params.split_fastq) {
