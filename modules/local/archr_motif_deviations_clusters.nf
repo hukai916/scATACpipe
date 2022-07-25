@@ -82,14 +82,21 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
       markerRNA <- getFeatures(proj2, select = paste(motifs, collapse="|"), useMatrix = "GeneScoreMatrix")
       markerRNA <- gsub(".+:", "", markerRNA) # get rid of potential leading "chrN:", otherwise plotEmbedding error
 
-      p <- plotEmbedding(
-            ArchRProj = proj2,
-            colorBy = "GeneScoreMatrix",
-            name = sort(markerRNA),
-            embedding = embedding,
-            imputeWeights = getImputeWeights(proj2)
-           )
-      plotPDF(p, name = paste0("Plot-Groups-Deviations-w-Imputation-", embedding, "-Embedding-w-Gene-Scores"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+      tryCatch({
+        p <- plotEmbedding(
+              ArchRProj = proj2,
+              colorBy = "GeneScoreMatrix",
+              name = sort(markerRNA),
+              embedding = embedding,
+              imputeWeights = getImputeWeights(proj2)
+             )
+        plotPDF(p, name = paste0("Plot-Groups-Deviations-w-Imputation-", embedding, "-Embedding-w-Gene-Scores"), width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+        },
+        error = function(cond) {
+          message("TryCatch Error here")
+          message(cond)
+        }
+      )
 
       # With gene expression overlay on the UMAP: for clusters2 only.
       # ArchR deviations, skipped before fixing the Nextflow download.file problem.
@@ -113,14 +120,21 @@ process ARCHR_MOTIF_DEVIATIONS_CLUSTERS {
       markerCustom <- sort(grep("z:", markerCustom, value = TRUE))
 
       for (embedding in names(proj@embeddings)) {
-        p <- plotEmbedding(
-          ArchRProj = proj2,
-          colorBy = "CustomMatrix",
-          name = markerCustom,
-          embedding = embedding,
-          imputeWeights = getImputeWeights(proj2)
-          )
-        plotPDF(p, name = paste0("Plot-Groups-Deviations-w-Imputation-", embedding, "-Embedding-w-z-scores") , width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+        tryCatch({
+          p <- plotEmbedding(
+            ArchRProj = proj2,
+            colorBy = "CustomMatrix",
+            name = markerCustom,
+            embedding = embedding,
+            imputeWeights = getImputeWeights(proj2)
+            )
+          plotPDF(p, name = paste0("Plot-Groups-Deviations-w-Imputation-", embedding, "-Embedding-w-z-scores") , width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+          },
+          error = function(cond) {
+            message("TryCatch Error here")
+            message(cond)
+          }
+        )
       }
 
       ' >> run.R
