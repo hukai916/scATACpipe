@@ -29,49 +29,56 @@ process ARCHR_GET_POSITIVE_TF_REGULATOR_CLUSTERS {
 
     proj <- readRDS("$archr_project", refhook = NULL)
 
-    seGroupMotif <- getGroupSE(ArchRProj = proj, useMatrix = "MotifMatrix", groupBy = "Clusters")
-    seZ <- seGroupMotif[rowData(seGroupMotif)\$seqnames=="z",]
-    rowData(seZ)\$maxDelta <- lapply(seq_len(ncol(seZ)), function(x){
-        rowMaxs(assay(seZ) - assay(seZ)[,x])
-      }) %>% Reduce("cbind", .) %>% rowMaxs
+    tryCatch({
+      seGroupMotif <- getGroupSE(ArchRProj = proj, useMatrix = "MotifMatrix", groupBy = "Clusters")
+      seZ <- seGroupMotif[rowData(seGroupMotif)\$seqnames=="z",]
+      rowData(seZ)\$maxDelta <- lapply(seq_len(ncol(seZ)), function(x){
+          rowMaxs(assay(seZ) - assay(seZ)[,x])
+        }) %>% Reduce("cbind", .) %>% rowMaxs
 
-    corGSM_MM <- correlateMatrices(
-      ArchRProj = proj,
-      useMatrix1 = "GeneScoreMatrix",
-      useMatrix2 = "MotifMatrix",
-      reducedDims = "IterativeLSI"
-      )
+      corGSM_MM <- correlateMatrices(
+        ArchRProj = proj,
+        useMatrix1 = "GeneScoreMatrix",
+        useMatrix2 = "MotifMatrix",
+        reducedDims = "IterativeLSI"
+        )
 
-    corGSM_MM\$maxDelta <- rowData(seZ)[match(corGSM_MM\$MotifMatrix_name, rowData(seZ)\$name), "maxDelta"]
+      corGSM_MM\$maxDelta <- rowData(seZ)[match(corGSM_MM\$MotifMatrix_name, rowData(seZ)\$name), "maxDelta"]
 
-    corGSM_MM <- corGSM_MM[order(abs(corGSM_MM\$cor), decreasing = TRUE), ]
-    corGSM_MM <- corGSM_MM[which(!duplicated(gsub("\\\\-.*","",corGSM_MM[,"MotifMatrix_name"]))), ]
-    corGSM_MM\$TFRegulator <- "NO"
-    corGSM_MM\$TFRegulator[which(corGSM_MM\$cor > 0.5 & corGSM_MM\$padj < 0.01 & corGSM_MM\$maxDelta > quantile(corGSM_MM\$maxDelta, 0.75))] <- "YES"
-    sort(corGSM_MM[corGSM_MM\$TFRegulator=="YES",1])
+      corGSM_MM <- corGSM_MM[order(abs(corGSM_MM\$cor), decreasing = TRUE), ]
+      corGSM_MM <- corGSM_MM[which(!duplicated(gsub("\\\\-.*","",corGSM_MM[,"MotifMatrix_name"]))), ]
+      corGSM_MM\$TFRegulator <- "NO"
+      corGSM_MM\$TFRegulator[which(corGSM_MM\$cor > 0.5 & corGSM_MM\$padj < 0.01 & corGSM_MM\$maxDelta > quantile(corGSM_MM\$maxDelta, 0.75))] <- "YES"
+      sort(corGSM_MM[corGSM_MM\$TFRegulator=="YES",1])
 
-    p <- ggplot(data.frame(corGSM_MM), aes(cor, maxDelta, label =  MotifMatrix_matchName, color = TFRegulator)) +
-      geom_point() +
-      theme_ArchR() +
-      geom_vline(xintercept = 0, lty = "dashed") +
-      scale_color_manual(values = c("NO"="darkgrey", "YES"="firebrick3")) +
-      xlab("Correlation To Gene Score") +
-      ylab("Max TF Motif Delta") +
-      scale_y_continuous(
-        expand = c(0,0),
-        limits = c(0, max(corGSM_MM\$maxDelta)*1.05)
-      ) +
-      geom_text_repel(data = subset(data.frame(corGSM_MM), TFRegulator == "YES"),
-                      size = 2,
-                      show.legend = FALSE, # otherwise there will be a hidden letter a
-                      point.padding = 0.5,
-                      force = 200,
-                      max.time = 30,
-                      segment.size = 0.3,
-                      direction = "both",
-                      segment.color = "grey50",
-                      segment.curvature = -0.1)
-    plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+      p <- ggplot(data.frame(corGSM_MM), aes(cor, maxDelta, label =  MotifMatrix_matchName, color = TFRegulator)) +
+        geom_point() +
+        theme_ArchR() +
+        geom_vline(xintercept = 0, lty = "dashed") +
+        scale_color_manual(values = c("NO"="darkgrey", "YES"="firebrick3")) +
+        xlab("Correlation To Gene Score") +
+        ylab("Max TF Motif Delta") +
+        scale_y_continuous(
+          expand = c(0,0),
+          limits = c(0, max(corGSM_MM\$maxDelta)*1.05)
+        ) +
+        geom_text_repel(data = subset(data.frame(corGSM_MM), TFRegulator == "YES"),
+                        size = 2,
+                        show.legend = FALSE, # otherwise there will be a hidden letter a
+                        point.padding = 0.5,
+                        force = 200,
+                        max.time = 30,
+                        segment.size = 0.3,
+                        direction = "both",
+                        segment.color = "grey50",
+                        segment.curvature = -0.1)
+      plotPDF(p, name = "Plot-Tracks-With-Features", width = 5, height = 5, ArchRProj = NULL, addDOC = FALSE)
+      },
+      error = function(cond) {
+        message("TryCatch Error here")
+        message(cond)
+      }
+    )
 
     ' > run.R
 
