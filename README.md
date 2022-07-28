@@ -9,6 +9,8 @@
   - [DOWNSTREAM_ARCHR](#downstream_archr)
 
 [Quick Start](#quick-start)  
+  - [Web GUI](#web-gui)    
+
 [Example used in paper](#example-used-in-paper)
   - [Commands and config](#commands-and-config)
   - [Pipeline info: time and resource usage](#pipeline-info)
@@ -16,7 +18,8 @@
 [Documentation](#documentation)  
 [Credits](#credits)  
 [Bug report/Support](#bug-reportsupport)  
-[Citations](#citations)
+[Citations](#citations)   
+[Release notes](#release-notes)
 
 ## Introduction
 
@@ -147,6 +150,14 @@ nextflow run main.nf --help
 ```
 
 See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
+
+##### Web GUI
+For easy generation of configuration file, we have implemented an interactive [config generator](#). It was implemented with pure HTML/JavaScript/CSS codes so that it can be used locally. To use it locally, simply:
+```
+wget https://downgit.github.io/#/home?url=https://github.com/hukai916/scATACpipe/tree/0.1.1/web_gui
+
+```
+Then, open `web_gui/index.html` with your web browser.
 
 ## Example used in paper
 
@@ -287,3 +298,17 @@ Please kindly cite scATACpipe [to be added] if you use it for your research.
 A ***Template of Method*** can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/template_of_method.docx).
 
 A complete list of references for the tools used by scATACpipe can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/scATACpipe_module_references.xlsx).
+
+## Release notes
+<details markdown="1">
+<summary>v0.1.0</summary>   
+
+  * initial release
+</details>
+
+<details markdown="1">
+<summary>v0.1.1</summary>
+
+* add web_gui for easy generation of config file
+* minor improvements
+</details>

@@ -1,0 +1,891 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* font-family: 'Noto Sans', sans-serif; */
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 400;
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+a {
+  cursor: default;
+}
+h3 {
+  font-weight: 500;
+}
+h3.h3-effect {
+  padding-top: 1rem;
+}
+
+input, select {
+  border-radius: 0.3rem;
+  border: 1px solid black;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+header {
+  width: 60rem;
+  height: 8rem;
+  margin: auto;
+  display: flex;
+
+  /* background-color: rgb(0, 113, 206, 0.15); */
+  background-color: rgb(0, 15, 159);
+  background-color: rgba(64,64,64,1);
+  /* border-radius: 0 0 0.5rem 0.5rem; */
+  border-radius: 0 0 0 0;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.header {
+  height: 8rem;
+}
+
+.header.text {
+  /* width: 18rem; */
+  width: 50rem;
+}
+
+.header h2 {
+  font-size: 2.5rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 8rem;
+  padding-left: 2rem;
+  color: rgba(255, 198, 41, 1);
+}
+
+.header.logo {
+  line-height: 8rem;
+  width: 32rem;
+  text-align: center;
+}
+
+body {
+  /* background-color: rgb(132, 218, 222, 0.1); */
+}
+
+nav {
+  /* border: 2px solid black; */
+  /* height: 4rem; */
+  width: 60rem;
+  margin: auto;
+  background: rgba(0, 15, 159, 1);
+  border-radius: 0 0 0 0;
+}
+
+nav ul li ul {
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+nav > ul > li {
+  display: inline-block;
+  list-style: none;
+  position: relative;
+}
+nav > ul > li > a {
+  display: block;
+  text-align: center;
+  padding: 1rem 2rem;
+  text-decoration: none;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 0 0 0 0;
+}
+nav > ul > li.effect:hover > a {
+  color: rgba(0, 15, 159, 1);
+  background-color: white;
+  text-decoration: underline;
+  transition: 0.2s;
+  transform-style: ease-in-out;
+  cursor: pointer;
+}
+
+nav ul li #selected-analysis {
+  font-weight: 300;
+  font-size: 1rem;
+}
+/* nav ul li #selected-analysis:hover {
+  font-weight: 300;
+  font-size: 1rem;
+  color: black;
+  cursor: default;
+} */
+nav ul li span {
+  /* color: red !important; */
+  color: rgba(255, 198, 41, 1) !important;
+  font-weight: 700 !important;
+  font-size: 1rem;
+}
+
+nav ul li ul {
+  /* background-color: rgb(229, 241, 250);
+  background-color: white;
+  background: rgba(210,210,210,1); */
+  background: rgba(0, 15, 159, 1);
+  position: absolute;
+  list-style: none;
+  display: none;
+  padding: 10px;
+  border-radius: 0px 0px 4px 4px;
+  z-index: 1000;
+}
+nav ul li ul li {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* nav ul li:hover ul {
+  display: block;
+} */
+/* Achieved the same effect with JS, JS will overwrite the CSS effect
+JS is more flexible: can hide the div box after click.*/
+
+nav ul li ul li {
+  width: 23rem;
+  border-radius: 4px;
+  text-align: center;
+  margin: auto;
+}
+nav ul li ul li a {
+  color: black;
+  color: rgba(255, 198, 41, 1);
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+nav ul li ul li:hover {
+  background-color: rgba(255, 198, 41, 0.4);
+  font-size: 1.1rem;
+  text-decoration: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+nav ul li ul li a:hover {
+  cursor: pointer;
+}
+
+div.main div.wrapper {
+  margin: auto;
+  width: 60rem;
+  min-height: 15rem;
+  min-height: 40rem;
+  overflow: auto;
+  /* background-color: pink;
+  background-color: rgb(230, 243, 244); */
+  /* background-color: rgb(198, 219, 146, 0.45); */
+  background-color: rgba(0, 15, 159, 0.5);
+  background-color: rgba(45, 113, 199, 0.15);
+  /* background: linear-gradient(to bottom, rgba(45, 113, 199, 0.25), rgba(45, 113, 199, 0.5)); */
+  /* border-radius: 0.5rem 0.5rem 0 0; */
+  border-radius: 0 0 0 0;
+}
+
+div.main div.input-radio, .parameters {
+  /* display: none; */
+  min-height: 5rem;
+  margin: auto;
+  /* width: 20rem; */
+  width: 55rem;
+  /* background-color: yellow; */
+  /* border: 1px solid blue; */
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  position: relative;
+  border: solid 1px;
+}
+div.main div.input-radio h2, div.parameters-required h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+/* Hide the browser's default radio button */
+div.main div.input-radio input {
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+}
+/* Create a custom radio button */
+div.input-radio label.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  /* margin-bottom: 12px; */
+  cursor: pointer;
+  font-size: 20px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 100%;
+}
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  /* background-color: #eee; */
+  background: white;
+  border-radius: 50%;
+}
+.radio-input-file:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+.radio-input-file input:checked ~ .checkmark {
+  background-color: #2196F3;
+  background: rgba(0, 15, 159, 1);
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.radio-input-file input:checked ~ .checkmark:after {
+  display: block;
+}
+.radio-input-file .checkmark:after {
+ 	top: 8px;
+	left: 8px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
+.div-label {
+  width: 15rem;
+}
+.radio-input-file {
+  padding: 0.5rem;
+}
+.radio-input-file:hover {
+  background-color: white;
+}
+/* Done: create a custom radio button */
+
+/* Hide the browser's default radio button */
+div.main div#param-core-input .master input {
+  opacity: 0;
+  position: absolute;
+  cursor: pointer;
+}
+/* Create a custom radio button */
+div#param-core-input label.container {
+  display: block;
+  position: relative;
+  /* padding-left: 5px;
+  margin-bottom: 12px; */
+  cursor: pointer;
+  /* font-size: 22px; */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.checkmark2 {
+  position: absolute;
+  /* top: 8px;
+  left: -0.75rem;
+  height: 15px;
+  width: 15px; */
+  top: 0.4rem;
+  left: 0.65rem;
+  height: 1rem;
+  width: 1rem;
+  background-color: #eee;
+  background: white;
+  border-radius: 50%;
+}
+div#param-core-input label.container:hover input ~ .checkmark2 {
+  background-color: #ccc;
+}
+div#param-core-input label.container input:checked ~ .checkmark2 {
+  background-color: #2196F3;
+  background: rgba(0, 15, 159, 1);
+}
+.checkmark2:after {
+  content: "";
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  display: none;
+}
+div#param-core-input label.container input:checked ~ .checkmark2:after {
+  display: block;
+}
+div#param-core-input label.container .checkmark2:after {
+ 	/* top: 4px;
+	left: 4px;
+	width: 7px;
+	height: 7px; */
+  /* left: 0.25rem;
+  top: 0.25rem; */
+  width: 0.5rem;
+  height: 0.5rem;
+	border-radius: 50%;
+	background: white;
+}
+/* div#param-core-input label.container {
+  margin-left: 1rem;
+} */
+/* Done: create a custom radio button */
+
+.es-wrapper {
+  width: 46rem;
+  margin: auto;
+}
+
+div.main div.input-radio .radio-input-file {
+  display: inline-block;
+  font-size: 1rem;
+  width: 32.9%;
+}
+
+.radio-input-type-h3 {
+  display: inline-block;
+  width: 10%;
+}
+
+.radio-input-type {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  display: inline-block;
+  font-size: 20px;
+  width: 29%;
+}
+
+.radio-input-type:hover {
+  background-color: white;
+}
+
+div.main div.parameters {
+  display: block;
+  min-height: 15rem;
+  /* width: 30rem; */
+  width: 55rem;
+  /* width: 55%; */
+  /* background-color: green; */
+}
+
+/* div.parameters h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+} */
+
+div.main div.parameters-required {
+  margin: auto;
+  width: 100%;
+  min-height: 10rem;
+  margin-bottom: 1rem;
+}
+
+div.main div.parameters-core {
+  margin: auto;
+  min-height: 10rem;
+  width: 48rem;
+}
+
+div.main div .param-input .param-input-display.master {
+  display: block;
+  margin: auto;
+  width: 90%;
+  min-height: 2rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  /* text-align: center; */
+}
+
+div #param-core-input, #param-core-input-gRNA {
+  border: dashed 1px black;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+  margin: auto;
+  /* padding: 0.4rem; */
+}
+
+div #param-core-input .param-input-display.master label {
+  width: 100%;
+  padding-left: 2.5rem;
+}
+
+/* INPUT div */
+
+.param-input-display.subtype.sequence {
+  width: 13% !important;
+  /* display: inline-block; */
+  float: left;
+}
+.param-input-display.subtype.sequence span {
+  float: left;
+}
+.param-input-value.sequence {
+  display: block;
+  width: 90%;
+  margin: auto;
+  min-height: 6rem;
+  overflow: auto;
+}
+.param-input-value.sequence textarea {
+  width: 100%;
+  min-height: 6rem;
+  resize: vertical;
+}
+.R-scripts textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 20rem;
+}
+
+/* For genomic range input */
+.param-input-display.subtype.genomic-range {
+  width: 100% !important;
+  /* display: inline-block; */
+  float: middle;
+}
+.param-input-display.subtype.genomic-range span {
+  width: 100% !important;
+}
+.genomic-range-input {
+  width: 4rem;
+  display: inline-block;
+  min-height: 3rem;
+  /* float: left; */
+  text-align: center;
+  margin: auto;
+}
+.genomic-range-input input {
+  width: 4rem;
+}
+.genomic-range-input select {
+  width: 4rem;
+}
+
+/* For gene symbol input */
+.param-input-display.subtype.gene {
+  width: 100%;
+  min-height: 1rem;
+}
+.gene-symbol-input {
+  width: 10rem;
+  /* width: 50%; */
+  min-height: 3rem;
+  display: inline-block;
+  margin: auto;
+}
+
+
+
+/* .param-input-display.subtype.gene {
+  width: 30% !important;
+  float: left;
+  min-height: 1rem !important;
+} */
+/* .param-input-display.subtype.gene span {
+  float: left;
+} */
+/* .param-input-value.gene {
+  width: 70% !important;
+  margin: auto;
+  overflow: auto;
+} */
+
+
+/* .genomic-range-input select#org {
+  width: 5rem;
+} */
+
+/* .genomic-range-input button {
+  margin: auto;
+  width: 3.5rem;
+  height: 1.5rem;
+  margin-top: 14px;
+} */
+
+/* Add in the model effect */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+ .modal-content { */
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  font-size: 2rem;
+  width: 50%; /* Could be more or less, depending on screen size */
+}
+
+.param-input-display-gRNA.subtype.sequence {
+  min-width: 4rem !important;
+  /* padding-bottom: 0.5rem !important; */
+}
+
+#param-gRNA-input {
+  width: 90%;
+  min-height: 4rem;
+  /* padding-bottom: 0.5rem; */
+  margin-top: 1rem;
+}
+#gRNA-span {
+  width: 90%;
+  margin: auto;
+  padding-top: 1rem;
+  /* padding-bottom: 1rem; */
+}
+#gRNA-textarea {
+  padding: 0.5rem;
+}
+
+.param-input-value.sequence textarea#gRNA-textarea {
+  width: 100%;
+  min-height: 4rem;
+  resize: vertical;
+}
+
+div.main div .left-panel {
+  /* width: 21rem; */
+  width: 29rem;
+  /* width: 45%; */
+  position: absolute;
+}
+
+
+
+/* .R-scripts {
+  display: none;
+} */
+
+
+/* The Close Button */
+/* .close { */
+  /* color: #aaa;
+  float: right;
+  font-size: 29px;
+  font-weight: bold;
+} */
+
+/* .close:hover, */
+/* .close:focus { */
+  /* color: black;
+  text-decoration: none;
+  cursor: pointer;
+} */
+
+
+/* For hover-reveal question mark tooltip */
+.question-mark {
+  width: 1.25rem;
+  height: 1.25rem;
+  vertical-align: middle;
+  /* margin-left: 0.5rem;
+  margin-bottom: 0.126rem; */
+  /* border: red solid 1px; */
+}
+
+/* .div-tooltip {
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #444;
+  color: #fff;
+  padding: 10px 20px;
+  margin: 20px;
+  z-index: 10000;
+} */
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  /* display: block; */
+  width: 1.6rem;
+  margin: auto;
+  /* border-bottom: 1px dotted black; /* If you want dots under the hoverable text */ */
+}
+
+
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 16rem;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  margin-left: -8rem;
+
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: 0.2s ease-in-out 0.4s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.param-input-value2 {
+  width: 49%;
+}
+.param-input-value2 label {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+.param-input-value2 select, .param-input-value2 input{
+  width: 65%;
+  display: block;
+  margin: auto;
+  padding: 0.2rem;
+}
+
+.genomic-range-input.param-input-value2 {
+  width: 19.5%;
+}
+.genomic-range-input.param-input-value2  select, .genomic-range-input.param-input-value2  input{
+  width: 90%;
+  display: block;
+  margin: auto;
+  padding: 0.2rem;
+}
+
+.param-input-display.subtype, .param-input-value.sequence {
+  padding-bottom: 1rem;
+}
+
+/* Param-core format */
+.wrapper-param-core-other {
+  width: 32.9%;
+  display: inline-block;
+  /* border: solid 1px; */
+  padding: 1rem;
+  margin-top: 1rem;
+  margin: auto;
+}
+.wrapper-param-core-other .param-input-display {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+.wrapper-param-core-other select, .wrapper-param-core-other input {
+  width: 90%;
+  display: block;
+  margin: auto;
+  padding: 0.2rem;
+}
+
+/* editor specific param format */
+.div-parameters-editor {
+  width: 48rem;
+  margin: auto;
+}
+.parameters-editor {
+  width: 95%;
+  margin: auto;
+  /* border: dashed 1px; */
+}
+.wrapper-param-editor {
+  width: 32.9%;
+  display: inline-block;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin: auto;
+}
+.wrapper-param-editor .param-input-display {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+.wrapper-param-editor select, .wrapper-param-editor input {
+  width: 90%;
+  display: block;
+  margin: auto;
+  padding: 0.2rem;
+}
+
+/* Advanced parameters format */
+div.main div.parameters-pipeline {
+  margin: auto;
+  min-height: 3rem;
+  width: 48rem;
+}
+.parameters-pipeline-master h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.param-input.pipeline {
+  width: 48%;
+  display: inline-block;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin: auto;
+}
+.param-input.pipeline .param-input-display {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding-bottom: 0.5rem;
+}
+.param-input.pipeline select, .param-input.pipeline input {
+  width: 90%;
+  display: block;
+  margin: auto;
+  padding: 0.2rem;
+}
+
+/* for profile section only */
+.param-input.pipeline.profile input {
+  width: 60%;
+  display: inline-block;
+  margin: auto;
+  padding: 0.2rem;
+}
+
+/* operation format */
+.operations {
+  display: block;
+  margin: auto;
+  min-height: 3rem;
+  width: 55rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: solid 1px;
+  padding: 1rem;
+  padding-bottom: 0rem;
+}
+
+.show-script, .submit-job {
+  width: 49.5%;
+  display: inline-block;
+  margin: auto;
+  margin-bottom: 1rem;
+}
+
+.btn-show-script {
+  margin-left: 15rem;
+}
+.btn-submit-job {
+  margin-right: 15rem;
+}
+.btn-show-script button, .btn-submit-job button {
+  background: rgba(255, 198, 41, 0.5);
+}
+.btn-show-script button:hover, .btn-submit-job button:hover {
+  background: rgba(255, 198, 41, 1);
+  cursor: pointer;
+}
+
+
+.btn-show-script button, .btn-submit-job button {
+  display: block;
+  margin: auto;
+  padding: 0.65rem 0.5rem;
+  width: 9rem;
+  border-radius: 0.6rem;
+  font-size: 1rem;
+}
+.btn-show-script button:focus, .btn-submit-job button:focus {
+  outline: 0;
+}
+
+
+
+/* div.submit-job {
+  text-align: center;
+} */
+/* .submit-job button {
+  margin: 1rem;
+} */
+/* .btn-show-script {
+  text-align: center;
+} */
+.R-scripts {
+  width: 90%;
+  margin: auto;
+  min-height: 10rem;
+  padding-bottom: 0.75rem;
+}
+
+
+div.main {
+  /* padding-bottom: 5rem; */
+}
+/* footer */
+footer {
+  /* position: absolute; */
+  /* bottom: 0; */
+  color: white;
+  width: 60rem;
+  margin: auto;
+  height: 7rem;
+  border-radius: 0 0 0 0;
+  /* background-color: pink; */
+  background-color: rgba(51,51,51);
+  font-family:
+}
+
+footer div {
+  height: 7rem;
+  padding-top: 1rem;
+}
+footer p {
+  padding-left: 2rem;
+  padding-top: 0.25rem;
+  line-height: 1.25rem;
+}
+footer #span-question {
+  font-weight: 700;
+}
+
+
+/* input style: user genome to search */
+#user-genome-to-search {
+  display: none;
+}
+#user_genome_to_search input {
+  width: 80%;
+  float: right;
+}

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>webCRISPRseek</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,500&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <!-- must be here, otherwise favicon.ico error -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  </head>
+  <body>
+    <header>
+      <div class="header text">
+        <h2>Generate scATACpipe config file</h2>
+      </div>
+      <!-- <div class="header logo"><p>LOGO</p>
+      </div> -->
+    </header>
+
+    <div class="main">
+      <div class="wrapper">
+        <!-- input type -->
+        <div id="div-input-type" class="input-radio input-type">
+            <h2>Input type</h2>
+            <div class="es-wrapper">
+              <div class="radio-input-file">
+                <label class="container" for="fragment">fragment
+                  <input type="radio" id="fragment" name="input-type" value="fragment">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+              <div class="radio-input-file">
+                <label class="container" for="fastq">FASTQ
+                  <input type="radio" id="fastq" name="input-type" value="fastq" checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+        </div>
+
+        <!-- reference genome source -->
+        <div id="div-reference-genome-source" class="input-radio if-fastq-section">
+            <h2>Reference genome source</h2>
+            <div class="es-wrapper">
+              <div class="radio-input-file">
+                <label class="container" for="ensembl">ENSEMBL
+                  <input type="radio" id="ensembl" name="reference-genome-source" value="ensembl" checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="radio-input-file">
+                <label class="container" for="ucsc">UCSC
+                  <input type="radio" id="ucsc" name="reference-genome-source" value="ucsc">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="radio-input-file">
+                <label class="container" for="custom-fasta">custom FASTA
+                  <input type="radio" id="custom-fasta" name="reference-genome-source" value="custom-fasta">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+        </div>
+
+        <!-- archr genome source -->
+        <div id="div-archr-genome-source" class="input-radio archr-genome-source if-fragment-section">
+            <h2>ArchR genome source</h2>
+            <div class="es-wrapper">
+              <div class="radio-input-file">
+                <label class="container" for="archr-defaults">ArchR defaults
+                  <!-- <select id="archr-defaults" class="archr-defaults">
+                    <option value="hg38">hg38</option>
+                    <option value="hg19">hg19</option>
+                    <option value="mm10">mm10</option>
+                    <option value="mm9">mm9</option>
+                  </select> -->
+                  <input type="radio" id="archr-defaults" name="archr-genome-source" value="archr-defaults" checked>
+                  <span class="checkmark"></span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">ArchR natively supports hg38, hg19, mm10, mm9. Select this option if your genome falls into these four genomes.</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="radio-input-file">
+                <label class="container" for="build-from-fasta">build from FASTA
+                  <input type="radio" id="build-from-fasta" name="archr-genome-source" value="build-from-fasta">
+                  <span class="checkmark"></span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">ArchR genome can be built from custom genome FASTA and annotation GTF file. Both files can be obtained from ENSEMBL or UCSC website.</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="radio-input-file">
+                <label class="container" for="r-objects">R objects
+                  <input type="radio" id="r-objects" name="archr-genome-source" value="r-objects">
+                  <span class="checkmark"></span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">If available, ArchR genome can be built when supplying relevant bsgenome, txdb, and org R objects.</span>
+                  </div>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+        <!-- preprocessing strategy -->
+        <div id="div-preprocessing-strategy" class="input-radio preprocessing-strategy if-fastq-section">
+            <h2>Preprocessing strategy</h2>
+            <div class="es-wrapper">
+              <div class="radio-input-file">
+                <label class="container" for="default">default
+                  <input type="radio" id="default" name="preprocessing-strategy" value="default" checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+              <div class="radio-input-file">
+                <label class="container" for="chromap">chromap
+                  <input type="radio" id="chromap" name="preprocessing-strategy" value="chromap">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+              <div class="radio-input-file">
+                <label class="container" for="10xgenomics">10xgenomics
+                  <input type="radio" id="10xgenomics" name="preprocessing-strategy" value="10xgenomics">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+        <!-- is genome index (bwa) available -->
+        <div id="div-index-bwa" class="input-radio index-available2 index-bwa-available if-fastq-section if-preprocessing-strategy-section">
+            <h2>Is genome index (bwa) available?</h2>
+            <div class="es-wrapper">
+              <div class="radio-input-file">
+                <label class="container" for="index-bwa-yes">yes
+                  <input type="radio" id="index-bwa-yes" name="index-bwa-available" value="index-bwa-yes">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="radio-input-file">
+                <label class="container" for="index-bwa-no">no
+                  <input type="radio" id="index-bwa-no" name="index-bwa-available" value="index-bwa-no" checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+            </div>
+        </div>
+
+        <!-- is genome index (chromap) available -->
+        <div id="div-index-chromap" class="input-radio index-available2 index-chromap-available if-fastq-section if-preprocessing-strategy-section">
+            <h2>Is genome index (chromap) available?</h2>
+            <div class="es-wrapper">
+              <div class="radio-input-file">
+                <label class="container" for="index-chromap-yes">yes
+                  <input type="radio" id="index-chromap-yes" name="index-chromap-available" value="index-chromap-yes">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+              <div class="radio-input-file">
+                <label class="container" for="index-chromap-no">no
+                  <input type="radio" id="index-chromap-no" name="index-chromap-available" value="index-chromap-no"
+                  checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+            </div>
+        </div>
+
+        <!-- is genome index (cellranger) available -->
+        <div id="div-index-cellranger" class="input-radio index-available2 index-cellranger-available if-fastq-section if-preprocessing-strategy-section">
+            <h2>Is genome index (cellranger) available?</h2>
+            <div class="es-wrapper">
+              <div class="radio-input-file">
+                <label class="container" for="index-cellranger-yes">yes
+                  <input type="radio" id="index-cellranger-yes" name="index-cellranger-available" value="index-cellranger-yes">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+              <div class="radio-input-file">
+                <label class="container" for="index-cellranger-no">no
+                  <input type="radio" id="index-cellranger-no" name="index-cellranger-available" value="index-cellranger-no"
+                  checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+
+            </div>
+        </div>
+
+
+        <!-- other parameters -->
+        <div class="parameters">
+          <div id="div-pipeline-parameters" class="parameters-pipeline-master">
+            <h2>Other pipeline-level parameters</h2>
+            <div class="parameters-pipeline">
+              <!-- input_fragment -->
+              <div id="param-input-fragment" class="param-input pipeline if-fragment">
+                <div class="param-input-display">
+                  <span>CSV file (fragment)</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path to CSV file containing fragment file info.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="fragment" type="text" name="fragment" placeholder="/full_path/your_fragment.csv">
+                </div>
+              </div>
+              <!-- input_fastq -->
+              <div id="param-input-fastq" class="param-input pipeline if-fastq">
+                <div class="param-input-display">
+                  <span>CSV file (FASTQ)</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path to CSV file containing FASTQ file info.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="input-fastq" type="text" name="input-fastq" placeholder="/full_path/your_fastq.csv">
+                </div>
+              </div>
+              <!-- outdir -->
+              <div id="param-outdir" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>output folder</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path or path relative to working directory.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="outdir" type="text" name="outdir" value="./results">
+                </div>
+              </div>
+              <!-- species_latin_name -->
+              <div id="param-species-latin-name" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>species latin name</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="species-latin-name" type="text" name="species-latin-name" placeholder="e.g. Homo Sapiens">
+                </div>
+              </div>
+              <!-- ref_fasta -->
+              <div id="param-ref-fasta" class="param-input pipeline if-custom-fasta">
+                <div class="param-input-display">
+                  <span>genome FASTA</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="ref-fasta" type="text" name="ref-fasta" placeholder="/full_path/your_genome.fasta">
+                </div>
+              </div>
+              <!-- ref_gtf -->
+              <div id="param-ref-gtf" class="param-input pipeline if-custom-fasta if-build-from-fasta">
+                <div class="param-input-display">
+                  <span>genome GTF</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="ref-gtf" type="text" name="ref-gtf" placeholder="/full_path/your_annotation.gtf">
+                </div>
+              </div>
+              <!-- ref_fasta_ensembl -->
+              <div id="param-ref-fasta-ensembl" class="param-input pipeline if-ensembl">
+                <div class="param-input-display">
+                  <span>ENSEMBL genome name</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="ref-fasta-ensembl" type="text" name="ref-fasta-ensembl" placeholder="e.g. Homo Sapiens">
+                </div>
+              </div>
+              <!-- ref_fasta_ucsc -->
+              <div id="param-ref-fasta-ucsc" class="param-input pipeline if-ucsc">
+                <div class="param-input-display">
+                  <span>UCSC genome name</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="ref-fasta-ucsc" type="text" name="ref-fasta-ucsc" placeholder="e.g. hg38">
+                </div>
+              </div>
+
+              <!-- PREPROCESSING: default  -->
+              <!-- split_fastq -->
+              <div id="param-split-fastq" class="param-input pipeline if-fastq">
+                <div class="param-input-display">
+                  <span>whether or not to split FASTQ</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Set to "true" to split reads into 20M chunks to gain more speed.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <select id="split-fastq" name="split-fastq" type="text">
+                    <option value="true">true</option>
+                    <option value="false" selected>false</option>
+                  </select>
+                </div>
+              </div>
+              <!-- ref_bwa_index -->
+              <div id="param-ref-bwa-index" class="param-input pipeline if-bwa-index">
+                <div class="param-input-display">
+                  <span>BWA index file</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="ref-bwa-index" type="text" name="ref-bwa-index" placeholder="/full_path/your_bwa_index_folder">
+                </div>
+              </div>
+              <!-- barcode_correction -->
+              <div id="param-barcode-correction" class="param-input pipeline if-default">
+                <div class="param-input-display">
+                  <span>barcode correction algorithm</span>
+                </div>
+                <div class="param-input-value">
+                  <select id="barcode-correction" name="barcode-correction">
+                    <option value="pheniqs" selected>pheniqs</option>
+                    <option value="naive">naive</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+              </div>
+              <!-- whitelist_barcode -->
+              <div id="param-whitelist-barcode" class="param-input pipeline if-default">
+                <div class="param-input-display">
+                  <span>whitelist barcode folder</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path or path relative to working directory.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="whitelist-barcode" type="text" name="whitelist-barcode" value="assets/whitelist_barcode">
+                </div>
+              </div>
+              <!-- filter -->
+              <div id="param-filter" class="param-input pipeline if-default">
+                <div class="param-input-display">
+                  <span>How to filter BAM files</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Choose from 'false' (no bam filtering will be performed), 'improper' (reads with low mapping quality, extreme fragment size(outside of 38 - 2000bp), etc. will be filtered out), and 'both' ('improper' + mitochondrial reads will be filtered out.)
+                    </span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <select id="filter" name="filter" type="text">
+                    <option value="both" selected>both</option>
+                    <option value="improper">improper</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- PPREPROCESSING: 10xgenomics -->
+              <!-- ref_cellranger_index -->
+              <div id="param-ref-cellranger-index" class="param-input pipeline if-cellranger-index">
+                <div class="param-input-display">
+                  <span>cellranger index folder</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="ref-cellranger-index" type="text" name="ref-cellranger-index" placeholder="/full_path/your_cellranger_index_folder">
+                </div>
+              </div>
+
+              <!-- PREPROCESSING: chromap -->
+              <!-- ref_chromap_index -->
+              <div id="param-ref-chromap-index" class="param-input pipeline if-chromap-index">
+                <div class="param-input-display">
+                  <span>chromap index folder</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="ref-chromap-index" type="text" name="ref-chromap-index" placeholder="/full_path/your_chromap_index_folder">
+                </div>
+              </div>
+
+              <!-- DOWNSTREAM_ARCHR -->
+              <!-- doublet_removal_algorithm -->
+              <div id="param-doublet-removal-algorithm" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>doublet removal algorithm</span>
+                </div>
+                <div class="param-input-value">
+                  <select id="doublet-removal-algorithm" name="doublet-removal-algorithm" type="text">
+                    <option value="archr" selected>archr</option>
+                    <option value="amulet">amulet</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+              </div>
+              <!-- amulet_rmsk_bed -->
+              <div id="param-amulet-rmsk-bed" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>Amulet rmsk bed</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path to your Amulet rmsk BED file. Set to 'false' to skip.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="amulet-rmsk-bed" type="text" name="amulet-rmsk-bed" value="false">
+                </div>
+              </div>
+              <!-- amulet_autosomes -->
+              <div id="param-amulet-autosomes" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>Amulet autosomes file</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path (path relatively to working directory) to your Amulet autosome file. E.g. assets/<br>homo_sapiens_autosomes.txt</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="amulet-autosomes" type="text" name="amulet-autosomes" placeholder="/full_path/your_amulet_autosomes_file">
+                </div>
+              </div>
+              <!-- archr_thread -->
+              <div id="param-archr-thread" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>ArchR thread</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="archr-thread" type="number" min=1 name="archr-thread" value=8>
+                </div>
+              </div>
+              <!-- archr_genome -->
+              <div id="param-archr-genome" class="param-input pipeline if-archr-defaults">
+                <div class="param-input-display">
+                  <span>ArchR genome</span>
+                </div>
+                <div class="param-input-value">
+                  <select id="archr-genome" name="archr-genome">
+                    <option value="hg38" selected>hg38</option>
+                    <option value="hg19">hg19</option>
+                    <option value="mm10">mm10</option>
+                    <option value="mm9">mm9</option>
+                  </select>
+                </div>
+              </div>
+              <!-- archr_genome_fasta -->
+              <div id="param-archr-genome-fasta" class="param-input pipeline if-build-from-fasta">
+                <div class="param-input-display">
+                  <span>ArchR genome FASTA</span>
+                </div>
+                <div class="param-input-value">
+                  <input id="archr-genome-fasta" type="text" name="archr-genome-fasta" placeholder="/full_path/your_genome_fasta">
+                </div>
+              </div>
+              <!-- archr_txdb -->
+              <div id="param-archr-txdb" class="param-input pipeline if-r-objects">
+                <div class="param-input-display">
+                  <span>TxDb</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Bioconductor TxDb name for building ArchR genome.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="archr-txdb" type="text" name="archr-txdb" placeholder="E.g. TxDb.Hsapiens.UCSC.hg38.knownGene">
+                </div>
+              </div>
+              <!-- archr_org -->
+              <div id="param-archr-org" class="param-input pipeline if-r-objects">
+                <div class="param-input-display">
+                  <span>OrgDb</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Bioconductor OrgDb name for building ArchR genome.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="archr-org" type="text" name="archr-org" placeholder="E.g. TxDb.Hsapiens.UCSC.hg38.knownGene">
+                </div>
+              </div>
+              <!-- archr_bsgenome -->
+              <div id="param-archr-bsgenome" class="param-input pipeline if-r-objects">
+                <div class="param-input-display">
+                  <span>BSgenome</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Bioconductor BSgenome name for building ArchR genome.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="archr-bsgenome" type="text" name="archr-bsgenome" placeholder="E.g. BSgenome.Hsapiens.UCSC.hg38">
+                </div>
+              </div>
+              <!-- archr_blacklist -->
+              <div id="param-archr-blacklist" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>ArchR blacklist</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path to blacklist BED file, will be used in building ArchR genome. Set to 'false' to skip.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input id="archr-blacklist" type="text" name="archr-blacklist" value="false">
+                </div>
+              </div>
+              <!-- archr_batch_correction_harmony -->
+              <div id="param-archr-batch-correction-harmony" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>batch correction (Harmony)</span>
+                </div>
+                <div class="param-input-value">
+                  <select id="archr-batch-correction-harmony" name="archr-batch-correction-harmony">
+                    <option value="true" selectd>true</option>
+                    <option value="false">false</option>
+                  </select>
+                </div>
+              </div>
+              <!-- filter_sample -->
+              <div id="param-filter-sample" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>filter sample</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Samples to get rid of for downstream analysis, refer to header line of archr_clustering/<br>Cluster_xxx_matrix.csv for valid sample names. Default to 'false' meaning that no sample will be excluded. E.g. 'PBMC_1K_N, PBMC_5K_V'.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input type="text" id="filter-sample" name="filter-sample" value="false">
+                </div>
+              </div>
+              <!-- filter_seurat_ilsi -->
+              <div id="param-filter-seurat-ilsi" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>filter cluster ilsi</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Clusters to get rid of for downstream analysis, refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input type="text" id="filter-seurat-ilsi" name="filter-seurat-ilsi" value="false">
+                </div>
+              </div>
+              <!-- filter_seurat_harmony -->
+              <div id="param-filter-seurat-harmony" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>filter cluster harmony</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Clusters to get rid of for downstream analysis, refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input type="text" id="filter-seurat-harmony" name="filter-seurat-harmony" value="false">
+                </div>
+              </div>
+              <!-- custom_peaks -->
+              <div id="param-custom-peaks" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>custom peaks</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Clusters to get rid of for downstream analysis, refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input type="text" id="custom-peaks" name="custom-peaks" value="false">
+                </div>
+              </div>
+              <!-- archr_scrnaseq -->
+              <div id="param-archr-scrnaseq" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>scRNAseq Seurat object</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Full path to scRNA-seq Seurat object, when supplied, will perform integrated scRNA-seq analysis.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input type="text" id="archr-scrnaseq" name="archr-scrnaseq" value="false">
+                </div>
+              </div>
+              <!-- archr_scrnaseq_grouplist -->
+              <div id="param-archr-scrnaseq-grouplist" class="param-input pipeline if-core">
+                <div class="param-input-display">
+                  <span>scRNAseq grouplist</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">scRNAseq cluster grouping information for constrained integration. Example see conf/test.config.</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input type="text" id="archr-scrnaseq-grouplist" name="archr-scrnaseq-grouplist" value="false">
+                </div>
+              </div>
+              <!-- profile -->
+              <div id="param-profile" class="param-input pipeline profile if-core">
+                <div class="param-input-display">
+                  <span>profile</span>
+                  <div class="tooltip">
+                    <img class="question-mark" src="imgs/question_mark.svg" alt="?">
+                    <span class="tooltiptext">Profile refers to a set of pre-defined parameters that are bundled together. E.g. "lsf" bundles "executor = 'lsf'" and "queue = 'long'".</span>
+                  </div>
+                </div>
+                <div class="param-input-value">
+                  <input type="checkbox" name="profile" value="lsf" checked>lsf<br>
+                  <input type="checkbox" name="profile" value="singularity" checked>singularity
+                  <input type="checkbox" name="profile" value="local">local
+                  <input type="checkbox" name="profile" value="test">test
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- operations -->
+        <div class="operations">
+          <div class="show-script">
+            <div class="btn-show-script">
+              <button type="button" name="button">Show config</button>
+            </div>
+          </div>
+
+          <div class="submit-job">
+            <div class="btn-submit-job">
+              <button type="submit" name="btn-submit-job">Download config</button>
+            </div>
+          </div>
+
+          <div class="R-scripts" style="display:none">
+            <textarea type="text" name="rscripts" value="test here" readonly></textarea>
+          </div>
+        </div>
+
+        <!-- <div class="placeholder">
+
+        </div> -->
+
+
+      </div>
+
+      <!-- <div class="div-analysis box"> -->
+        <!-- <h2>Analysis</h2> -->
+        <!-- <ul>
+          <li id="ut">Unpaired Traditional</li>
+          <li id="pc">Paired Configuration</li>
+          <li id="be">Base Editing</li>
+          <li id="pe">Prime Editing</li>
+          <li id="ofa">Off Target Analysis</li>
+        </ul> -->
+      <!-- </div> -->
+    </div>
+    <footer>
+      <div class="footer-info">
+          <p>This is an official Page of the University of Massachusetts Medical School</p>
+          <p>• 55 Lake Avenue North, Worcester, Massachusetts 01655</p>
+          <p><span id="span-question">Questions or Comments?</span> Email: kai.hu@umassmed.edu</p>
+      </div>
+    </footer>
+
+    <!-- Helper functions -->
+    <script src="js/visible.js"></script>
+
+    <!-- Select Radio Button update page -->
+    <script src="js/select_radio_update.js"></script>
+    <!-- Update other parameters upon radio parameter changes -->
+    <script src="js/update_other_parameter.js"></script>
+    <!-- Show config file -->
+    <script src="js/show_config.js"></script>
+
+  </body>
+</html>
