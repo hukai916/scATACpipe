@@ -76,6 +76,7 @@ btnShowConfig.addEventListener("click", function(e) {
       inputVisible.forEach((item, i) => {
         name = item.childNodes[1].name.replaceAll("-", "_");
         value = item.childNodes[1].value;
+        value = value.replace(/(^"|"$|^'|'$)/g, ''); // get rid of leading/trailing quotes
         if (value != 'false' && value != 'true') {
           _tem = '\t\t' + name + ' = ' + '\'' + value + '\'';
         } else {
@@ -84,7 +85,7 @@ btnShowConfig.addEventListener("click", function(e) {
         displayConfig = displayConfig + _tem + "\n";
       });
       displayConfig = displayConfig + '\t}\n\n';
-      displayConfig = displayConfig + "// Use the following command:\n";
+      displayConfig = displayConfig + "// Use this command: ";
 
       // figure out profile settings
       let _profileStr = '';
@@ -98,9 +99,9 @@ btnShowConfig.addEventListener("click", function(e) {
 
       if (_profileArr.length > 0) {
         _profileStr = _profileArr.join(',');
-        displayConfig = displayConfig + "\t// nextflow run main.nf -c custom.config -profile " + _profileStr;
+        displayConfig = displayConfig + " nextflow run main.nf -c custom.config -profile " + _profileStr;
       } else {
-        displayConfig = displayConfig + "\t// nextflow run main.nf -c custom.config";
+        displayConfig = displayConfig + " nextflow run main.nf -c custom.config";
       }
 
       rtextarea.style = "font-size: 1.2rem; color: black; padding: 0.5rem;";

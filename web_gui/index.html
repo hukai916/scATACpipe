@@ -259,7 +259,7 @@
                   <span>species latin name</span>
                 </div>
                 <div class="param-input-value">
-                  <input id="species-latin-name" type="text" name="species-latin-name" placeholder="e.g. Homo Sapiens">
+                  <input id="species-latin-name" type="text" name="species-latin-name" placeholder="e.g. Homo sapiens">
                 </div>
               </div>
               <!-- ref_fasta -->
@@ -286,7 +286,7 @@
                   <span>ENSEMBL genome name</span>
                 </div>
                 <div class="param-input-value">
-                  <input id="ref-fasta-ensembl" type="text" name="ref-fasta-ensembl" placeholder="e.g. Homo Sapiens">
+                  <input id="ref-fasta-ensembl" type="text" name="ref-fasta-ensembl" placeholder="e.g. homo_sapiens">
                 </div>
               </div>
               <!-- ref_fasta_ucsc -->
@@ -547,7 +547,7 @@
                   <span>filter cluster ilsi</span>
                   <div class="tooltip">
                     <img class="question-mark" src="imgs/question_mark.svg" alt="?">
-                    <span class="tooltiptext">Clusters to get rid of for downstream analysis, refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                    <span class="tooltiptext">Filter clusters generated with dimension reduced matrix using ISLI. Filtered clusters will not appear in downstream analysis. Refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
                   </div>
                 </div>
                 <div class="param-input-value">
@@ -560,7 +560,7 @@
                   <span>filter cluster harmony</span>
                   <div class="tooltip">
                     <img class="question-mark" src="imgs/question_mark.svg" alt="?">
-                    <span class="tooltiptext">Clusters to get rid of for downstream analysis, refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                    <span class="tooltiptext">Filter clusters generated with dimension reduced matrix using Harmony. Filtered clusters will not appear in downstream analysis. Refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
                   </div>
                 </div>
                 <div class="param-input-value">
@@ -573,7 +573,7 @@
                   <span>custom peaks</span>
                   <div class="tooltip">
                     <img class="question-mark" src="imgs/question_mark.svg" alt="?">
-                    <span class="tooltiptext">Clusters to get rid of for downstream analysis, refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                    <span class="tooltiptext">Name and path to custom peak file in .bed.gz format, used for motif enrichment and deviation analyses. E.g. 'Encode_K562_GATA1 = "https://www.encodeproject.org/files/ENCFF632NQI/@@download/ENCFF632NQI.bed.gz"'</span>
                   </div>
                 </div>
                 <div class="param-input-value">

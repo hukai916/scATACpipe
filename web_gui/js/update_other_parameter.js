@@ -167,7 +167,7 @@ _allRadioArr.forEach((item, i) => {
     item.style.display = 'none';
   });
 
-  // update upon change
+  // update upon change for doublet-removal-algorithm
 document.querySelector('div[id=param-doublet-removal-algorithm').addEventListener('change', function(e) {
   if (document.querySelector('#doublet-removal-algorithm').value == 'amulet') {
     [...document.querySelectorAll('#param-amulet-rmsk-bed, #param-amulet-autosomes')].forEach((item, i) => {
@@ -175,6 +175,19 @@ document.querySelector('div[id=param-doublet-removal-algorithm').addEventListene
     });
   } else {
     [...document.querySelectorAll('#param-amulet-rmsk-bed, #param-amulet-autosomes')].forEach((item, i) => {
+      item.style.display = 'none';
+    });
+  }
+})
+
+  // update upon change for batch correction
+document.querySelector('div[id=param-archr-batch-correction-harmony').addEventListener('change', function(e) {
+  if (document.querySelector('#archr-batch-correction-harmony').value == 'true') {
+    [...document.querySelectorAll('#param-filter-seurat-harmony')].forEach((item, i) => {
+      item.style.display = 'inline-block';
+    });
+  } else {
+    [...document.querySelectorAll('#param-filter-seurat-harmony')].forEach((item, i) => {
       item.style.display = 'none';
     });
   }
