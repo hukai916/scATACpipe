@@ -153,7 +153,7 @@ nextflow run main.nf --help
 See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
 
 ##### Web GUI
-For easy generation of configuration file, we have implemented an interactive [config generator](https://rawcdn.githack.com/hukai916/scATACpipe/cebf545705e633a6eadf581240472568d0b0a9fd/web_gui/index.html). It was implemented with pure HTML/JavaScript/CSS codes so that it can be used locally. To use it locally, simply:
+For easy generation of configuration file, we have implemented an interactive [config generator](https://rawcdn.githack.com/hukai916/scATACpipe/7d580885e89ce845ad11b1a964fd69305ef05cad/web_gui/index.html). It was implemented with pure HTML/JavaScript/CSS codes so that it can be used locally. To use it locally, simply:
 ```
 wget https://downgit.github.io/#/home?url=https://github.com/hukai916/scATACpipe/tree/0.1.1/web_gui
 
