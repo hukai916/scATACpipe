@@ -288,13 +288,13 @@ Results are stored [here](https://github.com/hukai916/scATACpipe_example/tree/ma
 
 2.  Command used for `chromap` option:
 ```
-nextflow run main.nf -c conf/test_default_plant.config -profile singularity,lsf
+nextflow run main.nf -c conf/test_chromap_plant.config -profile singularity,lsf
 ```
 Results are stored [here](https://github.com/hukai916/scATACpipe_example/tree/main/test_plant_chromap).
 
 3. Command used for `10xgenomics` option:
 ```
-nextflow run main.nf -c conf/test_default_plant.config -profile singularity,lsf
+nextflow run main.nf -c conf/test_10xgenomics_plant.config -profile singularity,lsf
 ```
 Results are stored [here](https://github.com/hukai916/scATACpipe_example/tree/main/test_plant_10xgenomics).
 
