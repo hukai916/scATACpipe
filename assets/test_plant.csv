@@ -1,0 +1,5 @@
+sample_name,path_fastq_1,path_fastq_2,path_barcode
+rep1,/home/kh45w/workflow/test_data/plant/SRR12340627_2.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340627_4.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340627_3.fastq.gz
+rep1,/home/kh45w/workflow/test_data/plant/SRR12340628_2.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340628_4.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340628_3.fastq.gz
+rep2,/home/kh45w/workflow/test_data/plant/SRR12340629_2.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340629_4.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340629_3.fastq.gz
+rep2,/home/kh45w/workflow/test_data/plant/SRR12340630_2.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340630_4.fastq.gz,/home/kh45w/workflow/test_data/plant/SRR12340630_3.fastq.gz

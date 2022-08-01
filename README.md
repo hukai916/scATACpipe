@@ -14,6 +14,7 @@
 [Example used in paper](#example-used-in-paper)
   - [Commands and config](#commands-and-config)
   - [Pipeline info: time and resource usage](#pipeline-info)
+  - [Another example using plant genome](#another-example-using-plant-genome)
 
 [Documentation](#documentation)  
 [Credits](#credits)  
@@ -275,6 +276,28 @@ Upon pipeline execution completion, Nextflow will produce time and resource usag
 - Using `default` option: [results_default_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_default_final/pipeline_info)
 - Using `10xgenomics` option: [results_10xgenomics_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_10xgenomics_final/pipeline_info)
 
+### Another example using plant genome
+
+For this example, we didn't perform integrated scRNA-seq data analysis. Also note, for `motifSet`, when set to 'cisbp', only human and mouse are currently supported by ArchR. Therefore, need to replace all occurrences of `motifSet = "cisbp"` to `motifSet = "encode"` in the `./conf/motif.config` file.
+
+1. Command line used for `default` option:
+```
+nextflow run main.nf -c conf/test_default_plant.config -profile singularity,lsf
+```
+Results are stored [here](https://github.com/hukai916/scATACpipe_example/tree/main/test_plant_default).
+
+2.  Command used for `chromap` option:
+```
+nextflow run main.nf -c conf/test_default_plant.config -profile singularity,lsf
+```
+Results are stored [here](https://github.com/hukai916/scATACpipe_example/tree/main/test_plant_chromap).
+
+3. Command used for `10xgenomics` option:
+```
+nextflow run main.nf -c conf/test_default_plant.config -profile singularity,lsf
+```
+Results are stored [here](https://github.com/hukai916/scATACpipe_example/tree/main/test_plant_10xgenomics).
+
 ## Documentation
 
 The scATACpipe workflow comes with documentation about the pipeline: [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) and [output](https://github.com/hukai916/scATACpipe/blob/main/docs/output.md).
@@ -310,5 +333,6 @@ A complete list of references for the tools used by scATACpipe can be found [her
 <summary>v0.1.1</summary>
 
 * add web_gui for easy generation of config file
+* add one more example for Arabidopsis Thaliana
 * minor improvements
 </details>
