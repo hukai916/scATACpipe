@@ -277,11 +277,7 @@ Upon pipeline execution completion, Nextflow will produce time and resource usag
 - Using `default` option: [results_default_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_default_final/pipeline_info)
 - Using `10xgenomics` option: [results_10xgenomics_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_10xgenomics_final/pipeline_info)
 
-<<<<<<< HEAD
-### An example using plant genome
-=======
 ## An example using plant genome
->>>>>>> dev
 
 For this example (GSE155304), integrated analysis cannot be performed due to the lack of matched scRNA-seq data. Also note, for `motifSet`, when set to 'cisbp', only human and mouse are currently supported by ArchR. Therefore, for this dataset, we need to replace all occurrences of `motifSet = "cisbp"` to `motifSet = "encode"` in the `./conf/motif.config` file.
 
