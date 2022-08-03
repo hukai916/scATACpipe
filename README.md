@@ -11,10 +11,10 @@
 [Quick Start](#quick-start)  
   - [Web GUI](#web-gui)    
 
-[Example used in paper](#example-used-in-paper)
+[An example using human genome with matched scRNA-seq data](#an-example-using-human-genome-with-matched-scrna-seq-data)
   - [Commands and config](#commands-and-config)
   - [Pipeline info: time and resource usage](#pipeline-info)
-  - [Another example using plant genome](#another-example-using-plant-genome)
+[An example using plant genome](#an-example-using-plant-genome)
 
 [Documentation](#documentation)  
 [Credits](#credits)  
@@ -160,7 +160,7 @@ wget https://downgit.github.io/#/home?url=https://github.com/hukai916/scATACpipe
 ```
 Then, open `web_gui/index.html` with your web browser.
 
-## Example used in paper
+## An example using human genome with matched scRNA-seq data
 
 ### Commands and config
 
@@ -276,9 +276,9 @@ Upon pipeline execution completion, Nextflow will produce time and resource usag
 - Using `default` option: [results_default_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_default_final/pipeline_info)
 - Using `10xgenomics` option: [results_10xgenomics_final/pipeline_info](https://github.com/hukai916/scATACpipe_example/tree/main/results_10xgenomics_final/pipeline_info)
 
-### Another example using plant genome
+## An example using plant genome
 
-For this example, we didn't perform integrated scRNA-seq data analysis. Also note, for `motifSet`, when set to 'cisbp', only human and mouse are currently supported by ArchR. Therefore, need to replace all occurrences of `motifSet = "cisbp"` to `motifSet = "encode"` in the `./conf/motif.config` file.
+For this example (GSE155304), integrated analysis cannot be performed due to the lack of matched scRNA-seq data. Also note, for `motifSet`, when set to 'cisbp', only human and mouse are currently supported by ArchR. Therefore, for this dataset, we need to replace all occurrences of `motifSet = "cisbp"` to `motifSet = "encode"` in the `./conf/motif.config` file.
 
 1. Command line used for `default` option:
 ```
