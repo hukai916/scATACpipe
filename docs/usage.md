@@ -32,7 +32,7 @@
 [Version control](#version-control)
 
 ## Introduction
-Either raw sequencing data (**.fastq**) or preprocessed fragment (**.gz**) file can serve as input to scATACpipe.
+Either raw sequencing data (**.fastq.gz**) or preprocessed fragment (**.tsv.gz**) file can serve as input to scATACpipe.
 
 When inputting FASTQ files (`--input_fastq`), scATACpipe provides 3 alternative strategies for preprocessing (shown below), followed by DOWNSTREAM_ARCHR.
   - PREPROCESS_DEFAULT
