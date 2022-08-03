@@ -14,11 +14,8 @@
 [An example using human genome with matched scRNA-seq data](#an-example-using-human-genome-with-matched-scrna-seq-data)
   - [Commands and config](#commands-and-config)
   - [Pipeline info: time and resource usage](#pipeline-info)
-<<<<<<< HEAD
-  - [An example using plant genome](#an-example-using-plant-genome)
-=======
+
 [An example using plant genome](#an-example-using-plant-genome)
->>>>>>> dev
 
 [Documentation](#documentation)  
 [Credits](#credits)  
