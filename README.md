@@ -317,7 +317,7 @@ If you would like to extend scATACpipe for your own good, feel free to fork the 
 
 ## Citations
 <!-- TODO If you use scATACpipe for your analysis, please cite it using the following doi: [](https://) -->
-Please kindly cite scATACpipe [to be added] if you use it for your research.
+Please cite scATACpipe [to be added] if you use it for your research.
 
 A ***Template of Method*** can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/template_of_method.docx).
 
