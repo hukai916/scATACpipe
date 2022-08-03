@@ -278,7 +278,7 @@ Upon pipeline execution completion, Nextflow will produce time and resource usag
 
 ### Another example using plant genome
 
-For this example, we didn't perform integrated scRNA-seq data analysis. Also note, for `motifSet`, when set to 'cisbp', only human and mouse are currently supported by ArchR. Therefore, need to replace all occurrences of `motifSet = "cisbp"` to `motifSet = "encode"` in the `./conf/motif.config` file.
+For this example (GSE155304), we didn't perform integrated scRNA-seq data analysis. Also note, for `motifSet`, when set to 'cisbp', only human and mouse are currently supported by ArchR. Therefore, for this dataset, we need to replace all occurrences of `motifSet = "cisbp"` to `motifSet = "encode"` in the `./conf/motif.config` file.
 
 1. Command line used for `default` option:
 ```
