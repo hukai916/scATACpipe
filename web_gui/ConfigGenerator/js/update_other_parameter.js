@@ -6,10 +6,12 @@
   // step0: initialization to match with default page
   // step1: track all radio paramenter changes
     //1-1 set all other parameters display to 'none'
+      // if-core always on
+      // if-core-check should check
     //1-2 monitor the display of each section
     //1-3 change relevant other parameter to 'inline-block' for each displayed section
-  // step2: handle doublet-removal-algorithm parameter to auto hide amulet-rmsk-bed and amulet-autosomes if not amulet.
-
+  // step2-1: handle doublet-removal-algorithm parameter to auto hide amulet-rmsk-bed and amulet-autosomes if not amulet.
+  // step2-2: handle batch-correction to auto hide filter-seurat-harmony
 
 let referenceGenomeSourceCurr = 'null';
 let archrGenomeSourceCurr = 'null';
@@ -36,6 +38,20 @@ _allRadioArr.forEach((item, i) => {
     _allOtherParameterArr.forEach((item, i) => { item.style.display = 'none'; });
     // .if-core should always on:
     [...document.querySelectorAll(".if-core")].forEach((item, i) => { item.style.display = "inline-block"; });
+    // .if-core-check should check first:
+      // batch-correction-harmony related:
+    if (document.querySelector("div[id=param-archr-batch-correction-harmony]").style.display == "inline-block") {
+      if (document.querySelector("select[id=archr-batch-correction-harmony]").value == "true") {
+        document.querySelector("div[id=param-filter-seurat-harmony]").style.display = "inline-block";
+      }
+    }
+      // param-doublet-removal-algorithm related:
+    if (document.querySelector("div[id=param-doublet-removal-algorithm]").style.display == "inline-block") {
+      if (document.querySelector("select[id=doublet-removal-algorithm]").value == "amulet") {
+        document.querySelector("div[id=param-amulet-autosomes]").style.display = "inline-block";
+        document.querySelector("div[id=param-amulet-rmsk-bed]").style.display = "inline-block";
+      }
+    }
 
     // 1-2
       // input type section always on
