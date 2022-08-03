@@ -154,11 +154,11 @@ nextflow run main.nf --help
 See documentation [usage](https://github.com/hukai916/scATACpipe/blob/main/docs/usage.md) for all of the available options.
 
 ##### Web GUI
-For easy generation of configuration file, we have implemented an interactive [config generator](https://mccb.umassmed.edu/scATACpipe/ConfigGenerator). It was implemented with pure HTML/JavaScript/CSS codes so that it can be used locally.
+For easy generation of configuration file, we have implemented an interactive [config generator](https://mccb.umassmed.edu/scATACpipe/ConfigGenerator).
 
-To use it locally, simply click [here](https://downgit.github.io/#/home?url=https://github.com/hukai916/scATACpipe/tree/0.1.1/web_gui) to download the web_gui.
+It was implemented with pure HTML/JavaScript/CSS codes so that it can be used locally. To use it locally, simply click [here](https://downgit.github.io/#/home?url=https://github.com/hukai916/scATACpipe/tree/0.1.1/web_gui) to download the web_gui.
 
-Then, then it open with web browser:
+Then, then open it with your web browser by double clicking `web_gui/index.html` file or execute the following command in your terminal:
 ```
 open web_gui/index.html
 
