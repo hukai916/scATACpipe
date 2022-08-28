@@ -68,7 +68,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       assign(cluster_name, rownames(cM)[grep(get(c_name), preClust)])
 
       rna_name <- paste0("rna_", x)
-      assign(rna_name, colnames(seRNA)[grep(get(c_name), colData(seRNA)\$BioClassification)])
+      assign(rna_name, colnames(seRNA)[grep(get(c_name), colData(seRNA)\$$options.group_rna)])
     }
 
     groupList <- SimpleList()
@@ -112,7 +112,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       seRNA = seRNA,
       addToArrow = FALSE,
       groupList = groupList,
-      groupRNA = "BioClassification",
+      groupRNA = "$options.group_rna",
       nameCell = "predictedCell_Co",
       nameGroup = "predictedGroup_Co",
       nameScore = "predictedScore_Co"
@@ -126,7 +126,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       addToArrow = TRUE,
       force= TRUE,
       groupList = groupList,
-      groupRNA = "BioClassification",
+      groupRNA = "$options.group_rna",
       nameCell = "predictedCell",
       nameGroup = "predictedGroup",
       nameScore = "predictedScore"

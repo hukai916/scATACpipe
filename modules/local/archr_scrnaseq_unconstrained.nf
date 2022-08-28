@@ -53,7 +53,7 @@ process ARCHR_SCRNASEQ_UNCONSTRAINED {
       reducedDims = reducedDims,
       addToArrow = TRUE,
       force = TRUE,
-      $options.args
+      groupRNA = "$options.group_rna"
     )
 
     # Add impute weights
