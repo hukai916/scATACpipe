@@ -68,7 +68,7 @@ process ARCHR_SCRNASEQ_CONSTRAINED {
       assign(cluster_name, rownames(cM)[grep(get(c_name), preClust)])
 
       rna_name <- paste0("rna_", x)
-      assign(rna_name, colnames(seRNA)[grep(get(c_name), colData(seRNA)\$$options.group_rna)])
+      assign(rna_name, colnames(seRNA)[grep(get(c_name), as.vector(seRNA\$$options.group_rna))])
     }
 
     groupList <- SimpleList()
