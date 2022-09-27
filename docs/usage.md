@@ -120,7 +120,7 @@ Main pipeline parameters must be supplied with command flags or configured insid
   # Example: assets/homo_sapiens_autosomes.txt
 
 --archr_scrnaseq                    [false|path_to_matching_RNAseq_Seurat_object] Whether or not to integrate scRNAseq data.
---archr_scrnaseq_grouplist          [''|'example see conf/test_chromap.config']  scRNAseq cluster grouping info for constrained integration.
+--archr_scrnaseq_grouplist          [''|'example see conf/test_chromap.config']  scRNAseq cluster grouping info for constrained integration. The matching scATAC clusters will be automatically determined so that only RNA groupings are needed.
 --custom_peaks                      [false|'example see conf/test_chromap.config']  For motif enrichment/deviation.
 
 --outlier_further                   [true|false]  Set to false to stop immediately after embedding step for outlier detection

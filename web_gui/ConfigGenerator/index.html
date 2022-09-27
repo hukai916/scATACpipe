@@ -233,7 +233,7 @@
                   <span>CSV file (FASTQ)</span>
                   <div class="tooltip">
                     <img class="question-mark" src="imgs/question_mark.svg" alt="?">
-                    <span class="tooltiptext">Full path to CSV file containing FASTQ file info.</span>
+                    <span class="tooltiptext">Provide full path to a CVS file with each row containing four columns, i.e., the absolute paths to R1, R2, and R3 from each individual run of each sample, and a unique sample name. An example can be found <a style="color: red" href="https://raw.githubusercontent.com/hukai916/scATACpipe/main/assets/example_samplesheet_fastq.csv">here</a>. If multiple lane/run sequencing data is provided for a sample, the corresponding fastq files for each lane/run must be supplied in separate rows with the same sample name. Importantly, if users have sequencing data from multiple libraries on the same sample, the sample name for each library should be distinct to avoid collapsing data from different libraries. The INPUT_CHECK_FASTQ sub-workflow checks if the input CSV file is valid. To speed up the preprocessing of large fastq files, users can set the command-line parameter split_fastq to split the files into 20 million reads each using the SPLIT_FASTQ module.</span>
                   </div>
                 </div>
                 <div class="param-input-value">
@@ -544,10 +544,10 @@
               <!-- filter_seurat_ilsi -->
               <div id="param-filter-seurat-ilsi" class="param-input pipeline if-core">
                 <div class="param-input-display">
-                  <span>filter cluster ilsi</span>
+                  <span>filter cluster ILSI</span>
                   <div class="tooltip">
                     <img class="question-mark" src="imgs/question_mark.svg" alt="?">
-                    <span class="tooltiptext">Filter clusters generated with dimension reduced matrix using ISLI. Filtered clusters will not appear in downstream analysis. Refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                    <span class="tooltiptext">To filter out undesired clusters (e.g. outliers). Filtered clusters will not appear in downstream analysis. The clusters are generated with dimension reduced matrix using <a style="color: red" href="https://www.archrproject.com/bookdown/iterative-latent-semantic-indexing-lsi.html">ISLI</a>. Refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
                   </div>
                 </div>
                 <div class="param-input-value">
@@ -560,7 +560,7 @@
                   <span>filter cluster harmony</span>
                   <div class="tooltip">
                     <img class="question-mark" src="imgs/question_mark.svg" alt="?">
-                    <span class="tooltiptext">Filter clusters generated with dimension reduced matrix using Harmony. Filtered clusters will not appear in downstream analysis. Refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
+                    <span class="tooltiptext">To filter out undesired clusters (e.g. outliers). Filtered clusters will not appear in downstream analysis. Refer to archr_clustering/<br>Cluster_xxx_matrix.csv for valid cluster names. Default to 'false' meaning that no clusters will be excluded. E.g. 'C1, C2'.</span>
                   </div>
                 </div>
                 <div class="param-input-value">

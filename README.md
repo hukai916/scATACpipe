@@ -167,7 +167,7 @@ open web_gui/index.html
 
 ### Commands and config
 
-This section describes how the plots in the manuscript (to be added) were generated using scATACpipe. For comparison, the manuscript conducted 3 separate analyses, each using a different preprocessing strategy (`default`, `10xgenomics`, `chromap`). Since the commands and preprocessed results are quite similar across the three methods, only the `chromap` option will be demonstrated here.
+This section describes how the plots in the [manuscript](https://www.frontiersin.org/articles/10.3389/fcell.2022.981859/full) were generated using scATACpipe. For comparison, the manuscript conducted 3 separate analyses, each using a different preprocessing strategy (`default`, `10xgenomics`, `chromap`). Since the commands and preprocessed results are quite similar across the three methods, only the `chromap` option will be demonstrated here.
 
 1.  The initial execution:
 ```
@@ -319,7 +319,7 @@ If you would like to extend scATACpipe for your own good, feel free to fork the 
 
 ## Citations
 <!-- TODO If you use scATACpipe for your analysis, please cite it using the following doi: [](https://) -->
-Please cite scATACpipe [to be added] if you use it for your research.
+Please cite [scATACpipe](https://www.frontiersin.org/articles/10.3389/fcell.2022.981859/full) if you use it for your research.
 
 A ***Template of Method*** can be found [here](https://github.com/hukai916/scATACpipe/blob/main/docs/template_of_method.docx).
 

@@ -397,7 +397,7 @@ workflow DOWNSTREAM_ARCHR {
 
     if (params.archr_batch_correction_harmony) {
       ARCHR_BATCH_CORRECTION(ARCHR_DIMENSION_REDUCTION.out.archr_project, params.archr_thread)
-      // Module: clustering with seurat and scran, auto check if Harmony performed
+      // Module: clustering with seurat, auto check if Harmony performed
       ARCHR_CLUSTERING(ARCHR_BATCH_CORRECTION.out.archr_project, filter_sample, seurat_ilsi, seurat_harmony, params.archr_thread)
     } else {
       ARCHR_CLUSTERING(ARCHR_DIMENSION_REDUCTION.out.archr_project, filter_sample, seurat_ilsi, seurat_harmony, params.archr_thread)
