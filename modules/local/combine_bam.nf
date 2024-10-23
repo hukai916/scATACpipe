@@ -9,7 +9,7 @@ process COMBINE_BAM {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'combine_bam', publish_id:'') }
-    container "hukai916/pysam_xenial:0.1"
+    container "hukai916/miniconda3_v24.7_amd64_bio:0.1"
 
     input:
     val sample_name

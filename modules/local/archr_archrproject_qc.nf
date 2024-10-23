@@ -9,7 +9,7 @@ process ARCHR_ARCHRPROJECT_QC {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'archr_archrproject_qc', publish_id:'') }
-    container "hukai916/scatacpipe_downstream:0.2.1"
+    container "hukai916/r_env_v4.4.1_amd64:0.1"
 
     input:
     path archr_project

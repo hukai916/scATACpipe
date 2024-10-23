@@ -9,7 +9,7 @@ process GET_VALID_BARCODE {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'get_valid_barcode', publish_id:'') }
-    container "hukai916/r_utils:0.1"
+    container "hukai916/r_env_v4.4.1_amd64:0.1"
 
     input:
     tuple val(sample_name), path(dedup_bam), path(barcode_fastq), path(whitelist_barcode)

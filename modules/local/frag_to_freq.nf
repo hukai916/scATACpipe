@@ -9,7 +9,7 @@ process FRAG_TO_FREQ {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'frag_to_freq', publish_id:'') }
-    container "hukai916/pysam_xenial:0.1"
+    container "hukai916/miniconda3_v24.7_amd64_bio:0.1"
 
     input:
     tuple val(sample_name), path(fragments)

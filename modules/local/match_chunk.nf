@@ -9,7 +9,7 @@ process MATCH_CHUNK {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'match_chunk', publish_id:'') }
-    container "hukai916/sinto_xenial:0.2"
+    container "hukai916/miniconda3_v24.7_amd64_bio:0.1"
 
     input:
     path read1_chunk

@@ -9,7 +9,7 @@ process PREP_FRAGMENT {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'prep_fragment', publish_id:'') }
-    container "hukai916/miniconda3_bio:0.1"
+    container "hukai916/miniconda3_v24.7_amd64_bio:0.1"
 
     input:
     tuple val(sample_name), path(fragment)

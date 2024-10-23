@@ -9,7 +9,7 @@ process CELLRANGER_INDEX {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'cellranger_index', publish_id:'') }
-    container "hukai916/cellranger_atat_2.1.0:0.1"
+    container "hukai916/cellranger_2.1.0_miniconda3_v24.7:0.1 "
 
     input:
     path genome_fasta

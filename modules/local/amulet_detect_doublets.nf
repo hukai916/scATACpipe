@@ -9,7 +9,7 @@ process AMULET_DETECT_DOUBLETS {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'amulet_detect_doublets', publish_id:'') }
-    container "hukai916/amulet_xenial:0.1"
+    container "hukai916/amulet_miniconda3_v24.7_amd64:0.1"
 
     input:
     tuple val(sample_name), path(fragment)

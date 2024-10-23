@@ -9,7 +9,7 @@ process GET_WHITELIST_BARCODE {
     publishDir "${params.outdir}",
         mode: params.publish_dir_mode,
         saveAs: { filename -> saveFiles(filename:filename, options:params.options, publish_dir: 'get_whitelist_barcode', publish_id:'') }
-    container "hukai916/seqkit_0.16.1:0.1"
+    container "hukai916/miniconda3_v24.7_amd64_bio:0.1"
 
     input:
     val sample_name
